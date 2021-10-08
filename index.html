@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>evm.opcodes</title>
+    <script src='/bundle.js' defer></script>
+    <style>
+        table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            overflow: auto;
+        }
+
+        #opcodes {
+            width: 100%;
+        }
+
+        .float {
+            float: left;
+        }
+
+        td,
+        thead {
+            border: 1px solid #ddd;
+            padding: 1px;
+            padding-left: 5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        thead {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #040c30;
+            color: white;
+            position: sticky;
+            top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center">evm.codes</h1>
+    <h2>Introduction</h2>
+    <p>
+        The ethereum virtual machine (or EVM) is a stack based computer. It means that all instructions take their
+        parameters from the stack, and write their results on the stack. Each instruction thus has a stack input, the
+        parameters that it needs (if any), and a stack output, the return values (if any). All instruction are encoded
+        on 1 byte, with the exception of the PUSH instruction, which allows to put an arbitrary value on the stack and
+        encode the value directly after the instruction.
+    </p>
+    <p>
+        The list of instructions available, with their opcodes, is shown <a href="#opcodes">below</a>. You can also <a
+            href="#tryIt">run your own instructions</a> and see the result.
+    </p>
+    <p>
+        An instruction is assigned an arbitrary value between 0 and 255 (or FF in hexadecimal), the opcode, and a
+        mnemonic, which is a text representation that help us human read the instruction. A smart contract is a set of
+        instructions. When the EVM executes a smart contract, it reads and executes each instruction one by one. If an
+        instruction cannot be executed (for example because there are not enough values on the stack), the smart
+        contract fails.
+    </p>
+    <h2>Execution environment</h2>
+    <p>
+        When the EVM executes a smart contract, a context is created for it. The context is made of several memory
+        regions, each with its own purpose.
+    </p>
+    <h3>The code</h3>
+    <p>
+        The code is the region where the instructions are stored. During a smart contract execution, this is the bytes
+        that the EVM will read, interpret and execute. This is a region that cannot be modified, but can be read with
+        the instructions <a href="#56">CODESIZE</a> and <a href="#57">CODECOPY</a>. Other contracts code can also be
+        read with <a href="#59">EXTCODESIZE</a> and <a href="#60">EXTCODECOPY</a>. The program counter (PC) encodes
+        which instruction should be read next by the EVM in this region.
+    </p>
+    <h3>The stack</h3>
+    <p>
+        The stack is a list of 32-byte elements. The stack is used to put the parameters that are needed by the
+        instructions, and their result values. When a new value is put on the stack, it is put on top, and only the top
+        values are used by the instructions. The stack currently has a maximum limit of 1024 values. All instructions
+        interact with the stack, but it can be directly manipulated with instructions like <a href="#96">PUSH1</a>, <a
+            href="#80">POP</a>, <a href="#128">DUP1</a> or <a href="#144">SWAP1</a>.
+    </p>
+
+    <h3>The memory</h3>
+    <p>
+        The memory is a region that only exists during the smart contract execution, and accessed with a byte offset.
+        While all the 32-byte address space is available and initialised to 0, the size is counted with the highest
+        address that was accessed. It is generally read and written with <a href="#81">MLOAD</a> and <a
+            href="#82">MSTORE</a> instructions, but is also used by other instructions like <a href="#240">CREATE</a> or
+        <a href="#243">RETURN</a>.
+    </p>
+    <h3>The storage</h3>
+    <p>
+        The storage is the persistent memory of the smart contract. It is a map of 32-byte slot to 32-byte value, and
+        each value written is kept until it is set to 0 or the contract self destruction. Reading from an unset key also
+        returns 0. It is read and written with the instructions <a href="#84">SLOAD</a> and <a href="#85">SSTORE</a>.
+    </p>
+
+    <h3>The call data</h3>
+    <p>
+        The call data region is the data that is sent with a transaction. In the case of a contract creation, it would
+        be the constructor code. This region is immutable, and can be read with the instructions <a
+            href="#53">CALLDATALOAD</a>, <a href="#54">CALLDATASIZE</a> and <a href="#55">CALLDATACOPY</a>.
+    </p>
+
+    <h3>The return data</h3>
+    <p>
+        The return data region is the way a smart contract can return a value after a call. It can be set by external
+        contract calls through the <a href="#243">RETURN</a> and <a href="#253">REVERT</a> instructions, and can be read
+        by the calling contract with <a href="#61">RETURNDATASIZE</a> and <a href="#60">RETURNDATACOPY</a>.
+    </p>
+
+    <h2>The instructions</h2>
+    <!-- Just a skeleton to make it easy to manipulate with Javascript-->
+    <label for="hardforks">Hardfork:</label>
+    <select name="hardfork" id="hardforks" required>
+    </select>
+
+    <table id="opcodes">
+    </table>
+
+    <h2 id="tryIt">Try it yourself!</h2>
+    <h3>Submit your instructions</h3>
+    <label for="submittedInstructions">Enter your instructions (in hexadecimal, always 2 characters per byte)</label>
+    and <button type="button" id="resetExecute">execute them</button>:
+    <br>
+    <textarea id="submittedInstructions" name="submittedInstructions" rows="2" cols="100"></textarea>
+
+    <h3>Examine the results</h3>
+    <button type="button" id="executeNext">Step</button>
+    <button type="button" id="executeAll">Continue</button>
+    <br>
+    <table class="float">
+        <thead>
+            <tr>
+                <td>Next</td>
+            </tr>
+        </thead>
+        <tbody id="instructions"></tbody>
+    </table>
+    <table class="float">
+        <thead>
+            <tr>
+                <td>Stack</td>
+            </tr>
+        </thead>
+        <tbody id="stack"></tbody>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <td>Storage slot</td>
+                <td>Storage value</td>
+            </tr>
+        </thead>
+        <tbody id="storage"></tbody>
+    </table>
+    <p>Return value:
+    <div id="returnValue"></div>
+    </p>
+
+    <p style="text-align:center">Powered by <a href=https://github.com/ethereumjs/ethereumjs-monorepo>Ethereum-js</a>
+    </p>
+</body>
+
+</html>
