@@ -5,6 +5,7 @@ const BN = require('bn.js')
 
 // Globals
 const hardforkStorageKey = 'evm.codes.hardfork'
+const chainStorageKey = 'evm.codes.chain'
 const gasLimit = new BN(0xffffffffffff)
 let storage = window.localStorage
 
@@ -315,8 +316,34 @@ function localClearContractStorage(address) {
 
 // Table functions
 
+function listChains() {
+  const select = document.getElementById("chains");
+  select.innerHTML = "" // Clear it first
+
+  for (let item in Chain) {
+    if (isNaN(Number(item))) {
+      select.add(new Option(item))
+    }
+  }
+
+  // We remember the last chain selected
+  const lastSet = storage.getItem(chainStorageKey)
+  if (!lastSet) {
+    select.selectedIndex = 0
+    storage.setItem(chainStorageKey, 0)
+    // Make sure we have a valid hardfork
+    storage.setItem(hardforkStorageKey, 0)
+  }
+  else {
+    select.selectedIndex = lastSet
+  }
+
+  common.setChain(select.value.toLowerCase())
+  listHardForks()
+}
+
 function listHardForks() {
-  let select = document.getElementById("hardforks");
+  const select = document.getElementById("hardforks");
   select.innerHTML = "" // Clear it first
 
   common.hardforks().forEach(value => {
@@ -324,7 +351,7 @@ function listHardForks() {
   })
 
   // We remember the last hardfork selected
-  let lastSet = storage.getItem(hardforkStorageKey)
+  const lastSet = storage.getItem(hardforkStorageKey)
   if (!lastSet) {
     select.selectedIndex = 0
     storage.setItem(hardforkStorageKey, 0)
@@ -336,6 +363,17 @@ function listHardForks() {
   common.setHardfork(select.value)
   updateVmInstance()
   resetTable()
+}
+
+function onChainChange(select) {
+  // Remember the last chain selected
+  storage.setItem(chainStorageKey, select.target.selectedIndex)
+  storage.setItem(hardforkStorageKey, 0)
+  common.setChain(select.target.value.toLowerCase())
+
+  document.getElementById("executeArea").hidden = true
+  finishExecution()
+  listHardForks()
 }
 
 function onHardForkChange(select) {
@@ -530,8 +568,9 @@ function buttonContinue() {
 
 // Init code
 
-listHardForks()
+listChains()
 document.getElementById("hardforks").addEventListener('input', onHardForkChange)
+document.getElementById("chains").addEventListener('input', onChainChange)
 document.getElementById("resetExecute").onclick = buttonResetExecute
 document.getElementById("executeAll").onclick = buttonContinue
 document.getElementById("executeNext").onclick = buttonStep
