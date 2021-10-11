@@ -4,15 +4,21 @@ const VM = require('../../dist').default
 const BN = require('bn.js')
 
 // Globals
-const common = new Common({ chain: Chain.Mainnet })
 const hardforkStorageKey = 'evm.codes.hardfork'
+const gasLimit = new BN(0xffffffffffff)
 let storage = window.localStorage
-let vm = new VM({ common })
 
-// Synchronisation
+// VM
+let vm = null
+const storageMemory = new Map()
+const common = new Common({ chain: Chain.Mainnet })
+
+// Synchronisation for VM step
 let shouldfinishExecution = false
-let canStep = false
+let nextStepFunction = null
+let executionResult = null
 
+// Extra info to display per opcode
 const extraOpcodeInfo = [
   ["Stack input", "Stack output", "Description", "Note", "Group"],
   ["[ ...", "[ ...", "Halts execution", "", "Stop and Arithmetic Operations"],
@@ -279,12 +285,35 @@ function addRowElement(row, element) {
   row.insertCell().appendChild(document.createTextNode(element))
 }
 
-function clearExecution() {
-  document.getElementById("instructions").innerHTML = ""
-  document.getElementById("returnValue").innerHTML = ""
-  document.getElementById("storage").innerHTML = ""
-  document.getElementById("stack").innerHTML = ""
+function updateVmInstance() {
+  vm = new VM({ common })
+  vm.on('step', vmStep)
+
+  // Hack the state manager so that we can track the stored variables
+  vm.stateManager.originalPutContractStorage = vm.stateManager.putContractStorage
+  vm.stateManager.originalClearContractStorage = vm.stateManager.clearContractStorage
+  vm.stateManager.putContractStorage = localPutContractStorage
+  vm.stateManager.clearContractStorage = localClearContractStorage
+  storageMemory.clear()
 }
+
+function localPutContractStorage(address, key, value) {
+  if (value === 0) {
+    storageMemory.delete(key)
+  }
+  else {
+    storageMemory.set(key, value)
+  }
+
+  return vm.stateManager.originalPutContractStorage(address, key, value)
+}
+
+function localClearContractStorage(address) {
+  storageMemory.clear()
+  return vm.stateManager.originalClearContractStorage(address)
+}
+
+// Table functions
 
 function listHardForks() {
   let select = document.getElementById("hardforks");
@@ -305,7 +334,7 @@ function listHardForks() {
   }
 
   common.setHardfork(select.value)
-  select.addEventListener('input', onHardForkChange)
+  updateVmInstance()
   resetTable()
 }
 
@@ -313,8 +342,11 @@ function onHardForkChange(select) {
   // Remember the last hardfork selected
   storage.setItem(hardforkStorageKey, select.target.selectedIndex)
   common.setHardfork(select.target.value)
-  vm = new VM({ common })
-  clearExecution()
+
+  document.getElementById("executeArea").hidden = true
+  finishExecution()
+
+  updateVmInstance()
   resetTable()
 }
 
@@ -347,45 +379,114 @@ function resetTable() {
   })
 }
 
-function until(conditionFunction) {
-  const poll = resolve => {
-    if (conditionFunction()) resolve();
-    else setTimeout(_ => poll(resolve), 400);
-  }
+// Execution functions
 
-  return new Promise(poll);
+function loadInstructions(hexaString) {
+  const htmlInstructions = document.getElementById("instructions")
+  const opcodes = vm.getActiveOpcodes()
+
+  htmlInstructions.innerHTML = ""
+
+  for (let i = 0; i < hexaString.length; i += 2) {
+    let instruction = parseInt(hexaString.slice(i, i + 2), '16')
+    let row = htmlInstructions.insertRow()
+    let opcode = opcodes.get(instruction)
+
+    if (!opcode) {
+      addRowElement(row, 'INVALID')
+    }
+    else if (opcode.name === 'PUSH') {
+      let count = parseInt(opcode.fullName.slice(4), '10') * 2
+      addRowElement(row, opcode.fullName + ' ' + hexaString.slice(i + 2, i + 2 + count))
+      i += count
+    }
+    else {
+      addRowElement(row, opcode.fullName)
+    }
+  }
+}
+
+function popInstruction() {
+  document.getElementById("instructions").deleteRow(0)
+}
+
+function loadStack(stack) {
+  let htmlStack = document.getElementById("stack")
+  htmlStack.innerHTML = ""
+
+  stack.forEach(value => {
+    addRowElement(htmlStack.insertRow(0), value.toString('hex'))
+  })
+}
+
+function loadMemory(memory) {
+  document.getElementById("memory").innerText = memory.map(x => x.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+async function loadStorage() {
+  let htmlStorage = document.getElementById("storage")
+  htmlStorage.innerHTML = ""
+
+  storageMemory.forEach((value, key) => {
+    const row = htmlStorage.insertRow()
+    addRowElement(row, key.map(x => x.toString(16).padStart(2, '0')).join(''))
+    addRowElement(row, value.map(x => x.toString(16).padStart(2, '0')).join(''))
+  })
 }
 
 function startExecution(code) {
+  // Make sure of the state
+  finishExecution()
+
+  nextStepFunction = null
   shouldfinishExecution = false
-  clearExecution()
-  canStep = false
 
-  vm.on('step', vmStep)
-  vm.runCode({ code: Buffer.from(code, 'hex'), gasLimit: new BN(0xffff) })
+  executionResult = vm.runCode({ code: Buffer.from(code, 'hex'), gasLimit: gasLimit })
+  executionResult.then(results => {
+    nextStepFunction = null
+
+    if (results.exceptionError) {
+      alert(results.exceptionError.error)
+      return
+    }
+
+    document.getElementById("currentPC").innerText = results.runState.programCounter.toString()
+    document.getElementById("currentGasCost").innerText = '0'
+    document.getElementById("totalGasCost").innerText = results.gasUsed.toString()
+    document.getElementById("returnValue").innerText = results.returnValue.toString('hex')
+
+    loadStack(results.runState.stack._store)
+    loadMemory(results.runState.memory._store)
+    loadStorage()
+
+  }).catch(console.error)
 }
 
-function finishExecution() {
-  shouldfinishExecution = true
-  canStep = true
-}
-
-async function vmStep(data) {
-  // First block until next step is called
-  if (!shouldfinishExecution) {
-    await until(_ => canStep == true)
-    canStep = false
+async function finishExecution() {
+  if (!nextStepFunction) {
+    return
   }
 
-  // Remove the instruction
-  document.getElementById("instructions").deleteRow(0)
-
-  // Then update the stack
-  console.log(data.stack)
+  shouldfinishExecution = true
+  buttonStep()
+  await executionResult
 }
 
-function buttonStep() {
-  canStep = true
+function vmStep(data, continueFunction) {
+  document.getElementById("currentPC").innerText = data.pc
+  document.getElementById("currentGasCost").innerText = data.opcode.fee
+  document.getElementById("totalGasCost").innerText = (gasLimit - data.gasLeft).toString()
+  document.getElementById("returnValue").innerText = ''
+
+  loadStack(data.stack)
+  loadMemory(data.memory)
+  loadStorage()
+
+  nextStepFunction = continueFunction
+  if (shouldfinishExecution) {
+    buttonStep()
+  }
 }
 
 function textToInstructions() {
@@ -404,33 +505,33 @@ function textToInstructions() {
   }
 
   let instructions = textArea.value
+  loadInstructions(instructions)
   startExecution(instructions)
 
-  let textInstructions = document.getElementById("instructions")
-  const opcodes = vm.getActiveOpcodes()
+  document.getElementById("executeArea").hidden = false
+}
 
-  for (let i = 0; i < textArea.textLength; i += 2) {
-    let instruction = parseInt(instructions.slice(i, i + 2), '16')
-    let opcode = opcodes.get(instruction)
-    let row = textInstructions.insertRow()
+function buttonResetExecute() {
+  textToInstructions()
+}
 
-    if (!opcode) {
-      addRowElement(row, 'INVALID')
-    }
-    else if (opcode.name === 'PUSH') {
-      let count = parseInt(opcode.fullName.slice(4), '10') * 2
-      addRowElement(row, opcode.fullName + ' ' + instructions.slice(i + 2, i + 2 + count))
-      i += count
-    }
-    else {
-      addRowElement(row, opcode.fullName)
-    }
+function buttonStep() {
+  if (!nextStepFunction) {
+    return
   }
+
+  popInstruction()
+  nextStepFunction()
+}
+
+function buttonContinue() {
+  finishExecution()
 }
 
 // Init code
 
 listHardForks()
-document.getElementById("resetExecute").onclick = textToInstructions
-document.getElementById("executeAll").onclick = finishExecution
+document.getElementById("hardforks").addEventListener('input', onHardForkChange)
+document.getElementById("resetExecute").onclick = buttonResetExecute
+document.getElementById("executeAll").onclick = buttonContinue
 document.getElementById("executeNext").onclick = buttonStep

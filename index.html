@@ -6,8 +6,15 @@
     <title>evm.opcodes</title>
     <script src='/bundle.js' defer></script>
     <style>
+        body {
+            font-family: Inter, Helvetica, Apple Color Emoji, Segoe UI Emoji, NotoColorEmoji, Noto Color Emoji, Segoe UI Symbol, Android Emoji, EmojiSymbols, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Noto Sans, sans-serif;
+            margin-left: 80px;
+            margin-right: 80px;
+            line-height: 1.1;
+            word-break: break-word;
+        }
+
         table {
-            font-family: Arial, Helvetica, sans-serif;
             border-collapse: collapse;
             overflow: auto;
         }
@@ -16,8 +23,9 @@
             width: 100%;
         }
 
-        .float {
-            float: left;
+        .inline {
+            display: inline-block;
+            vertical-align: top;
         }
 
         td,
@@ -27,11 +35,11 @@
             padding-left: 5px;
         }
 
-        tr:nth-child(even) {
+        tbody tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
-        tr:hover {
+        tbody tr:hover {
             background-color: #ddd;
         }
 
@@ -129,45 +137,125 @@
     </table>
 
     <h2 id="tryIt">Try it yourself!</h2>
-    <h3>Submit your instructions</h3>
-    <label for="submittedInstructions">Enter your instructions (in hexadecimal, always 2 characters per byte)</label>
-    and <button type="button" id="resetExecute">execute them</button>:
+
+    <label for="submittedInstructions">Enter your instructions (in hexadecimal, always 2 characters per
+        byte)</label>
+    and <button type="button" id="resetExecute">load them for execution</button>:
     <br>
     <textarea id="submittedInstructions" name="submittedInstructions" rows="2" cols="100"></textarea>
 
-    <h3>Examine the results</h3>
-    <button type="button" id="executeNext">Step</button>
-    <button type="button" id="executeAll">Continue</button>
-    <br>
-    <table class="float">
-        <thead>
-            <tr>
-                <td>Next</td>
-            </tr>
-        </thead>
-        <tbody id="instructions"></tbody>
-    </table>
-    <table class="float">
-        <thead>
-            <tr>
-                <td>Stack</td>
-            </tr>
-        </thead>
-        <tbody id="stack"></tbody>
-    </table>
-    <table>
-        <thead>
-            <tr>
-                <td>Storage slot</td>
-                <td>Storage value</td>
-            </tr>
-        </thead>
-        <tbody id="storage"></tbody>
-    </table>
-    <p>Return value:
-    <div id="returnValue"></div>
-    </p>
+    <div id="executeArea" hidden>
+        <br>
+        <button type="button" id="executeNext">Step</button>
+        <button type="button" id="executeAll">Continue</button>
+        PC: <span id="currentPC">0</span>,
+        gas cost: <span id="currentGasCost">0</span>,
+        total gas cost: <span id="totalGasCost">0</span>,
+        return value: <span id="returnValue"></span>
+        <br>
+        <table class="inline">
+            <thead>
+                <tr>
+                    <td>Next</td>
+                </tr>
+            </thead>
+            <tbody id="instructions">
+                <tr>
+                    <td>DUMMY</td>
+                </tr>
+                <tr>
+                    <td>DUMMY</td>
+                </tr>
+                <tr>
+                    <td>DUMMY</td>
+                </tr>
+                <tr>
+                    <td>DUMMY</td>
+                </tr>
+                <tr>
+                    <td>DUMMY</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="inline">
+            <thead>
+                <tr>
+                    <td>Stack</td>
+                </tr>
+            </thead>
+            <tbody id="stack">
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="inline">
+            <thead>
+                <tr>
+                    <td>Storage slot</td>
+                    <td>Storage value</td>
+                </tr>
+            </thead>
+            <tbody id="storage">
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+                <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="inline">
+            <thead>
+                <tr>
+                    <td>Memory</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="memory">
+                        0000000000000000000000000000000000000000000000
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
+    <br>
+    <br>
+    <br>
     <p style="text-align:center">Powered by <a href=https://github.com/ethereumjs/ethereumjs-monorepo>Ethereum-js</a>
     </p>
 </body>
