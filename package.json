@@ -2,12 +2,14 @@
   "name": "run-code-browser",
   "private": true,
   "scripts": {
-    "browser": "browserify index.js -o bundle.js && http-server"
+    "browser-test": "browserify index.js -o bundle.js && http-server",
+    "browser": "browserify index.js -o bundle.js --plugin tinyify && http-server"
   },
   "dependencies": {
     "@ethereumjs/common": "^2.5.0",
     "@ethereumjs/vm": "^5.5.3",
-    "browserify": "^16.5.1",
-    "http-server": "^0.11.1"
+    "browserify": "^17.0.0",
+    "http-server": "^13.0.2",
+    "tinyify": "3.0.0"
   }
 }
