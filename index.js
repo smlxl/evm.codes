@@ -7,7 +7,7 @@ const BN = require('bn.js')
 const hardforkStorageKey = 'evm.codes.hardfork'
 const chainStorageKey = 'evm.codes.chain'
 const gasLimit = new BN(0xffffffffffff)
-let storage = window.localStorage
+const storage = window.localStorage
 
 // VM
 let vm = null
@@ -282,7 +282,11 @@ const extraOpcodeInfo = [
 // Utility functions
 
 function addRowElement(row, element) {
-  row.insertCell().appendChild(document.createTextNode(element))
+  row.insertCell().appendChild(element)
+}
+
+function addRowTextElement(row, element) {
+  addRowElement(row, document.createTextNode(element))
 }
 
 function updateVmInstance() {
@@ -342,7 +346,7 @@ function listChains() {
   const select = document.getElementById("chains");
   select.innerHTML = "" // Clear it first
 
-  for (let item in Chain) {
+  for (const item in Chain) {
     if (isNaN(Number(item))) {
       select.add(new Option(item))
     }
@@ -411,30 +415,30 @@ function onHardForkChange(select) {
 }
 
 function resetTable() {
-  let table = document.getElementById("opcodes");
+  const table = document.getElementById("opcodes");
   table.innerHTML = "" // Clear it first
 
-  let head = table.createTHead().insertRow()
-  addRowElement(head, "Opcode")
-  addRowElement(head, "Mnemonic")
-  addRowElement(head, "Gas cost")
+  const head = table.createTHead().insertRow()
+  addRowTextElement(head, "Opcode")
+  addRowTextElement(head, "Mnemonic")
+  addRowTextElement(head, "Gas cost")
 
   extraOpcodeInfo[0].forEach(value => {
-    addRowElement(head, value)
+    addRowTextElement(head, value)
   })
 
-  let body = table.createTBody()
+  const body = table.createTBody()
 
   vm.getActiveOpcodes().forEach(value => {
-    let row = body.insertRow()
+    const row = body.insertRow()
     row.id = value.code
 
-    addRowElement(row, value.code.toString(16).toUpperCase().padStart(2, '0'))
-    addRowElement(row, value.fullName)
-    addRowElement(row, value.fee)
+    addRowTextElement(row, value.code.toString(16).toUpperCase().padStart(2, '0'))
+    addRowTextElement(row, value.fullName)
+    addRowTextElement(row, value.fee)
 
     extraOpcodeInfo[value.code + 1].forEach(value => {
-      addRowElement(row, value)
+      addRowTextElement(row, value)
     })
   })
 }
@@ -448,34 +452,58 @@ function loadInstructions(hexaString) {
   htmlInstructions.innerHTML = ""
 
   for (let i = 0; i < hexaString.length; i += 2) {
-    let instruction = parseInt(hexaString.slice(i, i + 2), '16')
-    let row = htmlInstructions.insertRow()
-    let opcode = opcodes.get(instruction)
+    const instruction = parseInt(hexaString.slice(i, i + 2), '16')
+    const row = htmlInstructions.insertRow()
+    const opcode = opcodes.get(instruction)
 
     if (!opcode) {
-      addRowElement(row, 'INVALID')
+      addRowTextElement(row, 'INVALID')
     }
     else if (opcode.name === 'PUSH') {
-      let count = parseInt(opcode.fullName.slice(4), '10') * 2
-      addRowElement(row, opcode.fullName + ' ' + hexaString.slice(i + 2, i + 2 + count))
+      const count = parseInt(opcode.fullName.slice(4), '10') * 2
+      addRowTextElement(row, opcode.fullName + ' ' + hexaString.slice(i + 2, i + 2 + count))
       i += count
     }
     else {
-      addRowElement(row, opcode.fullName)
+      addRowTextElement(row, opcode.fullName)
+    }
+
+    const checkbox = document.createElement("INPUT");
+    checkbox.setAttribute("type", "checkbox");
+    addRowElement(row, checkbox)
+
+    // Let the checkbox be clicked if we click on the row as well
+    row.onclick = () => {
+      if (document.activeElement !== checkbox) {
+        checkbox.checked = !checkbox.checked
+      }
     }
   }
 }
 
+// If the instruction has a breakpoint, it returns false, removes the breakpoint and
+// does not pop the instruction; otherwise it pops and returns true
 function popInstruction() {
-  document.getElementById("instructions").deleteRow(0)
+  const tbody = document.getElementById("instructions")
+  const checkbox = tbody.firstChild.childNodes.item(1).childNodes.item(0)
+
+  if (checkbox.checked) {
+    shouldfinishExecution = false
+    checkbox.checked = false
+    return false
+  }
+  else {
+    tbody.deleteRow(0)
+    return true
+  }
 }
 
 function loadStack(stack) {
-  let htmlStack = document.getElementById("stack")
+  const htmlStack = document.getElementById("stack")
   htmlStack.innerHTML = ""
 
   stack.forEach(value => {
-    addRowElement(htmlStack.insertRow(0), value.toString('hex'))
+    addRowTextElement(htmlStack.insertRow(0), value.toString('hex'))
   })
 }
 
@@ -485,13 +513,13 @@ function loadMemory(memory) {
 }
 
 function loadStorage() {
-  let htmlStorage = document.getElementById("storage")
+  const htmlStorage = document.getElementById("storage")
   htmlStorage.innerHTML = ""
 
   storageMemory.forEach((value, key) => {
     const row = htmlStorage.insertRow()
-    addRowElement(row, key)
-    addRowElement(row, value)
+    addRowTextElement(row, key)
+    addRowTextElement(row, value)
   })
 }
 
@@ -522,21 +550,11 @@ function startExecution(code) {
 }
 
 function finishExecution() {
-  if (!nextStepFunction) {
-    return
-  }
-
   shouldfinishExecution = true
-  nextStepFunction()
+  buttonStep()
 }
 
 function vmStep(data, continueFunction) {
-  nextStepFunction = continueFunction
-  if (shouldfinishExecution) {
-    buttonStep()
-    return
-  }
-
   document.getElementById("currentPC").innerText = data.pc
   document.getElementById("currentGasCost").innerText = data.opcode.fee
   document.getElementById("totalGasCost").innerText = (gasLimit - data.gasLeft).toString()
@@ -545,6 +563,12 @@ function vmStep(data, continueFunction) {
   loadStack(data.stack)
   loadMemory(data.memory)
   loadStorage()
+
+  nextStepFunction = continueFunction
+  if (shouldfinishExecution) {
+    buttonStep()
+    return
+  }
 }
 
 function textToInstructions() {
@@ -562,9 +586,9 @@ function textToInstructions() {
     return
   }
 
-  let instructions = textArea.value
-  loadInstructions(instructions)
+  const instructions = textArea.value
   startExecution(instructions)
+  loadInstructions(instructions)
 
   document.getElementById("executeArea").hidden = false
 }
@@ -578,8 +602,9 @@ function buttonStep() {
     return
   }
 
-  popInstruction()
-  nextStepFunction()
+  if (popInstruction()) {
+    nextStepFunction()
+  }
 }
 
 function buttonContinue() {
