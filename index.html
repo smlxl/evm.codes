@@ -143,14 +143,14 @@
 
     <label for="submittedInstructions">Enter your instructions (in hexadecimal, always 2 characters per
         byte)</label>
-    and <button type="button" id="resetExecute">load them for execution</button>:
+    and <button type="button" id="resetExecute" title="Click or press 'ctrl+enter'">load them for execution</button>:
     <br>
     <textarea id="submittedInstructions" name="submittedInstructions" rows="2" cols="100"></textarea>
 
     <div id="executeArea" hidden>
         <br>
-        <button type="button" id="executeNext">Step</button>
-        <button type="button" id="executeAll">Continue</button>
+        <button type="button" id="executeNext" title="Click or press 's'">Step</button>
+        <button type="button" id="executeAll" title="Click or press 'c'">Continue</button>
         PC: <span id="currentPC">0</span>,
         gas cost: <span id="currentGasCost">0</span>,
         total gas cost: <span id="totalGasCost">0</span>,

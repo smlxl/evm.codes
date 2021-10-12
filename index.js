@@ -17,7 +17,6 @@ const common = new Common({ chain: Chain.Mainnet })
 // Synchronisation for VM step
 let shouldfinishExecution = false
 let nextStepFunction = null
-let executionResult = null
 
 // Extra info to display per opcode
 const extraOpcodeInfo = [
@@ -303,7 +302,8 @@ function localPutContractStorage(address, key, value) {
     storageMemory.delete(key)
   }
   else {
-    storageMemory.set(key, value)
+    storageMemory.set(key.map(x => x.toString(16).padStart(2, '0')).join(''),
+      value.map(x => x.toString(16).padStart(2, '0')).join(''))
   }
 
   return vm.stateManager.originalPutContractStorage(address, key, value)
@@ -312,6 +312,28 @@ function localPutContractStorage(address, key, value) {
 function localClearContractStorage(address) {
   storageMemory.clear()
   return vm.stateManager.originalClearContractStorage(address)
+}
+
+// Keyboards shortcuts
+
+function onKeyDown(event) {
+  const textArea = document.getElementById("submittedInstructions")
+
+  if (event.key === 'Enter' && event.ctrlKey && !event.altKey && !event.shiftKey) {
+    textToInstructions()
+    // Remove focus from the text area so that we can use the other shortcuts
+    textArea.blur()
+  }
+  // Else we check for simple keys, but not if the text area has focus
+  else if (textArea === document.activeElement) {
+    return
+  }
+  else if (event.key === 's' && !event.ctrlKey && !event.altKey) {
+    buttonStep()
+  }
+  else if (event.key === 'c' && !event.ctrlKey && !event.altKey) {
+    buttonContinue()
+  }
 }
 
 // Table functions
@@ -462,26 +484,24 @@ function loadMemory(memory) {
     .join('')
 }
 
-async function loadStorage() {
+function loadStorage() {
   let htmlStorage = document.getElementById("storage")
   htmlStorage.innerHTML = ""
 
   storageMemory.forEach((value, key) => {
     const row = htmlStorage.insertRow()
-    addRowElement(row, key.map(x => x.toString(16).padStart(2, '0')).join(''))
-    addRowElement(row, value.map(x => x.toString(16).padStart(2, '0')).join(''))
+    addRowElement(row, key)
+    addRowElement(row, value)
   })
 }
 
 function startExecution(code) {
   // Make sure of the state
   finishExecution()
-
   nextStepFunction = null
   shouldfinishExecution = false
 
-  executionResult = vm.runCode({ code: Buffer.from(code, 'hex'), gasLimit: gasLimit })
-  executionResult.then(results => {
+  vm.runCode({ code: Buffer.from(code, 'hex'), gasLimit: gasLimit }).then(results => {
     nextStepFunction = null
 
     if (results.exceptionError) {
@@ -501,17 +521,22 @@ function startExecution(code) {
   }).catch(console.error)
 }
 
-async function finishExecution() {
+function finishExecution() {
   if (!nextStepFunction) {
     return
   }
 
   shouldfinishExecution = true
-  buttonStep()
-  await executionResult
+  nextStepFunction()
 }
 
 function vmStep(data, continueFunction) {
+  nextStepFunction = continueFunction
+  if (shouldfinishExecution) {
+    buttonStep()
+    return
+  }
+
   document.getElementById("currentPC").innerText = data.pc
   document.getElementById("currentGasCost").innerText = data.opcode.fee
   document.getElementById("totalGasCost").innerText = (gasLimit - data.gasLeft).toString()
@@ -520,11 +545,6 @@ function vmStep(data, continueFunction) {
   loadStack(data.stack)
   loadMemory(data.memory)
   loadStorage()
-
-  nextStepFunction = continueFunction
-  if (shouldfinishExecution) {
-    buttonStep()
-  }
 }
 
 function textToInstructions() {
@@ -574,3 +594,4 @@ document.getElementById("chains").addEventListener('input', onChainChange)
 document.getElementById("resetExecute").onclick = buttonResetExecute
 document.getElementById("executeAll").onclick = buttonContinue
 document.getElementById("executeNext").onclick = buttonStep
+document.onkeydown = onKeyDown
