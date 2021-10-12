@@ -1,6 +1,6 @@
 const Common = require('@ethereumjs/common').default
 const Chain = require('@ethereumjs/common').Chain
-const VM = require('../../dist').default
+const VM = require('@ethereumjs/vm').default
 const BN = require('bn.js')
 
 // Globals
