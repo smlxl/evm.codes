@@ -28,6 +28,18 @@
             vertical-align: top;
         }
 
+        .row {
+            display: flex;
+        }
+
+        .column {
+            flex: 50%;
+        }
+
+        .nextInstruction {
+            background-color: gold !important;
+        }
+
         td,
         thead {
             border: 1px solid #ddd;
@@ -51,6 +63,10 @@
             color: white;
             position: sticky;
             top: 0px;
+        }
+
+        textarea {
+            width: 100%;
         }
     </style>
 </head>
@@ -139,13 +155,26 @@
     <table id="opcodes">
     </table>
 
-    <h2 id="tryIt">Try it yourself!</h2>
-
-    <label for="submittedInstructions">Enter your instructions (in hexadecimal, always 2 characters per
-        byte)</label>
-    and <button type="button" id="resetExecute" title="Click or press 'ctrl+enter'">load them for execution</button>:
-    <br>
-    <textarea id="submittedInstructions" name="submittedInstructions" rows="2" cols="100"></textarea>
+    <h2 id="tryIt">Try it yourself! (beta)</h2>
+    <div class="row">
+        <div class="column">
+            <select name="instructionType" id="instructionType" required>
+                <option>Opcodes</option>
+                <option>Solidity</option>
+            </select>
+            <label for="submittedInstructions"> <span id="instructionText"></span> </label>
+            and <button type="button" id="resetExecute" title="Click or press 'ctrl+enter'">load them for
+                execution</button>:
+            <br>
+            <textarea id="submittedInstructions" name="submittedInstructions" rows="10"></textarea>
+        </div>
+        <div class="column">
+            <label for="console">Output: </label>
+            <button type="button" id="clearConsole" title="Click or press 'x'">Clear output</button>
+            <br>
+            <textarea id="console" name="console" rows="10" readonly></textarea>
+        </div>
+    </div>
 
     <div id="executeArea" hidden>
         <br>
@@ -159,7 +188,7 @@
         <table class="inline">
             <thead>
                 <tr>
-                    <td>Next</td>
+                    <td>Code</td>
                     <td>Breakpoint</td>
                 </tr>
             </thead>
@@ -185,12 +214,14 @@
         <table class="inline">
             <thead>
                 <tr>
+                    <td>Contract address</td>
                     <td>Storage slot</td>
                     <td>Storage value</td>
                 </tr>
             </thead>
             <tbody id="storage">
                 <tr>
+                    <td>0000000000000000000000000000000000000000000000000000000000000000</td>
                     <td>0000000000000000000000000000000000000000000000000000000000000000</td>
                     <td>0000000000000000000000000000000000000000000000000000000000000000</td>
                 </tr>

@@ -1,9 +1,16 @@
-const Common = require('@ethereumjs/common').default
+const Address = require('ethereumjs-util').Address
+const Account = require('ethereumjs-util').Account
+const BN = require('ethereumjs-util').BN
 const Chain = require('@ethereumjs/common').Chain
+const Common = require('@ethereumjs/common').default
+const Transaction = require('@ethereumjs/tx').Transaction
 const VM = require('@ethereumjs/vm').default
-const BN = require('bn.js')
+
+// Solidity is too big, needs to be loaded separately, and we load it lazily
+let solidityWorker = null
 
 // Globals
+const instructionTypeStorageKey = 'evm.codes.instructionType'
 const hardforkStorageKey = 'evm.codes.hardfork'
 const chainStorageKey = 'evm.codes.chain'
 const gasLimit = new BN(0xffffffffffff)
@@ -17,6 +24,11 @@ const common = new Common({ chain: Chain.Mainnet })
 // Synchronisation for VM step
 let shouldfinishExecution = false
 let nextStepFunction = null
+let compiling = false
+
+// Contract execution
+const privateKey = Buffer.from('e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109', 'hex')
+const accountAddress = Address.fromPrivateKey(privateKey)
 
 // Extra info to display per opcode
 const extraOpcodeInfo = [
@@ -281,6 +293,18 @@ const extraOpcodeInfo = [
 
 // Utility functions
 
+function log(text) {
+  document.getElementById("console").value += text + '\n'
+}
+
+function error(text) {
+  log('Error: ' + text)
+}
+
+function clearLog() {
+  document.getElementById("console").value = ''
+}
+
 function addRowElement(row, element) {
   row.insertCell().appendChild(element)
 }
@@ -289,7 +313,11 @@ function addRowTextElement(row, element) {
   addRowElement(row, document.createTextNode(element))
 }
 
-function updateVmInstance() {
+function getInstructionId(pc) {
+  return 'code_' + pc
+}
+
+async function updateVmInstance() {
   vm = new VM({ common })
   vm.on('step', vmStep)
 
@@ -299,23 +327,96 @@ function updateVmInstance() {
   vm.stateManager.putContractStorage = localPutContractStorage
   vm.stateManager.clearContractStorage = localClearContractStorage
   storageMemory.clear()
+
+  // Add a fake account
+  const acctData = {
+    nonce: 0,
+    balance: new BN(10).pow(new BN(18)), // 1 eth
+  }
+  const account = Account.fromAccountData(acctData)
+  await vm.stateManager.putAccount(accountAddress, account)
 }
 
 function localPutContractStorage(address, key, value) {
-  if (value === 0) {
-    storageMemory.delete(key)
+  const addressText = address.toString()
+  const keyText = key.map(x => x.toString(16).padStart(2, '0')).join('')
+  const valueText = value.map(x => x.toString(16).padStart(2, '0')).join('')
+
+  if (value.length == 0) {
+    if (storageMemory.has(addressText)) {
+      const addressStorage = storageMemory.get(addressText)
+      addressStorage.delete(keyText)
+
+      if (addressStorage.size == 0) {
+        storageMemory.delete(addressText)
+      }
+    }
   }
   else {
-    storageMemory.set(key.map(x => x.toString(16).padStart(2, '0')).join(''),
-      value.map(x => x.toString(16).padStart(2, '0')).join(''))
+    if (storageMemory.has(addressText)) {
+      storageMemory.get(addressText).set(keyText, valueText)
+    }
+    else {
+      storageMemory.set(addressText, new Map([[keyText, valueText]]))
+    }
   }
 
   return vm.stateManager.originalPutContractStorage(address, key, value)
 }
 
 function localClearContractStorage(address) {
-  storageMemory.clear()
+  const addressText = address.toString()
+  storageMemory.delete(addressText)
   return vm.stateManager.originalClearContractStorage(address)
+}
+
+function onCompilationResult(result) {
+  compiling = false
+
+  if (result.data.error) {
+    error(result.data.error)
+  }
+  else {
+    if (result.data.warning) {
+      log(result.data.warning)
+    }
+
+    deployContract(result.data.code.toString('hex'))
+  }
+}
+
+function loadSolidityCompiler() {
+  log('Loading Solidity compiler...')
+  solidityWorker = new Worker('/worker.js')
+  solidityWorker.onmessage = onCompilationResult
+  log('Solidity loaded')
+}
+
+function compileSolidity(code) {
+  if (!solidityWorker) {
+    loadSolidityCompiler()
+  }
+
+  compiling = true
+  log('Starting compilation...')
+  solidityWorker.postMessage({
+    evmVersion: document.getElementById("hardforks").value,
+    source: code
+  })
+}
+
+async function deployContract(code) {
+  const account = await vm.stateManager.getAccount(accountAddress)
+  const txData = {
+    value: 0,
+    gasLimit: gasLimit,
+    gasPrice: 1,
+    data: '0x' + code,
+    nonce: account.nonce,
+  }
+
+  startExecution(txData)
+  loadInstructions(code)
 }
 
 // Keyboards shortcuts
@@ -324,7 +425,7 @@ function onKeyDown(event) {
   const textArea = document.getElementById("submittedInstructions")
 
   if (event.key === 'Enter' && event.ctrlKey && !event.altKey && !event.shiftKey) {
-    textToInstructions()
+    buttonResetExecute()
     // Remove focus from the text area so that we can use the other shortcuts
     textArea.blur()
   }
@@ -338,9 +439,25 @@ function onKeyDown(event) {
   else if (event.key === 'c' && !event.ctrlKey && !event.altKey) {
     buttonContinue()
   }
+  else if (event.key === 'x' && !event.ctrlKey && !event.altKey) {
+    clearLog()
+  }
 }
 
 // Table functions
+
+function setInstructionTypeText() {
+  const text = document.getElementById("instructionText");
+  const lastSet = storage.getItem(instructionTypeStorageKey)
+
+  if (lastSet == 1) {
+    text.innerHTML = "Enter your solidity code (compatible with the selected hardfork)"
+    document.getElementById("instructionType").selectedIndex = 1
+  }
+  else {
+    text.innerHTML = "Enter your instructions (in hexadecimal, always 2 characters per byte)"
+  }
+}
 
 function listChains() {
   const select = document.getElementById("chains");
@@ -414,6 +531,11 @@ function onHardForkChange(select) {
   resetTable()
 }
 
+function onInstructionTypeChange(select) {
+  storage.setItem(instructionTypeStorageKey, select.target.selectedIndex)
+  setInstructionTypeText()
+}
+
 function resetTable() {
   const table = document.getElementById("opcodes");
   table.innerHTML = "" // Clear it first
@@ -456,6 +578,9 @@ function loadInstructions(hexaString) {
     const row = htmlInstructions.insertRow()
     const opcode = opcodes.get(instruction)
 
+    // Give an id to find the row being executed quick, with the pc
+    row.id = getInstructionId(i / 2)
+
     if (!opcode) {
       addRowTextElement(row, 'INVALID')
     }
@@ -479,23 +604,12 @@ function loadInstructions(hexaString) {
       }
     }
   }
+
+  document.getElementById("executeArea").hidden = false
 }
 
-// If the instruction has a breakpoint, it returns false, removes the breakpoint and
-// does not pop the instruction; otherwise it pops and returns true
-function popInstruction() {
-  const tbody = document.getElementById("instructions")
-  const checkbox = tbody.firstChild.childNodes.item(1).childNodes.item(0)
-
-  if (checkbox.checked) {
-    shouldfinishExecution = false
-    checkbox.checked = false
-    return false
-  }
-  else {
-    tbody.deleteRow(0)
-    return true
-  }
+function shouldBreak(htmlInstructionRow) {
+  return htmlInstructionRow.childNodes.item(1).childNodes.item(0).checked
 }
 
 function loadStack(stack) {
@@ -516,37 +630,68 @@ function loadStorage() {
   const htmlStorage = document.getElementById("storage")
   htmlStorage.innerHTML = ""
 
-  storageMemory.forEach((value, key) => {
-    const row = htmlStorage.insertRow()
-    addRowTextElement(row, key)
-    addRowTextElement(row, value)
+  storageMemory.forEach((storage, address) => {
+    storage.forEach((value, slot) => {
+      const row = htmlStorage.insertRow()
+      addRowTextElement(row, address)
+      addRowTextElement(row, slot)
+      addRowTextElement(row, value)
+    })
   })
 }
 
-function startExecution(code) {
+function startExecution(transactionData) {
   // Make sure of the state
   finishExecution()
   nextStepFunction = null
   shouldfinishExecution = false
 
-  vm.runCode({ code: Buffer.from(code, 'hex'), gasLimit: gasLimit }).then(results => {
-    nextStepFunction = null
+  const htmlPc = document.getElementById("currentPC")
 
-    if (results.exceptionError) {
-      alert(results.exceptionError.error)
-      return
-    }
+  if (!transactionData.data) {
+    vm.runCode({ code: Buffer.from(transactionData, 'hex'), gasLimit: gasLimit }).then(results => {
+      nextStepFunction = null
+      document.getElementById(getInstructionId(htmlPc.innerText)).className = ''
 
-    document.getElementById("currentPC").innerText = results.runState.programCounter.toString()
-    document.getElementById("currentGasCost").innerText = '0'
-    document.getElementById("totalGasCost").innerText = results.gasUsed.toString()
-    document.getElementById("returnValue").innerText = results.returnValue.toString('hex')
+      if (results.exceptionError) {
+        error(results.exceptionError.error)
+        return
+      }
 
-    loadStack(results.runState.stack._store)
-    loadMemory(results.runState.memory._store)
-    loadStorage()
+      htmlPc.innerText = results.runState.programCounter.toString()
+      document.getElementById("currentGasCost").innerText = '0'
+      document.getElementById("totalGasCost").innerText = results.gasUsed.toString()
+      document.getElementById("returnValue").innerText = results.returnValue.toString('hex')
 
-  }).catch(console.error)
+      loadStack(results.runState.stack._store)
+      loadMemory(results.runState.memory._store)
+      loadStorage()
+
+    }).catch(console.error)
+  }
+  else {
+    const tx = Transaction.fromTxData(transactionData).sign(privateKey)
+    vm.runTx({ tx }).then(results => {
+      nextStepFunction = null
+      document.getElementById(getInstructionId(htmlPc.innerText)).className = ''
+
+      if (results.execResult.exceptionError) {
+        error(results.execResult.exceptionError.error)
+        return
+      }
+
+      htmlPc.innerText = results.execResult.runState.programCounter.toString()
+      document.getElementById("currentGasCost").innerText = '0'
+      document.getElementById("totalGasCost").innerText = results.gasUsed.toString()
+      document.getElementById("returnValue").innerText = results.execResult.returnValue.toString('hex')
+
+      loadStack(results.execResult.runState.stack._store)
+      loadMemory(results.execResult.runState.memory._store)
+      loadStorage()
+
+      log('Contract deployed at address ' + results.createdAddress)
+    }).catch(console.error)
+  }
 }
 
 function finishExecution() {
@@ -555,7 +700,18 @@ function finishExecution() {
 }
 
 function vmStep(data, continueFunction) {
-  document.getElementById("currentPC").innerText = data.pc
+  const htmlPc = document.getElementById("currentPC")
+
+  // Update the next instruction to be displayed
+  const currentHtmlInstruction = document.getElementById(getInstructionId(htmlPc.innerText))
+  const nextHtmlInstruction = document.getElementById(getInstructionId(data.pc.toString()))
+
+  if (currentHtmlInstruction) {
+    currentHtmlInstruction.className = ''
+  }
+  nextHtmlInstruction.className = 'nextInstruction'
+
+  htmlPc.innerText = data.pc
   document.getElementById("currentGasCost").innerText = data.opcode.fee
   document.getElementById("totalGasCost").innerText = (gasLimit - data.gasLeft).toString()
   document.getElementById("returnValue").innerText = ''
@@ -565,9 +721,14 @@ function vmStep(data, continueFunction) {
   loadStorage()
 
   nextStepFunction = continueFunction
+
   if (shouldfinishExecution) {
-    buttonStep()
-    return
+    if (shouldBreak(nextHtmlInstruction)) {
+      shouldfinishExecution = false
+    }
+    else {
+      buttonStep()
+    }
   }
 }
 
@@ -576,25 +737,33 @@ function textToInstructions() {
   const hex = /^[0-9a-fA-F]+$/;
 
   if (textArea.textLength === 0) {
-    alert('No code found')
+    error('No code found')
     return
   } else if (textArea.textLength % 2 !== 0) {
-    alert('There should be 2 characters per byte')
+    error('There should be 2 characters per byte')
     return
   } else if (!hex.test(textArea.value)) {
-    alert('Only hexadecimal characters are allowed')
+    error('Only hexadecimal characters are allowed')
     return
   }
 
   const instructions = textArea.value
   startExecution(instructions)
   loadInstructions(instructions)
-
-  document.getElementById("executeArea").hidden = false
 }
 
 function buttonResetExecute() {
-  textToInstructions()
+  if (compiling) {
+    error('Compiling in progress, please wait...')
+    return
+  }
+
+  if (document.getElementById("instructionType").selectedIndex == 0) {
+    textToInstructions()
+  }
+  else {
+    compileSolidity(document.getElementById("submittedInstructions").value)
+  }
 }
 
 function buttonStep() {
@@ -602,9 +771,7 @@ function buttonStep() {
     return
   }
 
-  if (popInstruction()) {
-    nextStepFunction()
-  }
+  nextStepFunction()
 }
 
 function buttonContinue() {
@@ -614,9 +781,12 @@ function buttonContinue() {
 // Init code
 
 listChains()
+setInstructionTypeText()
+document.getElementById("instructionType").addEventListener('input', onInstructionTypeChange)
 document.getElementById("hardforks").addEventListener('input', onHardForkChange)
 document.getElementById("chains").addEventListener('input', onChainChange)
 document.getElementById("resetExecute").onclick = buttonResetExecute
 document.getElementById("executeAll").onclick = buttonContinue
 document.getElementById("executeNext").onclick = buttonStep
+document.getElementById("clearConsole").onclick = clearLog
 document.onkeydown = onKeyDown

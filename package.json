@@ -7,8 +7,10 @@
   },
   "dependencies": {
     "@ethereumjs/common": "^2.5.0",
+    "@ethereumjs/tx": "^3.3.2",
     "@ethereumjs/vm": "^5.5.3",
     "browserify": "^17.0.0",
+    "ethereumjs-util": "^7.1.2",
     "http-server": "^13.0.2",
     "tinyify": "3.0.0"
   }
