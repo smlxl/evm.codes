@@ -700,6 +700,12 @@ function finishExecution() {
 }
 
 function vmStep(data, continueFunction) {
+  // We skip over the calls
+  if (data.depth != 0) {
+    continueFunction()
+    return
+  }
+
   const htmlPc = document.getElementById("currentPC")
 
   // Update the next instruction to be displayed
