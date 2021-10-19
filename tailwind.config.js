@@ -5,9 +5,11 @@ module.exports = {
     fontFamily: {
       serif: ['Inter', 'sans-serif'],
       sans: ['Inter', 'sans-serif'],
+      mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;',
     },
     extend: {
       fontSize: {
+        '2xs': '10px',
         tiny: '13px',
       },
     },

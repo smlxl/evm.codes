@@ -1,8 +1,8 @@
 import { GITHUB_REPO_URL } from '../../util/constants'
 import Container from '../Container'
-import Logo from '../Logo'
 import NavLink from '../NavLink'
 import Settings from '../Settings'
+import Logo from '../ui/Logo'
 
 const Nav = () => {
   return (

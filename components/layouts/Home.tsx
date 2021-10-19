@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import Container from '../Container'
 import Footer from './Footer'
 import Nav from './Nav'
 
@@ -17,9 +16,7 @@ const HomeLayout: NextPage = ({ children }) => {
       <div className="flex flex-col h-screen justify-between">
         <Nav />
 
-        <main className="mb-auto flex h-screen items-center">
-          <Container>{children}</Container>
-        </main>
+        <main className="mb-auto h-screen mt-60">{children}</main>
 
         <Footer />
       </div>

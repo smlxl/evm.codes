@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "eslint --ext js,jsx,ts,tsx --fix",
+    "lint": "eslint --ext js,jsx,ts,tsx --fix .",
     "lint:package": "sort-package-json",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit"
   },
@@ -13,11 +13,13 @@
     "classnames": "^2.3.1",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-table": "^7.7.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^11.1.2",
     "@types/react": "17.0.30",
+    "@types/react-table": "^7.7.6",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "autoprefixer": "^10.3.7",
