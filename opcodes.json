@@ -1,0 +1,1794 @@
+{
+  "0": {
+    "input": "",
+    "output": "",
+    "description": "Halts execution",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "1": {
+    "input": "a | b",
+    "output": "a + b",
+    "description": "Addition operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "2": {
+    "input": "a | b",
+    "output": "a * b",
+    "description": "Multiplication operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "3": {
+    "input": "a | b",
+    "output": "a - b",
+    "description": "Subtraction operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "4": {
+    "input": "a | b",
+    "output": "a // b",
+    "description": "Integer division operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "5": {
+    "input": "a | b",
+    "output": "a // b",
+    "description": "Signed integer division operation (truncated)",
+    "note": "Where all values are treated as two’s complement signed 256-bit integers. Note the overflow semantic when −2**255 is negated",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "6": {
+    "input": "a | b",
+    "output": "a % b",
+    "description": "Modulo remainder operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "7": {
+    "input": "a | b",
+    "output": "a % b",
+    "description": "Signed modulo remainder operation",
+    "note": "Where all values are treated as two’s complement signed 256-bit integers",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "8": {
+    "input": "a | b | N",
+    "output": "(a + b) % N",
+    "description": "Modulo addition operation",
+    "note": "All intermediate calculations of this operation are not subject to the 2**256 modulo",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "9": {
+    "input": "a | b | N",
+    "output": "(a * b) % N",
+    "description": "Modulo multiplication operation",
+    "note": "All intermediate calculations of this operation are not subject to the 2**256 modulo",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "10": {
+    "input": "a | b",
+    "output": "a ** b",
+    "description": "Exponential operation",
+    "note": "",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "11": {
+    "input": "b | x",
+    "output": "y",
+    "description": "Extend length of two’s complement signed integer",
+    "note": "x is the value, b is the size of x in bytes",
+    "group": "Stop and Arithmetic Operations"
+  },
+  "12": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "13": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "14": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "15": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "16": {
+    "input": "a | b",
+    "output": "a < b",
+    "description": "Less-than comparison",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "17": {
+    "input": "a | b",
+    "output": "a > b",
+    "description": "Greater-than comparison",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "18": {
+    "input": "a | b",
+    "output": "a < b",
+    "description": "Signed less-than comparison",
+    "note": "Where all values are treated as two’s complement signed 256-bit integers",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "19": {
+    "input": "a | b",
+    "output": "a > b",
+    "description": "Signed greater-than comparison",
+    "note": "Where all values are treated as two’s complement signed 256-bit integers",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "20": {
+    "input": "a | b",
+    "output": "a == b",
+    "description": "Equality comparison",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "21": {
+    "input": "a",
+    "output": "a == 0",
+    "description": "Simple not operator",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "22": {
+    "input": "a | b",
+    "output": "a & b",
+    "description": "Bitwise AND operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "23": {
+    "input": "a | b",
+    "output": "a | b",
+    "description": "Bitwise OR operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "24": {
+    "input": "a | b",
+    "output": "a ^ b",
+    "description": "Bitwise XOR operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "25": {
+    "input": "a",
+    "output": "~a",
+    "description": "Bitwise NOT operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "26": {
+    "input": "i | x",
+    "output": "y",
+    "description": "Retrieve single byte from word",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "27": {
+    "input": "shift | value",
+    "output": "value << shift",
+    "description": "Left shift operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "28": {
+    "input": "shift | value",
+    "output": "value >> shift",
+    "description": "Logical right shift operation",
+    "note": "",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "29": {
+    "input": "shift | value",
+    "output": "value >> shift",
+    "description": "Arithmetic (signed) right shift operation",
+    "note": "value is treated as two’s complement signed 256-bit integers",
+    "group": "Comparison & Bitwise Logic Operations"
+  },
+  "30": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "31": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "32": {
+    "input": "offset | length",
+    "output": "hash",
+    "description": "Compute Keccak-256 hash",
+    "note": "offset and length in bytes",
+    "group": "SHA3"
+  },
+  "33": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "34": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "35": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "36": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "37": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "38": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "39": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "40": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "41": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "42": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "43": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "44": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "45": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "46": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "47": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "48": {
+    "input": "",
+    "output": "address",
+    "description": "Get address of currently executing account",
+    "note": "",
+    "group": "Environmental Information"
+  },
+  "49": {
+    "input": "address",
+    "output": "If address exists: [ balance...\nelse: [ 0",
+    "description": "Get balance of the given account",
+    "note": "Unit is wei",
+    "group": "Environmental Information"
+  },
+  "50": {
+    "input": "",
+    "output": "address",
+    "description": "Get execution origination address",
+    "note": "This is the sender of original transaction; it is never an account with non-empty associated code.",
+    "group": "Environmental Information"
+  },
+  "51": {
+    "input": "",
+    "output": "address",
+    "description": "Get caller address",
+    "note": "This is the address of the account that is directly responsible for this execution",
+    "group": "Environmental Information"
+  },
+  "52": {
+    "input": "",
+    "output": "value",
+    "description": "Get deposited value by the instruction/transaction responsible for this execution",
+    "note": "Unit is wei",
+    "group": "Environmental Information"
+  },
+  "53": {
+    "input": "i",
+    "output": "data[i]",
+    "description": "Get input data of current environment",
+    "note": "256-bit chunk of calldata",
+    "group": "Environmental Information"
+  },
+  "54": {
+    "input": "",
+    "output": "size",
+    "description": "Get size of input data in current environment",
+    "note": "Size in bytes",
+    "group": "Environmental Information"
+  },
+  "55": {
+    "input": "destOffset | offset | length",
+    "output": "",
+    "description": "Copy input data in current environment to memory",
+    "note": "Copy calldata to memory, values in byte, copy 0s if out of bounds",
+    "group": "Environmental Information"
+  },
+  "56": {
+    "input": "",
+    "output": "size",
+    "description": "Get size of code running in current environment",
+    "note": "Size in bytes",
+    "group": "Environmental Information"
+  },
+  "57": {
+    "input": "destOffset | offset | length",
+    "output": "",
+    "description": "Copy code running in current environment to memory",
+    "note": "Copy code to memory, values in byte, copy 0s if out of bounds",
+    "group": "Environmental Information"
+  },
+  "58": {
+    "input": "",
+    "output": "price",
+    "description": "Get price of gas in current environment",
+    "note": "This is gas price specified by the originating transaction in wei per gas",
+    "group": "Environmental Information"
+  },
+  "59": {
+    "input": "address",
+    "output": "size",
+    "description": "Get size of an account’s code",
+    "note": "Size in bytes",
+    "group": "Environmental Information"
+  },
+  "60": {
+    "input": "address | destOffset | offset | length",
+    "output": "",
+    "description": "Copy an account’s code to memory",
+    "note": "Copy code to memory, values in byte, copy 0s if out of bounds",
+    "group": "Environmental Information"
+  },
+  "61": {
+    "input": "",
+    "output": "size",
+    "description": "Get size of output data from the previous call from the current environment",
+    "note": "Size in bytes",
+    "group": "Environmental Information"
+  },
+  "62": {
+    "input": "destOffset | offset | length",
+    "output": "",
+    "description": "Copy output data from the previous call to memory",
+    "note": "All parameters in byte",
+    "group": "Environmental Information"
+  },
+  "63": {
+    "input": "address",
+    "output": "hash",
+    "description": "Get hash of an account’s code",
+    "note": "",
+    "group": "Environmental Information"
+  },
+  "64": {
+    "input": "blockNumber",
+    "output": "hash",
+    "description": "Get the hash of one of the 256 most recent complete blocks",
+    "note": "If the block number is equal or higher than the current one, or if it is older than the last 256 blocks, writes 0",
+    "group": "Block Information"
+  },
+  "65": {
+    "input": "",
+    "output": "address",
+    "description": "Get the block’s beneficiary address",
+    "note": "Miner's address",
+    "group": "Block Information"
+  },
+  "66": {
+    "input": "",
+    "output": "timestamp",
+    "description": "Get the block’s timestamp",
+    "note": "Unix timestamp",
+    "group": "Block Information"
+  },
+  "67": {
+    "input": "",
+    "output": "blockNumber",
+    "description": "Get the block’s number",
+    "note": "",
+    "group": "Block Information"
+  },
+  "68": {
+    "input": "",
+    "output": "difficulty",
+    "description": "Get the block’s difficulty",
+    "note": "",
+    "group": "Block Information"
+  },
+  "69": {
+    "input": "",
+    "output": "gasLimit",
+    "description": "Get the block’s gas limit",
+    "note": "",
+    "group": "Block Information"
+  },
+  "70": {
+    "input": "",
+    "output": "chainId",
+    "description": "Get the chain ID",
+    "note": "1 for mainnet",
+    "group": "Block Information"
+  },
+  "71": {
+    "input": "",
+    "output": "balance",
+    "description": "Get balance of currently executing account",
+    "note": "Unit is wei",
+    "group": "Block Information"
+  },
+  "72": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "73": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "74": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "75": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "76": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "77": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "78": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "79": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "80": {
+    "input": "y",
+    "output": "",
+    "description": "Remove item from stack",
+    "note": "",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "81": {
+    "input": "offset",
+    "output": "value",
+    "description": "Load word from memory",
+    "note": "Offset in bytes",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "82": {
+    "input": "offset | value",
+    "output": "",
+    "description": "Save word to memory",
+    "note": "Offset in bytes",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "83": {
+    "input": "offset | value",
+    "output": "",
+    "description": "Save byte to memory",
+    "note": "Offset in bytes",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "84": {
+    "input": "key",
+    "output": "value",
+    "description": "Load word from storage",
+    "note": "Reading from an unset key returns 0",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "85": {
+    "input": "key | value",
+    "output": "",
+    "description": "Save word to storage",
+    "note": "Storing 0 erases the value",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "86": {
+    "input": "counter",
+    "output": "",
+    "description": "Alter the program counter",
+    "note": "Can only jump to JUMPDEST instruction",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "87": {
+    "input": "counter | b",
+    "output": "",
+    "description": "Conditionally alter the program counter",
+    "note": "If b is not 0, do the jump, otherwise execute command right after; can only jump to JUMPDEST instruction",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "88": {
+    "input": "",
+    "output": "counter",
+    "description": "Get the value of the program counter prior to the increment corresponding to this instruction",
+    "note": "",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "89": {
+    "input": "",
+    "output": "size",
+    "description": "Get the size of active memory in bytes",
+    "note": "",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "90": {
+    "input": "",
+    "output": "gas",
+    "description": "Get the amount of available gas, including the corresponding reduction for the cost of this instruction",
+    "note": "",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "91": {
+    "input": "",
+    "output": "",
+    "description": "Mark a valid destination for jumps",
+    "note": "This operation has no effect on machine state during execution",
+    "group": "Stack Memory Storage and Flow Operations"
+  },
+  "92": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "93": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "94": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "95": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "96": {
+    "input": "",
+    "output": "value",
+    "description": "Place 1 byte item on stack",
+    "note": "The byte is read in line from the program code’s bytes array; the byte is right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "97": {
+    "input": "",
+    "output": "value",
+    "description": "Place 2 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "98": {
+    "input": "",
+    "output": "value",
+    "description": "Place 3 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "99": {
+    "input": "",
+    "output": "value",
+    "description": "Place 4 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "100": {
+    "input": "",
+    "output": "value",
+    "description": "Place 5 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "101": {
+    "input": "",
+    "output": "value",
+    "description": "Place 6 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "102": {
+    "input": "",
+    "output": "value",
+    "description": "Place 7 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "103": {
+    "input": "",
+    "output": "value",
+    "description": "Place 8 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "104": {
+    "input": "",
+    "output": "value",
+    "description": "Place 9 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "105": {
+    "input": "",
+    "output": "value",
+    "description": "Place 10 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "106": {
+    "input": "",
+    "output": "value",
+    "description": "Place 11 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "107": {
+    "input": "",
+    "output": "value",
+    "description": "Place 12 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "108": {
+    "input": "",
+    "output": "value",
+    "description": "Place 13 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "109": {
+    "input": "",
+    "output": "value",
+    "description": "Place 14 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "110": {
+    "input": "",
+    "output": "value",
+    "description": "Place 15 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "111": {
+    "input": "",
+    "output": "value",
+    "description": "Place 16 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "112": {
+    "input": "",
+    "output": "value",
+    "description": "Place 17 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "113": {
+    "input": "",
+    "output": "value",
+    "description": "Place 18 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "114": {
+    "input": "",
+    "output": "value",
+    "description": "Place 19 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "115": {
+    "input": "",
+    "output": "value",
+    "description": "Place 20 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "116": {
+    "input": "",
+    "output": "value",
+    "description": "Place 21 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "117": {
+    "input": "",
+    "output": "value",
+    "description": "Place 22 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "118": {
+    "input": "",
+    "output": "value",
+    "description": "Place 23 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "119": {
+    "input": "",
+    "output": "value",
+    "description": "Place 24 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "120": {
+    "input": "",
+    "output": "value",
+    "description": "Place 25 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "121": {
+    "input": "",
+    "output": "value",
+    "description": "Place 26 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "122": {
+    "input": "",
+    "output": "value",
+    "description": "Place 27 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "123": {
+    "input": "",
+    "output": "value",
+    "description": "Place 28 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "124": {
+    "input": "",
+    "output": "value",
+    "description": "Place 29 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "125": {
+    "input": "",
+    "output": "value",
+    "description": "Place 30 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "126": {
+    "input": "",
+    "output": "value",
+    "description": "Place 31 byte item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "127": {
+    "input": "",
+    "output": "value",
+    "description": "Place 32 byte (full word) item on stack",
+    "note": "The bytes are read in line from the program code’s bytes array; the bytes are right-aligned (takes the lowest significant place in big endian)",
+    "group": "Push Operations"
+  },
+  "128": {
+    "input": "value",
+    "output": "value | value",
+    "description": "Duplicate 1st stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "129": {
+    "input": "a | b",
+    "output": "b | a | b",
+    "description": "Duplicate 2nd stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "130": {
+    "input": "a | b | c",
+    "output": "c | a | b | c",
+    "description": "Duplicate 3rd stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "131": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 4th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "132": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 5th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "133": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 6th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "134": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 7th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "135": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 8th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "136": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 9th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "137": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 10th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "138": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 11th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "139": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 12th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "140": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 13th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "141": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 14th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "142": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 15th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "143": {
+    "input": "... | value",
+    "output": "value | ... | value",
+    "description": "Duplicate 16th stack item",
+    "note": "",
+    "group": "Duplication Operations"
+  },
+  "144": {
+    "input": "a | b",
+    "output": "b | a",
+    "description": "Exchange 1st and 2nd stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "145": {
+    "input": "a | b | c",
+    "output": "c | b | a",
+    "description": "Exchange 1st and 3rd stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "146": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 4th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "147": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 5th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "148": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 6th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "149": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 7th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "150": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 8th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "151": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 9th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "152": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 10th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "153": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 11th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "154": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 12th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "155": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 13th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "156": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 14th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "157": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 15th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "158": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 16th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "159": {
+    "input": "a | ... | b",
+    "output": "b | ... | a",
+    "description": "Exchange 1st and 17th stack items",
+    "note": "",
+    "group": "Exchange Operations"
+  },
+  "160": {
+    "input": "offset | length",
+    "output": "",
+    "description": "Append log record with no topics",
+    "note": "offset and length to memory in bytes",
+    "group": "Logging Operations"
+  },
+  "161": {
+    "input": "offset | length | topic",
+    "output": "",
+    "description": "Append log record with one topic",
+    "note": "offset and length to memory in bytes",
+    "group": "Logging Operations"
+  },
+  "162": {
+    "input": "offset | length | topic1 | topic2",
+    "output": "",
+    "description": "Append log record with four topics",
+    "note": "offset and length to memory in bytes",
+    "group": "Logging Operations"
+  },
+  "163": {
+    "input": "offset | length | topic1 | topic2 | topic3",
+    "output": "",
+    "description": "Append log record with four topics",
+    "note": "offset and length to memory in bytes",
+    "group": "Logging Operations"
+  },
+  "164": {
+    "input": "offset | length | topic1 | topic2 | topic3 | topic4",
+    "output": "",
+    "description": "Append log record with four topics",
+    "note": "offset and length to memory in bytes",
+    "group": "Logging Operations"
+  },
+  "165": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "166": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "167": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "168": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "169": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "170": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "171": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "172": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "173": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "174": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "175": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "176": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "177": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "178": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "179": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "180": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "181": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "182": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "183": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "184": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "185": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "186": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "187": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "188": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "189": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "190": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "191": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "192": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "193": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "194": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "195": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "196": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "197": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "198": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "199": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "200": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "201": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "202": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "203": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "204": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "205": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "206": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "207": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "208": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "209": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "210": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "211": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "212": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "213": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "214": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "215": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "216": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "217": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "218": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "219": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "220": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "221": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "222": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "223": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "224": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "225": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "226": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "227": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "228": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "229": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "230": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "231": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "232": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "233": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "234": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "235": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "236": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "237": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "238": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "239": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "240": {
+    "input": "value | offset | length",
+    "output": "address",
+    "description": "Create a new account with associated code",
+    "note": "offset and length to memory in bytes, point to the code of the new contract",
+    "group": "System operations"
+  },
+  "241": {
+    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "output": "success",
+    "description": "Message-call into an account",
+    "note": "",
+    "group": "System operations"
+  },
+  "242": {
+    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "output": "success",
+    "description": "Message-call into this account with alternative account’s code",
+    "note": "In fact the same account as at present is called, simply that the code is overwritten",
+    "group": "System operations"
+  },
+  "243": {
+    "input": "offset | length",
+    "output": "",
+    "description": "Halt execution returning output data",
+    "note": "offset and length to memory in bytes",
+    "group": "System operations"
+  },
+  "244": {
+    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "output": "success",
+    "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value",
+    "note": "In fact the same account as at present is called, simply that the code is overwritten and the context is almost entirely identical",
+    "group": "System operations"
+  },
+  "245": {
+    "input": "value | offset | length | salt",
+    "output": "address",
+    "description": "Create a new account with associated code",
+    "note": "Exactly equivalent to CREATE, except the salt allows to create at a deterministic address",
+    "group": "System operations"
+  },
+  "246": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "247": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "248": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "249": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "250": {
+    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "output": "success",
+    "description": "Static message-call into an account",
+    "note": "Equivalent to call with value set to 0",
+    "group": "System operations"
+  },
+  "251": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "252": {
+    "input": "",
+    "output": "",
+    "description": "",
+    "note": "",
+    "group": ""
+  },
+  "253": {
+    "input": "offset | length",
+    "output": "",
+    "description": "Halt execution reverting state changes but returning data and remaining gas",
+    "note": "offset and length to memory in bytes",
+    "group": "System operations"
+  },
+  "254": {
+    "input": "",
+    "output": "",
+    "description": "Designated invalid instruction",
+    "note": "",
+    "group": "System operations"
+  },
+  "255": {
+    "input": "address",
+    "output": "",
+    "description": "Halt execution and register account for later deletion",
+    "note": "The balance of the current contract is sent to the address",
+    "group": "System operations"
+  }
+}

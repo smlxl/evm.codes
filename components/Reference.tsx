@@ -1,15 +1,35 @@
+import { useContext, useMemo } from 'react'
+
 import cn from 'classnames'
-import { useMemo } from 'react'
 import { useTable } from 'react-table'
 
-import { opcodes } from '../util/fixtures'
-import StackBox from './ui/StackBox'
+import { EthereumContext } from 'context/ethereumContext'
+
+import { isEmpty } from 'util/string'
+
+import StackBox from 'components/ui/StackBox'
+
+type GroupLabel = {
+  [group: string]: string
+}
+
+const groupLabels: GroupLabel = {
+  'Stop and Arithmetic Operations': 'Stop & Arithmetic',
+  'Comparison & Bitwise Logic Operations': 'Comparison & Bitwise',
+  'Environmental Information': 'Environment',
+  'Block Information': 'Block',
+  'Stack Memory Storage and Flow Operations': 'Stack & Memory',
+  'Push Operations': 'Push',
+  'Duplication Operations': 'Duplication',
+  'Exchange Operations': 'Exchange',
+  'System operations': 'System',
+}
 
 const columnsData = [
   {
     Header: 'Opcode',
-    accessor: 'opcode',
-    className: 'font-mono',
+    accessor: 'code',
+    className: 'font-mono uppercase',
   },
   {
     Header: 'Name',
@@ -18,7 +38,7 @@ const columnsData = [
   },
   {
     Header: 'Gas',
-    accessor: 'gas',
+    accessor: 'fee',
   },
   {
     Header: 'Input',
@@ -37,14 +57,19 @@ const columnsData = [
   {
     Header: 'Group',
     accessor: 'group',
-    Cell: ({ value }: { value: string }) => (
-      <span
-        className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium"
-        style={{ whiteSpace: 'nowrap' }}
-      >
-        {value}
-      </span>
-    ),
+    Cell: ({ value }: { value: string }) => {
+      const label = groupLabels[value]
+      return isEmpty(label) ? (
+        ''
+      ) : (
+        <span
+          className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium"
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          {label}
+        </span>
+      )
+    },
   },
   {
     Header: 'Note',
@@ -53,8 +78,10 @@ const columnsData = [
 ]
 
 const ReferenceTable = () => {
-  const data = useMemo(() => opcodes, [])
+  const { opcodes } = useContext(EthereumContext)
+  const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => columnsData, [])
+
   // FIXME: See: https://github.com/tannerlinsley/react-table/issues/3064
   // @ts-ignore: Waiting for 8.x of react-table to have better types
   const table = useTable({ columns, data })

@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:libs": "browserify ethereum.js -o public/ethereum.min.js --plugin tinyify",
     "dev": "next dev",
-    "lint": "eslint --ext js,jsx,ts,tsx --fix .",
+    "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
-    "type-check": "tsc --project tsconfig.json --pretty --noEmit"
+    "typecheck": "tsc --pretty"
   },
   "dependencies": {
     "classnames": "^2.3.1",
@@ -17,12 +18,16 @@
     "react-table": "^7.7.0"
   },
   "devDependencies": {
+    "@ethereumjs/common": "^2.5.0",
+    "@ethereumjs/tx": "^3.3.2",
+    "@ethereumjs/vm": "^5.5.3",
     "@next/eslint-plugin-next": "^11.1.2",
     "@types/react": "17.0.30",
     "@types/react-table": "^7.7.6",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "autoprefixer": "^10.3.7",
+    "browserify": "^17.0.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
     "eslint-config-prettier": "^8.3.0",
@@ -30,13 +35,14 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "ethereumjs-util": "^7.1.3",
     "husky": "^7.0.2",
     "nstall": "^0.2.0",
     "postcss": "^8.3.9",
     "prettier": "^2.4.1",
     "sort-package-json": "^1.52.0",
     "tailwindcss": "^2.2.17",
+    "tinyify": "^3.0.0",
     "typescript": "4.4.4"
   }
 }

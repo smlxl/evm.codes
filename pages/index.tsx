@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
 
-import Container from '../components/Container'
-import HomeLayout from '../components/layouts/Home'
-import ReferenceTable from '../components/Reference'
+import HomeLayout from 'components/layouts/Home'
+import ReferenceTable from 'components/Reference'
+import Container from 'components/ui/Container'
 
 const HomePage = () => {
   return (

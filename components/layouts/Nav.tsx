@@ -1,12 +1,13 @@
-import { GITHUB_REPO_URL } from '../../util/constants'
-import Container from '../Container'
-import NavLink from '../NavLink'
-import Settings from '../Settings'
-import Logo from '../ui/Logo'
+import { GITHUB_REPO_URL } from 'util/constants'
+
+import NavLink from 'components/NavLink'
+import Settings from 'components/Settings'
+import Container from 'components/ui/Container'
+import Logo from 'components/ui/Logo'
 
 const Nav = () => {
   return (
-    <nav className="fixed h-16 top-0 inset-x-0 py-8">
+    <nav className="fixed h-16 top-0 inset-x-0 py-5 bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg">
       <Container>
         <div className="flex justify-between">
           <Logo />

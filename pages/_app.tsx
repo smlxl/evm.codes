@@ -1,8 +1,11 @@
-import '../styles/globals.css'
+import type { ReactElement, ReactNode } from 'react'
 
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import type { ReactElement, ReactNode } from 'react'
+
+import { EthereumProvider } from 'context/ethereumContext'
+
+import '../styles/globals.css'
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -16,6 +19,10 @@ function Main({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page)
 
-  return getLayout(<Component {...pageProps} />)
+  return getLayout(
+    <EthereumProvider>
+      <Component {...pageProps} />
+    </EthereumProvider>,
+  )
 }
 export default Main

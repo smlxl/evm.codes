@@ -1,6 +1,6 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 
-import Remix from '../components/ui/vector/Remix'
+import Remix from 'components/ui/vector/Remix'
 
 class MyDocument extends Document {
   render() {

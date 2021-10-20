@@ -16,25 +16,26 @@ module.exports = {
     react: {
       version: 'detect',
     },
+    'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
   },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
     'plugin:@next/next/recommended',
     'plugin:prettier/recommended',
   ],
-  plugins: ['simple-import-sort'],
   rules: {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/no-unescaped-entities': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
+    'import/no-unresolved': 0,
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -43,6 +44,56 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': [
       'error',
       { 'ts-ignore': 'allow-with-description' },
+    ],
+    '@typescript-eslint/ban-types': [
+      'error',
+      {
+        extendDefaults: true,
+        types: {
+          '{}': false,
+        },
+      },
+    ],
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        pathGroups: [
+          {
+            pattern: 'react',
+            group: 'external',
+            position: 'before',
+          },
+          {
+            pattern: 'context/**',
+            group: 'internal',
+            position: 'after',
+          },
+          {
+            pattern: 'util/**',
+            group: 'internal',
+            position: 'after',
+          },
+          {
+            pattern: 'components/**',
+            group: 'internal',
+            position: 'after',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['react'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
     ],
   },
   overrides: [
