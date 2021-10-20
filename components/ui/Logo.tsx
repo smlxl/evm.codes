@@ -1,4 +1,4 @@
-const Logo = () => {
+export const Logo = () => {
   return (
     <div className="font-bold">
       <span className="text-xl">evm</span>
@@ -34,5 +34,3 @@ const Logo = () => {
     </div>
   )
 }
-
-export default Logo

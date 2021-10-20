@@ -4,7 +4,7 @@ import { GITHUB_REPO_URL } from 'util/constants'
 
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
-import Container from 'components/ui/Container'
+import { Container, Button } from 'components/ui'
 
 const HomePage = () => {
   return (
@@ -32,14 +32,9 @@ const HomePage = () => {
             Have ideas to make evm.codes better?
           </h2>
 
-          <a
-            href={GITHUB_REPO_URL}
-            target="_blank"
-            className="rounded py-3 px-4 bg-gray-500 font-semibold text-white"
-            rel="noreferrer"
-          >
-            Contribute on GitHub
-          </a>
+          <Button external href={GITHUB_REPO_URL}>
+            Contribute to GitHub
+          </Button>
         </Container>
       </section>
     </>

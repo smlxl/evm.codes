@@ -1,6 +1,6 @@
 import { GITHUB_REPO_URL } from 'util/constants'
 
-import Container from 'components/ui/Container'
+import { Container } from 'components/ui/Container'
 
 const Footer = () => {
   return (

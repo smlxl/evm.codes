@@ -5,7 +5,7 @@ type Props = {
   className?: string
 }
 
-const Icon = ({ name, className }: Props) => (
+export const Icon = ({ name, className }: Props) => (
   <svg className={cn('inline-block ri', className)}>
     <use xlinkHref={`#remix_svg__ri-${name}`} />
     <style jsx>{`
@@ -16,5 +16,3 @@ const Icon = ({ name, className }: Props) => (
     `}</style>
   </svg>
 )
-
-export default Icon

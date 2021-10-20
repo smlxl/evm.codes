@@ -2,7 +2,7 @@ type Props = {
   value: string
 }
 
-const StackBox = ({ value }: Props): JSX.Element | null => {
+export const StackBox = ({ value }: Props): JSX.Element | null => {
   if (value.length === 0) return null
 
   const parts = value.split('|')
@@ -24,5 +24,3 @@ const StackBox = ({ value }: Props): JSX.Element | null => {
     </table>
   )
 }
-
-export default StackBox

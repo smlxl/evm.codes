@@ -7,7 +7,7 @@ import { EthereumContext } from 'context/ethereumContext'
 
 import { isEmpty } from 'util/string'
 
-import StackBox from 'components/ui/StackBox'
+import { StackBox } from 'components/ui'
 
 type GroupLabel = {
   [group: string]: string

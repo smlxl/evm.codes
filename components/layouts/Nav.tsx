@@ -2,8 +2,7 @@ import { GITHUB_REPO_URL } from 'util/constants'
 
 import NavLink from 'components/NavLink'
 import Settings from 'components/Settings'
-import Container from 'components/ui/Container'
-import Logo from 'components/ui/Logo'
+import { Container, Logo } from 'components/ui'
 
 const Nav = () => {
   return (
