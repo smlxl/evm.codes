@@ -1,5 +1,7 @@
 import type { NextPage } from 'next'
 
+import { GITHUB_REPO_URL } from 'util/constants'
+
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import Container from 'components/ui/Container'
@@ -21,6 +23,23 @@ const HomePage = () => {
           <h2 className="mb-10 font-medium text-xl">Instructions reference</h2>
 
           <ReferenceTable />
+        </Container>
+      </section>
+
+      <section className="py-20 text-center">
+        <Container>
+          <h2 className="mb-10 font-semibold text-2xl">
+            Have ideas to make evm.codes better?
+          </h2>
+
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            className="rounded py-3 px-4 bg-gray-500 font-semibold text-white"
+            rel="noreferrer"
+          >
+            Contribute on GitHub
+          </a>
         </Container>
       </section>
     </>
