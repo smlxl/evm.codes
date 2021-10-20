@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { GITHUB_REPO_URL } from 'util/constants'
 
 import NavLink from 'components/NavLink'
@@ -9,7 +11,11 @@ const Nav = () => {
     <nav className="fixed h-16 top-0 inset-x-0 py-5 bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg">
       <Container>
         <div className="flex justify-between">
-          <Logo />
+          <Link href="/" passHref>
+            <a>
+              <Logo />
+            </a>
+          </Link>
 
           <ul>
             <NavLink href="/about">About EVM</NavLink>
