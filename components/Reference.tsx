@@ -62,10 +62,7 @@ const columnsData = [
       return isEmpty(label) ? (
         ''
       ) : (
-        <span
-          className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium"
-          style={{ whiteSpace: 'nowrap' }}
-        >
+        <span className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap">
           {label}
         </span>
       )
@@ -90,8 +87,8 @@ const ReferenceTable = () => {
     table
 
   return (
-    <table {...getTableProps()} className="w-full table-auto text-sm">
-      <thead>
+    <table {...getTableProps()} className="w-full table-auto">
+      <thead className="text-sm">
         {headerGroups.map((headerGroup) => (
           <tr key={headerGroup.getHeaderGroupProps().key} className="border-b">
             {headerGroup.headers.map((column) => (
@@ -106,7 +103,7 @@ const ReferenceTable = () => {
         ))}
       </thead>
 
-      <tbody {...getTableBodyProps()}>
+      <tbody {...getTableBodyProps()} className="text-xs">
         {rows.map((row) => {
           prepareRow(row)
           return (
