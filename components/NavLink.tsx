@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Link from 'next/link'
 
 type Props = {
@@ -6,7 +8,7 @@ type Props = {
   children: string
 }
 
-const NavLink = ({ href, children, external = false }: Props) => {
+const NavLink: React.FC<Props> = ({ href, children, external = false }) => {
   return (
     <li className="inline-block mx-8 uppercase font-semibold text-tiny">
       <Link href={href} passHref={external}>

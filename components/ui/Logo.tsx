@@ -1,4 +1,4 @@
-export const Logo = () => {
+export const Logo: React.FC = () => {
   return (
     <div className="font-bold">
       <span className="text-xl">evm</span>

@@ -1,8 +1,10 @@
+import React from 'react'
+
 type Props = {
   value: string
 }
 
-export const StackBox = ({ value }: Props): JSX.Element | null => {
+export const StackBox: React.FC<Props> = ({ value }) => {
   if (value.length === 0) return null
 
   const parts = value.split('|')

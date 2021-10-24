@@ -1,3 +1,5 @@
+import React from 'react'
+
 import cn from 'classnames'
 
 type Props = {
@@ -5,8 +7,8 @@ type Props = {
   className?: string
 }
 
-export const Icon = ({ name, className }: Props) => (
-  <svg className={cn('inline-block ri', className)}>
+export const Icon: React.FC<Props> = ({ name, className }) => (
+  <svg className={cn('inline-block fill-current ri', className)}>
     <use xlinkHref={`#remix_svg__ri-${name}`} />
     <style jsx>{`
       svg {

@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app'
 import { EthereumProvider } from 'context/ethereumContext'
 
 import '../styles/globals.css'
+import '../styles/highlight/atom-one-light.css'
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode

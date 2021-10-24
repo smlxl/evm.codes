@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Code editor
+ */
+.code-editor {
+  @apply font-mono text-tiny leading-4;
+}
+
+/* Since Pre overlays Textarea, these two must be identical */
+.code-editor pre,
+.code-editor textarea {
+  @apply py-1 !important;
+  @apply pl-4 !important;
+}
+
+.code-editor.with-numbers pre,
+.code-editor.with-numbers textarea {
+  @apply pl-10 !important;
+}
+
+.code-editor textarea {
+  @apply outline-none;
+  caret-color: #000;
+}
+
+.code-editor .line-number {
+  @apply text-gray-300 absolute left-0 text-right w-8;
+}
+
+/*
+ * Scroll bars
+ */
+.pane::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+.pane::-webkit-scrollbar-thumb {
+  @apply rounded bg-clip-padding border-2 border-transparent;
+}
+
+.pane.pane-light::-webkit-scrollbar-thumb {
+  @apply bg-opacity-50 bg-gray-300;
+}
+
+.pane.pane-light::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-75;
+}
+
+.pane.pane-dark::-webkit-scrollbar-thumb {
+  @apply bg-opacity-50 bg-gray-600;
+}
+
+.pane.pane-dark::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-75;
+}
+
+.pane::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}

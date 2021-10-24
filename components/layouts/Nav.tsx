@@ -8,7 +8,7 @@ import { Container, Logo } from 'components/ui'
 
 const Nav = () => {
   return (
-    <nav className="fixed h-16 top-0 inset-x-0 py-5 bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg">
+    <nav className="fixed z-50 h-16 top-0 inset-x-0 py-5 bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg">
       <Container>
         <div className="flex justify-between">
           <Link href="/" passHref>

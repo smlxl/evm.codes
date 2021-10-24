@@ -1,3 +1,5 @@
+import React from 'react'
+
 import cn from 'classnames'
 
 type Props = {
@@ -5,15 +7,36 @@ type Props = {
   href?: string
   external?: boolean
   className?: string
-}
+  transparent?: boolean
+  padded?: boolean
+  size?: 'sm' | 'md'
+} & React.ComponentPropsWithoutRef<'button'>
 
-export const Button = ({ children, className, href, external }: Props) => {
+export const Button: React.FC<Props> = ({
+  children,
+  className,
+  href,
+  external,
+  disabled,
+  transparent = false,
+  padded = true,
+  size = 'md',
+  ...rest
+}: Props) => {
   const button = (
     <button
+      disabled={disabled}
       className={cn(
-        'rounded py-3 px-4 bg-gray-500 font-semibold text-white',
+        {
+          'bg-gray-500 text-white rounded': !transparent,
+          'cursor-not-allowed opacity-50': disabled,
+          'px-4': padded,
+          'text-tiny py-2 font-medium': size === 'sm',
+          'text-base py-3 font-semibold': size === 'md',
+        },
         className,
       )}
+      {...rest}
     >
       {children}
     </button>
