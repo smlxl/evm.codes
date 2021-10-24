@@ -25,3 +25,24 @@ export interface IOpcodeMeta {
 export interface IOpcodeMetaList {
   [code: string]: IOpcodeMeta
 }
+
+export interface IInstruction {
+  id: number
+  name: string
+  value: string | undefined
+}
+
+export interface IStorage {
+  address: string
+  slot: string
+  value: string
+}
+
+export interface IExecutionState {
+  programCounter: number | undefined
+  stack: string[]
+  storage: IStorage[]
+  memory: string | undefined
+  totalGas: string | undefined
+  currentGas: string | undefined
+}

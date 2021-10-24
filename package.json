@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:libs": "browserify ethereum.js -o public/ethereum.min.js --plugin tinyify",
+    "build:libs": "browserify ./lib/ethereum.js -o public/ethereum.min.js --plugin tinyify",
     "dev": "next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
