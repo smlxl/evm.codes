@@ -6,6 +6,7 @@ import {
   useContext,
   useMemo,
   useCallback,
+  MutableRefObject,
 } from 'react'
 
 import cn from 'classnames'
@@ -50,6 +51,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [status, setStatus] = useState<StatusMessage | undefined>(undefined)
 
   const solcWorkerRef = useRef<null | Worker>(null)
+  const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
 
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, error } = event.data
@@ -199,8 +201,9 @@ const Editor = ({ readOnly = false }: Props) => {
             <div
               className="pane pane-light overflow-auto py-3 bg-gray-100"
               style={{ height: editorHeight }}
+              ref={instructionsRef}
             >
-              <InstructionList />
+              <InstructionList containerRef={instructionsRef} />
             </div>
 
             <div

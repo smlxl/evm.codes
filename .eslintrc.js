@@ -34,6 +34,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/no-unescaped-entities': 'off',
+    'react/display-name': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'import/no-unresolved': 0,
     '@typescript-eslint/no-unused-vars': ['error'],
