@@ -178,13 +178,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param tx The optional transaction data to run from.
    */
   const startExecution = (byteCode: string, tx?: TypedTransaction | TxData) => {
-    if (isExecuting) {
-      resetExecution()
-      setTimeout(() => startExecution(byteCode, tx), 1)
-      return
-    } else {
-      setIsExecuting(true)
-    }
+    // always start paused
+    isExecutionPaused.current = true
+    setIsExecuting(true)
 
     if (tx) {
       // starting execution via deployed contract's transaction
