@@ -1,20 +1,26 @@
-import { useContext, useEffect, useRef, RefObject } from 'react'
-
-import cn from 'classnames'
+import { useContext, useEffect, useRef, RefObject, createRef, Ref } from 'react'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-type Props = {
+import InstructionRow from './InstructionRow'
+
+type TableProps = {
   containerRef: RefObject<HTMLDivElement>
 }
 
 type RowRefs = {
-  [programCounter: number]: HTMLTableRowElement
+  [programCounter: number]: Ref<HTMLTableRowElement> | undefined
 }
 
-const EditorInstructions = ({ containerRef }: Props) => {
+const EditorInstructions = ({ containerRef }: TableProps) => {
   const itemsRef = useRef<RowRefs>({})
-  const { instructions, executionState } = useContext(EthereumContext)
+  const tableRef = useRef() as React.MutableRefObject<HTMLTableElement>
+  const { instructions, executionState, addBreakpoint, removeBreakpoint } =
+    useContext(EthereumContext)
+
+  useEffect(() => {
+    instructions.forEach((i) => (itemsRef.current[i.id] = createRef()))
+  }, [instructions])
 
   useEffect(() => {
     if (!containerRef?.current) {
@@ -22,33 +28,32 @@ const EditorInstructions = ({ containerRef }: Props) => {
     }
 
     if (executionState?.programCounter) {
-      containerRef.current.scrollTop =
-        itemsRef.current[executionState.programCounter].offsetTop
-    } else {
-      containerRef.current.scrollTop = 0
+      const tableOffset = tableRef?.current?.offsetTop || 0
+      const rowRef = itemsRef.current[
+        executionState.programCounter
+      ] as RefObject<HTMLTableRowElement>
+
+      if (rowRef.current)
+        containerRef.current.scrollTop = rowRef.current.offsetTop - tableOffset
     }
-  }, [containerRef, executionState.programCounter])
+  }, [containerRef, tableRef, executionState.programCounter])
 
   return (
-    <table className="w-full font-mono text-tiny">
+    <table className="w-full font-mono text-tiny" ref={tableRef}>
       <tbody>
-        {instructions.map(({ id, name, value }) => {
-          const isActive = executionState.programCounter === id
-
+        {instructions.map(({ id, name, value, hasBreakpoint }) => {
           return (
-            <tr
+            <InstructionRow
               key={id}
-              ref={(element) => {
-                if (element) itemsRef.current[id] = element
-              }}
-              className={cn('border-b border-gray-200', {
-                'text-gray-900': isActive,
-                'text-gray-400': !isActive,
-              })}
-            >
-              <td className="py-1 px-4 pr-6">{name}</td>
-              <td className="py-1 px-4">{value}</td>
-            </tr>
+              instructionId={id}
+              ref={itemsRef.current[id]}
+              isActive={executionState.programCounter === id}
+              name={name}
+              value={value}
+              hasBreakpoint={hasBreakpoint}
+              onAddBreakpoint={addBreakpoint}
+              onRemoveBreakpoint={removeBreakpoint}
+            />
           )
         })}
       </tbody>

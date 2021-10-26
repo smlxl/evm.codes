@@ -29,7 +29,8 @@ export interface IOpcodeMetaList {
 export interface IInstruction {
   id: number
   name: string
-  value: string | undefined
+  value?: string | undefined
+  hasBreakpoint?: boolean
 }
 
 export interface IStorage {

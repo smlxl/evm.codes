@@ -155,7 +155,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       const opcode = opcodes.get(instruction)
 
       if (!opcode) {
-        instructions.push({ id, name: 'INVALID', value: undefined })
+        instructions.push({
+          id,
+          name: 'INVALID',
+        })
       } else if (opcode.name === 'PUSH') {
         const count = parseInt(opcode.fullName.slice(4), 10) * 2
         instructions.push({
@@ -165,7 +168,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         })
         i += count
       } else {
-        instructions.push({ id, name: opcode.fullName, value: undefined })
+        instructions.push({
+          id,
+          name: opcode.fullName,
+        })
       }
     }
 
@@ -216,6 +222,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    */
   const addBreakpoint = (instructionId: number) => {
     breakpointIds.current.push(instructionId)
+
+    setInstructions(
+      instructions.map((el) => {
+        if (el.id === instructionId) {
+          return {
+            ...el,
+            hasBreakpoint: true,
+          }
+        }
+        return el
+      }),
+    )
   }
 
   /**
@@ -226,6 +244,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const removeBreakpoint = (instructionId: number) => {
     breakpointIds.current = breakpointIds.current.filter(
       (id) => id !== instructionId,
+    )
+
+    setInstructions(
+      instructions.map((el) => {
+        if (el.id === instructionId) {
+          return {
+            ...el,
+            hasBreakpoint: false,
+          }
+        }
+        return el
+      }),
     )
   }
 
