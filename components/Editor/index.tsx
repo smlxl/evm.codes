@@ -20,6 +20,7 @@ import { codeHighlight, isEmpty, isHex } from 'util/string'
 import InstructionList from 'components/Editor/Instructions'
 
 import Console from './Console'
+import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
 import { StatusMessage } from './types'
@@ -210,7 +211,7 @@ const Editor = ({ readOnly = false }: Props) => {
               className="pane pane-dark overflow-auto bg-gray-700 text-white px-4 py-3"
               style={{ height: consoleHeight }}
             >
-              EVM state info
+              <ExecutionState />
             </div>
           </div>
         </div>

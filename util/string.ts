@@ -44,3 +44,21 @@ export const codeHighlight = (text: string, extension: string) => {
     ignoreIllegals: true,
   })
 }
+
+/**
+ * Converts buffer to string.
+ */
+export const fromBuffer = (buf: Buffer) => {
+  let result = ''
+  buf.forEach((value) => {
+    result += value.toString(16).padStart(2, '0')
+  })
+  return result
+}
+
+/**
+ * Creates a RC key from string prefix and index.
+ */
+export const toKeyIndex = (prefix: string, index: number) => {
+  return [prefix, index].join('-')
+}

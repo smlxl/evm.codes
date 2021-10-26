@@ -2,14 +2,13 @@ import { useContext, useMemo } from 'react'
 
 import cn from 'classnames'
 import { useTable, HeaderGroup } from 'react-table'
+import { IOpcode } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
 import { isEmpty } from 'util/string'
 
 import { StackBox } from 'components/ui'
-
-import { IOpcode } from '../types'
 
 type GroupLabel = {
   [group: string]: string

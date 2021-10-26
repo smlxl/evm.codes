@@ -18,7 +18,7 @@ import {
   IExecutionState,
 } from 'types'
 
-import { toHex } from 'util/string'
+import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
 let common: Common
@@ -394,7 +394,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       programCounter: pc,
       stack: stack.map((value) => value.toString('hex')),
       totalGas: gasUsed.toString(),
-      memory: memory.toString(),
+      memory: fromBuffer(memory),
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
     })
@@ -406,8 +406,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     value: Buffer,
   ) => {
     const addressText = address.toString()
-    const keyText = key.toString()
-    const valueText = value.toString()
+    const keyText = fromBuffer(key)
+    const valueText = fromBuffer(value)
 
     if (value.length == 0) {
       if (storageMemory.has(addressText)) {
