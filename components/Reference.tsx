@@ -41,18 +41,18 @@ const columnsData = [
     accessor: 'fee',
   },
   {
-    Header: 'Input',
+    Header: 'Stack Input',
     accessor: 'input',
-    Cell: ({ value }: { value: string }) => <StackBox value={value} />,
+    Cell: ({ value, row: { id } }: { value: string; row: { id: string } }) => (
+      <StackBox value={value} tipId={`opcode-input-${id}`} />
+    ),
   },
   {
-    Header: 'Ouput',
+    Header: 'Stack Ouput',
     accessor: 'output',
-    Cell: ({ value }: { value: string }) => <StackBox value={value} />,
-  },
-  {
-    Header: 'Description',
-    accessor: 'description',
+    Cell: ({ value, row: { id } }: { value: string; row: { id: string } }) => (
+      <StackBox value={value} tipId={`opcode-output-${id}`} />
+    ),
   },
   {
     Header: 'Group',
@@ -69,9 +69,14 @@ const columnsData = [
     },
   },
   {
-    Header: 'Note',
-    accessor: 'note',
+    Header: 'Description',
+    accessor: 'description',
   },
+  // FIXME: Move to side panel or some other overlay to show custom notes
+  // {
+  //   Header: 'Note',
+  //   accessor: 'note',
+  // },
 ]
 
 const ReferenceTable = () => {
