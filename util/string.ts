@@ -44,26 +44,3 @@ export const codeHighlight = (text: string, extension: string) => {
     ignoreIllegals: true,
   })
 }
-
-/**
- * Reduces the size of an array to fit to a given string length.
- *
- * @param arr The array of strings to process.
- * @param maxLength The maximum string length to fit into.
- */
-export const reduceArrayToFit = (arr: string[], maxLength: number) => {
-  let out = ''
-  const outValues: string[] = []
-
-  arr.forEach((value) => {
-    const str = value.trim()
-
-    if (out.length > maxLength) {
-      return outValues
-    }
-    outValues.push(str)
-    out = [out, str].join('')
-  })
-
-  return outValues
-}
