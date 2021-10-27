@@ -40,7 +40,7 @@ const HomePage = () => {
           </h2>
 
           <Button external href={GITHUB_REPO_URL}>
-            Contribute to GitHub
+            Contribute on GitHub
           </Button>
         </Container>
       </section>
