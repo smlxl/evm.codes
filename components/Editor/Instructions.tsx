@@ -33,7 +33,7 @@ const EditorInstructions = ({ containerRef }: TableProps) => {
         executionState.programCounter
       ] as RefObject<HTMLTableRowElement>
 
-      if (rowRef.current)
+      if (rowRef?.current)
         containerRef.current.scrollTop = rowRef.current.offsetTop - tableOffset
     }
   }, [containerRef, tableRef, executionState.programCounter])

@@ -384,8 +384,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   ) => {
     const storage: IStorage[] = []
 
-    storageMemory.forEach((storage, address) => {
-      storage.forEach((value: string, slot: string) => {
+    storageMemory.forEach((sm, address) => {
+      sm.forEach((value: string, slot: string) => {
+        console.log({ storage })
         storage.push({ address, slot, value })
       })
     })
