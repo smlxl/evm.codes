@@ -1,4 +1,4 @@
-import {
+import React, {
   ChangeEvent,
   useState,
   useRef,
@@ -7,6 +7,7 @@ import {
   useMemo,
   useCallback,
   MutableRefObject,
+  RefObject,
 } from 'react'
 
 import cn from 'classnames'
@@ -28,6 +29,10 @@ import { StatusMessage } from './types'
 type Props = {
   readOnly?: boolean
 }
+
+type SCEditorRef = {
+  _input: HTMLTextAreaElement
+} & RefObject<React.FC>
 
 enum CodeType {
   Solidity,
@@ -53,6 +58,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const solcWorkerRef = useRef<null | Worker>(null)
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
+  const editorRef = useRef<SCEditorRef>()
 
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, error } = event.data
@@ -145,6 +151,14 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCodeType(parseInt(event.target.value) as CodeType)
+
+    // NOTE: SCEditor does not expose input ref as public /shrug
+    if (editorRef?.current?._input) {
+      const input = editorRef?.current?._input
+
+      input.focus()
+      input.select()
+    }
   }
 
   const isRunDisabled = useMemo(() => {
@@ -173,6 +187,8 @@ const Editor = ({ readOnly = false }: Props) => {
               style={{ height: editorHeight }}
             >
               <SCEditor
+                // @ts-ignore: SCEditor is not TS-friendly
+                ref={editorRef}
                 value={code}
                 readOnly={readOnly}
                 onValueChange={handleCodeChange}
