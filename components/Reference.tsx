@@ -97,7 +97,7 @@ const ReferenceTable = () => {
     table
 
   return (
-    <table {...getTableProps()} className="w-full">
+    <table {...getTableProps()} className="w-full" id="reference">
       <thead className="text-sm">
         {headerGroups.map((headerGroup) => (
           <tr key={headerGroup.getHeaderGroupProps().key} className="border-b">

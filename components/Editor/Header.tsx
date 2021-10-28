@@ -1,4 +1,6 @@
-import { ChangeEvent } from 'react'
+import { useContext, ChangeEvent } from 'react'
+
+import { EthereumContext } from 'context/ethereumContext'
 
 import { Button, Message } from 'components/ui'
 
@@ -19,12 +21,19 @@ const EditorHeader = ({
   onRun,
   isRunDisabled,
 }: Props) => {
+  const { selectedChain, selectedFork } = useContext(EthereumContext)
+
   return (
     <div className="flex justify-between items-center">
       {
         // FIXME: Add title based on the selected network & fork
       }
-      <h3 className="font-semibold text-md">Running on Mainnet London</h3>
+      <h3 className="font-semibold text-md">
+        Running on {selectedChain?.name}{' '}
+        <span className="capitalize text-sm text-gray-700 font-medium px-1">
+          {selectedFork}
+        </span>
+      </h3>
 
       {status && <Message type={status.type} text={status.message} />}
 

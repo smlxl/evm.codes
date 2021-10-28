@@ -16,6 +16,7 @@ import {
   IInstruction,
   IStorage,
   IExecutionState,
+  IChain,
 } from 'types'
 
 import { toHex, fromBuffer } from 'util/string'
@@ -39,12 +40,18 @@ if (typeof window !== 'undefined') {
 }
 
 type ContextProps = {
+  chains: IChain[]
+  forks: string[]
+  selectedChain: IChain | undefined
+  selectedFork: string | undefined
   opcodes: IOpcode[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
   executionState: IExecutionState
 
+  onChainChange: (chainId: number) => void
+  onForkChange: (forkName: string) => void
   deployContract: (byteCode: string) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, tx?: TypedTransaction | TxData) => void
@@ -65,12 +72,18 @@ const initialExecutionState = {
 }
 
 export const EthereumContext = createContext<ContextProps>({
+  chains: [],
+  forks: [],
+  selectedChain: undefined,
+  selectedFork: undefined,
   opcodes: [],
   instructions: [],
   deployedContractAddress: undefined,
   isExecuting: false,
   executionState: initialExecutionState,
 
+  onChainChange: () => undefined,
+  onForkChange: () => undefined,
   deployContract: () =>
     new Promise((resolve) => {
       resolve({})
@@ -85,6 +98,10 @@ export const EthereumContext = createContext<ContextProps>({
 })
 
 export const EthereumProvider: React.FC<{}> = ({ children }) => {
+  const [chains, setChains] = useState<IChain[]>([])
+  const [forks, setForks] = useState<string[]>([])
+  const [selectedChain, setSelectedChain] = useState<IChain>()
+  const [selectedFork, setSelectedFork] = useState<string>()
   const [opcodes, setOpcodes] = useState<IOpcode[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
@@ -107,17 +124,46 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   /**
    * Initializes the EVM instance.
    */
-  const initVmInstance = async () => {
+  const initVmInstance = async (skipChainsLoading?: boolean) => {
     const { VM, Common, Chain } = window.EvmCodes
 
     common = new Common({ chain: Chain.Mainnet })
     vm = new VM({ common })
+
+    if (!skipChainsLoading) {
+      _loadChainAndForks(common)
+    }
 
     _loadOpcodes()
     _setupStateManager()
     _setupAccount()
 
     vm.on('step', _stepInto)
+  }
+
+  /**
+   * Callback on changing the EVM chain.
+   * @param chainId The chain ID.
+   */
+  const onChainChange = (chainId: number) => {
+    common.setChain(chainId)
+    resetExecution()
+    initVmInstance(true)
+
+    const chain = chains.find((chain) => chain.id === chainId)
+    if (chain) setSelectedChain(chain)
+  }
+
+  /**
+   * Callback on changing the EVM hard fork.
+   * @param forkName The hard fork name.
+   */
+  const onForkChange = (forkName: string) => {
+    common.setHardfork(forkName)
+    resetExecution()
+    initVmInstance(true)
+
+    setSelectedFork(forkName)
   }
 
   /**
@@ -286,6 +332,36 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
+  const _loadChainAndForks = (common: Common) => {
+    const { Chain } = window.EvmCodes
+
+    const chainIds: number[] = []
+    const chainNames: string[] = []
+    const forks: string[] = []
+
+    // iterate over TS enum to pick key,val
+    for (const chain in Chain) {
+      if (isNaN(Number(chain))) {
+        chainNames.push(chain)
+      } else {
+        chainIds.push(parseInt(chain))
+      }
+    }
+    setChains(
+      chainIds.map((chainId, index) => {
+        return { id: chainId, name: chainNames[index] }
+      }),
+    )
+
+    common.hardforks().forEach(({ name }) => {
+      forks.push(name)
+    })
+    setForks(forks)
+
+    setSelectedChain({ id: chainIds[0], name: chainNames[0] })
+    setSelectedFork(common.hardfork())
+  }
+
   const _loadOpcodes = () => {
     const opcodes: IOpcode[] = []
 
@@ -386,7 +462,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     storageMemory.forEach((sm, address) => {
       sm.forEach((value: string, slot: string) => {
-        console.log({ storage })
         storage.push({ address, slot, value })
       })
     })
@@ -442,12 +517,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   return (
     <EthereumContext.Provider
       value={{
+        chains,
+        forks,
+        selectedChain,
+        selectedFork,
         opcodes,
         instructions,
         deployedContractAddress,
         isExecuting,
         executionState,
 
+        onChainChange,
+        onForkChange,
         deployContract,
         loadInstructions,
         startExecution,

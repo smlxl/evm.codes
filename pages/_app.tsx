@@ -20,10 +20,10 @@ function Main({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page)
 
-  return getLayout(
+  return (
     <EthereumProvider>
-      <Component {...pageProps} />
-    </EthereumProvider>,
+      {getLayout(<Component {...pageProps} />)}
+    </EthereumProvider>
   )
 }
 export default Main

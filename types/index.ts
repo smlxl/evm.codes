@@ -47,3 +47,8 @@ export interface IExecutionState {
   totalGas: string | undefined
   currentGas: string | undefined
 }
+
+export interface IChain {
+  id: number
+  name: string
+}
