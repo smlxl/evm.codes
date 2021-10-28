@@ -10,18 +10,35 @@ const Footer = () => {
           <div>
             <span>
               Brought to you by{' '}
-              <a href="https://comitylabs.com" target="_blank" rel="noreferrer">
+              <a
+                className="underline"
+                href="https://comitylabs.com"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Comity Labs
               </a>
-              .
             </span>
 
             <span className="mx-4">
               Powered by{' '}
-              <a href="" target="_blank">
+              <a
+                className="underline"
+                href="https://github.com/ethereumjs/ethereumjs-monorepo"
+                target="_blank"
+                rel="noreferrer"
+              >
                 EthereumJS
+              </a>{' '}
+              and{' '}
+              <a
+                className="underline"
+                href="https://github.com/ethereum/solc-js"
+                target="_blank"
+                rel="noreferrer"
+              >
+                SolcJS
               </a>
-              .
             </span>
           </div>
 
