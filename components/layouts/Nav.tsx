@@ -18,13 +18,14 @@ const Nav = () => {
           </Link>
 
           <ul className="ml-6">
+            <NavLink href="/">Opcodes</NavLink>
+            <NavLink href="/playground">Playground</NavLink>
             <NavLink href="/about">About EVM</NavLink>
-            <NavLink href="#reference">Opcodes</NavLink>
           </ul>
 
           <div className="flex items-center ml-auto">
             <ChainSelector />
-            <Settings />
+            {/* TODO: <Settings /> */}
           </div>
         </div>
       </Container>

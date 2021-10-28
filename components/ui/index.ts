@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './Container'
+export * from './Heading'
 export * from './Icon'
 export * from './Logo'
 export * from './Message'
