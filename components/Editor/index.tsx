@@ -39,8 +39,8 @@ enum CodeType {
   Bytecode,
 }
 
-const editorHeight = 400
-const consoleHeight = 200
+const editorHeight = 350
+const consoleHeight = 350
 
 const Editor = ({ readOnly = false }: Props) => {
   const {
@@ -170,7 +170,7 @@ const Editor = ({ readOnly = false }: Props) => {
   return (
     <div className="bg-gray-200 rounded-lg">
       <div className="flex">
-        <div className="w-2/3">
+        <div className="w-1/2">
           <div className="flex flex-col">
             <div className="border-r border-gray-300 px-6 h-8 my-3">
               <Header
@@ -209,7 +209,7 @@ const Editor = ({ readOnly = false }: Props) => {
           </div>
         </div>
 
-        <div className="w-1/3">
+        <div className="w-1/2">
           <div className="flex flex-col">
             <div className="flex items-center w-full pl-4 pr-6 my-3 h-8">
               <ExecutionStatus />
