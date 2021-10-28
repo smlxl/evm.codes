@@ -117,6 +117,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
+    const { Common, Chain } = window.EvmCodes
+    common = new Common({ chain: Chain.Mainnet })
+
     initVmInstance()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -125,9 +128,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * Initializes the EVM instance.
    */
   const initVmInstance = async (skipChainsLoading?: boolean) => {
-    const { VM, Common, Chain } = window.EvmCodes
-
-    common = new Common({ chain: Chain.Mainnet })
+    const { VM } = window.EvmCodes
     vm = new VM({ common })
 
     if (!skipChainsLoading) {
