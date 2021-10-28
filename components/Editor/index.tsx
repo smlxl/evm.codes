@@ -19,6 +19,7 @@ import { exampleContract } from 'util/contracts'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import InstructionList from 'components/Editor/Instructions'
+import { Message } from 'components/ui'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
@@ -174,7 +175,6 @@ const Editor = ({ readOnly = false }: Props) => {
           <div className="flex flex-col">
             <div className="border-r border-gray-300 px-6 h-8 my-3">
               <Header
-                status={status}
                 isBytecode={isBytecode}
                 isRunDisabled={isRunDisabled}
                 onCodeTypeChange={handleCodeTypeChange}
@@ -183,9 +183,14 @@ const Editor = ({ readOnly = false }: Props) => {
             </div>
 
             <div
-              className="pane pane-light overflow-auto border-r bg-gray-100 border-gray-200"
+              className="relative pane pane-light overflow-auto border-r bg-gray-100 border-gray-200"
               style={{ height: editorHeight }}
             >
+              {status && (
+                <div className="absolute z-10 right-6 left-6 top-2">
+                  <Message type={status.type} text={status.message} />
+                </div>
+              )}
               <SCEditor
                 // @ts-ignore: SCEditor is not TS-friendly
                 ref={editorRef}

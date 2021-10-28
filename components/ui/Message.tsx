@@ -23,7 +23,7 @@ export const Message: React.FC<Props> = ({ type, text }) => {
   return (
     <div
       className={cn(
-        'flex items-center rounded text-white text-xs px-3 py-1',
+        'flex items-center rounded text-white text-xs px-3 py-2 bg-opacity-85',
         bgColor,
       )}
     >
