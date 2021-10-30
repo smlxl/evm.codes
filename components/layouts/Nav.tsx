@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import NavLink from 'components/NavLink'
-//import Settings from 'components/Settings'
+import Settings from 'components/Settings'
 import { Container, Logo } from 'components/ui'
 
 import ChainSelector from '../ChainSelector'
@@ -25,7 +25,7 @@ const Nav = () => {
 
           <div className="flex items-center ml-auto">
             <ChainSelector />
-            {/* TODO: <Settings /> */}
+            <Settings />
           </div>
         </div>
       </Container>

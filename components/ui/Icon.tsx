@@ -5,16 +5,21 @@ import cn from 'classnames'
 type Props = {
   name: string
   className?: string
+  size?: 'md' | 'lg'
 }
 
-export const Icon: React.FC<Props> = ({ name, className }) => (
-  <svg className={cn('inline-block fill-current ri', className)}>
-    <use xlinkHref={`#remix_svg__ri-${name}`} />
-    <style jsx>{`
-      svg {
-        width: 16px;
-        height: 16px;
-      }
-    `}</style>
-  </svg>
-)
+const sizes = {
+  md: 16,
+  lg: 24,
+}
+
+export const Icon: React.FC<Props> = ({ name, className, size = 'md' }) => {
+  return (
+    <svg
+      className={cn('inline-block fill-current ri', className)}
+      style={{ width: sizes[size], height: sizes[size] }}
+    >
+      <use xlinkHref={`#remix_svg__ri-${name}`} />
+    </svg>
+  )
+}
