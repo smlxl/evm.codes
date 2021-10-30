@@ -105,12 +105,13 @@ const ReferenceTable = () => {
               <th
                 key={column.getHeaderProps().key}
                 className={cn(
-                  'uppercase text-xs font-semibold text-left py-2 pr-6',
+                  'sticky bg-gray-200 bg-opacity-95 uppercase text-xs font-semibold text-left py-2 pr-6',
                   column.className,
                 )}
                 style={{
                   maxWidth: column.maxWidth || 'auto',
                   minWidth: column.minWidth || 'auto',
+                  top: 72,
                 }}
               >
                 {column.render('Header')}

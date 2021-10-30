@@ -46,7 +46,7 @@ const EditorInstructionRow = forwardRef(
         })}
         ref={ref}
       >
-        <td className="py-1 pl-6 pr-4 pr-6">
+        <td className="py-1 pl-6 pr-6">
           {(isBreakpointVisible || hasBreakpoint) && (
             <button
               onClick={toggleBreakpoint}
