@@ -15,8 +15,13 @@ type RowRefs = {
 const EditorInstructions = ({ containerRef }: TableProps) => {
   const itemsRef = useRef<RowRefs>({})
   const tableRef = useRef() as React.MutableRefObject<HTMLTableElement>
-  const { instructions, executionState, addBreakpoint, removeBreakpoint } =
-    useContext(EthereumContext)
+  const {
+    instructions,
+    executionState,
+    isExecuting,
+    addBreakpoint,
+    removeBreakpoint,
+  } = useContext(EthereumContext)
 
   useEffect(() => {
     instructions.forEach((i) => (itemsRef.current[i.id] = createRef()))
@@ -47,7 +52,7 @@ const EditorInstructions = ({ containerRef }: TableProps) => {
               key={id}
               instructionId={id}
               ref={itemsRef.current[id]}
-              isActive={executionState.programCounter === id}
+              isActive={isExecuting && executionState.programCounter === id}
               name={name}
               value={value}
               hasBreakpoint={hasBreakpoint}

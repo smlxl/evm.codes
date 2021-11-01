@@ -237,14 +237,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     if (tx) {
       // starting execution via deployed contract's transaction
-      vm.runTx({ tx: tx as TypedTransaction }).then(
-        ({ execResult, gasUsed, createdAddress }) =>
+      vm.runTx({ tx: tx as TypedTransaction })
+        .then(({ execResult, gasUsed, createdAddress }) =>
           _loadRunState(gasUsed, execResult.runState, createdAddress),
-      )
+        )
+        .finally(() => setIsExecuting(false))
     } else {
-      vm.runCode({ code: Buffer.from(byteCode, 'hex'), gasLimit }).then(
-        ({ runState, gasUsed }) => _loadRunState(gasUsed, runState),
-      )
+      vm.runCode({ code: Buffer.from(byteCode, 'hex'), gasLimit })
+        .then(({ runState, gasUsed }) => _loadRunState(gasUsed, runState))
+        .finally(() => setIsExecuting(false))
     }
   }
 
