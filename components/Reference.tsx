@@ -6,29 +6,14 @@ import { IOpcode } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
+import { hardforkColor } from 'util/opcodes'
 import { isEmpty } from 'util/string'
 
 import { StackBox } from 'components/ui'
 
-type GroupLabel = {
-  [group: string]: string
-}
-
 type CustomHeaderGroup = {
   className?: string
 } & HeaderGroup<IOpcode>
-
-const groupLabels: GroupLabel = {
-  'Stop and Arithmetic Operations': 'Stop & Arithmetic',
-  'Comparison & Bitwise Logic Operations': 'Comparison & Bitwise',
-  'Environmental Information': 'Environment',
-  'Block Information': 'Block',
-  'Stack Memory Storage and Flow Operations': 'Stack & Memory',
-  'Push Operations': 'Push',
-  'Duplication Operations': 'Duplication',
-  'Exchange Operations': 'Exchange',
-  'System operations': 'System',
-}
 
 const columnsData = [
   {
@@ -68,20 +53,39 @@ const columnsData = [
     className: 'hidden lg:table-cell',
   },
   {
-    Header: 'Group',
-    accessor: 'group',
+    Header: 'Fork',
+    accessor: 'fork',
     Cell: ({ value }: { value: string }) => {
-      const label = groupLabels[value]
-      return isEmpty(label) ? (
+      return isEmpty(value) ? (
         ''
       ) : (
-        <span className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap">
-          {label}
+        <span
+          className={cn(
+            'bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap',
+            hardforkColor[value],
+          )}
+        >
+          {value}
         </span>
       )
     },
-    className: 'hidden lg:table-cell',
   },
+  // FIXME: Move into opcode details page
+  // {
+  //   Header: 'Group',
+  //   accessor: 'group',
+  //   Cell: ({ value }: { value: string }) => {
+  //     const label = groupLabels[value]
+  //     return isEmpty(label) ? (
+  //       ''
+  //     ) : (
+  //       <span className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap">
+  //         {label}
+  //       </span>
+  //     )
+  //   },
+  //   className: 'hidden lg:table-cell',
+  // },
 ]
 
 const ReferenceTable = () => {

@@ -19,6 +19,7 @@ import {
   IChain,
 } from 'types'
 
+import { getHardfork } from 'util/opcodes'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -377,6 +378,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
           code: toHex(op.code),
           fee: op.fee,
           name: op.fullName,
+          fork: getHardfork(op.code),
         },
       })
     })
