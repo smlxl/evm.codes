@@ -64,6 +64,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.12.5":
+  version "7.16.0"
+  resolved "https://package-cluster.production.groovehq.com/@babel%2fruntime/-/runtime-7.16.0.tgz#e27b977f2e2088ba24748bf99b5e1dece64e4f0b"
+  integrity sha512-Nht8L0O8YCktmsDV6FqFue7vQLRx3Hb0B37lS5y0jDRqRxlBG4wIJHnf9/bgSE2UyipKFA01YtS+npRdTWBUyw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/types@7.15.0":
   version "7.15.0"
   resolved "https://package-cluster.production.groovehq.com/@babel%2ftypes/-/types-7.15.0.tgz"
@@ -367,6 +374,28 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
+
+"@reach/observe-rect@^1.1.0":
+  version "1.2.0"
+  resolved "https://package-cluster.production.groovehq.com/@reach%2fobserve-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
+  integrity sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==
+
+"@reach/portal@^0.16.0":
+  version "0.16.2"
+  resolved "https://package-cluster.production.groovehq.com/@reach%2fportal/-/portal-0.16.2.tgz#ca83696215ee03acc2bb25a5ae5d8793eaaf2f64"
+  integrity sha512-9ur/yxNkuVYTIjAcfi46LdKUvH0uYZPfEp4usWcpt6PIp+WDF57F/5deMe/uGi/B/nfDweQu8VVwuMVrCb97JQ==
+  dependencies:
+    "@reach/utils" "0.16.0"
+    tiny-warning "^1.0.3"
+    tslib "^2.3.0"
+
+"@reach/utils@0.16.0":
+  version "0.16.0"
+  resolved "https://package-cluster.production.groovehq.com/@reach%2futils/-/utils-0.16.0.tgz#5b0777cf16a7cab1ddd4728d5d02762df0ba84ce"
+  integrity sha512-PCggBet3qaQmwFNcmQ/GqHSefadAFyNCUekq9RrWoaU9hh/S4iaFgf2MBMdM47eQj5i/Bk0Mm07cP/XPFlkN+Q==
+  dependencies:
+    tiny-warning "^1.0.3"
+    tslib "^2.3.0"
 
 "@rushstack/eslint-patch@^1.0.6":
   version "1.0.8"
@@ -2397,6 +2426,11 @@ fast-diff@^1.1.2:
   resolved "https://package-cluster.production.groovehq.com/fast-diff/-/fast-diff-1.2.0.tgz"
   integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
+fast-equals@^2.0.3:
+  version "2.0.3"
+  resolved "https://package-cluster.production.groovehq.com/fast-equals/-/fast-equals-2.0.3.tgz#7039b0a039909f345a2ce53f6202a14e5f392efc"
+  integrity sha512-0EMw4TTUxsMDpDkCg0rXor2gsg+npVrMIHbEhvD0HZyIhUX6AktC/yasm+qKwfyswd06Qy95ZKk8p2crTo0iPA==
+
 fast-glob@^3.0.3, fast-glob@^3.1.1, fast-glob@^3.2.7:
   version "3.2.7"
   resolved "https://package-cluster.production.groovehq.com/fast-glob/-/fast-glob-3.2.7.tgz"
@@ -3186,6 +3220,16 @@ jsonparse@^1.2.0:
     array-includes "^3.1.3"
     object.assign "^4.1.2"
 
+kbar@^0.1.0-beta.16:
+  version "0.1.0-beta.16"
+  resolved "https://package-cluster.production.groovehq.com/kbar/-/kbar-0.1.0-beta.16.tgz#ed8517c6f3ec1994dc965bff288a0df25b64bfde"
+  integrity sha512-e/jOX5XZRoACgMMQylXdmOko2+2gvKNRC7H6xqZ/6qP9uJfPoh7Tg66RIzGlmms0OVcYkgMHy9Z0a66SNby3Ig==
+  dependencies:
+    "@reach/portal" "^0.16.0"
+    fast-equals "^2.0.3"
+    match-sorter "^6.3.0"
+    react-virtual "^2.8.2"
+
 keccak@^3.0.0:
   version "3.0.2"
   resolved "https://package-cluster.production.groovehq.com/keccak/-/keccak-3.0.2.tgz#4c2c6e8c54e04f2670ee49fa734eb9da152206e0"
@@ -3410,6 +3454,14 @@ make-dir@^3.0.2:
   integrity sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==
   dependencies:
     semver "^6.0.0"
+
+match-sorter@^6.3.0:
+  version "6.3.1"
+  resolved "https://package-cluster.production.groovehq.com/match-sorter/-/match-sorter-6.3.1.tgz#98cc37fda756093424ddf3cbc62bfe9c75b92bda"
+  integrity sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    remove-accents "0.4.2"
 
 mcl-wasm@^0.7.1:
   version "0.7.9"
@@ -4341,6 +4393,13 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-virtual@^2.8.2:
+  version "2.8.2"
+  resolved "https://package-cluster.production.groovehq.com/react-virtual/-/react-virtual-2.8.2.tgz#e204b30c57c426bd260ed1ac49f8b1099e92b7cb"
+  integrity sha512-CwnvF/3Jev4M14S9S7fgzGc0UFQ/bG/VXbrUCq+AB0zH8WGnVDTG0lQT7O3jPY76YLPzTHBu+AMl64Stp8+exg==
+  dependencies:
+    "@reach/observe-rect" "^1.1.0"
+
 react@17.0.2:
   version "17.0.2"
   resolved "https://package-cluster.production.groovehq.com/react/-/react-17.0.2.tgz"
@@ -4417,6 +4476,11 @@ regexpp@^3.1.0:
   version "3.2.0"
   resolved "https://package-cluster.production.groovehq.com/regexpp/-/regexpp-3.2.0.tgz"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://package-cluster.production.groovehq.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 require-from-string@^2.0.2:
   version "2.0.2"
@@ -5072,6 +5136,11 @@ timers-browserify@^1.0.1:
   dependencies:
     process "~0.11.0"
 
+tiny-warning@^1.0.3:
+  version "1.0.3"
+  resolved "https://package-cluster.production.groovehq.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
+  integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
+
 tinyify@^3.0.0:
   version "3.0.0"
   resolved "https://package-cluster.production.groovehq.com/tinyify/-/tinyify-3.0.0.tgz#99d5f805191558c6d85dacabe634d617da5509e6"
@@ -5157,6 +5226,11 @@ tslib@^1.8.1:
   version "1.14.1"
   resolved "https://package-cluster.production.groovehq.com/tslib/-/tslib-1.14.1.tgz"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.3.0:
+  version "2.3.1"
+  resolved "https://package-cluster.production.groovehq.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 tsutils@^3.21.0:
   version "3.21.0"

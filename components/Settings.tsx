@@ -1,16 +1,28 @@
+import { useKBar } from 'kbar'
+
+import { isMac } from 'util/browser'
 import { GITHUB_REPO_URL } from 'util/constants'
 
-import { Icon } from 'components/ui'
+import { Icon, Button } from 'components/ui'
 
 const Settings = () => {
+  const { query } = useKBar()
+
   return (
     <div className="flex items-center">
-      {/* <button>
-        <Icon name="command-line" className="mr-1" />
-        <span className="text-tiny font-semibold">K</span>
-      </button>
+      <Button
+        size="xs"
+        onClick={query.toggle}
+        className="mx-6 px-2 font-semibold flex-items-center"
+        transparent
+        outline
+        padded={false}
+      >
+        {isMac && <Icon name="command-line" className="mr-1" />}
+        {isMac ? <span>K</span> : <span>Ctrl + K</span>}
+      </Button>
 
-      <button className="mx-6">
+      {/* <button className="mx-6">
         <Icon name="contrast-2-line" className="mr-1" />
       </button> */}
 

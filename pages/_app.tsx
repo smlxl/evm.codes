@@ -1,9 +1,13 @@
-import type { ReactElement, ReactNode } from 'react'
+import { ReactElement, ReactNode } from 'react'
 
+import { KBarProvider } from 'kbar'
+import useActions from 'lib/useActions'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 
 import { EthereumProvider } from 'context/ethereumContext'
+
+import KBar from 'components/KBar'
 
 import '../styles/globals.css'
 import '../styles/highlight/atom-one-light.css'
@@ -16,14 +20,20 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-function Main({ Component, pageProps }: AppPropsWithLayout) {
+const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
+  const actions = useActions()
+
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
     <EthereumProvider>
-      {getLayout(<Component {...pageProps} />)}
+      <KBarProvider actions={actions}>
+        {getLayout(<Component {...pageProps} />)}
+        <KBar />
+      </KBarProvider>
     </EthereumProvider>
   )
 }
+
 export default Main

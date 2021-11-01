@@ -1,19 +1,40 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
+
+import { useRegisterActions } from 'kbar'
 
 import { EthereumContext } from 'context/ethereumContext'
 
 import { Button, Icon } from 'components/ui'
 
 const ExecutionStatus = () => {
-  const {
-    isExecuting,
-    executionState,
-    nextExecution,
-    continueExecution,
-    // TODO: UI for adding/removing breakpoints
-    // addBreakpoint,
-    // removeBreakpoint,
-  } = useContext(EthereumContext)
+  const { isExecuting, executionState, nextExecution, continueExecution } =
+    useContext(EthereumContext)
+
+  const actions = useMemo(
+    () => [
+      {
+        id: 'step',
+        name: 'Step',
+        shortcut: ['s'],
+        keywords: 'execution next',
+        section: 'Execution',
+        perform: nextExecution,
+        subtitle: 'Run next execution',
+      },
+      {
+        id: 'continue',
+        name: 'Continue',
+        shortcut: ['c'],
+        keywords: 'execution continue',
+        section: 'Execution',
+        perform: continueExecution,
+        subtitle: 'Continue execution',
+      },
+    ],
+    [nextExecution, continueExecution],
+  )
+
+  useRegisterActions(actions)
 
   return (
     <div className="flex flex-grow justify-between items-center">

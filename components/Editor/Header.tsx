@@ -1,4 +1,6 @@
-import { useContext, ChangeEvent } from 'react'
+import { useContext, useMemo, ChangeEvent } from 'react'
+
+import { useRegisterActions } from 'kbar'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -21,6 +23,23 @@ const EditorHeader = ({
   isRunDisabled,
 }: Props) => {
   const { selectedChain, selectedFork } = useContext(EthereumContext)
+
+  const actions = useMemo(
+    () => [
+      {
+        id: 'run',
+        name: 'Run',
+        shortcut: ['r'],
+        keywords: 'execution run',
+        section: 'Execution',
+        perform: onRun,
+        subtitle: 'Start execution',
+      },
+    ],
+    [onRun],
+  )
+
+  useRegisterActions(actions)
 
   return (
     <div className="flex justify-between items-center">

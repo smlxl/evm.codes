@@ -3,13 +3,14 @@ import React from 'react'
 import cn from 'classnames'
 
 type Props = {
-  children: JSX.Element | string
+  children: React.ReactNode | string
   href?: string
   external?: boolean
   className?: string
   transparent?: boolean
+  outline?: boolean
   padded?: boolean
-  size?: 'sm' | 'md'
+  size?: 'xs' | 'sm' | 'md'
 } & React.ComponentPropsWithoutRef<'button'>
 
 export const Button: React.FC<Props> = ({
@@ -20,6 +21,7 @@ export const Button: React.FC<Props> = ({
   disabled,
   transparent = false,
   padded = true,
+  outline = false,
   size = 'md',
   ...rest
 }: Props) => {
@@ -27,12 +29,15 @@ export const Button: React.FC<Props> = ({
     <button
       disabled={disabled}
       className={cn(
+        'rounded outline-none inline-block',
         {
-          'bg-gray-500 text-white rounded': !transparent,
+          'bg-gray-500 text-white': !transparent,
           'cursor-not-allowed opacity-50': disabled,
           'px-4': padded,
           'text-tiny py-2 font-medium': size === 'sm',
           'text-base py-3 font-semibold': size === 'md',
+          'text-xs py-1': size === 'xs',
+          'border border-gray-200': outline,
         },
         className,
       )}
