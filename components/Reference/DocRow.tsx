@@ -13,6 +13,7 @@ type Props = {
 const docComponents = {
   h1: Doc.H1,
   h2: Doc.H2,
+  h3: Doc.H3,
   p: Doc.P,
   ul: Doc.UL,
   ol: Doc.OL,
