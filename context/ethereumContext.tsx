@@ -377,11 +377,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     const opcodes: IOpcode[] = []
 
     vm.getActiveOpcodes().forEach((op: Opcode) => {
-      const opStr = op.code.toString()
       const meta = OpcodesMeta as IOpcodeMetaList
 
       opcodes.push({
-        ...meta[opStr],
+        ...meta[toHex(op.code)],
         ...{
           code: toHex(op.code),
           fee: op.fee,

@@ -1,4 +1,10 @@
+import fs from 'fs'
+import path from 'path'
+
+import matter from 'gray-matter'
 import type { NextPage } from 'next'
+import { serialize } from 'next-mdx-remote/serialize'
+import { IOpcodeDocs, IOpcodeDocMeta } from 'types'
 
 import { GITHUB_REPO_URL } from 'util/constants'
 
@@ -6,7 +12,9 @@ import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import { H1, H2, Container, Button } from 'components/ui'
 
-const HomePage = () => {
+const docsDir = 'docs/opcodes'
+
+const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   return (
     <>
       <Container>
@@ -21,7 +29,7 @@ const HomePage = () => {
       <section className="py-20 bg-gray-100">
         <Container>
           <H2 className="mb-10">Instructions reference</H2>
-          <ReferenceTable />
+          <ReferenceTable opcodeDocs={opcodeDocs} />
         </Container>
       </section>
 
@@ -39,6 +47,37 @@ const HomePage = () => {
 
 HomePage.getLayout = function getLayout(page: NextPage) {
   return <HomeLayout>{page}</HomeLayout>
+}
+
+export const getStaticProps = async () => {
+  const files = fs.readdirSync(path.join(docsDir))
+  const opcodeDocs: IOpcodeDocs = {}
+
+  await Promise.all(
+    files.map(async (filename) => {
+      const opcode = filename.split('.')[0]
+
+      const markdownWithMeta = fs.readFileSync(
+        path.join(docsDir, filename),
+        'utf-8',
+      )
+
+      const { data, content } = matter(markdownWithMeta)
+      const meta = data as IOpcodeDocMeta
+      const mdxSource = await serialize(content)
+
+      opcodeDocs[opcode] = {
+        meta,
+        mdxSource,
+      }
+    }),
+  )
+
+  return {
+    props: {
+      opcodeDocs,
+    },
+  }
 }
 
 export default HomePage

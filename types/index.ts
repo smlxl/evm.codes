@@ -52,3 +52,17 @@ export interface IChain {
   id: number
   name: string
 }
+
+export interface IOpcodeDocMeta {
+  fork: string
+  group: string
+}
+
+export interface IOpcodeDoc {
+  meta: IOpcodeDocMeta
+  mdxSource: any
+}
+
+export interface IOpcodeDocs {
+  [opcode: string]: IOpcodeDoc
+}
