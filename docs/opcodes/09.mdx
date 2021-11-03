@@ -1,0 +1,25 @@
+---
+Appeared in fork: Frontier
+Group: Stop and Arithmetic Operations
+---
+
+## Notes
+
+All intermediate calculations of this operation are not subject to the 2<sup>256</sup> modulo.
+
+## Stack input
+
+0. `Integer`: first integer to multiply.
+1. `Integer`: second integer to multiply.
+2. `Integer`: denominator.
+
+## Stack output
+
+0. `Integer`: result of the multiplication followed by a modulo. If the denominator is 0, the result will be 0.
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+
