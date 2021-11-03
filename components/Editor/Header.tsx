@@ -6,10 +6,9 @@ import { EthereumContext } from 'context/ethereumContext'
 
 import { Button, Radio } from 'components/ui'
 
-import { CodeType, StatusMessage } from './types'
+import { CodeType } from './types'
 
 type Props = {
-  status?: StatusMessage
   isBytecode: boolean
   isRunDisabled: boolean
   onCodeTypeChange: (event: ChangeEvent<HTMLInputElement>) => void

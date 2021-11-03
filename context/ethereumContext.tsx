@@ -7,6 +7,7 @@ import { TypedTransaction, TxData } from '@ethereumjs/tx'
 import VM from '@ethereumjs/vm'
 import { RunState, InterpreterStep } from '@ethereumjs/vm/dist/evm/interpreter'
 import { Opcode } from '@ethereumjs/vm/dist/evm/opcodes'
+import { VmError } from '@ethereumjs/vm/dist/exceptions'
 import { BN, Address } from 'ethereumjs-util'
 //
 import OpcodesMeta from 'opcodes.json'
@@ -50,6 +51,7 @@ type ContextProps = {
   deployedContractAddress: string | undefined
   isExecuting: boolean
   executionState: IExecutionState
+  vmError: string | undefined
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -82,6 +84,7 @@ export const EthereumContext = createContext<ContextProps>({
   deployedContractAddress: undefined,
   isExecuting: false,
   executionState: initialExecutionState,
+  vmError: undefined,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -112,6 +115,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [deployedContractAddress, setDeployedContractAddress] = useState<
     string | undefined
   >()
+  const [vmError, setVmError] = useState<string | undefined>()
 
   const nextStepFunction = useRef<() => void | undefined>()
   const isExecutionPaused = useRef(true)
@@ -235,6 +239,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // always start paused
     isExecutionPaused.current = true
     setIsExecuting(true)
+    setVmError(undefined)
 
     if (tx) {
       // starting execution via deployed contract's transaction
@@ -245,7 +250,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         .finally(() => setIsExecuting(false))
     } else {
       vm.runCode({ code: Buffer.from(byteCode, 'hex'), gasLimit })
-        .then(({ runState, gasUsed }) => _loadRunState(gasUsed, runState))
+        .then(({ runState, gasUsed, exceptionError }) =>
+          _loadRunState(gasUsed, runState, undefined, exceptionError),
+        )
         .finally(() => setIsExecuting(false))
     }
   }
@@ -257,6 +264,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setInstructions([])
     setExecutionState(initialExecutionState)
     setDeployedContractAddress(undefined)
+    setVmError(undefined)
 
     isExecutionPaused.current = true
     breakpointIds.current = []
@@ -419,7 +427,13 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     gasUsed: BN,
     runState?: RunState,
     contractAddress?: Address,
+    exceptionError?: VmError,
   ) => {
+    if (exceptionError) {
+      setVmError(exceptionError.error)
+      return
+    }
+
     if (runState) {
       const { programCounter, stack, memory } = runState
       _setExecutionState(programCounter, gasUsed, stack._store, memory._store)
@@ -530,6 +544,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         deployedContractAddress,
         isExecuting,
         executionState,
+        vmError,
 
         onChainChange,
         onForkChange,

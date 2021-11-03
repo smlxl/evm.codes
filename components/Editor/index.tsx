@@ -19,13 +19,12 @@ import { exampleContract } from 'util/contracts'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import InstructionList from 'components/Editor/Instructions'
-import { Message } from 'components/ui'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { StatusMessage } from './types'
+import { IConsoleOutput } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -43,20 +42,27 @@ enum CodeType {
 const editorHeight = 350
 const consoleHeight = 350
 
+// FIXME: Handle compiler detection
+const compilerVersion = 'v0.8.9'
+
 const Editor = ({ readOnly = false }: Props) => {
   const {
     deployContract,
     loadInstructions,
     startExecution,
     deployedContractAddress,
+    vmError,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState(exampleContract)
   const [compiling, setIsCompiling] = useState(false)
   const [codeType, setCodeType] = useState(CodeType.Solidity)
-  const [output, setOutput] = useState(['Loading Solidity compiler...'])
-  const [status, setStatus] = useState<StatusMessage | undefined>(undefined)
-
+  const [output, setOutput] = useState<IConsoleOutput[]>([
+    {
+      type: 'info',
+      message: `Loading Solidity compiler ${compilerVersion}...`,
+    },
+  ])
   const solcWorkerRef = useRef<null | Worker>(null)
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
@@ -65,7 +71,8 @@ const Editor = ({ readOnly = false }: Props) => {
     const { code: byteCode, error } = event.data
 
     if (error) {
-      setStatus({ type: 'error', message: error })
+      log(error, 'error')
+      setIsCompiling(false)
       return
     }
 
@@ -77,8 +84,8 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const log = useCallback(
-    (line: string) => {
-      setOutput([...output, line])
+    (line: string, type = 'info') => {
+      setOutput([...output, { type, message: line }])
     },
     [output, setOutput],
   )
@@ -102,6 +109,13 @@ const Editor = ({ readOnly = false }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deployedContractAddress])
+
+  useEffect(() => {
+    if (vmError) {
+      log(vmError, 'error')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vmError])
 
   const handleCodeChange = (value: string) => {
     setCode(value)
@@ -132,17 +146,11 @@ const Editor = ({ readOnly = false }: Props) => {
       }
     } else if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
-        setStatus({
-          type: 'warning',
-          message: 'There should be at least 2 characters per byte.',
-        })
+        log('There should be at least 2 characters per byte.', 'warn')
         return
       }
       if (!isHex(code)) {
-        setStatus({
-          type: 'warning',
-          message: 'Only hexadecimal characters are allowed.',
-        })
+        log('Only hexadecimal characters are allowed.', 'warn')
         return
       }
       loadInstructions(code)
@@ -186,11 +194,6 @@ const Editor = ({ readOnly = false }: Props) => {
               className="relative pane pane-light overflow-auto border-r bg-gray-100 border-gray-200"
               style={{ height: editorHeight }}
             >
-              {status && (
-                <div className="absolute z-10 right-6 left-6 top-2">
-                  <Message type={status.type} text={status.message} />
-                </div>
-              )}
               <SCEditor
                 // @ts-ignore: SCEditor is not TS-friendly
                 ref={editorRef}

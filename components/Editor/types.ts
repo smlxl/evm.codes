@@ -3,7 +3,7 @@ export enum CodeType {
   Bytecode,
 }
 
-export interface StatusMessage {
-  type: 'error' | 'warning' | 'success'
+export interface IConsoleOutput {
+  type: 'info' | 'warn' | 'error'
   message: string
 }
