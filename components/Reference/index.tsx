@@ -1,6 +1,7 @@
-import { useContext, useMemo, Fragment } from 'react'
+import { useContext, useMemo, useCallback, Fragment } from 'react'
 
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 import { useTable, useExpanded, HeaderGroup } from 'react-table'
 import { IOpcode, IOpcodeDocs } from 'types'
 
@@ -14,6 +15,7 @@ type CustomHeaderGroup = {
 } & HeaderGroup<IOpcode>
 
 const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
+  const router = useRouter()
   const { opcodes } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => tableData, [])
@@ -30,6 +32,14 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     prepareRow,
     visibleColumns,
   } = table
+
+  const isRowFocused = useCallback(
+    (opcode: string) => {
+      const re = new RegExp(`/#${opcode}`, 'gi')
+      return router.asPath.match(re)
+    },
+    [router.asPath],
+  )
 
   return (
     <table {...getTableProps()} className="w-full table-auto">
@@ -58,13 +68,16 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
       <tbody {...getTableBodyProps()} className="text-xs">
         {rows.map((row) => {
-          // @ts-ignore: Waiting for 8.x of react-table to have better types
-          const isExpanded = row.isExpanded
           prepareRow(row)
+
+          const opcode = row.values.code
+          // @ts-ignore: Waiting for 8.x of react-table to have better types
+          const isExpanded = row.isExpanded || isRowFocused(opcode)
 
           return (
             <Fragment key={row.getRowProps().key}>
               <tr
+                id={opcode}
                 className={cn('border-b cursor-pointer', {
                   ' border-gray-200 hover:bg-gray-200': !isExpanded,
                   'border-yellow-300 bg-yellow-200 hover:bg-yellow-300':
@@ -92,7 +105,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
               {isExpanded ? (
                 <tr>
                   <td colSpan={visibleColumns.length}>
-                    <DocRow opcode={opcodeDocs[row.values.code]} />
+                    <DocRow opcode={opcodeDocs[opcode]} />
                   </td>
                 </tr>
               ) : null}

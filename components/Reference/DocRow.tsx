@@ -18,6 +18,7 @@ const docComponents = {
   ul: Doc.UL,
   ol: Doc.OL,
   li: Doc.LI,
+  a: Doc.A,
 }
 
 const colClassName = 'py-1 px-2 border border-gray-400'

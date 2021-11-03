@@ -1,8 +1,14 @@
 import React from 'react'
 
+import Link from 'next/link'
+
 type Props = {
   children: string
 }
+
+type LinkProps = {
+  href?: string
+} & Props
 
 export const H1: React.FC<Props> = ({ children }) => (
   <h1 className="text-lg font-semibold my-4">{children}</h1>
@@ -30,4 +36,10 @@ export const OL: React.FC<Props> = ({ children }) => (
 
 export const LI: React.FC<Props> = ({ children }) => (
   <li className="ml-6">{children}</li>
+)
+
+export const A: React.FC<LinkProps> = ({ children, href }) => (
+  <Link href={href as string} scroll={false}>
+    <a className="underline">{children}</a>
+  </Link>
 )
