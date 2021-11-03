@@ -55,7 +55,7 @@ export const getStaticProps = async () => {
 
   await Promise.all(
     files.map(async (filename) => {
-      const opcode = filename.split('.')[0]
+      const opcode = filename.split('.')[0].toUpperCase()
 
       const markdownWithMeta = fs.readFileSync(
         path.join(docsDir, filename),

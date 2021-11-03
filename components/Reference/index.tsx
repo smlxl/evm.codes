@@ -77,7 +77,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
           return (
             <Fragment key={row.getRowProps().key}>
               <tr
-                id={opcode}
+                id={opcode.toUpperCase()}
                 className={cn('border-b cursor-pointer', {
                   ' border-gray-200 hover:bg-gray-200': !isExpanded,
                   'border-yellow-300 bg-yellow-200 hover:bg-yellow-300':
