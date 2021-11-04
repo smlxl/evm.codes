@@ -1,0 +1,31 @@
+---
+Appeared in fork: Frontier
+Group: SHA3
+---
+
+## Stack input
+
+0. `Integer`: byte offset in the memory.
+1. `Integer`: byte count to read in the memory.
+
+## Stack output
+
+0. `Integer`: Keccak-256 hash of the given data in memory.
+
+## Examples
+
+| Memory |
+|-------:|
+| 0xFFFFFFFF|
+
+| Input | Output |
+|------:|-------:|
+| 0 | 0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238 |
+| 4 | |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+
