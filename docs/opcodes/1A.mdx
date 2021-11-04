@@ -1,0 +1,25 @@
+---
+Appeared in fork: Frontier
+Group: Comparison & Bitwise Logic Operations
+---
+
+## Stack input
+
+0. `Integer`: 0-based byte index starting from the most significant byte.
+1. `Integer`: value.
+
+## Stack output
+
+0. `Integer`: the indicated byte at the lest significant position. If the byte index is out of range, the result is 0.
+
+## Examples
+
+With the top stack value as 31 and the second stack value as 0xFF, the result is 0xFF.
+With the top stack value as 30 and the second stack value as 0xFF00, the result is 0xFF.
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+
