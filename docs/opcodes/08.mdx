@@ -9,13 +9,21 @@ All intermediate calculations of this operation are not subject to the 2<sup>256
 
 ## Stack input
 
-0. `Integer`: first integer to add.
-1. `Integer`: second integer to add.
+0. `Integer`: first value to add.
+1. `Integer`: second value to add.
 2. `Integer`: denominator.
 
 ## Stack output
 
 0. `Integer`: result of the addition followed by a modulo. If the denominator is 0, the result will be 0.
+
+## Examples
+
+| Input | Output | | Input | Output |
+|------:|-------:|-|------:|-------:|
+| 10 | 4 | | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF | 1 |
+| 10 | | | 2 | |
+| 8 | | | 2 | |
 
 ## Error cases
 
