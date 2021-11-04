@@ -9,13 +9,21 @@ All intermediate calculations of this operation are not subject to the 2<sup>256
 
 ## Stack input
 
-0. `Integer`: first integer to multiply.
-1. `Integer`: second integer to multiply.
+0. `Integer`: first value to multiply.
+1. `Integer`: second value to multiply.
 2. `Integer`: denominator.
 
 ## Stack output
 
 0. `Integer`: result of the multiplication followed by a modulo. If the denominator is 0, the result will be 0.
+
+## Examples
+
+| Input | Output | | Input | Output |
+|------:|-------:|-|------:|-------:|
+| 10 | 4 | | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF | 9 |
+| 10 | | | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF | |
+| 8 | | | 12 | |
 
 ## Error cases
 
