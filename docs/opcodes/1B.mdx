@@ -1,0 +1,30 @@
+---
+Appeared in fork: Constantinople
+Group: Comparison & Bitwise Logic Operations
+---
+
+## Notes
+
+Shift the bits towards the most significant one. The bits moved after the 256th one are discarded, the new bits are set to 0.
+
+## Stack input
+
+0. `Integer`: number of bits to shift to the left.
+1. `Integer`: value.
+
+## Stack output
+
+0. `Integer`: the shifted value. If the shift value is bigger than 255, returns 0.
+
+## Examples
+
+| Input | Output | | Input | Output |
+|------:|-------:|-|------:|-------:|
+| 1 | 2 | | 4 | 0xF000000000000000000000000000000000000000000000000000000000000000 |
+| 1 | | | 0xFF00000000000000000000000000000000000000000000000000000000000000 | |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
