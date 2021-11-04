@@ -16,6 +16,13 @@ All values are treated as two’s complement signed 256-bit integers. Note the o
 
 0. `Integer`: result of the signed integer modulo. If the denominator is 0, the result will be 0.
 
+## Examples
+
+| Input | Output | | Input | Output |
+|------:|-------:|-|------:|-------:|
+| 10 | 1 | | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8 | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE |
+| 3 | | | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD | |
+
 ## Error cases
 
 The transaction is reverted in those cases:
