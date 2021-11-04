@@ -5,12 +5,17 @@ Group: Stop and Arithmetic Operations
 
 ## Stack input
 
-0. `Integer`: first integer to multiply.
-1. `Integer`: second integer to multiply.
+0. `Integer`: first value to multiply.
+1. `Integer`: second value to multiply.
 
 ## Stack output
 
 0. `Integer`: result of the multiplication modulo 2<sup>256</sup>.
+
+## Examples
+
+With the top stack value as 10 and the second stack value as 10, the result is 100.
+With the top stack value as 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF and the second stack value as 2, the result is 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE.
 
 ## Error cases
 
