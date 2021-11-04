@@ -1,6 +1,10 @@
 import React from 'react'
 
+import cn from 'classnames'
 import Link from 'next/link'
+
+// The mark identifying an empty table cell, in order to avoid applying styles
+const EMPTY_MARK = '*'
 
 type Props = {
   children: string
@@ -36,6 +40,29 @@ export const OL: React.FC<Props> = ({ children }) => (
 
 export const LI: React.FC<Props> = ({ children }) => (
   <li className="ml-6">{children}</li>
+)
+
+export const TH: React.FC<Props> = ({ children }) => {
+  console.log({ children })
+  return (
+    <th
+      className={cn('py-1 px-2 border-gray-400 text-xs font-semibold', {
+        border: children !== EMPTY_MARK,
+      })}
+    >
+      {children !== EMPTY_MARK && children}
+    </th>
+  )
+}
+
+export const TD: React.FC<Props> = ({ children }) => (
+  <td
+    className={cn('py-1 px-2 border-gray-400 text-xs font-normal', {
+      border: children !== EMPTY_MARK,
+    })}
+  >
+    {children !== EMPTY_MARK && children}
+  </td>
 )
 
 export const A: React.FC<LinkProps> = ({ children, href }) => (
