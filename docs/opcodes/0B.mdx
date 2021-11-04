@@ -6,11 +6,16 @@ Group: Stop and Arithmetic Operations
 ## Stack input
 
 0. `Integer`: size in byte - 1 of the integer to sign extend.
-1. `Integer`: integer to sign extend.
+1. `Integer`: value to sign extend.
 
 ## Stack output
 
 0. `Integer`: result of the sign extend.
+
+## Examples
+
+With the top stack value as 0 and the second stack value as 0xFF, the result is 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.
+With the top stack value as 0 and the second stack value as 0x7F, the result is 0x7F.
 
 ## Error cases
 
