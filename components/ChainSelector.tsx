@@ -4,6 +4,7 @@ import { useRegisterActions, Action } from 'kbar'
 import Select, { OnChangeValue } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { toKeyIndex } from 'util/string'
 
@@ -11,6 +12,7 @@ import { Icon } from 'components/ui'
 import { baseSelectStyles } from 'components/ui/reactSelectStyles'
 
 const ChainSelector = () => {
+  const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
   const {
     chains,
     forks,
@@ -56,17 +58,33 @@ const ChainSelector = () => {
     (option: OnChangeValue<any, any>) => {
       setChainValue(option)
       onChainChange(parseInt(option.value))
+      setSetting(Setting.VmChain, option)
     },
-    [onChainChange],
+    [onChainChange, setSetting],
   )
 
   const handleForkChange = useCallback(
     (option: OnChangeValue<any, any>) => {
       setForkValue(option)
       onForkChange(option.value)
+      setSetting(Setting.VmFork, option)
     },
-    [onForkChange],
+    [onForkChange, setSetting],
   )
+
+  useEffect(() => {
+    if (defaultChainOption) {
+      handleChainChange(getSetting(Setting.VmChain) || defaultChainOption)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsLoaded, defaultChainOption])
+
+  useEffect(() => {
+    if (defaultForkOption) {
+      handleForkChange(getSetting(Setting.VmFork) || defaultForkOption)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsLoaded, defaultForkOption])
 
   useEffect(() => {
     const chainIds: string[] = []
@@ -140,7 +158,6 @@ const ChainSelector = () => {
             onChange={handleChainChange}
             options={chainOptions}
             value={chainValue}
-            defaultValue={defaultChainOption}
             className="capitalize mr-4 text-sm font-medium"
             // @ts-ignore: React-select does not have types for all styles
             styles={baseSelectStyles}
@@ -156,7 +173,6 @@ const ChainSelector = () => {
             onChange={handleForkChange}
             options={forkOptions}
             value={forkValue}
-            defaultValue={defaultForkOption}
             className="capitalize text-sm font-medium"
             // @ts-ignore: React-select does not have types for all styles
             styles={baseSelectStyles}

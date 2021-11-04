@@ -14,6 +14,7 @@ import cn from 'classnames'
 import SCEditor from 'react-simple-code-editor'
 
 import { EthereumContext } from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { exampleContract } from 'util/contracts'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
@@ -46,6 +47,8 @@ const consoleHeight = 350
 const compilerVersion = 'v0.8.9'
 
 const Editor = ({ readOnly = false }: Props) => {
+  const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
+
   const {
     deployContract,
     loadInstructions,
@@ -56,7 +59,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const [code, setCode] = useState(exampleContract)
   const [compiling, setIsCompiling] = useState(false)
-  const [codeType, setCodeType] = useState(CodeType.Solidity)
+  const [codeType, setCodeType] = useState<number | undefined>()
   const [output, setOutput] = useState<IConsoleOutput[]>([
     {
       type: 'info',
@@ -89,6 +92,11 @@ const Editor = ({ readOnly = false }: Props) => {
     },
     [output, setOutput],
   )
+
+  useEffect(() => {
+    setCodeType(getSetting(Setting.EditorCodeType) || CodeType.Solidity)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsLoaded])
 
   useEffect(() => {
     solcWorkerRef.current = new Worker(
@@ -159,7 +167,9 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [code, codeType, loadInstructions, log, startExecution])
 
   const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCodeType(parseInt(event.target.value) as CodeType)
+    const value = parseInt(event.target.value)
+    setCodeType(value as CodeType)
+    setSetting(Setting.EditorCodeType, value)
 
     // NOTE: SCEditor does not expose input ref as public /shrug
     if (editorRef?.current?._input) {

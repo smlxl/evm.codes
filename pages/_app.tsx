@@ -6,6 +6,7 @@ import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 
 import { EthereumProvider } from 'context/ethereumContext'
+import { SettingsProvider } from 'context/settingsContext'
 
 import KBar from 'components/KBar'
 
@@ -27,12 +28,14 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <EthereumProvider>
-      <KBarProvider actions={actions}>
-        {getLayout(<Component {...pageProps} />)}
-        <KBar />
-      </KBarProvider>
-    </EthereumProvider>
+    <SettingsProvider>
+      <EthereumProvider>
+        <KBarProvider actions={actions}>
+          {getLayout(<Component {...pageProps} />)}
+          <KBar />
+        </KBarProvider>
+      </EthereumProvider>
+    </SettingsProvider>
   )
 }
 
