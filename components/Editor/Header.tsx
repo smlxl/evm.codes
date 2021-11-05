@@ -42,27 +42,29 @@ const EditorHeader = ({
 
   return (
     <div className="flex justify-between items-center">
-      <h3 className="font-semibold text-md">
+      <h3 className="font-semibold text-md hidden xl:block">
         Running on {selectedChain?.name}{' '}
         <span className="capitalize text-sm text-gray-700 font-medium px-1">
           {selectedFork}
         </span>
       </h3>
 
-      <div>
-        <Radio
-          text="Solidity"
-          value={CodeType.Solidity.toString()}
-          isChecked={!isBytecode}
-          onChange={onCodeTypeChange}
-        />
+      <div className="flex items-center justify-between w-full xl:w-auto">
+        <div>
+          <Radio
+            text="Solidity"
+            value={CodeType.Solidity.toString()}
+            isChecked={!isBytecode}
+            onChange={onCodeTypeChange}
+          />
 
-        <Radio
-          text="Bytecode"
-          value={CodeType.Bytecode.toString()}
-          isChecked={isBytecode}
-          onChange={onCodeTypeChange}
-        />
+          <Radio
+            text="Bytecode"
+            value={CodeType.Bytecode.toString()}
+            isChecked={isBytecode}
+            onChange={onCodeTypeChange}
+          />
+        </div>
 
         <Button
           onClick={onRun}

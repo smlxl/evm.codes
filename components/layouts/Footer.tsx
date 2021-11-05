@@ -6,8 +6,8 @@ const Footer = () => {
   return (
     <footer className="border-t py-6">
       <Container>
-        <div className="flex justify-between text-tiny">
-          <div>
+        <div className="flex justify-between text-tiny items-start">
+          <div className="flex flex-col md:flex-row leading-6">
             <span>
               Brought to you by{' '}
               <a
@@ -18,9 +18,10 @@ const Footer = () => {
               >
                 Comity Labs
               </a>
+              .
             </span>
 
-            <span className="mx-4">
+            <span className="md:mx-2">
               Powered by{' '}
               <a
                 className="underline"
@@ -39,11 +40,17 @@ const Footer = () => {
               >
                 SolcJS
               </a>
+              .
             </span>
           </div>
 
           <div>
-            <a href={GITHUB_REPO_URL} target="_blank" rel="noreferrer">
+            <a
+              className="underline"
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
               GitHub
             </a>
           </div>

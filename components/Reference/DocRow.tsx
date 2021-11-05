@@ -18,6 +18,7 @@ const docComponents = {
   ul: Doc.UL,
   ol: Doc.OL,
   li: Doc.LI,
+  table: Doc.Table,
   th: Doc.TH,
   td: Doc.TD,
   a: Doc.A,

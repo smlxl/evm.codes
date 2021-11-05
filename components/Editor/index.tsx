@@ -188,65 +188,66 @@ const Editor = ({ readOnly = false }: Props) => {
 
   return (
     <div className="bg-gray-200 rounded-lg">
-      <div className="flex">
-        <div className="w-1/2">
-          <div className="flex flex-col">
-            <div className="border-r border-gray-300 px-6 h-8 my-3">
-              <Header
-                isBytecode={isBytecode}
-                isRunDisabled={isRunDisabled}
-                onCodeTypeChange={handleCodeTypeChange}
-                onRun={handleRun}
-              />
-            </div>
+      <div className="flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2">
+          <div className="border-gray-300 px-6 h-8 my-3 md:border-r">
+            <Header
+              isBytecode={isBytecode}
+              isRunDisabled={isRunDisabled}
+              onCodeTypeChange={handleCodeTypeChange}
+              onRun={handleRun}
+            />
+          </div>
 
-            <div
-              className="relative pane pane-light overflow-auto border-r bg-gray-100 border-gray-200"
-              style={{ height: editorHeight }}
-            >
-              <SCEditor
-                // @ts-ignore: SCEditor is not TS-friendly
-                ref={editorRef}
-                value={code}
-                readOnly={readOnly}
-                onValueChange={handleCodeChange}
-                highlight={isBytecode ? highlightBytecode : highlightCode}
-                tabSize={4}
-                className={cn('code-editor', {
-                  'with-numbers': !isBytecode,
-                })}
-              />
-            </div>
-
-            <div
-              className="pane pane-dark overflow-auto bg-gray-700 text-white border-r border-gray-800 border-opacity-25"
-              style={{ height: consoleHeight }}
-            >
-              <Console output={output} />
-            </div>
+          <div
+            className="relative pane pane-light overflow-auto md:border-r bg-gray-100 border-gray-200"
+            style={{ height: editorHeight }}
+          >
+            <SCEditor
+              // @ts-ignore: SCEditor is not TS-friendly
+              ref={editorRef}
+              value={code}
+              readOnly={readOnly}
+              onValueChange={handleCodeChange}
+              highlight={isBytecode ? highlightBytecode : highlightCode}
+              tabSize={4}
+              className={cn('code-editor', {
+                'with-numbers': !isBytecode,
+              })}
+            />
           </div>
         </div>
 
-        <div className="w-1/2">
-          <div className="flex flex-col">
-            <div className="flex items-center w-full pl-4 pr-6 my-3 h-8">
-              <ExecutionStatus />
-            </div>
+        <div className="w-full md:w-1/2">
+          <div className="flex items-center pl-4 pr-6 my-3 h-8">
+            <ExecutionStatus />
+          </div>
 
-            <div
-              className="pane pane-light overflow-auto py-3 bg-gray-100"
-              style={{ height: editorHeight }}
-              ref={instructionsRef}
-            >
-              <InstructionList containerRef={instructionsRef} />
-            </div>
+          <div
+            className="pane pane-light overflow-auto py-3 bg-gray-100"
+            style={{ height: editorHeight }}
+            ref={instructionsRef}
+          >
+            <InstructionList containerRef={instructionsRef} />
+          </div>
+        </div>
+      </div>
 
-            <div
-              className="pane pane-dark overflow-auto bg-gray-700 text-white px-4 py-3"
-              style={{ height: consoleHeight }}
-            >
-              <ExecutionState />
-            </div>
+      <div className="flex flex-col md:flex-row-reverse">
+        <div className="w-full md:w-1/2">
+          <div
+            className="pane pane-dark overflow-auto bg-gray-700 text-white px-4 py-3"
+            style={{ height: consoleHeight }}
+          >
+            <ExecutionState />
+          </div>
+        </div>
+        <div className="w-full md:w-1/2">
+          <div
+            className="pane pane-dark overflow-auto bg-gray-700 text-white border-t border-gray-800 border-opacity-25 md:border-r"
+            style={{ height: consoleHeight }}
+          >
+            <Console output={output} />
           </div>
         </div>
       </div>

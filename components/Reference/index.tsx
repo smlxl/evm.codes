@@ -56,11 +56,11 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
         <thead className="text-sm">
           {headerGroups.map((headerGroup) => (
             <>
-              <tr>
+              <tr className="hidden md:table-row">
                 <th
                   className="sticky text-right z-20 pr-4"
                   colSpan={visibleColumns.length}
-                  style={{ top: 62 }}
+                  style={{ top: 46 }}
                 >
                   <Button
                     onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
@@ -95,7 +95,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                     style={{
                       maxWidth: column.maxWidth || 'auto',
                       minWidth: column.minWidth || 'auto',
-                      top: 72,
+                      top: 56,
                     }}
                   >
                     {column.render('Header')}

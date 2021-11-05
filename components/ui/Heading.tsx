@@ -11,7 +11,7 @@ export const H1: React.FC<Props> = ({ children, className }) => {
   return (
     <h1
       className={cn(
-        'text-3xl max-w-3xl font-medium leading-relaxed text-center mx-auto mb-16',
+        'text-2xl md:text-3xl max-w-3xl font-medium leading-relaxed text-center mx-auto mb-8 md:mb-16',
         className,
       )}
     >

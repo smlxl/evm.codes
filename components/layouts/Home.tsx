@@ -19,7 +19,7 @@ const HomeLayout: NextPage = ({ children }) => {
       <div className="flex flex-col h-screen justify-between">
         <Nav />
 
-        <main className="mb-auto mt-32 pb-10">{children}</main>
+        <main className="mb-auto mt-20 md:mt-28 pb-10">{children}</main>
 
         <Footer />
       </div>

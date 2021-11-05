@@ -42,6 +42,10 @@ export const LI: React.FC<Props> = ({ children }) => (
   <li className="ml-6">{children}</li>
 )
 
+export const Table: React.FC<Props> = ({ children }) => (
+  <table className="table-auto">{children}</table>
+)
+
 export const TH: React.FC<Props> = ({ children }) => {
   console.log({ children })
   return (

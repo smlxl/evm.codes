@@ -8,7 +8,7 @@ const ReferenceHeader = () => {
   const { selectedChain, selectedFork } = useContext(EthereumContext)
 
   return (
-    <>
+    <div className="pb-6 md:pb-0">
       <H2>Instructions reference</H2>
 
       <h3 className="font-medium text-md">
@@ -17,7 +17,7 @@ const ReferenceHeader = () => {
           {selectedFork}
         </span>
       </h3>
-    </>
+    </div>
   )
 }
 

@@ -26,7 +26,7 @@ const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
         </H1>
       </Container>
 
-      <section className="py-20 bg-gray-100">
+      <section className="py-10 md:py-20 bg-gray-100">
         <Container>
           <ReferenceTable opcodeDocs={opcodeDocs} />
         </Container>

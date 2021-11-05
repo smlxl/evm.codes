@@ -1,7 +1,7 @@
 export const Logo: React.FC = () => {
   return (
-    <div className="font-bold">
-      <span className="text-xl">evm</span>
+    <div className="font-semibold w-32">
+      <span className="text-lg">evm</span>
       <svg
         className="inline-block"
         width="21"
@@ -30,7 +30,7 @@ export const Logo: React.FC = () => {
         </defs>
       </svg>
 
-      <span className="text-xl">codes</span>
+      <span className="text-lg">codes</span>
     </div>
   )
 }

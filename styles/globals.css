@@ -6,7 +6,7 @@
  * Code editor
  */
 .code-editor {
-  @apply font-mono text-tiny leading-4;
+  @apply font-mono text-base md:text-tiny leading-4;
 }
 
 /* Since Pre overlays Textarea, these two must be identical */
@@ -63,8 +63,29 @@
 /*
  * Tooltips
  */
-
 .tooltip {
   @apply bg-gray-900 text-xs rounded z-30 border-0 pt-2 px-4 !important;
   padding-bottom: 5px !important;
+}
+
+
+/*
+ * Hamburger menu
+ */
+.hamburger .bar {
+  width: 20px;
+  height: 2px;
+  @apply my-1 mx-auto block bg-gray-900 transition-transform;
+}
+
+.hamburger.active .bar:nth-child(2) {
+  @apply opacity-0;
+}
+
+.hamburger.active .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }

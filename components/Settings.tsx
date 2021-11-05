@@ -1,7 +1,6 @@
 import { useKBar } from 'kbar'
 
 import { isMac } from 'util/browser'
-import { GITHUB_REPO_URL } from 'util/constants'
 
 import { Icon, Button } from 'components/ui'
 
@@ -13,10 +12,11 @@ const Settings = () => {
       <Button
         size="xs"
         onClick={query.toggle}
-        className="mx-6 px-2 font-semibold flex-items-center"
+        className="mx-6 px-2 font-semibold"
         transparent
         outline
         padded={false}
+        style={{ width: isMac ? 48 : 64 }}
       >
         {isMac && <Icon name="command-line" className="mr-1" />}
         {isMac ? <span>K</span> : <span>Ctrl + K</span>}
@@ -25,10 +25,6 @@ const Settings = () => {
       {/* <button className="mx-6">
         <Icon name="contrast-2-line" className="mr-1" />
       </button> */}
-
-      <a href={GITHUB_REPO_URL} target="_blank" rel="noreferrer">
-        <Icon name="github-fill" className="mr-1" size="lg" />
-      </a>
     </div>
   )
 }

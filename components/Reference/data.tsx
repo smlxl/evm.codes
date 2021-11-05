@@ -7,12 +7,11 @@ const tableData = [
   {
     Header: 'Opcode',
     accessor: 'code',
-    className: 'font-mono uppercase pl-2',
+    className: 'uppercase pl-2',
   },
   {
     Header: 'Name',
     accessor: 'name',
-    className: 'font-mono',
   },
   {
     Header: 'Gas',
@@ -23,12 +22,14 @@ const tableData = [
     accessor: 'input',
     Cell: ({ value }: { value: string }) => <StackBox value={value} />,
     maxWidth: 200,
+    className: 'hidden lg:table-cell',
   },
   {
     Header: 'Stack Ouput',
     accessor: 'output',
     Cell: ({ value }: { value: string }) => <StackBox value={value} />,
     maxWidth: 200,
+    className: 'hidden lg:table-cell',
   },
   {
     Header: 'Description',
