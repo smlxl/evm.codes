@@ -224,7 +224,7 @@ const Editor = ({ readOnly = false }: Props) => {
           </div>
 
           <div
-            className="pane pane-light overflow-auto py-3 bg-gray-100"
+            className="pane pane-light overflow-auto bg-gray-100"
             style={{ height: editorHeight }}
             ref={instructionsRef}
           >

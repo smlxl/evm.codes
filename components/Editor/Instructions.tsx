@@ -12,6 +12,9 @@ type RowRefs = {
   [programCounter: number]: Ref<HTMLTableRowElement> | undefined
 }
 
+// The offset to leave before the top instruction row on the next scroll
+const topRowOffset = 28
+
 const EditorInstructions = ({ containerRef }: TableProps) => {
   const itemsRef = useRef<RowRefs>({})
   const tableRef = useRef() as React.MutableRefObject<HTMLTableElement>
@@ -38,8 +41,10 @@ const EditorInstructions = ({ containerRef }: TableProps) => {
         executionState.programCounter
       ] as RefObject<HTMLTableRowElement>
 
-      if (rowRef?.current)
-        containerRef.current.scrollTop = rowRef.current.offsetTop - tableOffset
+      if (rowRef?.current) {
+        containerRef.current.scrollTop =
+          rowRef.current.offsetTop - tableOffset - topRowOffset
+      }
     }
   }, [containerRef, tableRef, executionState.programCounter])
 

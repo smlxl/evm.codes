@@ -485,7 +485,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     setExecutionState({
       programCounter: pc,
-      stack: stack.map((value) => value.toString('hex')),
+      stack: stack.map((value) => value.toString('hex')).reverse(),
       totalGas: gasUsed.toString(),
       memory: fromBuffer(memory),
       storage,

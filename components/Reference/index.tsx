@@ -56,7 +56,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
         <thead className="text-sm">
           {headerGroups.map((headerGroup) => (
             <>
-              <tr className="hidden md:table-row">
+              <tr key="header-links" className="hidden md:table-row">
                 <th
                   className="sticky text-right z-20 pr-4"
                   colSpan={visibleColumns.length}
