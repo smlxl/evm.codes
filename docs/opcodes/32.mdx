@@ -1,0 +1,20 @@
+---
+Appeared in fork: Frontier
+Group: Environmental Information
+---
+
+## Stack output
+
+0. `Integer`: the 20-byte address of the sender of the transaction. It can only be an account without code.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+|  | 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4 |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Stack overflow.
