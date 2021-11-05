@@ -1,0 +1,25 @@
+---
+Appeared in fork: Frontier
+Group: Environmental Information
+---
+
+## Stack input
+
+0. `Integer`: 20-byte address of the account to check.
+
+## Stack output
+
+0. `Integer`: balance of the given account in [wei](https://www.investopedia.com/terms/w/wei.asp). Returns 0 if the account doesn't exist.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4 | 125985 |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+
