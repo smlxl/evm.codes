@@ -1,6 +1,12 @@
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
+  purge: {
+    enabled: true,
+    content: [
+      './pages/**/*.{js,ts,jsx,tsx}',
+      './components/**/*.{js,ts,jsx,tsx}',
+    ],
+  },
   theme: {
     fontFamily: {
       serif: ['Inter', 'sans-serif'],
@@ -12,10 +18,23 @@ module.exports = {
         '2xs': '10px',
         tiny: '13px',
       },
+      colors: {
+        black: {
+          900: '#000000',
+          800: '#080808',
+          700: '#101111',
+          600: '#141515',
+          500: '#1B1B1B',
+          400: '#2F2F2F',
+        },
+      },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      backgroundColor: ['dark'],
+      textColor: ['dark'],
+    },
   },
   plugins: [],
 }

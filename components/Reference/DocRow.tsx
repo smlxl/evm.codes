@@ -24,16 +24,16 @@ const docComponents = {
   a: Doc.A,
 }
 
-const colClassName = 'py-1 px-2 border border-gray-400'
+const colClassName = 'py-1 px-2 border border-indigo-200 dark:border-black-400'
 
 const DocRow = ({ opcode }: Props) => {
   return (
-    <div className="text-sm px-4 py-4 bg-yellow-100">
+    <div className="text-sm px-8 py-8 bg-indigo-50 dark:bg-black-600">
       {opcode && (
         <>
           <table className="table-auto mb-4">
             <thead>
-              <tr>
+              <tr className="text-xs">
                 <td className={cn('font-medium', colClassName)}>
                   Appeared in fork
                 </td>

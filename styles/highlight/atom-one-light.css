@@ -1,5 +1,4 @@
 /*
-Source: https://github.com/highlightjs/highlight.js/blob/main/src/styles/atom-one-light.css
 Atom One Light by Daniel Gamage
 Original One Light Syntax theme from https://github.com/atom/one-light-syntax
 base:    #fafafa
@@ -16,77 +15,77 @@ hue-6:   #986801
 hue-6-2: #c18401
 */
 
-.hljs {
+.light .hljs {
   color: #383a42;
   background: #fafafa;
 }
 
-.hljs-comment,
-.hljs-quote {
+.light .hljs-comment,
+.light .hljs-quote {
   color: #a0a1a7;
   font-style: italic;
 }
 
-.hljs-doctag,
-.hljs-keyword,
-.hljs-formula {
+.light .hljs-doctag,
+.light .hljs-keyword,
+.light .hljs-formula {
   color: #a626a4;
 }
 
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
+.light .hljs-section,
+.light .hljs-name,
+.light .hljs-selector-tag,
+.light .hljs-deletion,
+.light .hljs-subst {
   color: #e45649;
 }
 
-.hljs-literal {
+.light .hljs-literal {
   color: #0184bb;
 }
 
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta .hljs-string {
+.light .hljs-string,
+.light .hljs-regexp,
+.light .hljs-addition,
+.light .hljs-attribute,
+.light .hljs-meta .hljs-string {
   color: #50a14f;
 }
 
-.hljs-attr,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-type,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
+.light .hljs-attr,
+.light .hljs-variable,
+.light .hljs-template-variable,
+.light .hljs-type,
+.light .hljs-selector-class,
+.light .hljs-selector-attr,
+.light .hljs-selector-pseudo,
+.light .hljs-number {
   color: #986801;
 }
 
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
+.light .hljs-symbol,
+.light .hljs-bullet,
+.light .hljs-link,
+.light .hljs-meta,
+.light .hljs-selector-id,
+.light .hljs-title {
   color: #4078f2;
 }
 
-.hljs-built_in,
-.hljs-title.class_,
-.hljs-class .hljs-title {
+.light .hljs-built_in,
+.light .hljs-title.class_,
+.light .hljs-class .hljs-title {
   color: #c18401;
 }
 
-.hljs-emphasis {
+.light .hljs-emphasis {
   font-style: italic;
 }
 
-.hljs-strong {
+.light .hljs-strong {
   font-weight: bold;
 }
 
-.hljs-link {
+.light .hljs-link {
   text-decoration: underline;
 }

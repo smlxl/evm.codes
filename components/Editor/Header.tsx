@@ -4,7 +4,7 @@ import { useRegisterActions } from 'kbar'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { Button, Radio } from 'components/ui'
+import { Button, Radio, Label } from 'components/ui'
 
 import { CodeType } from './types'
 
@@ -21,7 +21,7 @@ const EditorHeader = ({
   onRun,
   isRunDisabled,
 }: Props) => {
-  const { selectedChain, selectedFork } = useContext(EthereumContext)
+  const { selectedFork } = useContext(EthereumContext)
 
   const actions = useMemo(
     () => [
@@ -41,12 +41,10 @@ const EditorHeader = ({
   useRegisterActions(actions)
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center w-full">
       <h3 className="font-semibold text-md hidden xl:block">
-        Running on {selectedChain?.name}{' '}
-        <span className="capitalize text-sm text-gray-700 font-medium px-1">
-          {selectedFork}
-        </span>
+        EVM Playground
+        <Label>{selectedFork}</Label>
       </h3>
 
       <div className="flex items-center justify-between w-full xl:w-auto">

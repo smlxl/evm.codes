@@ -7,7 +7,7 @@ const tableData = [
   {
     Header: 'Opcode',
     accessor: 'code',
-    className: 'uppercase pl-2',
+    className: 'uppercase',
   },
   {
     Header: 'Name',
@@ -20,14 +20,24 @@ const tableData = [
   {
     Header: 'Stack Input',
     accessor: 'input',
-    Cell: ({ value }: { value: string }) => <StackBox value={value} />,
+    Cell: ({ value }: { value: string }) => (
+      <StackBox
+        value={value}
+        className="text-xs border-indigo-300 dark:border-indigo-900 text-gray-800 dark:text-gray-200"
+      />
+    ),
     maxWidth: 200,
     className: 'hidden lg:table-cell',
   },
   {
     Header: 'Stack Ouput',
     accessor: 'output',
-    Cell: ({ value }: { value: string }) => <StackBox value={value} />,
+    Cell: ({ value }: { value: string }) => (
+      <StackBox
+        value={value}
+        className="text-xs border-indigo-300 dark:border-indigo-900 text-gray-800 dark:text-gray-200"
+      />
+    ),
     maxWidth: 200,
     className: 'hidden lg:table-cell',
   },
@@ -36,40 +46,6 @@ const tableData = [
     accessor: 'description',
     className: 'hidden md:table-cell',
   },
-  //  FIXME: Use in table filters:
-  // {
-  //   Header: 'Fork',
-  //   accessor: 'fork',
-  //   Cell: ({ value }: { value: string }) => {
-  //     return isEmpty(value) ? (
-  //       ''
-  //     ) : (
-  //       <span
-  //         className={cn(
-  //           'bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap',
-  //           hardforkColor[value],
-  //         )}
-  //       >
-  //         {value}
-  //       </span>
-  //     )
-  //   },
-  // },
-  // {
-  //   Header: 'Group',
-  //   accessor: 'group',
-  //   Cell: ({ value }: { value: string }) => {
-  //     const label = groupLabels[value]
-  //     return isEmpty(label) ? (
-  //       ''
-  //     ) : (
-  //       <span className="bg-gray-200 rounded-full px-4 py-1 text-2xs uppercase font-medium whitespace-nowrap">
-  //         {label}
-  //       </span>
-  //     )
-  //   },
-  //   className: 'hidden lg:table-cell',
-  // },
 ]
 
 export default tableData

@@ -8,7 +8,7 @@ type Props = {
 
 const Console = ({ output }: Props) => {
   return (
-    <div className="px-4 font-mono text-tiny">
+    <div className="px-4 pt-2 leading-5 font-mono text-tiny text-gray-400 dark:text-gray-500">
       {output.map((log, index) => (
         <pre key={toKeyIndex('line', index)}>
           {log.type === 'error' && (

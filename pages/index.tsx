@@ -19,14 +19,12 @@ const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     <>
       <Container>
         <H1>
-          Get a hang of Ethereum Virtual Machine{' '}
-          <span className="font-semibold">Opcodes</span>,{' '}
-          <span className="font-semibold">Gas</span> consumption and contract{' '}
-          <span className="font-semibold">optimization</span>.
+          Deep dive into EVM Opcodes <br />
+          and gas consumption
         </H1>
       </Container>
 
-      <section className="py-10 md:py-20 bg-gray-100">
+      <section className="py-10 md:py-20 bg-gray-50 dark:bg-black-700">
         <Container>
           <ReferenceTable opcodeDocs={opcodeDocs} />
         </Container>

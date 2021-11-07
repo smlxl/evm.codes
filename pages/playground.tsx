@@ -2,13 +2,11 @@ import type { NextPage } from 'next'
 
 import Editor from 'components/Editor'
 import HomeLayout from 'components/layouts/Home'
-import { H1, Container } from 'components/ui'
+import { Container } from 'components/ui'
 
 const PlaygroundPage = () => {
   return (
     <Container>
-      <H1>Playground</H1>
-
       <Editor />
     </Container>
   )

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import cn from 'classnames'
+import ReactTooltip from 'react-tooltip'
 
 type Props = {
   children: React.ReactNode | string
@@ -11,6 +12,8 @@ type Props = {
   outline?: boolean
   padded?: boolean
   size?: 'xs' | 'sm' | 'md'
+  tooltip?: string | undefined
+  tooltipId?: string | undefined
 } & React.ComponentPropsWithoutRef<'button'>
 
 export const Button: React.FC<Props> = ({
@@ -19,31 +22,49 @@ export const Button: React.FC<Props> = ({
   href,
   external,
   disabled,
+  tooltip,
+  tooltipId = undefined,
   transparent = false,
   padded = true,
   outline = false,
   size = 'md',
   ...rest
 }: Props) => {
+  const tooltipIdPrefixed = tooltipId ? ['btn', tooltipId].join('-') : ''
+
   const button = (
     <button
       disabled={disabled}
       className={cn(
         'rounded outline-none inline-block',
         {
-          'bg-gray-500 text-white': !transparent,
+          'bg-indigo-500 hover:bg-indigo-600 text-white':
+            !transparent && !outline,
           'cursor-not-allowed opacity-50': disabled,
           'px-4': padded,
-          'text-tiny py-2 font-medium': size === 'sm',
-          'text-base py-3 font-semibold': size === 'md',
-          'text-xs py-1': size === 'xs',
-          'border border-gray-200': outline,
+          'py-3': padded && size === 'md',
+          'py-2': padded && size === 'sm',
+          'py-1': padded && size === 'xs',
+          'text-tiny font-medium': size === 'sm',
+          'text-sm font-medium': size === 'md',
+          'text-xs': size === 'xs',
+          'border border-gray-200 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white':
+            outline,
         },
         className,
       )}
+      data-tip={tooltip}
+      data-for={tooltipIdPrefixed}
       {...rest}
     >
-      {children}
+      <div className="flex items-center">{children}</div>
+      {tooltip && tooltipId && (
+        <ReactTooltip
+          className="tooltip"
+          id={tooltipIdPrefixed}
+          effect="solid"
+        />
+      )}
     </button>
   )
 

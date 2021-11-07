@@ -22,41 +22,44 @@
 
 .code-editor textarea {
   @apply outline-none;
+}
+
+.light .code-editor textarea {
   caret-color: #000;
 }
 
+.dark .code-editor textarea {
+  caret-color: #fff;
+}
+
 .code-editor .line-number {
-  @apply text-gray-300 absolute left-0 text-right w-8;
+  @apply text-gray-300 dark:text-black-400 absolute left-0 text-right w-8;
 }
 
 /*
  * Scroll bars
  */
-.pane::-webkit-scrollbar {
+.pane::-webkit-scrollbar,
+.select__menu-list::-webkit-scrollbar {
   @apply w-2 h-2;
 }
 
-.pane::-webkit-scrollbar-thumb {
+.pane::-webkit-scrollbar-thumb,
+.select__menu-list::-webkit-scrollbar-thumb {
   @apply rounded bg-clip-padding border-2 border-transparent;
 }
 
-.pane.pane-light::-webkit-scrollbar-thumb {
-  @apply bg-opacity-50 bg-gray-300;
-}
-
-.pane.pane-light::-webkit-scrollbar-thumb:hover {
-  @apply bg-opacity-75;
+.pane.pane-light::-webkit-scrollbar-thumb,
+.select__menu-list::-webkit-scrollbar-thumb {
+  @apply bg-opacity-50 bg-gray-200 hover:bg-gray-300 dark:bg-black-500 dark:hover:bg-black-400 hover:bg-opacity-75;
 }
 
 .pane.pane-dark::-webkit-scrollbar-thumb {
-  @apply bg-opacity-50 bg-gray-600;
+  @apply bg-opacity-50 bg-gray-700 hover:bg-gray-600 dark:bg-black-600 dark:hover:bg-black-500 hover:bg-opacity-75;
 }
 
-.pane.pane-dark::-webkit-scrollbar-thumb:hover {
-  @apply bg-opacity-75;
-}
-
-.pane::-webkit-scrollbar-track {
+.pane::-webkit-scrollbar-track,
+.select__menu-list::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
 
@@ -64,28 +67,70 @@
  * Tooltips
  */
 .tooltip {
-  @apply bg-gray-900 text-xs rounded z-30 border-0 pt-2 px-4 !important;
-  padding-bottom: 5px !important;
+  @apply bg-gray-800 dark:bg-black-500 shadow-md opacity-100 text-xs text-white font-normal rounded z-30 py-2 px-4 !important;
 }
 
+.tooltip.place-top::after {
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top-style: solid;
+  border-top-width: 6px;
+  @apply left-1/2 opacity-100 -ml-2 -bottom-1.5 !important;
+}
+
+.light .tooltip.place-top::after {
+  border-top-color: #1F2937;
+}
+
+.dark .tooltip.place-top::after {
+  border-top-color: #1B1B1B;
+}
 
 /*
- * Hamburger menu
+ * React Select
  */
-.hamburger .bar {
-  width: 20px;
-  height: 2px;
-  @apply my-1 mx-auto block bg-gray-900 transition-transform;
+.select__control {
+  min-height: 32 !important;
+  @apply shadow-none bg-transparent border-transparent h-8 text-sm capitalize !important;
 }
 
-.hamburger.active .bar:nth-child(2) {
-  @apply opacity-0;
+.select__value-container {
+  @apply cursor-pointer p-0 pr-1 !important;
 }
 
-.hamburger.active .bar:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
+.select__single-value {
+  @apply p-0 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white !important;
 }
 
-.hamburger.active .bar:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
+.select__dropdown-indicator {
+  @apply text-gray-200 dark:text-gray-700 p-0 pr-1 !important;
+}
+
+.select__control--is-focused .select__dropdown-indicator {
+  @apply text-gray-600 dark:text-gray-400 !important;
+}
+
+.select__indicator-separator {
+  @apply hidden !important;
+}
+
+.select__menu {
+  min-width: 160px !important;
+  @apply rounded border bg-white border-gray-200 dark:bg-black-600 dark:border-black-700 shadow !important;
+}
+
+.select__menu-list {
+  @apply bg-white dark:bg-black-600 rounded !important;
+}
+
+.select__option {
+  @apply text-sm capitalize py-2 px-3 font-normal text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer hover:bg-gray-50 dark:hover:bg-black-600 !important;
+}
+
+.select__option--is-selected {
+  @apply bg-gray-100 dark:bg-black-500 !important;
+}
+
+.select__option--is-focused {
+  @apply bg-gray-50 dark:bg-black-600 !important;
 }

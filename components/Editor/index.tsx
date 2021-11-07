@@ -187,10 +187,10 @@ const Editor = ({ readOnly = false }: Props) => {
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
 
   return (
-    <div className="bg-gray-200 rounded-lg">
+    <div className="bg-gray-100 dark:bg-black-700 rounded-lg">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/2">
-          <div className="border-gray-300 px-6 h-8 my-3 md:border-r">
+          <div className="border-b border-gray-200 dark:border-black-500 flex items-center px-6 h-14 md:border-r">
             <Header
               isBytecode={isBytecode}
               isRunDisabled={isRunDisabled}
@@ -200,7 +200,7 @@ const Editor = ({ readOnly = false }: Props) => {
           </div>
 
           <div
-            className="relative pane pane-light overflow-auto md:border-r bg-gray-100 border-gray-200"
+            className="relative pane pane-light overflow-auto md:border-r bg-gray-50 dark:bg-black-600 border-gray-200 dark:border-black-500"
             style={{ height: editorHeight }}
           >
             <SCEditor
@@ -219,12 +219,12 @@ const Editor = ({ readOnly = false }: Props) => {
         </div>
 
         <div className="w-full md:w-1/2">
-          <div className="flex items-center pl-4 pr-6 my-3 h-8">
+          <div className="border-t md:border-t-0 border-b border-gray-200 dark:border-black-500 flex items-center pl-4 pr-6 h-14">
             <ExecutionStatus />
           </div>
 
           <div
-            className="pane pane-light overflow-auto bg-gray-100"
+            className="pane pane-light overflow-auto bg-gray-50 dark:bg-black-600"
             style={{ height: editorHeight }}
             ref={instructionsRef}
           >
@@ -236,7 +236,7 @@ const Editor = ({ readOnly = false }: Props) => {
       <div className="flex flex-col md:flex-row-reverse">
         <div className="w-full md:w-1/2">
           <div
-            className="pane pane-dark overflow-auto bg-gray-700 text-white px-4 py-3"
+            className="pane pane-dark overflow-auto border-t border-black-900 border-opacity-25 bg-gray-800 dark:bg-black-700 text-white px-4 py-3"
             style={{ height: consoleHeight }}
           >
             <ExecutionState />
@@ -244,7 +244,7 @@ const Editor = ({ readOnly = false }: Props) => {
         </div>
         <div className="w-full md:w-1/2">
           <div
-            className="pane pane-dark overflow-auto bg-gray-700 text-white border-t border-gray-800 border-opacity-25 md:border-r"
+            className="pane pane-dark overflow-auto bg-gray-800 dark:bg-black-700 text-white border-t border-black-900 border-opacity-25 md:border-r"
             style={{ height: consoleHeight }}
           >
             <Console output={output} />
@@ -252,11 +252,8 @@ const Editor = ({ readOnly = false }: Props) => {
         </div>
       </div>
 
-      <div className="rounded-b-lg py-2 px-4 border-t bg-gray-700 border-gray-800 border-opacity-25 text-gray-400 text-xs text-right">
-        {
-          // TODO: Add editor prefs
-        }
-        Here will be editor prefs: Tab size, LOC, theme, etc.
+      <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900 border-opacity-25 text-gray-400 dark:text-gray-600 text-xs">
+        Solidity Compiler {compilerVersion}
       </div>
     </div>
   )

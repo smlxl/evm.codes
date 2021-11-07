@@ -37,14 +37,14 @@ const ExecutionStatus = () => {
   useRegisterActions(actions)
 
   return (
-    <div className="flex flex-grow justify-between items-center">
+    <div className="flex flex-grow justify-between items-center text-sm">
       <dl>
-        <dd className="inline-block mr-2 text-gray-400">
-          <Icon name="gas-station-fill" />
+        <dd className="inline-block ml-1 mr-2 text-gray-400">
+          <Icon name="gas-station-fill" className="text-indigo-500" />
         </dd>
-        <dd className="inline-block mr-1 text-gray-400 text-sm">Current:</dd>
+        <dd className="inline-block mr-1 text-gray-500 text-sm">Current:</dd>
         <dt className="inline-block mr-4">{executionState.currentGas}</dt>
-        <dd className="inline-block mr-1 text-gray-400 text-sm">Total:</dd>
+        <dd className="inline-block mr-1 text-gray-500 text-sm">Total:</dd>
         <dt className="inline-block mr-4">{executionState.totalGas}</dt>
       </dl>
 
@@ -55,8 +55,10 @@ const ExecutionStatus = () => {
           onClick={nextExecution}
           padded={false}
           className="mr-4"
+          tooltip="Step into"
+          tooltipId="step"
         >
-          <Icon name="arrow-go-forward-line" />
+          <Icon name="arrow-go-forward-line" className="text-indigo-500" />
         </Button>
 
         <Button
@@ -64,8 +66,10 @@ const ExecutionStatus = () => {
           disabled={!isExecuting}
           onClick={continueExecution}
           padded={false}
+          tooltip="Continue execution"
+          tooltipId="continue"
         >
-          <Icon name="play-circle-line" />
+          <Icon name="play-circle-line" className="text-indigo-500" />
         </Button>
       </div>
     </div>

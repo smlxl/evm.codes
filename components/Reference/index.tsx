@@ -53,25 +53,43 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
       <Header />
 
       <table {...getTableProps()} className="w-full table-auto">
-        <thead className="text-sm">
+        <thead>
           {headerGroups.map((headerGroup) => (
             <>
-              <tr key="header-links" className="hidden md:table-row">
-                <th
-                  className="sticky text-right z-20 pr-4"
-                  colSpan={visibleColumns.length}
-                  style={{ top: 46 }}
-                >
+              <tr
+                key={headerGroup.getHeaderGroupProps().key}
+                className="sticky border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
+                style={{
+                  top: 54,
+                }}
+              >
+                {headerGroup.headers.map((column: CustomHeaderGroup) => (
+                  <th
+                    key={column.getHeaderProps().key}
+                    className={cn(
+                      'bg-gray-50 dark:bg-black-700 py-3 pr-6 font-medium',
+                      column.className,
+                    )}
+                    style={{
+                      maxWidth: column.maxWidth || 'auto',
+                      minWidth: column.minWidth || 'auto',
+                    }}
+                  >
+                    {column.render('Header')}
+                  </th>
+                ))}
+                <th className="bg-gray-50 dark:bg-black-700 py-3 text-right">
                   <Button
                     onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
                     padded={false}
                     transparent
-                    className="text-gray-800"
+                    className="text-gray-800 dark:text-gray-200"
                   >
                     <span className="text-sm font-normal">
                       {isAllRowsExpanded ? 'Collapse' : 'Expand'}
                     </span>
                     <Icon
+                      className="text-indigo-500"
                       name={
                         isAllRowsExpanded
                           ? 'arrow-up-s-line'
@@ -81,32 +99,11 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                   </Button>
                 </th>
               </tr>
-              <tr
-                key={headerGroup.getHeaderGroupProps().key}
-                className="border-b"
-              >
-                {headerGroup.headers.map((column: CustomHeaderGroup) => (
-                  <th
-                    key={column.getHeaderProps().key}
-                    className={cn(
-                      'sticky bg-gray-200 bg-opacity-95 uppercase text-xs font-semibold text-left py-2 pr-6',
-                      column.className,
-                    )}
-                    style={{
-                      maxWidth: column.maxWidth || 'auto',
-                      minWidth: column.minWidth || 'auto',
-                      top: 56,
-                    }}
-                  >
-                    {column.render('Header')}
-                  </th>
-                ))}
-              </tr>
             </>
           ))}
         </thead>
 
-        <tbody {...getTableBodyProps()} className="text-xs">
+        <tbody {...getTableBodyProps()} className="text-sm">
           {rows.map((row) => {
             prepareRow(row)
 
@@ -118,9 +115,10 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
               <Fragment key={row.getRowProps().key}>
                 <tr
                   id={opcode.toUpperCase()}
-                  className={cn('border-b cursor-pointer', {
-                    ' border-gray-200 hover:bg-gray-200': !isExpanded,
-                    'border-yellow-300 bg-yellow-200 hover:bg-yellow-300':
+                  className={cn('border-t cursor-pointer', {
+                    'border-gray-200 dark:border-black-500 hover:bg-gray-100 dark:hover:bg-black-600':
+                      !isExpanded,
+                    'border-b border-indigo-100 dark:border-black-500':
                       isExpanded,
                   })}
                   // @ts-ignore: Waiting for 8.x of react-table to have better types
@@ -140,11 +138,12 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       {cell.render('Cell')}
                     </td>
                   ))}
+                  <td></td>
                 </tr>
 
                 {isExpanded ? (
-                  <tr>
-                    <td colSpan={visibleColumns.length}>
+                  <tr className="bg-indigo-50 dark:bg-black-600">
+                    <td colSpan={visibleColumns.length + 1}>
                       <DocRow opcode={opcodeDocs[opcode]} />
                     </td>
                   </tr>

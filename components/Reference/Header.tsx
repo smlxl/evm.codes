@@ -2,22 +2,16 @@ import { useContext } from 'react'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { H2 } from 'components/ui'
+import { H2, Label } from 'components/ui'
 
 const ReferenceHeader = () => {
-  const { selectedChain, selectedFork } = useContext(EthereumContext)
+  const { selectedFork } = useContext(EthereumContext)
 
   return (
-    <div className="pb-6 md:pb-0">
-      <H2>Instructions reference</H2>
-
-      <h3 className="font-medium text-md">
-        {selectedChain?.name}{' '}
-        <span className="capitalize text-sm text-gray-700 font-medium px-1">
-          {selectedFork}
-        </span>
-      </h3>
-    </div>
+    <H2 className="pb-6 md:pb-4">
+      Instructions Reference
+      <Label>{selectedFork}</Label>
+    </H2>
   )
 }
 

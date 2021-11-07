@@ -1,9 +1,16 @@
 import React from 'react'
 
+import cn from 'classnames'
+
 type Props = {
   children: React.ReactNode
+  className?: string
 }
 
-export const Container: React.FC<Props> = ({ children }) => {
-  return <div className="container mx-auto px-6 xl:px-0">{children}</div>
+export const Container: React.FC<Props> = ({ children, className }) => {
+  return (
+    <div className={cn('container mx-auto px-6 xl:px-0', className)}>
+      {children}
+    </div>
+  )
 }

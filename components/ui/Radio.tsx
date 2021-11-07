@@ -14,13 +14,13 @@ export const Radio: React.FC<Props> = ({
   isChecked,
 }) => {
   return (
-    <label className="mr-3">
+    <label className="mr-3 text-sm">
       <input
         type="radio"
         value={value}
         checked={isChecked}
         onChange={onChange}
-        className="mr-1"
+        className="mr-2"
       />
       {text}
     </label>

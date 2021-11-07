@@ -23,7 +23,9 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
 
   return (
     <>
-      <dt className="mb-1 text-gray-400 font-medium uppercase">{label}</dt>
+      <dt className="mb-1 text-gray-500 dark:text-gray-700 font-medium uppercase">
+        {label}
+      </dt>
       <dd className="font-mono mb-2">
         {values.map((value: string, index: number) => (
           <StackBox
@@ -31,7 +33,9 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
             isFullWidth
             showEmpty
             value={value ? value.toString() : ''}
-            className={cn('break-all border-gray-600')}
+            className={cn(
+              'break-all text-tiny border-gray-600 dark:border-gray-700 text-gray-300 dark:text-gray-400',
+            )}
           />
         ))}
       </dd>
@@ -49,10 +53,12 @@ const ExecutionState = () => {
         <ExecutionStateRow label="Memory" value={memory} />
         <ExecutionStateRow label="Stack" value={stack} />
 
-        <dt className="mb-1 text-gray-400 font-medium uppercase">Storage</dt>
+        <dt className="mb-1 text-gray-500 dark:text-gray-700 font-medium uppercase">
+          Storage
+        </dt>
         <dd>
           <div
-            className="inline-block border border-gray-600 px-2 py-1 mb-1 w-full"
+            className="inline-block border border-gray-600 dark:border-gray-700 px-2 py-1 mb-1 w-full"
             style={{ minHeight: 26 }}
           >
             <dl>

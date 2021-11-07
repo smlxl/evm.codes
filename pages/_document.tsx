@@ -12,7 +12,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           ></link>
         </Head>
-        <body>
+        <body className="dark:bg-black-800 dark:text-gray-200">
           <div id="remix">
             <Remix />
           </div>

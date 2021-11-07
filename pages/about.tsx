@@ -5,7 +5,7 @@ import { Container, H1, H2, H3 } from 'components/ui'
 
 const AboutPage = () => {
   return (
-    <Container>
+    <Container className="text-sm">
       <H1>About EVM</H1>
 
       <H2 className="mb-6">Introduction</H2>

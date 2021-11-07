@@ -25,7 +25,7 @@ export const StackBox: React.FC<Props> = ({
         <div
           key={index}
           className={cn(
-            'font-mono text-xs inline-block border border-gray-300 px-2 py-1 mb-1',
+            'font-mono inline-block border px-2 py-1 mb-1 rounded-sm',
             { 'w-full': isFullWidth, 'mr-1': !isFullWidth },
             className,
           )}

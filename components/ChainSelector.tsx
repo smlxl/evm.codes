@@ -9,7 +9,6 @@ import { SettingsContext, Setting } from 'context/settingsContext'
 import { toKeyIndex } from 'util/string'
 
 import { Icon } from 'components/ui'
-import { baseSelectStyles } from 'components/ui/reactSelectStyles'
 
 const ChainSelector = () => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
@@ -84,18 +83,15 @@ const ChainSelector = () => {
   return (
     <div className="flex justify-end items-center rounded">
       {forks.length > 0 && (
-        <div className="flex items-center">
-          <Icon name="git-branch-line" className="text-gray-400 mr-2" />
+        <div className="flex items-center mr-4">
+          <Icon name="git-branch-line" className="text-indigo-500 mr-2" />
 
           <Select
             onChange={handleForkChange}
             options={forkOptions}
             value={forkValue}
-            className="capitalize text-sm font-medium"
-            // @ts-ignore: React-select does not have types for all styles
-            styles={baseSelectStyles}
-            menuWidth={160}
             isSearchable={false}
+            classNamePrefix="select"
           />
         </div>
       )}

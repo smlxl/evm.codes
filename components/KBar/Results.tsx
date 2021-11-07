@@ -23,7 +23,7 @@ const Results = () => {
       items={flattened.filter((i: string) => i !== NO_GROUP)}
       onRender={({ item, active }) =>
         typeof item === 'string' ? (
-          <div className="px-4 py-2 text-2xs uppercase opacity-50 bg-white">
+          <div className="px-4 py-2 text-2xs uppercase text-gray-400 dark:text-gray-600 bg-white dark:bg-black-600">
             {item}
           </div>
         ) : (

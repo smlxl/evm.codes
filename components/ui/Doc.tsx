@@ -19,15 +19,15 @@ export const H1: React.FC<Props> = ({ children }) => (
 )
 
 export const H2: React.FC<Props> = ({ children }) => (
-  <h2 className="text-base font-semibold my-3">{children}</h2>
+  <h2 className="text-base font-semibold my-4">{children}</h2>
 )
 
 export const H3: React.FC<Props> = ({ children }) => (
-  <h2 className="text-base font-medium my-2">{children}</h2>
+  <h2 className="text-sm font-medium my-3">{children}</h2>
 )
 
 export const P: React.FC<Props> = ({ children }) => (
-  <p className="leading-5 mb-3">{children}</p>
+  <p className="leading-5 mb-4">{children}</p>
 )
 
 export const UL: React.FC<Props> = ({ children }) => (
@@ -35,7 +35,7 @@ export const UL: React.FC<Props> = ({ children }) => (
 )
 
 export const OL: React.FC<Props> = ({ children }) => (
-  <ol className="list-decimal mb-2">{children}</ol>
+  <ol className="list-decimal mb-4">{children}</ol>
 )
 
 export const LI: React.FC<Props> = ({ children }) => (
@@ -43,16 +43,19 @@ export const LI: React.FC<Props> = ({ children }) => (
 )
 
 export const Table: React.FC<Props> = ({ children }) => (
-  <table className="table-auto">{children}</table>
+  <table className="table-auto mb-4">{children}</table>
 )
 
 export const TH: React.FC<Props> = ({ children }) => {
   console.log({ children })
   return (
     <th
-      className={cn('py-1 px-2 border-gray-400 text-xs font-semibold', {
-        border: children !== EMPTY_MARK,
-      })}
+      className={cn(
+        'py-1 px-2 border-indigo-200 dark:border-black-400 text-gray-800 dark:text-gray-400 text-xs font-medium break-all',
+        {
+          border: children !== EMPTY_MARK,
+        },
+      )}
     >
       {children !== EMPTY_MARK && children}
     </th>
@@ -61,9 +64,12 @@ export const TH: React.FC<Props> = ({ children }) => {
 
 export const TD: React.FC<Props> = ({ children }) => (
   <td
-    className={cn('py-1 px-2 border-gray-400 text-xs font-normal', {
-      border: children !== EMPTY_MARK,
-    })}
+    className={cn(
+      'py-1 px-2 border-indigo-200 dark:border-black-400 text-xs font-normal break-all',
+      {
+        border: children !== EMPTY_MARK,
+      },
+    )}
   >
     {children !== EMPTY_MARK && children}
   </td>

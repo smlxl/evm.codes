@@ -19,7 +19,7 @@ const NavLink: React.FC<Props> = ({
   return (
     <li
       className={cn(
-        'inline-block mx-4 uppercase font-semibold text-tiny my-2 md:my-0',
+        'inline-block mx-4 text-sm my-2 md:my-0 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
         className,
       )}
     >

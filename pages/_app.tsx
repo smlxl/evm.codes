@@ -3,6 +3,7 @@ import { ReactElement, ReactNode } from 'react'
 import { KBarProvider } from 'kbar'
 import useActions from 'lib/useActions'
 import type { NextPage } from 'next'
+import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 
 import { EthereumProvider } from 'context/ethereumContext'
@@ -12,6 +13,7 @@ import KBar from 'components/KBar'
 
 import '../styles/globals.css'
 import '../styles/highlight/atom-one-light.css'
+import '../styles/highlight/atom-one-dark.css'
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -28,14 +30,16 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <SettingsProvider>
-      <EthereumProvider>
-        <KBarProvider actions={actions}>
-          {getLayout(<Component {...pageProps} />)}
-          <KBar />
-        </KBarProvider>
-      </EthereumProvider>
-    </SettingsProvider>
+    <ThemeProvider attribute="class">
+      <SettingsProvider>
+        <EthereumProvider>
+          <KBarProvider actions={actions}>
+            {getLayout(<Component {...pageProps} />)}
+            <KBar />
+          </KBarProvider>
+        </EthereumProvider>
+      </SettingsProvider>
+    </ThemeProvider>
   )
 }
 

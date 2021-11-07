@@ -40,10 +40,13 @@ const EditorInstructionRow = forwardRef(
       <tr
         onMouseEnter={() => setIsBreakpointVisible(true)}
         onMouseLeave={() => !hasBreakpoint && setIsBreakpointVisible(false)}
-        className={cn('relative border-b border-gray-200', {
-          'text-gray-900': isActive,
-          'text-gray-400': !isActive,
-        })}
+        className={cn(
+          'relative border-b border-gray-200 dark:border-black-500',
+          {
+            'text-gray-900 dark:text-gray-200': isActive,
+            'text-gray-400 dark:text-gray-700': !isActive,
+          },
+        )}
         ref={ref}
       >
         <td className="py-1 pl-6 pr-6">
