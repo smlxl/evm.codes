@@ -21,7 +21,11 @@ export const H1: React.FC<Props> = ({ children, className }) => {
 }
 
 export const H2: React.FC<Props> = ({ children, className }) => {
-  return <h2 className={cn('font-medium text-xl', className)}>{children}</h2>
+  return (
+    <h2 className={cn('font-medium text-lg md:text-xl', className)}>
+      {children}
+    </h2>
+  )
 }
 
 export const H3: React.FC<Props> = ({ children, className }) => {

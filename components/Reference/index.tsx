@@ -78,7 +78,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                     {column.render('Header')}
                   </th>
                 ))}
-                <th className="bg-gray-50 dark:bg-black-700 py-3 text-right">
+                <th className="bg-gray-50 dark:bg-black-700 py-3 text-right hidden md:table-cell">
                   <Button
                     onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
                     padded={false}
@@ -138,7 +138,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       {cell.render('Cell')}
                     </td>
                   ))}
-                  <td></td>
+                  <td className="hidden md:table-cell"></td>
                 </tr>
 
                 {isExpanded ? (
