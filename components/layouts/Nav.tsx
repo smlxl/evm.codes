@@ -16,7 +16,7 @@ const Nav = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
 
   return (
-    <nav className="fixed z-50 top-0 inset-x-0 py-2 bg-white dark:bg-black-800">
+    <nav className="fixed z-40 top-0 inset-x-0 py-2 bg-white dark:bg-black-800">
       <Container>
         <div className="h-10 flex items-center justify-between">
           <Link href="/" passHref>

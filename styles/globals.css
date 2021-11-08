@@ -71,7 +71,7 @@ html {
  * Tooltips
  */
 .tooltip {
-  @apply bg-gray-800 dark:bg-black-500 shadow-md opacity-100 text-xs text-white font-normal rounded z-30 py-2 px-4 !important;
+  @apply bg-gray-800 dark:bg-black-500 shadow-md opacity-100 text-xs text-white font-normal rounded z-50 py-2 px-4 !important;
 }
 
 .tooltip.place-top::after {
