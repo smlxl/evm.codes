@@ -1,4 +1,3 @@
-import cn from 'classnames'
 import { MDXRemote } from 'next-mdx-remote'
 import { IOpcodeDoc } from 'types'
 
@@ -24,26 +23,22 @@ const docComponents = {
   a: Doc.A,
 }
 
-const colClassName = 'py-1 px-2 border border-indigo-200 dark:border-black-400'
-
 const DocRow = ({ opcode }: Props) => {
   return (
     <div className="text-sm px-8 py-8 bg-indigo-50 dark:bg-black-600">
       {opcode && (
         <>
-          <table className="table-auto mb-4">
+          <table className="table-auto mb-6 bg-indigo-100 dark:bg-black-500 rounded font-medium">
             <thead>
-              <tr className="text-xs">
-                <td className={cn('font-medium', colClassName)}>
-                  Appeared in fork
-                </td>
-                <td className={cn('font-medium', colClassName)}>Group</td>
+              <tr className="text-gray-500 uppercase text-xs">
+                <td className="pt-2 px-4">Fork</td>
+                <td className="pt-2 px-4">Group</td>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className={colClassName}>{opcode.meta.fork}</td>
-                <td className={colClassName}>{opcode.meta.group}</td>
+                <td className="pb-2 px-4">{opcode.meta.fork}</td>
+                <td className="pb-2 px-4">{opcode.meta.group}</td>
               </tr>
             </tbody>
           </table>
