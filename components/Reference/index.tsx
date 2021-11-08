@@ -48,6 +48,8 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     [router.asPath],
   )
 
+  if (opcodes.length === 0) return null
+
   return (
     <>
       <Header />
