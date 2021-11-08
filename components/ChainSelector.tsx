@@ -83,7 +83,7 @@ const ChainSelector = () => {
   return (
     <div className="flex justify-end items-center rounded">
       {forks.length > 0 && (
-        <div className="flex items-center mr-4">
+        <div className="flex items-center mr-2">
           <Icon name="git-branch-line" className="text-indigo-500 mr-2" />
 
           <Select
@@ -92,6 +92,7 @@ const ChainSelector = () => {
             value={forkValue}
             isSearchable={false}
             classNamePrefix="select"
+            menuPlacement="auto"
           />
         </div>
       )}

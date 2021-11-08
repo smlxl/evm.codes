@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 /*
  * Code editor
  */
@@ -115,7 +119,7 @@
 }
 
 .select__menu {
-  min-width: 160px !important;
+  min-width: 150px !important;
   @apply rounded border bg-white border-gray-200 dark:bg-black-600 dark:border-black-700 shadow !important;
 }
 

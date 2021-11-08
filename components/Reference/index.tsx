@@ -123,6 +123,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                   })}
                   // @ts-ignore: Waiting for 8.x of react-table to have better types
                   onClick={() => row.toggleRowExpanded()}
+                  style={{ scrollMarginTop: '96px' }}
                 >
                   {row.cells.map((cell) => (
                     <td

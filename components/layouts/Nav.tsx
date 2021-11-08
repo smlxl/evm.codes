@@ -43,12 +43,12 @@ const Nav = () => {
               GitHub
             </NavLink>
 
-            <li className="hidden md:inline-block">
+            <li className="hidden lg:inline-block">
               <KBarButton />
             </li>
           </ul>
 
-          <div className="items-center ml-auto hidden lg:flex">
+          <div className="items-center ml-auto flex">
             <ChainSelector />
             <ThemeSelector />
           </div>

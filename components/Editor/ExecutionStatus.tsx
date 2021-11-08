@@ -38,15 +38,23 @@ const ExecutionStatus = () => {
 
   return (
     <div className="flex flex-grow justify-between items-center text-sm">
-      <dl>
-        <dd className="inline-block ml-1 mr-2 text-gray-400">
+      <div>
+        <span className="inline-block ml-1 mr-2 text-gray-400">
           <Icon name="gas-station-fill" className="text-indigo-500" />
-        </dd>
-        <dd className="inline-block mr-1 text-gray-500 text-sm">Current:</dd>
-        <dt className="inline-block mr-4">{executionState.currentGas}</dt>
-        <dd className="inline-block mr-1 text-gray-500 text-sm">Total:</dd>
-        <dt className="inline-block mr-4">{executionState.totalGas}</dt>
-      </dl>
+        </span>
+        <span className="inline-block mr-1 text-gray-500 text-sm select-none">
+          Current:
+        </span>
+        <span className="inline-block mr-4 select-all">
+          {executionState.currentGas}
+        </span>
+        <span className="inline-block mr-1 text-gray-500 text-sm select-none">
+          Total:
+        </span>
+        <span className="inline-block mr-4 select-all">
+          {executionState.totalGas}
+        </span>
+      </div>
 
       <div>
         <Button
