@@ -344,7 +344,7 @@
   },
   "31": {
     "input": "address",
-    "output": "If address exists: [ balance...\nelse: [ 0",
+    "output": "balance",
     "description": "Get balance of the given account",
     "note": "Unit is wei",
     "group": "Environmental Information"
@@ -505,10 +505,10 @@
   },
   "48": {
     "input": "",
-    "output": "",
-    "description": "",
-    "note": "",
-    "group": ""
+    "output": "baseFee",
+    "description": "Get the base fee",
+    "note": "Unit is wei",
+    "group": "Block Information"
   },
   "49": {
     "input": "",
