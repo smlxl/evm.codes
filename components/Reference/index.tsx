@@ -1,4 +1,11 @@
-import { useContext, useMemo, useCallback, Fragment } from 'react'
+import {
+  useContext,
+  useMemo,
+  useRef,
+  Fragment,
+  useEffect,
+  useState,
+} from 'react'
 
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -22,6 +29,8 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   const { opcodes } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => tableData, [])
+  const rowRefs = useRef<HTMLTableRowElement[]>([])
+  const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
 
   // FIXME: See: https://github.com/tannerlinsley/react-table/issues/3064
   // @ts-ignore: Waiting for 8.x of react-table to have better types
@@ -40,13 +49,24 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     isAllRowsExpanded,
   } = table
 
-  const isRowFocused = useCallback(
-    (opcode: string) => {
-      const re = new RegExp(`/#${opcode}`, 'gi')
-      return router.asPath.match(re)
-    },
-    [router.asPath],
-  )
+  // Focus and expand anchored opcode
+  useEffect(() => {
+    if (opcodes && rowRefs?.current) {
+      const idx = opcodes.findIndex((opcode) => {
+        const re = new RegExp(`/#${opcode.code}`, 'gi')
+        return router.asPath.match(re)
+      })
+
+      if (idx) {
+        setFocusedOpcode(idx)
+        setTimeout(() => {
+          if (rowRefs.current[idx]) {
+            rowRefs.current[idx].scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 300)
+      }
+    }
+  }, [opcodes, router.asPath])
 
   if (opcodes.length === 0) return null
 
@@ -111,18 +131,20 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
             const opcode = row.values.code
             // @ts-ignore: Waiting for 8.x of react-table to have better types
-            const isExpanded = row.isExpanded || isRowFocused(opcode)
+            const isExpanded = row.isExpanded || focusedOpcode === row.id
 
             return (
               <Fragment key={row.getRowProps().key}>
                 <tr
-                  id={opcode.toUpperCase()}
                   className={cn('border-t cursor-pointer', {
                     'border-gray-200 dark:border-black-500 hover:bg-gray-100 dark:hover:bg-black-600':
                       !isExpanded,
                     'border-b border-indigo-100 dark:border-black-500':
                       isExpanded,
                   })}
+                  ref={(el) => {
+                    if (el) rowRefs.current[row.index] = el
+                  }}
                   // @ts-ignore: Waiting for 8.x of react-table to have better types
                   onClick={() => row.toggleRowExpanded()}
                   style={{ scrollMarginTop: '96px' }}
@@ -147,7 +169,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={visibleColumns.length + 1}>
-                      <DocRow opcode={opcodeDocs[opcode]} />
+                      <DocRow opcode={opcodeDocs[opcode.toUpperCase()]} />
                     </td>
                   </tr>
                 ) : null}

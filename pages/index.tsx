@@ -19,8 +19,8 @@ const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     <>
       <Container>
         <H1>
-          Deep dive into EVM Opcodes <br />
-          and gas consumption
+          An interactive reference to <br />
+          Ethereum Virtual Machine Opcodes
         </H1>
       </Container>
 
