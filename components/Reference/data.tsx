@@ -1,6 +1,3 @@
-// import { hardforkColor } from 'util/opcodes'
-// import { isEmpty } from 'util/string'
-
 import { StackBox } from 'components/ui'
 
 const tableData = [

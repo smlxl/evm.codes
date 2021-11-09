@@ -9,8 +9,6 @@ export interface IOpcode {
   input: string
   output: string
   description: string
-  note: string
-  group: string
   fee: number
 }
 
@@ -18,8 +16,6 @@ export interface IOpcodeMeta {
   input: string
   output: string
   description: string
-  note: string
-  group: string
 }
 
 export interface IOpcodeMetaList {
