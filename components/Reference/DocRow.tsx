@@ -25,7 +25,7 @@ const docComponents = {
 
 const DocRow = ({ opcode }: Props) => {
   return (
-    <div className="text-sm px-8 py-8 bg-indigo-50 dark:bg-black-600">
+    <div className="text-sm px-4 md:px-8 py-8 bg-indigo-50 dark:bg-black-600">
       {opcode && (
         <>
           <table className="table-auto mb-6 bg-indigo-100 dark:bg-black-500 rounded font-medium">

@@ -9,6 +9,8 @@ type Props = {
 
 export const Container: React.FC<Props> = ({ children, className }) => {
   return (
-    <div className={cn('container mx-auto px-6', className)}>{children}</div>
+    <div className={cn('container mx-auto px-4 md:px-6', className)}>
+      {children}
+    </div>
   )
 }
