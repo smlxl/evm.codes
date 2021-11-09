@@ -246,15 +246,8 @@
   },
   "31": {
     "input": "address",
-<<<<<<< Updated upstream
     "output": "balance",
-    "description": "Get balance of the given account",
-    "note": "Unit is wei",
-    "group": "Environmental Information"
-=======
-    "output": "If address exists: [ balance...\nelse: [ 0",
     "description": "Get balance of the given account"
->>>>>>> Stashed changes
   },
   "32": {
     "input": "",
