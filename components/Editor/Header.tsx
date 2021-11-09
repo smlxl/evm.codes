@@ -1,4 +1,4 @@
-import { useContext, useMemo, ChangeEvent } from 'react'
+import { useContext, ChangeEvent } from 'react'
 
 import { useRegisterActions } from 'kbar'
 
@@ -23,22 +23,19 @@ const EditorHeader = ({
 }: Props) => {
   const { selectedFork } = useContext(EthereumContext)
 
-  const actions = useMemo(
-    () => [
-      {
-        id: 'run',
-        name: 'Run',
-        shortcut: ['r'],
-        keywords: 'execution run',
-        section: 'Execution',
-        perform: onRun,
-        subtitle: 'Start execution',
-      },
-    ],
-    [onRun],
-  )
+  const actions = [
+    {
+      id: 'run',
+      name: 'Run',
+      shortcut: ['r'],
+      keywords: 'execution run',
+      section: 'Execution',
+      perform: onRun,
+      subtitle: 'Start execution',
+    },
+  ]
 
-  useRegisterActions(actions)
+  useRegisterActions(actions, [onRun])
 
   return (
     <div className="flex justify-between items-center w-full">
