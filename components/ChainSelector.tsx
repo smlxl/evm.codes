@@ -1,14 +1,27 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
 import { useRegisterActions, Action } from 'kbar'
-import Select, { OnChangeValue } from 'react-select'
+import Select, { OnChangeValue, components } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
+import { CURRENT_FORK } from 'util/constants'
 import { toKeyIndex } from 'util/string'
 
-import { Icon } from 'components/ui'
+import { Icon, Label } from 'components/ui'
+
+const ChainOption = (props: any) => {
+  const { data, children } = props
+  const isCurrent = data.value === CURRENT_FORK
+
+  return (
+    <components.Option {...props}>
+      {children}
+      {isCurrent && <Label>Live</Label>}
+    </components.Option>
+  )
+}
 
 const ChainSelector = () => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
@@ -93,6 +106,7 @@ const ChainSelector = () => {
             isSearchable={false}
             classNamePrefix="select"
             menuPlacement="auto"
+            components={{ Option: ChainOption }}
           />
         </div>
       )}

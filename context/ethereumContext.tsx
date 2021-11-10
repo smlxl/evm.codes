@@ -363,8 +363,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       }),
     )
 
-    common.hardforks().forEach(({ name }) => {
-      forks.push(name)
+    common.hardforks().forEach(({ name, block }) => {
+      // ignore null block forks
+      if (block) {
+        forks.push(name)
+      }
     })
     setForks(forks)
 
