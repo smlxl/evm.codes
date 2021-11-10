@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 
 import { useRegisterActions } from 'kbar'
 
@@ -10,31 +10,28 @@ const ExecutionStatus = () => {
   const { isExecuting, executionState, nextExecution, continueExecution } =
     useContext(EthereumContext)
 
-  const actions = useMemo(
-    () => [
-      {
-        id: 'step',
-        name: 'Step',
-        shortcut: ['s'],
-        keywords: 'execution next',
-        section: 'Execution',
-        perform: nextExecution,
-        subtitle: 'Run next execution',
-      },
-      {
-        id: 'continue',
-        name: 'Continue',
-        shortcut: ['c'],
-        keywords: 'execution continue',
-        section: 'Execution',
-        perform: continueExecution,
-        subtitle: 'Continue execution',
-      },
-    ],
-    [nextExecution, continueExecution],
-  )
+  const actions = [
+    {
+      id: 'step',
+      name: 'Step',
+      shortcut: ['s'],
+      keywords: 'execution next',
+      section: 'Execution',
+      perform: nextExecution,
+      subtitle: 'Run next execution',
+    },
+    {
+      id: 'continue',
+      name: 'Continue',
+      shortcut: ['q'],
+      keywords: 'execution continue',
+      section: 'Execution',
+      perform: continueExecution,
+      subtitle: 'Continue execution',
+    },
+  ]
 
-  useRegisterActions(actions)
+  useRegisterActions(actions, [nextExecution, continueExecution])
 
   return (
     <div className="flex flex-grow justify-between items-center text-sm">
