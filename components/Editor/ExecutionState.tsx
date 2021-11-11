@@ -45,7 +45,7 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
 
 const ExecutionState = () => {
   const { executionState } = useContext(EthereumContext)
-  const { memory, stack, storage } = executionState
+  const { memory, stack, storage, returnValue } = executionState
 
   return (
     <div>
@@ -56,7 +56,7 @@ const ExecutionState = () => {
         <dt className="mb-1 text-gray-500 dark:text-gray-700 font-medium uppercase">
           Storage
         </dt>
-        <dd>
+        <dd className="mb-2">
           <div
             className="inline-block border border-gray-600 dark:border-gray-700 px-2 py-1 mb-1 w-full"
             style={{ minHeight: 26 }}
@@ -72,6 +72,8 @@ const ExecutionState = () => {
             </dl>
           </div>
         </dd>
+
+        <ExecutionStateRow label="Return value" value={returnValue} />
       </dl>
     </div>
   )

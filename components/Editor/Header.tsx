@@ -9,14 +9,14 @@ import { Button, Radio, Label } from 'components/ui'
 import { CodeType } from './types'
 
 type Props = {
-  isBytecode: boolean
+  codeType: string | undefined
   isRunDisabled: boolean
   onCodeTypeChange: (event: ChangeEvent<HTMLInputElement>) => void
   onRun: () => void
 }
 
 const EditorHeader = ({
-  isBytecode,
+  codeType,
   onCodeTypeChange,
   onRun,
   isRunDisabled,
@@ -50,16 +50,23 @@ const EditorHeader = ({
       <div className="flex items-center justify-between w-full xl:w-auto">
         <div>
           <Radio
+            text="Yul"
+            value={CodeType.Yul}
+            isChecked={codeType === CodeType.Yul}
+            onChange={onCodeTypeChange}
+          />
+
+          <Radio
             text="Solidity"
-            value={CodeType.Solidity.toString()}
-            isChecked={!isBytecode}
+            value={CodeType.Solidity}
+            isChecked={codeType === CodeType.Solidity}
             onChange={onCodeTypeChange}
           />
 
           <Radio
             text="Bytecode"
-            value={CodeType.Bytecode.toString()}
-            isChecked={isBytecode}
+            value={CodeType.Bytecode}
+            isChecked={codeType === CodeType.Bytecode}
             onChange={onCodeTypeChange}
           />
         </div>
