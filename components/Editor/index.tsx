@@ -16,16 +16,16 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
-import { exampleContract } from 'util/contracts'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
+import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { IConsoleOutput } from './types'
+import { IConsoleOutput, CodeType } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -34,11 +34,6 @@ type Props = {
 type SCEditorRef = {
   _input: HTMLTextAreaElement
 } & RefObject<React.FC>
-
-enum CodeType {
-  Solidity,
-  Bytecode,
-}
 
 const editorHeight = 350
 const consoleHeight = 350
@@ -55,11 +50,13 @@ const Editor = ({ readOnly = false }: Props) => {
     startExecution,
     deployedContractAddress,
     vmError,
+    selectedFork,
   } = useContext(EthereumContext)
 
-  const [code, setCode] = useState(exampleContract)
+  const [code, setCode] = useState('')
   const [compiling, setIsCompiling] = useState(false)
-  const [codeType, setCodeType] = useState<number | undefined>()
+  const [codeType, setCodeType] = useState<string | undefined>()
+  const [codeModified, setCodeModified] = useState(false)
   const [output, setOutput] = useState<IConsoleOutput[]>([
     {
       type: 'info',
@@ -94,7 +91,11 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   useEffect(() => {
-    setCodeType(getSetting(Setting.EditorCodeType) || CodeType.Solidity)
+    const initialCodeType: CodeType =
+      getSetting(Setting.EditorCodeType) || CodeType.Yul
+
+    setCodeType(initialCodeType)
+    setCode(examples[initialCodeType][0])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded])
 
@@ -127,10 +128,13 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleCodeChange = (value: string) => {
     setCode(value)
+    setCodeModified(true)
   }
 
   const highlightCode = (value: string) => {
-    return codeHighlight(value, 'sol')
+    if (!codeType) return value
+
+    return codeHighlight(value, codeType)
       .value.split('\n')
       .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
       .join('\n')
@@ -141,18 +145,7 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const handleRun = useCallback(() => {
-    if (codeType === CodeType.Solidity) {
-      setIsCompiling(true)
-      log('Starting compilation...')
-
-      if (solcWorkerRef?.current) {
-        solcWorkerRef.current.postMessage({
-          // TODO: Use evm version from the selected network
-          evmVersion: 'london',
-          source: code,
-        })
-      }
-    } else if (codeType === CodeType.Bytecode) {
+    if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
         log('There should be at least 2 characters per byte.', 'warn')
         return
@@ -163,13 +156,28 @@ const Editor = ({ readOnly = false }: Props) => {
       }
       loadInstructions(code)
       startExecution(code)
+    } else {
+      setIsCompiling(true)
+      log('Starting compilation...')
+
+      if (solcWorkerRef?.current) {
+        solcWorkerRef.current.postMessage({
+          language: codeType,
+          evmVersion: selectedFork,
+          source: code,
+        })
+      }
     }
-  }, [code, codeType, loadInstructions, log, startExecution])
+  }, [code, codeType, selectedFork, loadInstructions, log, startExecution])
 
   const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value)
-    setCodeType(value as CodeType)
+    const value = event.target.value
+    setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
+
+    if (!codeModified && codeType) {
+      setCode(examples[value as CodeType][0])
+    }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
     if (editorRef?.current?._input) {
@@ -192,10 +200,10 @@ const Editor = ({ readOnly = false }: Props) => {
         <div className="w-full md:w-1/2">
           <div className="border-b border-gray-200 dark:border-black-500 flex items-center px-6 h-14 md:border-r">
             <Header
-              isBytecode={isBytecode}
               isRunDisabled={isRunDisabled}
               onCodeTypeChange={handleCodeTypeChange}
               onRun={handleRun}
+              codeType={codeType}
             />
           </div>
 

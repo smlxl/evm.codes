@@ -42,6 +42,7 @@ export interface IExecutionState {
   memory: string | undefined
   totalGas: string | undefined
   currentGas: string | undefined
+  returnValue: string | undefined
 }
 
 export interface IChain {

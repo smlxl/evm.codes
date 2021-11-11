@@ -72,6 +72,7 @@ const initialExecutionState = {
   programCounter: undefined,
   totalGas: undefined,
   currentGas: undefined,
+  returnValue: undefined,
 }
 
 export const EthereumContext = createContext<ContextProps>({
@@ -245,13 +246,22 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       // starting execution via deployed contract's transaction
       vm.runTx({ tx: tx as TypedTransaction })
         .then(({ execResult, gasUsed, createdAddress }) =>
-          _loadRunState(gasUsed, execResult.runState, createdAddress),
+          _loadRunState({
+            gasUsed,
+            runState: execResult.runState,
+            contractAddress: createdAddress,
+          }),
         )
         .finally(() => setIsExecuting(false))
     } else {
       vm.runCode({ code: Buffer.from(byteCode, 'hex'), gasLimit })
-        .then(({ runState, gasUsed, exceptionError }) =>
-          _loadRunState(gasUsed, runState, undefined, exceptionError),
+        .then(({ runState, gasUsed, returnValue, exceptionError }) =>
+          _loadRunState({
+            gasUsed,
+            runState,
+            returnValue,
+            exceptionError,
+          }),
         )
         .finally(() => setIsExecuting(false))
     }
@@ -424,20 +434,33 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     )
   }
 
-  const _loadRunState = (
-    gasUsed: BN,
-    runState?: RunState,
-    contractAddress?: Address,
-    exceptionError?: VmError,
-  ) => {
+  const _loadRunState = ({
+    gasUsed,
+    runState,
+    contractAddress,
+    returnValue,
+    exceptionError,
+  }: {
+    gasUsed: BN
+    runState?: RunState
+    contractAddress?: Address
+    returnValue?: Buffer
+    exceptionError?: VmError
+  }) => {
     if (exceptionError) {
       setVmError(exceptionError.error)
       return
     }
 
     if (runState) {
-      const { programCounter, stack, memory } = runState
-      _setExecutionState(programCounter, gasUsed, stack._store, memory._store)
+      const { programCounter: pc, stack, memory } = runState
+      _setExecutionState({
+        pc,
+        gasUsed,
+        stack: stack._store,
+        memory: memory._store,
+        returnValue,
+      })
     }
 
     if (contractAddress) {
@@ -457,7 +480,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     const gasUsed = gasLimit.sub(gasLeft)
 
-    _setExecutionState(pc, gasUsed, stack, memory, opcode.fee)
+    _setExecutionState({ pc, gasUsed, stack, memory, currentGas: opcode.fee })
 
     nextStepFunction.current = continueFunc
 
@@ -470,13 +493,21 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-  const _setExecutionState = (
-    pc: number,
-    gasUsed: BN,
-    stack: BN[],
-    memory: Buffer,
-    currentGas?: BN | number,
-  ) => {
+  const _setExecutionState = ({
+    pc,
+    gasUsed,
+    stack,
+    memory,
+    currentGas,
+    returnValue,
+  }: {
+    pc: number
+    gasUsed: BN
+    stack: BN[]
+    memory: Buffer
+    currentGas?: BN | number
+    returnValue?: Buffer
+  }) => {
     const storage: IStorage[] = []
 
     storageMemory.forEach((sm, address) => {
@@ -492,6 +523,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       memory: fromBuffer(memory),
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
+      returnValue: returnValue ? returnValue.toString('hex') : undefined,
     })
   }
 
