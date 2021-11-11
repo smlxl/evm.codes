@@ -20,6 +20,7 @@ import {
   IChain,
 } from 'types'
 
+import { CURRENT_FORK } from 'util/constants'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -122,7 +123,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   useEffect(() => {
     const { Common, Chain } = window.EvmCodes
-    common = new Common({ chain: Chain.Mainnet })
+    common = new Common({ chain: Chain.Mainnet, hardfork: CURRENT_FORK })
 
     initVmInstance()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,8 +364,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       }),
     )
 
-    common.hardforks().forEach(({ name }) => {
-      forks.push(name)
+    common.hardforks().forEach(({ name, block }) => {
+      // ignore null block forks
+      if (block) {
+        forks.push(name)
+      }
     })
     setForks(forks)
 
