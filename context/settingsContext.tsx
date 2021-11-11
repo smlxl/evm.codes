@@ -10,7 +10,7 @@ type ContextProps = {
 }
 
 export enum Setting {
-  EditorCodeType = 'editor::code_type',
+  EditorCodeType = 'editor::codetype',
   VmChain = 'vm::chain',
   VmFork = 'vm::fork',
 }
