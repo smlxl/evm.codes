@@ -20,17 +20,16 @@ Shift the bits towards the least significant one. The bits moved before the firs
 
 | Input | Output |
 |------:|-------:|
-| 1 | 1 |
-| 2 | |
+| `1` | `1` |
+| `2` | |
 
 | Input | Output |
 |------:|-------:|
-| 4 | 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF |
-| 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0 | |
+| `4` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0` | |
 
 ## Error cases
 
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-

@@ -13,29 +13,28 @@ group: Environmental Information
 
 | Calldata |
 |---------:|
-| 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF |
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 | Input 1 | * | Input 2 |
 |------:|--:|--:|
-| 0 | * | 0 |
-| 0 | * | 31 |
-| 32 | * | 8 |
+| `0` | * | `0` |
+| `0` | * | `31` |
+| `32` | * | `8` |
 
 | Memory before |
 |--------------:|
-| 0 |
+| `0` |
 
 | Memory after input 1 |
 |---------------------:|
-| 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF |
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 | Memory after input 1 then 2 |
 |----------------------------:|
-| 0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF |
+| `0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 ## Error cases
 
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-

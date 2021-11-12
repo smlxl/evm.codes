@@ -34,11 +34,11 @@ const AboutPage = () => {
         <OLink opcode="60" title="PUSH1" /> instruction, which allows to put an
         arbitrary value on the stack and encode the value directly after the
         instruction. The list of instructions available, with their opcodes, is
-        shown below.
+        shown <NavLink href="/">here</NavLink>.
       </p>
       <p className="pt-4 pb-10">
         An instruction is assigned an arbitrary value between 0 and 255 (or FF
-        in hexadecimal), the opcode, and a mnemonic, which is a text
+        in hexadecimal), called the opcode, and a mnemonic, which is a text
         representation that helps us human read the instruction. A smart
         contract is a set of instructions. When the EVM executes a smart
         contract, it reads and executes each instruction one by one. If an
