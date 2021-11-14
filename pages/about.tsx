@@ -4,8 +4,8 @@ import Link from 'next/link'
 import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3 } from 'components/ui'
 
-const OLink = ({ opcode, title }: { opcode: string; title: string }) => (
-  <Link href={`/#${opcode}`} passHref>
+const OLink = ({ opcode, title }: { opcode?: string; title: string }) => (
+  <Link href={opcode ? `/#${opcode}` : '/'} passHref>
     <a className="underline font-mono">{title}</a>
   </Link>
 )
@@ -34,7 +34,7 @@ const AboutPage = () => {
         <OLink opcode="60" title="PUSH1" /> instruction, which allows to put an
         arbitrary value on the stack and encode the value directly after the
         instruction. The list of instructions available, with their opcodes, is
-        shown <NavLink href="/">here</NavLink>.
+        shown <OLink title="here" />.
       </p>
       <p className="pt-4 pb-10">
         An instruction is assigned an arbitrary value between 0 and 255 (or FF
