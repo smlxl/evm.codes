@@ -1,0 +1,24 @@
+---
+fork: Istanbul
+group: Block Information
+---
+
+## Note
+
+Semantically equivalent of calling [BALANCE](/#31) with [ADDRESS](/#30) as parameter, but with a reduced gas cost.
+
+## Stack output
+
+0. `Integer`: balance of the current account in [wei](https://www.investopedia.com/terms/w/wei.asp).
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| | `125985` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Stack overflow.

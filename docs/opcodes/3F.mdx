@@ -1,0 +1,24 @@
+---
+fork: Constantinople
+group: Environmental Information
+---
+
+## Stack input
+
+0. `Address`: 20-byte address of the account.
+
+## Stack output
+
+0. `Integer`: hash of the chosen account's code, or 0 if the account has no code.
+
+## Examples
+
+| Input | Output |
+|------:|-------:|
+| `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
