@@ -163,7 +163,7 @@ const Editor = ({ readOnly = false }: Props) => {
       if (solcWorkerRef?.current) {
         solcWorkerRef.current.postMessage({
           language: codeType,
-          evmVersion: selectedFork,
+          evmVersion: selectedFork?.name,
           source: code,
         })
       }

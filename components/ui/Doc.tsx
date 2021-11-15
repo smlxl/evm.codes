@@ -47,7 +47,6 @@ export const Table: React.FC<Props> = ({ children }) => (
 )
 
 export const TH: React.FC<Props> = ({ children }) => {
-  console.log({ children })
   return (
     <th
       className={cn(

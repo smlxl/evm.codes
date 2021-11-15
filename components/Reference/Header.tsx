@@ -10,7 +10,7 @@ const ReferenceHeader = () => {
   return (
     <H2 className="pb-6 md:pb-4">
       Instructions
-      {selectedFork && <Label>{selectedFork}</Label>}
+      {selectedFork && <Label>{selectedFork.name}</Label>}
     </H2>
   )
 }

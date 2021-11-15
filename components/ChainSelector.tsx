@@ -31,12 +31,12 @@ const ChainSelector = () => {
   const [actions, setActions] = useState<Action[]>([])
 
   const forkOptions = useMemo(
-    () => forks.map((fork) => ({ value: fork, label: fork })),
+    () => forks.map((fork) => ({ value: fork.name, label: fork.name })),
     [forks],
   )
 
   const defaultForkOption = useMemo(
-    () => forkOptions.find((fork) => fork.value === selectedFork),
+    () => forkOptions.find((fork) => fork.value === selectedFork?.name),
     [forkOptions, selectedFork],
   )
 
