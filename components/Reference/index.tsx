@@ -8,8 +8,9 @@ import {
 } from 'react'
 
 import cn from 'classnames'
+import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
-import { useTable, useExpanded, HeaderGroup } from 'react-table'
+import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import { IOpcode, IOpcodeDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -18,6 +19,7 @@ import { Button, Icon } from 'components/ui'
 
 import tableData from './data'
 import DocRow from './DocRow'
+import Filters from './Filters'
 import Header from './Header'
 
 type CustomHeaderGroup = {
@@ -31,10 +33,11 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   const columns = useMemo(() => tableData, [])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
+  const { width: screenWidth } = useWindowSize()
 
   // FIXME: See: https://github.com/tannerlinsley/react-table/issues/3064
   // @ts-ignore: Waiting for 8.x of react-table to have better types
-  const table = useTable({ columns, data }, useExpanded)
+  const table = useTable({ columns, data }, useExpanded, useFilters)
 
   const {
     getTableProps,
@@ -47,7 +50,14 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     toggleAllRowsExpanded,
     // @ts-ignore: Waiting for 8.x of react-table to have better types
     isAllRowsExpanded,
+    // @ts-ignore: Waiting for 8.x of react-table to have better types
+    setFilter,
   } = table
+
+  const colSpan = useMemo(
+    () => (screenWidth && screenWidth >= 768 ? visibleColumns.length + 1 : 3),
+    [screenWidth, visibleColumns],
+  )
 
   // Focus and expand anchored opcode
   useEffect(() => {
@@ -72,15 +82,18 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
   return (
     <>
-      <Header />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
+        <Header />
+        <Filters onSetFilter={setFilter} />
+      </div>
 
-      <table {...getTableProps()} className="w-full table-auto">
+      <table {...getTableProps()} className="w-full table-fixed">
         <thead>
           {headerGroups.map((headerGroup) => (
             <>
               <tr
                 key={headerGroup.getHeaderGroupProps().key}
-                className="sticky border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
+                className="sticky bg-gray-50 dark:bg-black-700 border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
                 style={{
                   top: 54,
                 }}
@@ -88,10 +101,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                 {headerGroup.headers.map((column: CustomHeaderGroup) => (
                   <th
                     key={column.getHeaderProps().key}
-                    className={cn(
-                      'bg-gray-50 dark:bg-black-700 py-3 pr-6 font-medium',
-                      column.className,
-                    )}
+                    className={cn('py-3 pr-6 font-medium', column.className)}
                     style={{
                       maxWidth: column.maxWidth || 'auto',
                       minWidth: column.minWidth || 'auto',
@@ -126,6 +136,17 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
         </thead>
 
         <tbody {...getTableBodyProps()} className="text-sm">
+          {rows.length === 0 && (
+            <tr>
+              <td
+                colSpan={colSpan}
+                className="text-center pt-20 pb-4 text-lg text-gray-400 dark:text-gray-600"
+              >
+                No opcodes found
+              </td>
+            </tr>
+          )}
+
           {rows.map((row) => {
             prepareRow(row)
 
@@ -163,12 +184,11 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       {cell.render('Cell')}
                     </td>
                   ))}
-                  <td className="hidden md:table-cell"></td>
                 </tr>
 
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
-                    <td colSpan={visibleColumns.length + 1}>
+                    <td colSpan={colSpan}>
                       <DocRow opcode={opcodeDocs[opcode.toUpperCase()]} />
                     </td>
                   </tr>

@@ -1,14 +1,23 @@
+import { Row } from 'react-table'
+
 import { StackBox } from 'components/ui'
+
+const filter = (rows: Row[], id: string, filterValue: string) => {
+  const re = new RegExp(`${filterValue}`, 'i')
+  return rows.filter((row: any) => row.original[id].match(re))
+}
 
 const tableData = [
   {
     Header: 'Opcode',
     accessor: 'code',
     className: 'uppercase',
+    filter,
   },
   {
     Header: 'Name',
     accessor: 'name',
+    filter,
   },
   {
     Header: 'Gas',

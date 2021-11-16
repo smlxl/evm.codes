@@ -83,18 +83,18 @@ html {
 }
 
 .light .tooltip.place-top::after {
-  border-top-color: #1F2937;
+  border-top-color: #1f2937;
 }
 
 .dark .tooltip.place-top::after {
-  border-top-color: #1B1B1B;
+  border-top-color: #1b1b1b;
 }
 
 /*
  * React Select
  */
 .select__control {
-  min-height: 32 !important;
+  min-height: 36px !important;
   @apply shadow-none bg-transparent border-transparent h-8 text-sm capitalize !important;
 }
 
@@ -128,7 +128,7 @@ html {
 }
 
 .select__option {
-  @apply text-sm capitalize py-2 px-3 font-normal text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer hover:bg-gray-50 dark:hover:bg-black-600 !important;
+  @apply text-sm capitalize py-2 px-3 font-normal text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer hover:bg-gray-50 dark:hover:bg-black-500 !important;
 }
 
 .select__option--is-selected {
