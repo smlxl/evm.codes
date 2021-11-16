@@ -83,18 +83,18 @@ html {
 }
 
 .light .tooltip.place-top::after {
-  border-top-color: #1F2937;
+  border-top-color: #1f2937;
 }
 
 .dark .tooltip.place-top::after {
-  border-top-color: #1B1B1B;
+  border-top-color: #1b1b1b;
 }
 
 /*
  * React Select
  */
 .select__control {
-  min-height: 32 !important;
+  min-height: 36px !important;
   @apply shadow-none bg-transparent border-transparent h-8 text-sm capitalize !important;
 }
 
