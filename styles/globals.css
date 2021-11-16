@@ -128,7 +128,7 @@ html {
 }
 
 .select__option {
-  @apply text-sm capitalize py-2 px-3 font-normal text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer hover:bg-gray-50 dark:hover:bg-black-600 !important;
+  @apply text-sm capitalize py-2 px-3 font-normal text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer hover:bg-gray-50 dark:hover:bg-black-500 !important;
 }
 
 .select__option--is-selected {

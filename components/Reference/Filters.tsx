@@ -3,7 +3,7 @@ import { useState } from 'react'
 import debounce from 'lodash.debounce'
 import Select, { OnChangeValue } from 'react-select'
 
-import { Button, Icon, Input } from 'components/ui'
+import { Input } from 'components/ui'
 
 const filterByOptions = [
   { label: 'Opcode', value: 'code' },
@@ -14,12 +14,10 @@ const filterByOptions = [
 const debounceTimeout = 100 // ms
 
 type Props = {
-  isExpanded: boolean
-  onExpand: (expanded: boolean) => void
   onSetFilter: (columnId: string, value: string) => void
 }
 
-const Filters = ({ isExpanded, onExpand, onSetFilter }: Props) => {
+const Filters = ({ onSetFilter }: Props) => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [searchFilter, setSearchFilter] = useState({
     value: 'name',
@@ -32,25 +30,14 @@ const Filters = ({ isExpanded, onExpand, onSetFilter }: Props) => {
   )
 
   const handleSearchFilterChange = (option: OnChangeValue<any, any>) => {
+    // clear previous filter first
+    onSetFilter(searchFilter.value, '')
+    setSearchKeyword('')
     setSearchFilter(option)
   }
 
   return (
     <div className="flex items-center md:justify-end">
-      <Button
-        onClick={() => onExpand(!isExpanded)}
-        padded={false}
-        transparent
-        className="text-gray-800 dark:text-gray-200 mr-8 hidden md:inline-block"
-      >
-        <span className="text-sm">{isExpanded ? 'Collapse' : 'Expand'}</span>
-
-        <Icon
-          className="text-indigo-500"
-          name={isExpanded ? 'arrow-up-s-line' : 'arrow-down-s-line'}
-        />
-      </Button>
-
       <span className="hidden md:inline-block text-sm text-gray-400 dark:text-black-400 mr-3">
         Search by
       </span>

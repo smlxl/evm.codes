@@ -8,11 +8,14 @@ import {
 } from 'react'
 
 import cn from 'classnames'
+import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import { IOpcode, IOpcodeDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
+
+import { Button, Icon } from 'components/ui'
 
 import tableData from './data'
 import DocRow from './DocRow'
@@ -30,6 +33,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   const columns = useMemo(() => tableData, [])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
+  const { width: screenWidth } = useWindowSize()
 
   // FIXME: See: https://github.com/tannerlinsley/react-table/issues/3064
   // @ts-ignore: Waiting for 8.x of react-table to have better types
@@ -49,6 +53,11 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     // @ts-ignore: Waiting for 8.x of react-table to have better types
     setFilter,
   } = table
+
+  const colSpan = useMemo(
+    () => (screenWidth && screenWidth >= 768 ? visibleColumns.length + 1 : 3),
+    [screenWidth, visibleColumns],
+  )
 
   // Focus and expand anchored opcode
   useEffect(() => {
@@ -73,14 +82,9 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
   return (
     <>
-      <Header />
-
-      <div className="mb-10">
-        <Filters
-          isExpanded={isAllRowsExpanded}
-          onExpand={toggleAllRowsExpanded}
-          onSetFilter={setFilter}
-        />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
+        <Header />
+        <Filters onSetFilter={setFilter} />
       </div>
 
       <table {...getTableProps()} className="w-full table-fixed">
@@ -106,6 +110,26 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                     {column.render('Header')}
                   </th>
                 ))}
+                <th className="bg-gray-50 dark:bg-black-700 py-3 text-right hidden md:table-cell">
+                  <Button
+                    onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
+                    padded={false}
+                    transparent
+                    className="text-gray-800 dark:text-gray-200"
+                  >
+                    <span className="text-sm font-normal">
+                      {isAllRowsExpanded ? 'Collapse' : 'Expand'}
+                    </span>
+                    <Icon
+                      className="text-indigo-500"
+                      name={
+                        isAllRowsExpanded
+                          ? 'arrow-up-s-line'
+                          : 'arrow-down-s-line'
+                      }
+                    />
+                  </Button>
+                </th>
               </tr>
             </>
           ))}
@@ -115,7 +139,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
           {rows.length === 0 && (
             <tr>
               <td
-                colSpan={visibleColumns.length}
+                colSpan={colSpan}
                 className="text-center pt-20 pb-4 text-lg text-gray-400 dark:text-gray-600"
               >
                 No opcodes found
@@ -164,7 +188,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
-                    <td colSpan={visibleColumns.length}>
+                    <td colSpan={colSpan}>
                       <DocRow opcode={opcodeDocs[opcode.toUpperCase()]} />
                     </td>
                   </tr>
