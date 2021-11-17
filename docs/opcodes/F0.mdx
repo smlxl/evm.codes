@@ -1,0 +1,17 @@
+---
+fork: Frontier
+group: System operations
+---
+
+## Stack input
+
+0. `Integer`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
+1. `Integer`: offset in the [memory](/about) in bytes, the instructions of the new account.
+2. `Integer`: how many bytes to copy (size of the instructions).
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

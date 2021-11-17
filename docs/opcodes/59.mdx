@@ -1,0 +1,24 @@
+---
+fork: Frontier
+group: Stack Memory Storage and Flow Operations
+---
+
+## Notes
+
+The [memory](/about) is always fully accessible. What this instruction tracks is the highest index that was used in the current execution. A first write to a bigger index will trigger a [memory](/about) expansion, which will cost gas.
+
+## Stack output
+
+0. `Integer`: current [memory](/about) size in bytes.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| | `2848` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Stack overflow.

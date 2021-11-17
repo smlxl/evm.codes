@@ -5,12 +5,12 @@ group: Environmental Information
 
 ## Notes
 
-For out of bound bytes, 0s will be copied.
+For out of bound bytes, 0s will be copied. A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL](/#F4) or [STATICCALL](/#FA).
 
 ## Stack input
 
-0. `Integer`: byte index in the memory where the result will be copied.
-1. `Integer`: byte index in the code to the read position start.
+0. `Integer`: byte index in the [memory](/about) where the result will be copied.
+1. `Integer`: byte index in the [return data](/about) from the last executed sub [context](/about) to copy.
 2. `Integer`: how many bytes to copy.
 
 ## Examples

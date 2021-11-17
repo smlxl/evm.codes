@@ -1,0 +1,24 @@
+---
+fork: Frontier
+group: Push Operations
+---
+
+## Stack output
+
+0. `Integer`: pushed value, aligned to the right (put in the lowest significant bytes).
+
+## Example
+
+| Code |
+|------|
+| `0x67FFFFFFFFFFFFFFFF` |
+
+| Input | Output |
+|------:|-------:|
+| | `0xFFFFFFFFFFFFFFFF` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Stack overflow.

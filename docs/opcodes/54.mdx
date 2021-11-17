@@ -1,0 +1,28 @@
+---
+fork: Frontier
+group: Stack Memory Storage and Flow Operations
+---
+
+## Stack input
+
+0. `Integer`: 32-byte key in [storage](/about).
+
+## Stack output
+
+0. `Integer`: 32-byte value corresponding to that key. 0 if that key was never written before.
+
+## Examples
+
+| Storage key | Storage value |
+|-------------|---------------|
+| `0` | `46` |
+
+| Input | Output | * | Input | Output |
+|------:|-------:|---|-------|--------|
+| `0` | `46` | * | `1` | `0` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.

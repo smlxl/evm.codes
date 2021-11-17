@@ -1,0 +1,19 @@
+---
+fork: Frontier
+group: System operations
+---
+
+## Notes
+
+Exits the current [context](/about) successfully.
+
+## Stack input
+
+0. `Integer`: offset in the [memory](/about) in bytes, to copy what will be the [return data](/about) of this [context](/about).
+1. `Integer`: how many bytes to copy (size of the [return data](/about)).
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.

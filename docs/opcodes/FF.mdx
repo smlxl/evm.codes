@@ -1,0 +1,19 @@
+---
+fork: Frontier
+group: System operations
+---
+
+## Notes
+
+The current account is registered to be destroyed, and will be at the end of the current transaction. The transfer of the current balance to the given account cannot fail. In particular, the destination account code (if any) is not executed, or, if the account does not exist, the balance is still added to the given address.
+
+## Stack input
+
+0. `Address`: account to send the current balance to (see [BALANCE](/#31) or [SELFBALANCE](/#47) since Istanbul fork).
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

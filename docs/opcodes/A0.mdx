@@ -1,0 +1,20 @@
+---
+fork: Frontier
+group: Logging Operations
+---
+
+## Notes
+
+This instruction has no effect on the EVM state. See [here](https://ethereum.org/en/developers/docs/smart-contracts/anatomy/#events-and-logs).
+
+## Stack input
+
+0. `Integer`: offset in the [memory](/about) in bytes.
+1. `Integer`: how many bytes to copy.
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

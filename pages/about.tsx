@@ -54,7 +54,8 @@ const AboutPage = () => {
 
       <H3 className="mb-4">The code</H3>
       <p className="pb-8">
-        The code is the region where the instructions are stored. During smart
+        The code is the region where the instructions are stored. It is persistent
+        and part of an account properties. During smart
         contract execution, these are the bytes that the EVM will read,
         interpret and execute. This is a region that cannot be modified, but can
         be read with the instructions <OLink opcode="38" title="CODESIZE" /> and{' '}
@@ -62,6 +63,7 @@ const AboutPage = () => {
         read with <OLink opcode="3B" title="EXTCODESIZE" /> and{' '}
         <OLink opcode="3B" title="EXTCODECOPY" />. The program counter (PC)
         encodes which instruction should be read next by the EVM in this region.
+        An externally owned account (or EOA) has an empty code region.
       </p>
 
       <H3 className="mb-4">The stack</H3>
