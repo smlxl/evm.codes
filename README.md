@@ -14,7 +14,7 @@ evm.codes is brought to you by [Comity Labs](https://www.comitylabs.com), powere
 
 The app requires the following dependencies:
 
-- [NodeJS](https://nodejs.org/) >= 16
+- [NodeJS](https://nodejs.org/) >= 14
 - [Yarn](https://yarnpkg.com/)
 
 ## 👩‍💻 Local Development
