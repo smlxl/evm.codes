@@ -1,0 +1,30 @@
+---
+fork: Frontier
+group: Exchange Operations
+---
+
+## Stack input
+
+0. `Integer`: value to swap.
+1. `Integer`: ignored value.
+2. `Integer`: value to swap.
+
+## Stack output
+
+0. `Integer`: swapped value.
+1. `Integer`: ignored value.
+2. `Integer`: swapped value.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| `1` | `2` |
+| `0` | `0` |
+| `2` | `1` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.

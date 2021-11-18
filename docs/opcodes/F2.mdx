@@ -1,0 +1,30 @@
+---
+fork: Frontier
+group: System operations
+---
+
+## Notes
+
+Creates a new sub [context](/about) as if calling itself, but with the [code](/about) of the given account. In particular the [storage](/about) remains the same. Note that an account with no code will return success as true.
+
+If the size of the [return data](/about) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork).
+
+## Stack input
+
+0. `Integer`: amount of gas to send to the sub [context](/about) to execute.
+1. `Address`: the account which [code](/about) to execute.
+2. `Integer`: [value](/#34) in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the account.
+3. `Integer`: offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+4. `Integer`: how many bytes to copy (size of the [calldata](/about)).
+5. `Integer`: offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
+6. `Integer`: how many bytes to copy (size of the [return data](/about)).
+
+## Stack output
+
+0. `Boolean`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.

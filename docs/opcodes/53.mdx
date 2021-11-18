@@ -1,0 +1,34 @@
+---
+fork: Frontier
+group: Stack Memory Storage and Flow Operations
+---
+
+## Stack input
+
+0. `Integer`: offset in the [memory](/about) in bytes.
+1. `Integer`: 1-byte value to write in the [memory](/about) (the least significant byte of the 32-byte stack value).
+
+## Examples
+
+| Input 1 | * | Input 2 |
+|------:|--:|--:|
+| `0` | * | `1` |
+| `0xFFFF` | * | `0xFF` |
+
+| Memory before |
+|--------------:|
+| `0` |
+
+| Memory after input 1 |
+|---------------------:|
+| `0xFF` |
+
+| Memory after input 1 then 2 |
+|----------------------------:|
+| `0xFFFF` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.

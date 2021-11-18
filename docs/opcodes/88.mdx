@@ -1,0 +1,51 @@
+---
+fork: Frontier
+group: Duplication Operations
+---
+
+## Stack input
+
+0. `Integer`: ignored value.
+1. `Integer`: ignored value.
+2. `Integer`: ignored value.
+3. `Integer`: ignored value.
+4. `Integer`: ignored value.
+5. `Integer`: ignored value.
+6. `Integer`: ignored value.
+7. `Integer`: ignored value.
+8. `Integer`: value to duplicate.
+
+## Stack output
+
+0. `Integer`: duplicated value.
+1. `Integer`: ignored value.
+2. `Integer`: ignored value.
+3. `Integer`: ignored value.
+4. `Integer`: ignored value.
+5. `Integer`: ignored value.
+6. `Integer`: ignored value.
+7. `Integer`: ignored value.
+8. `Integer`: ignored value.
+9. `Integer`: original value.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| `0` | `1` |
+| `0` | `0` |
+| `0` | `0` |
+| `0` | `0` |
+| `0` | `0` |
+| `0` | `0` |
+| `0` | `0` |
+| `0` | `0` |
+| `1` | `0` |
+| | `1` |
+
+## Error cases
+
+The transaction is reverted in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Stack overflow.
