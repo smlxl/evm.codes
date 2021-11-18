@@ -1,34 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+  <h1 align="center">EVM.Codes</h1>
+</p>
+<p align="center">
+  <strong><i>An interactive reference to Ethereum Virtual Machine Opcodes</i></strong>
+  <img width="1408" alt="screenshot" src="https://user-images.githubusercontent.com/5113/142245431-08ad9922-9115-43fd-9572-8b33cde75bb0.png">
+</p>
 
-## Getting Started
+This is the source code that runs [evm.codes](https://evm.codes) web application. Below you will find the docs on how to contribute to the project and get it up and running locally for further development.
 
-First, run the development server:
+evm.codes is brought to you by [Comity Labs](https://www.comitylabs.com), powered by open-source projects such as [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), [SolcJS](https://github.com/ethereum/solc-js) and [many others](package.json).
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## ⚙️ Installation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app requires the following dependencies:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- [NodeJS](https://nodejs.org/) >= 16
+- [Yarn](https://yarnpkg.com/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 👩‍💻 Local Development
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+For contributing to the project, you can quickly get the application running by following these steps:
 
-## Learn More
+Clone this repository:
 
-To learn more about Next.js, take a look at the following resources:
+    git clone git@github.com:comitylabs/evm.codes.git
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Install the dependencies:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    yarn install
 
-## Deploy on Vercel
+Start up the app and see it running at http://localhost:3000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    yarn dev
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🚀 Deploying
+
+Deployments are handled automatically by [Vercel](https://vercel.com/), as soon as your PR is merged to `main`.
+
+## 🤗 Contributing
+
+evm.codes is built and maintained by a small team, so we would definitely love your help to fix bugs, add new features and improvements, or update EVM [reference docs](docs/opcodes).
+
+Before you submit a pull request, please make sure there isn't an existing [GitHub issue](https://github.com/comitylabs/evm.codes/issues). If there isn't, create one first to discuss the best way to approach it and also get some feedback from the team.
+
+### Coding conventions
+
+The project is already pre-configured with [Eslint](.eslintrc.js), [TypeScript](tsconfig.json), and [Prettier](.prettierrc). Here are some useful commands you can run to ensure your changes follow the project's coding conventions:
+
+Check for any linting issues and fix:
+
+    yarn lint --fix
+
+Check for any TypeScript issues:
+
+    yarn typecheck
+
+Sort the `package.json`:
+
+    yarn lint:package
+
+## Architecture
+
+If you would like to contribute, make sure to check the [architecture document](docs/ARCHITECTURE.md) to learn about the code structure, and how the app is built.
+
+## License
+
+[MIT](LICENSE)

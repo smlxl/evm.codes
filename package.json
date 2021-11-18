@@ -1,7 +1,9 @@
 {
   "name": "evm.codes",
   "version": "0.1.0",
-  "private": true,
+  "description": "An interactive reference to Ethereum Virtual Machine Opcodes",
+  "homepage": "https://github.com/comitylabs/evm.codes",
+  "license": "MIT",
   "scripts": {
     "build": "next build",
     "build:libs": "browserify ./lib/ethereum.js -o public/ethereum.min.js --plugin tinyify",
