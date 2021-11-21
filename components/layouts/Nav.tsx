@@ -38,7 +38,7 @@ const Nav = () => {
           >
             <NavLink href="/">Opcodes</NavLink>
             <NavLink href="/playground">Playground</NavLink>
-            <NavLink href="/about">About EVM</NavLink>
+            <NavLink href="/about">About the EVM</NavLink>
             <NavLink href={GITHUB_REPO_URL} external>
               GitHub
             </NavLink>
