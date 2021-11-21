@@ -13,7 +13,7 @@ const OLink = ({ opcode, title }: { opcode?: string; title: string }) => (
 const AboutPage = () => {
   return (
     <Container className="text-sm leading-6">
-      <H1>About EVM</H1>
+      <H1>About the EVM</H1>
 
       <H2 className="mb-6">Introduction</H2>
       <p>
