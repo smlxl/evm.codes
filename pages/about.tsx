@@ -120,6 +120,28 @@ const AboutPage = () => {
         calling contract with <OLink opcode="3D" title="RETURNDATASIZE" /> and{' '}
         <OLink opcode="3E" title="RETURNDATACOPY" />.
       </p>
+
+      <H2 className="mb-6">Gas costs</H2>
+      <p className="pb-8">
+        As an incentive to provide resources to run transactions, a fee is payed
+        to send and execute a transaction. The fee is determined by several
+        factors, including the amount of data sent or the amount of work that a
+        transaction requires. That fee is calculated through two mechanisms. The
+        first is a fixed cost that is defined by Ethereum, depending on what is
+        done. The unit for that is called gas, and reùains the same, though it
+        can be changed by a hardfork. The second component is the price of one
+        gas unit, which varies over time according to what people are willing to
+        pay to run their transactions. Its unit is ethereum per gas.
+      </p>
+
+      <p className="pb-8">
+        Each opcode has its own gas cost. Their are two parts to the gas cost.
+        The first one is the static cost, which has to be paid for running that
+        opcode. This is the value that is displayed in our{' '}
+        <OLink title="reference" />. The second is a dynamic cost, which depends
+        on several factors during the execution of a transaction. It will be
+        soon added to the extended view of our reference.
+      </p>
     </Container>
   )
 }

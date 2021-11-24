@@ -20,7 +20,7 @@ const tableData = [
     filter,
   },
   {
-    Header: 'Gas',
+    Header: 'Static Gas',
     accessor: 'fee',
   },
   {
