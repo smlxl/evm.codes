@@ -123,19 +123,19 @@ const AboutPage = () => {
 
       <H2 className="mb-6">Gas costs</H2>
       <p className="pb-8">
-        As an incentive to provide resources to run transactions, a fee is payed
+        As an incentive to provide resources to run transactions, a fee is paid
         to send and execute a transaction. The fee is determined by several
         factors, including the amount of data sent or the amount of work that a
         transaction requires. That fee is calculated through two mechanisms. The
         first is a fixed cost that is defined by Ethereum, depending on what is
-        done. The unit for that is called gas, and reùains the same, though it
-        can be changed by a hardfork. The second component is the price of one
-        gas unit, which varies over time according to what people are willing to
-        pay to run their transactions. Its unit is ethereum per gas.
+        executed. The unit for that is called gas, and remains the same, though
+        it can be changed by a hardfork. The second component is the price of
+        one gas unit, which varies over time according to what people are
+        willing to pay to run their transactions. Its unit is ETH per gas.
       </p>
 
       <p className="pb-8">
-        Each opcode has its own gas cost. Their are two parts to the gas cost.
+        Each opcode has its own gas cost. There are two parts to the gas cost.
         The first one is the static cost, which has to be paid for running that
         opcode. This is the value that is displayed in our{' '}
         <OLink title="reference" />. The second is a dynamic cost, which depends
