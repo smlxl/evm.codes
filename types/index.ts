@@ -10,6 +10,7 @@ export interface IOpcode {
   output: string
   description: string
   fee: number
+  dynamicFee?: boolean
 }
 
 export interface IOpcodeMeta {
