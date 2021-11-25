@@ -201,7 +201,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                         width: cell.column.width || 'auto',
                       }}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center flex-wrap">
                         {cell.render('Cell')}
                         {cell.column.id === 'fee' && hasDynamicFee && (
                           <DynamicFeeTooltip />
