@@ -11,6 +11,7 @@ import cn from 'classnames'
 import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
+import ReactTooltip from 'react-tooltip'
 import { IOpcode, IOpcodeDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -25,6 +26,16 @@ import Header from './Header'
 type CustomHeaderGroup = {
   className?: string
 } & HeaderGroup<IOpcode>
+
+// FIXME: Remove once https://github.com/comitylabs/evm.codes/issues/57 is done
+const DynamicFeeTooltip = () => (
+  <span
+    className="inline-block pl-2 text-gray-400 dark:text-black-400"
+    data-tip="Dynamic gas portion is not included yet and coming soon."
+  >
+    <Icon name="question-line" />
+  </span>
+)
 
 const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   const router = useRouter()
@@ -55,7 +66,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
   } = table
 
   const colSpan = useMemo(
-    () => (screenWidth && screenWidth >= 768 ? visibleColumns.length + 1 : 3),
+    () => (screenWidth && screenWidth >= 768 ? visibleColumns.length : 3),
     [screenWidth, visibleColumns],
   )
 
@@ -78,6 +89,27 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     }
   }, [opcodes, router.asPath])
 
+  const renderExpandButton = () => {
+    return (
+      <div className="hidden md:block">
+        <Button
+          onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
+          padded={false}
+          transparent
+          className="text-gray-800 dark:text-gray-200"
+        >
+          <span className="text-sm font-normal">
+            {isAllRowsExpanded ? 'Collapse' : 'Expand'}
+          </span>
+          <Icon
+            className="text-indigo-500"
+            name={isAllRowsExpanded ? 'arrow-up-s-line' : 'arrow-down-s-line'}
+          />
+        </Button>
+      </div>
+    )
+  }
+
   if (opcodes.length === 0) return null
 
   return (
@@ -90,48 +122,36 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
       <table {...getTableProps()} className="w-full table-fixed">
         <thead>
           {headerGroups.map((headerGroup) => (
-            <>
-              <tr
-                key={headerGroup.getHeaderGroupProps().key}
-                className="sticky bg-gray-50 dark:bg-black-700 border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
-                style={{
-                  top: 54,
-                }}
-              >
-                {headerGroup.headers.map((column: CustomHeaderGroup) => (
-                  <th
-                    key={column.getHeaderProps().key}
-                    className={cn('py-3 pr-6 font-medium', column.className)}
-                    style={{
-                      maxWidth: column.maxWidth || 'auto',
-                      minWidth: column.minWidth || 'auto',
-                    }}
-                  >
-                    {column.render('Header')}
-                  </th>
-                ))}
-                <th className="bg-gray-50 dark:bg-black-700 py-3 text-right hidden md:table-cell">
-                  <Button
-                    onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
-                    padded={false}
-                    transparent
-                    className="text-gray-800 dark:text-gray-200"
-                  >
-                    <span className="text-sm font-normal">
-                      {isAllRowsExpanded ? 'Collapse' : 'Expand'}
-                    </span>
-                    <Icon
-                      className="text-indigo-500"
-                      name={
-                        isAllRowsExpanded
-                          ? 'arrow-up-s-line'
-                          : 'arrow-down-s-line'
-                      }
-                    />
-                  </Button>
-                </th>
-              </tr>
-            </>
+            <tr
+              key={headerGroup.getHeaderGroupProps().key}
+              className="sticky bg-gray-50 dark:bg-black-700 border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
+              style={{
+                top: 54,
+              }}
+            >
+              {headerGroup.headers.map(
+                (column: CustomHeaderGroup, index: number) => {
+                  const isLastColumn = index + 1 === headerGroup.headers.length
+
+                  return (
+                    <th
+                      key={column.getHeaderProps().key}
+                      className={cn('py-3 font-medium', column.className, {
+                        'pr-6': !isLastColumn,
+                      })}
+                      style={{
+                        width: column.width || 'auto',
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        {column.render('Header')}
+                        {isLastColumn && renderExpandButton()}
+                      </div>
+                    </th>
+                  )
+                },
+              )}
+            </tr>
           ))}
         </thead>
 
@@ -150,9 +170,10 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
           {rows.map((row) => {
             prepareRow(row)
 
-            const opcode = row.values.code
+            const { code } = row.values
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === row.id
+            const hasDynamicFee = opcodes[code.toUpperCase()]?.dynamicFee
 
             return (
               <Fragment key={row.getRowProps().key}>
@@ -177,11 +198,15 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       // @ts-ignore: Waiting for 8.x of react-table to have better types
                       className={cn('py-2 pr-6', cell.column.className)}
                       style={{
-                        maxWidth: cell.column.maxWidth || 'auto',
-                        minWidth: cell.column.minWidth || 'auto',
+                        width: cell.column.width || 'auto',
                       }}
                     >
-                      {cell.render('Cell')}
+                      <div className="flex items-center flex-wrap">
+                        {cell.render('Cell')}
+                        {cell.column.id === 'fee' && hasDynamicFee && (
+                          <DynamicFeeTooltip />
+                        )}
+                      </div>
                     </td>
                   ))}
                 </tr>
@@ -189,7 +214,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
-                      <DocRow opcode={opcodeDocs[opcode.toUpperCase()]} />
+                      <DocRow opcode={opcodeDocs[code.toUpperCase()]} />
                     </td>
                   </tr>
                 ) : null}
@@ -198,6 +223,8 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
           })}
         </tbody>
       </table>
+
+      <ReactTooltip className="tooltip" effect="solid" />
     </>
   )
 }

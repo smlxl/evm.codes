@@ -13,15 +13,18 @@ const tableData = [
     accessor: 'code',
     className: 'uppercase',
     filter,
+    width: 48,
   },
   {
     Header: 'Name',
     accessor: 'name',
     filter,
+    width: 128,
   },
   {
     Header: 'Static Gas',
     accessor: 'fee',
+    width: 96,
   },
   {
     Header: 'Stack Input',
@@ -32,7 +35,7 @@ const tableData = [
         className="text-xs border-indigo-300 dark:border-indigo-900 text-gray-800 dark:text-gray-200"
       />
     ),
-    maxWidth: 200,
+    width: 200,
     className: 'hidden lg:table-cell',
   },
   {
@@ -44,7 +47,7 @@ const tableData = [
         className="text-xs border-indigo-300 dark:border-indigo-900 text-gray-800 dark:text-gray-200"
       />
     ),
-    maxWidth: 200,
+    width: 200,
     className: 'hidden lg:table-cell',
   },
   {

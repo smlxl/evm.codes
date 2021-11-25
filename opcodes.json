@@ -32,7 +32,8 @@
   "06": {
     "input": "a | b",
     "output": "a % b",
-    "description": "Modulo remainder operation"
+    "description": "Modulo remainder operation",
+    "dynamicFee": true
   },
   "07": {
     "input": "a | b",
@@ -162,7 +163,8 @@
   "20": {
     "input": "offset | length",
     "output": "hash",
-    "description": "Compute Keccak-256 hash"
+    "description": "Compute Keccak-256 hash",
+    "dynamicFee": true
   },
   "21": {
     "input": "",
@@ -247,7 +249,8 @@
   "31": {
     "input": "address",
     "output": "balance",
-    "description": "Get balance of the given account"
+    "description": "Get balance of the given account",
+    "dynamicFee": true
   },
   "32": {
     "input": "",
@@ -277,7 +280,8 @@
   "37": {
     "input": "destOffset | offset | length",
     "output": "",
-    "description": "Copy input data in current environment to memory"
+    "description": "Copy input data in current environment to memory",
+    "dynamicFee": true
   },
   "38": {
     "input": "",
@@ -287,7 +291,8 @@
   "39": {
     "input": "destOffset | offset | length",
     "output": "",
-    "description": "Copy code running in current environment to memory"
+    "description": "Copy code running in current environment to memory",
+    "dynamicFee": true
   },
   "3a": {
     "input": "",
@@ -297,12 +302,14 @@
   "3b": {
     "input": "address",
     "output": "size",
-    "description": "Get size of an account’s code"
+    "description": "Get size of an account’s code",
+    "dynamicFee": true
   },
   "3c": {
     "input": "address | destOffset | offset | length",
     "output": "",
-    "description": "Copy an account’s code to memory"
+    "description": "Copy an account’s code to memory",
+    "dynamicFee": true
   },
   "3d": {
     "input": "",
@@ -312,12 +319,14 @@
   "3e": {
     "input": "destOffset | offset | length",
     "output": "",
-    "description": "Copy output data from the previous call to memory"
+    "description": "Copy output data from the previous call to memory",
+    "dynamicFee": true
   },
   "3f": {
     "input": "address",
     "output": "hash",
-    "description": "Get hash of an account’s code"
+    "description": "Get hash of an account’s code",
+    "dynamicFee": true
   },
   "40": {
     "input": "blockNumber",
@@ -407,27 +416,32 @@
   "51": {
     "input": "offset",
     "output": "value",
-    "description": "Load word from memory"
+    "description": "Load word from memory",
+    "dynamicFee": true
   },
   "52": {
     "input": "offset | value",
     "output": "",
-    "description": "Save word to memory"
+    "description": "Save word to memory",
+    "dynamicFee": true
   },
   "53": {
     "input": "offset | value",
     "output": "",
-    "description": "Save byte to memory"
+    "description": "Save byte to memory",
+    "dynamicFee": true
   },
   "54": {
     "input": "key",
     "output": "value",
-    "description": "Load word from storage"
+    "description": "Load word from storage",
+    "dynamicFee": true
   },
   "55": {
     "input": "key | value",
     "output": "",
-    "description": "Save word to storage"
+    "description": "Save word to storage",
+    "dynamicFee": true
   },
   "56": {
     "input": "counter",
@@ -802,27 +816,32 @@
   "a0": {
     "input": "offset | length",
     "output": "",
-    "description": "Append log record with no topics"
+    "description": "Append log record with no topics",
+    "dynamicFee": true
   },
   "a1": {
     "input": "offset | length | topic",
     "output": "",
-    "description": "Append log record with one topic"
+    "description": "Append log record with one topic",
+    "dynamicFee": true
   },
   "a2": {
     "input": "offset | length | topic1 | topic2",
     "output": "",
-    "description": "Append log record with four topics"
+    "description": "Append log record with four topics",
+    "dynamicFee": true
   },
   "a3": {
     "input": "offset | length | topic1 | topic2 | topic3",
     "output": "",
-    "description": "Append log record with four topics"
+    "description": "Append log record with four topics",
+    "dynamicFee": true
   },
   "a4": {
     "input": "offset | length | topic1 | topic2 | topic3 | topic4",
     "output": "",
-    "description": "Append log record with four topics"
+    "description": "Append log record with four topics",
+    "dynamicFee": true
   },
   "a5": {
     "input": "",
@@ -1202,32 +1221,38 @@
   "f0": {
     "input": "value | offset | length",
     "output": "address",
-    "description": "Create a new account with associated code"
+    "description": "Create a new account with associated code",
+    "dynamicFee": true
   },
   "f1": {
     "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
     "output": "success",
-    "description": "Message-call into an account"
+    "description": "Message-call into an account",
+    "dynamicFee": true
   },
   "f2": {
     "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
     "output": "success",
-    "description": "Message-call into this account with alternative account’s code"
+    "description": "Message-call into this account with alternative account’s code",
+    "dynamicFee": true
   },
   "f3": {
     "input": "offset | length",
     "output": "",
-    "description": "Halt execution returning output data"
+    "description": "Halt execution returning output data",
+    "dynamicFee": true
   },
   "f4": {
     "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
     "output": "success",
-    "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value"
+    "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value",
+    "dynamicFee": true
   },
   "f5": {
     "input": "value | offset | length | salt",
     "output": "address",
-    "description": "Create a new account with associated code"
+    "description": "Create a new account with associated code",
+    "dynamicFee": true
   },
   "f6": {
     "input": "",
@@ -1252,7 +1277,8 @@
   "fa": {
     "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
     "output": "success",
-    "description": "Static message-call into an account"
+    "description": "Static message-call into an account",
+    "dynamicFee": true
   },
   "fb": {
     "input": "",
@@ -1267,16 +1293,19 @@
   "fd": {
     "input": "offset | length",
     "output": "",
-    "description": "Halt execution reverting state changes but returning data and remaining gas"
+    "description": "Halt execution reverting state changes but returning data and remaining gas",
+    "dynamicFee": true
   },
   "fe": {
     "input": "",
     "output": "",
-    "description": "Designated invalid instruction"
+    "description": "Designated invalid instruction",
+    "dynamicFee": true
   },
   "ff": {
     "input": "address",
     "output": "",
-    "description": "Halt execution and register account for later deletion"
+    "description": "Halt execution and register account for later deletion",
+    "dynamicFee": true
   }
 }
