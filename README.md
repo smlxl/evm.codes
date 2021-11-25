@@ -43,7 +43,7 @@ evm.codes is built and maintained by a small team, so we would definitely love y
 
 Before you submit a pull request, please make sure there isn't an existing [GitHub issue](https://github.com/comitylabs/evm.codes/issues). If there isn't, create one first to discuss the best way to approach it and also get some feedback from the team.
 
-Once you are about to submit a pull request, prefix the name with either `chore:`, `fix:`, or `feat:` to help us quickly look up the type of the issue from the Git history.
+Once you are about to submit a pull request, prefix the name with either `chore:` (small improvements and regular maintenance), `fix:` (bugs and hot fixes), or `feat:` (new features) to help us quickly look up the type of the issue from the Git history.
 
 ### Coding conventions
 
