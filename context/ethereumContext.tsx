@@ -484,7 +484,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   const _getBlock = () => {
     // base fee is only applicable since london hardfork, ie block 12965000
-    if ((selectedFork?.block || 0) < 12965000) return null
+    if (selectedFork && (selectedFork.block || 0) < 12965000) return null
     const { Block } = window.EvmCodes
 
     return Block.fromBlockData(
