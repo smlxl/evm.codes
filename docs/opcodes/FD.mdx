@@ -5,18 +5,30 @@ group: System operations
 
 ## Notes
 
-Equivalent to [CREATE](/#F0), except the salt allows to create at a deterministic address.
+Abort execution, undo all state changes, return a value and refund the remaining gas to the caller.
+The error message returned is available to the caller in the returndata buffer.
 
 ## Stack input
 
-0. `Integer`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
-1. `Integer`: offset in the [memory](/about) in bytes, the instructions of the new account.
-2. `Integer`: how many bytes to copy (size of the instructions).
-3. `Integer`: salt, 32-byte value used to create the new account at a deterministic address.
+0. `Integer`: offset in the [memory](/about) in bytes. The starting position of the value to return.
+1. `Integer`: length in the [memory](/about) in bytes to return.
+
+## Returndata output
+
+memory[offset:offset+length]
+
+## Examples
+
+| Memory |
+|--------|
+| `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+
+|  Input   | Output |
+|---------:|-------:|
+| `0x0001` | `0xFF` |
 
 ## Error cases
 
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The current execution context is from a [STATICCALL](/#FA).
