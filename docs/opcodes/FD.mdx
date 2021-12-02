@@ -5,27 +5,27 @@ group: System operations
 
 ## Notes
 
-Abort execution, undo all state changes, return a value and refund the remaining gas to the caller.
-The error message returned is available to the caller in the returndata buffer.
+Stop the current context execution, revert the state changes (see [STATICCALL](/#FA) for a list of state changing opcodes) and return unused gas to the caller. If the execution is stopped with REVERT, the value 0 is put on the stack of the calling context, which continues to execute normally.
+The [return data](/about) of the calling context is set as the given chunk of memory of this context.
 
 ## Stack input
 
-0. `Integer`: offset in the [memory](/about) in bytes. The starting position of the value to return.
-1. `Integer`: length in the [memory](/about) in bytes to return.
-
-## Returndata output
-
-memory[offset:offset+length]
+0. `Integer`: Offset in the [memory](/about) in bytes. The return data of the calling context.
+1. `Integer`: Length: how many bytes to copy (size of the [return data](/about).
 
 ## Examples
 
 | Memory |
 |--------|
-| `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+| `0xFF01000000000000000000000000000000000000000000000000000000000000` |
 
-|  Input   | Output |
-|---------:|-------:|
-| `0x0001` | `0xFF` |
+|  Stack Input |
+|-------------:|
+|   `0x0001`   |
+
+| Calling context return data |
+|----------------------------:|
+|           `0xFF01`          |
 
 ## Error cases
 
