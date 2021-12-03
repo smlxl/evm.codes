@@ -10,22 +10,23 @@ The [return data](/about) of the calling context is set as the given chunk of me
 
 ## Stack input
 
-0. `Integer`: Offset in the [memory](/about) in bytes. The return data of the calling context.
-1. `Integer`: Length: how many bytes to copy (size of the [return data](/about).
+0. `Integer`: offset in the [memory](/about) in bytes. The return data of the calling context.
+1. `Integer`: length: how many bytes to copy (size of the [return data](/about).
 
 ## Examples
 
 | Memory |
-|--------|
-| `0xFF01000000000000000000000000000000000000000000000000000000000000` |
+|-------:|
+| `0xFF01` |
 
-|  Stack Input |
-|-------------:|
-|   `0x0001`   |
+| Input |
+|------:|
+| `0` |
+| `2` |
 
 | Calling context return data |
 |----------------------------:|
-|           `0xFF01`          |
+| `0xFF01` |
 
 ## Error cases
 
