@@ -173,7 +173,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
             const { code } = row.values
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === row.id
-            const hasDynamicFee = opcodes[code.toUpperCase()]?.dynamicFee
+            const hasDynamicFee = opcodes.find(opcode => opcode.code == code)?.dynamicFee
 
             return (
               <Fragment key={row.getRowProps().key}>
