@@ -32,8 +32,7 @@
   "06": {
     "input": "a | b",
     "output": "a % b",
-    "description": "Modulo remainder operation",
-    "dynamicFee": true
+    "description": "Modulo remainder operation"
   },
   "07": {
     "input": "a | b",
@@ -53,7 +52,8 @@
   "0a": {
     "input": "a | b",
     "output": "a ** b",
-    "description": "Exponential operation"
+    "description": "Exponential operation",
+    "dynamicFee": true
   },
   "0b": {
     "input": "b | x",
