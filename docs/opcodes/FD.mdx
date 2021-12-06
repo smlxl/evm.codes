@@ -5,18 +5,31 @@ group: System operations
 
 ## Notes
 
-Equivalent to [CREATE](/#F0), except the salt allows to create at a deterministic address.
+Stop the current context execution, revert the state changes (see [STATICCALL](/#FA) for a list of state changing opcodes) and return unused gas to the caller. If the execution is stopped with REVERT, the value 0 is put on the stack of the calling context, which continues to execute normally.
+The [return data](/about) of the calling context is set as the given chunk of memory of this context.
 
 ## Stack input
 
-0. `Integer`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
-1. `Integer`: offset in the [memory](/about) in bytes, the instructions of the new account.
-2. `Integer`: how many bytes to copy (size of the instructions).
-3. `Integer`: salt, 32-byte value used to create the new account at a deterministic address.
+0. `Integer`: offset in the [memory](/about) in bytes. The return data of the calling context.
+1. `Integer`: how many bytes to copy (size of the [return data](/about).
+
+## Examples
+
+| Memory |
+|-------:|
+| `0xFF01` |
+
+| Input |
+|------:|
+| `0` |
+| `2` |
+
+| Calling context return data |
+|----------------------------:|
+| `0xFF01` |
 
 ## Error cases
 
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The current execution context is from a [STATICCALL](/#FA).
