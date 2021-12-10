@@ -88,7 +88,6 @@ const DynamicFee = ({ opcode }: Props) => {
                   value={inputs[key]}
                   defaultValue={'0'}
                   onChange={(e) => handleChange(key, e.target.value)}
-                  size="xs"
                   className="bg-white bg-opacity-75 dark:bg-black-400 mb-4 text-sm font-mono"
                 />
               )}
