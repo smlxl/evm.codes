@@ -23,6 +23,9 @@ export const calculateDynamicFee = (
 ) => {
   let result = new BN(0)
 
+  // FIXME: Remove when all formulas are implemented
+  console.info('Received inputs for dynamic fee calc', { opcode, inputs })
+
   switch (opcode.code) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
