@@ -43,6 +43,7 @@ if (typeof window !== 'undefined') {
 }
 
 type ContextProps = {
+  common: Common | undefined
   chains: IChain[]
   forks: Hardfork[]
   selectedChain: IChain | undefined
@@ -77,6 +78,7 @@ const initialExecutionState = {
 }
 
 export const EthereumContext = createContext<ContextProps>({
+  common: undefined,
   chains: [],
   forks: [],
   selectedChain: undefined,
@@ -599,6 +601,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   return (
     <EthereumContext.Provider
       value={{
+        common,
         chains,
         forks,
         selectedChain,

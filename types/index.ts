@@ -10,7 +10,14 @@ export interface IOpcode {
   output: string
   description: string
   fee: number
-  dynamicFee?: boolean
+  dynamicFee?: {
+    inputs: {
+      [name: string]: {
+        type: 'number' | 'boolean'
+        label: string
+      }
+    }
+  }
 }
 
 export interface IOpcodeMeta {

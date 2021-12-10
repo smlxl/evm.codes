@@ -53,7 +53,14 @@
     "input": "a | b",
     "output": "a ** b",
     "description": "Exponential operation",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "exponent": {
+          "type": "number",
+          "label": "Exponent"
+        }
+      }
+    }
   },
   "0b": {
     "input": "b | x",
@@ -164,7 +171,22 @@
     "input": "offset | length",
     "output": "hash",
     "description": "Compute Keccak-256 hash",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Offset"
+        },
+        "byteSize": {
+          "type": "number",
+          "label": "Byte size"
+        },
+        "memSize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "21": {
     "input": "",
@@ -1306,6 +1328,25 @@
     "input": "address",
     "output": "",
     "description": "Halt execution and register account for later deletion",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "callValue": {
+          "type": "number",
+          "label": "Call value"
+        },
+        "address": {
+          "type": "boolean",
+          "label": "Is called account Warm (no for 'Cold')?"
+        },
+        "accountEmpty": {
+          "type": "boolean",
+          "label": "Is called account empty?"
+        },
+        "gasSent": {
+          "type": "number",
+          "label": "Gas sent with the call"
+        }
+      }
+    }
   }
 }

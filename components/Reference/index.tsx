@@ -27,11 +27,10 @@ type CustomHeaderGroup = {
   className?: string
 } & HeaderGroup<IOpcode>
 
-// FIXME: Remove once https://github.com/comitylabs/evm.codes/issues/57 is done
 const DynamicFeeTooltip = () => (
   <span
     className="inline-block pl-2 text-gray-400 dark:text-black-400"
-    data-tip="Dynamic gas portion is not included yet and coming soon."
+    data-tip="Contains dynamic gas fee, expand the row to calculate it."
   >
     <Icon name="question-line" />
   </span>
@@ -171,11 +170,10 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
             prepareRow(row)
 
             const { code } = row.values
+            const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
-            const isExpanded = row.isExpanded || focusedOpcode === row.id
-            const hasDynamicFee = opcodes.find(
-              (opcode) => opcode.code == code,
-            )?.dynamicFee
+            const isExpanded = row.isExpanded || focusedOpcode === rowId
+            const hasDynamicFee = opcodes[rowId]?.dynamicFee
 
             return (
               <Fragment key={row.getRowProps().key}>
@@ -216,7 +214,10 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
-                      <DocRow opcode={opcodeDocs[code.toUpperCase()]} />
+                      <DocRow
+                        opcodeDoc={opcodeDocs[code]}
+                        opcode={opcodes[rowId]}
+                      />
                     </td>
                   </tr>
                 ) : null}

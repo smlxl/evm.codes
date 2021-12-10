@@ -1,16 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+import cn from 'classnames'
 
 import { Icon } from './Icon'
 
 type Props = {
   searchable?: boolean
+  className?: string
 } & React.ComponentPropsWithoutRef<'input'>
 
-export const Input: React.FC<Props> = ({ searchable = false, ...rest }) => {
+export const Input: React.FC<Props> = ({
+  searchable = false,
+  onFocus,
+  onBlur,
+  className,
+  ...rest
+}) => {
+  const [isFocused, setIsFocused] = useState(false)
+
+  const handleFocus = (e: any) => {
+    setIsFocused(true)
+    if (onFocus) onFocus(e)
+  }
+
+  const handleBlur = (e: any) => {
+    setIsFocused(false)
+    if (onBlur && e) onBlur(e)
+  }
+
   return (
-    <div className="flex items-center h-9 bg-gray-100 dark:bg-black-500 rounded px-3 py-2">
+    <div
+      className={cn(
+        'flex items-center rounded px-3 py-2',
+        {
+          shadow: isFocused,
+        },
+        className,
+      )}
+    >
       <input
-        className="text-sm outline-none bg-transparent dark:placeholder-black-400"
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        className="w-full outline-none bg-transparent dark:placeholder-black-400 text-sm"
         {...rest}
       />
       {searchable && (
