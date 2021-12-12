@@ -828,13 +828,13 @@
   "a2": {
     "input": "offset | length | topic1 | topic2",
     "output": "",
-    "description": "Append log record with four topics",
+    "description": "Append log record with two topics",
     "dynamicFee": true
   },
   "a3": {
     "input": "offset | length | topic1 | topic2 | topic3",
     "output": "",
-    "description": "Append log record with four topics",
+    "description": "Append log record with three topics",
     "dynamicFee": true
   },
   "a4": {
