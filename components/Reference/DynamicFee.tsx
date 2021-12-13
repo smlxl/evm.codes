@@ -31,11 +31,7 @@ const DynamicFee = ({ opcode }: Props) => {
   useEffect(() => {
     const inputValues: InputValue = {}
     Object.keys(dynamicFee?.inputs || []).map((key: string) => {
-      if (dynamicFee?.inputs[key].type === 'number') {
-        inputValues[key] = '0'
-      } else if (dynamicFee?.inputs[key].type === 'boolean') {
-        inputValues[key] = '1' // true default
-      }
+      inputValues[key] = '0' // false for boolean, zero for numbers
     })
     setInputs(inputValues)
   }, [dynamicFee])
