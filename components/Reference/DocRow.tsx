@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { MDXRemote } from 'next-mdx-remote'
 import { IOpcode, IOpcodeDoc } from 'types'
 
@@ -46,8 +47,13 @@ const DocRow = ({ opcodeDoc, opcode }: Props) => {
             </tbody>
           </table>
 
-          {opcode.dynamicFee && <DynamicFee opcode={opcode} />}
-          <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
+          <div className="flex flex-col lg:flex-row">
+            <div className={cn({ 'flex-1 lg:pr-8': !!opcode.dynamicFee })}>
+              <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
+            </div>
+
+            {opcode.dynamicFee && <DynamicFee opcode={opcode} />}
+          </div>
         </>
       )}
       {!opcodeDoc && (

@@ -2,6 +2,10 @@ import Common from '@ethereumjs/common'
 import { BN } from 'ethereumjs-util'
 import { IOpcode } from 'types'
 
+const namespaces = ['gasPrices']
+const reFences = /{(.+)}/
+const reGasVariable = /\{\s*[a-zA-Z0-9_|]*\s*\}/g
+
 /*
  * Calculates dynamic gas fee
  *
@@ -15,7 +19,6 @@ import { IOpcode } from 'types'
  * Fee calculation is based on the ethereumjs-vm functions,
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/opcodes/functions.ts
  */
-
 export const calculateDynamicFee = (
   opcode: IOpcode,
   common: Common,
@@ -46,4 +49,28 @@ export const calculateDynamicFee = (
   }
 
   return result.toString()
+}
+
+/*
+ * Parses string and replaces all dynamic gas price occurrences
+ *
+ * @param common The Common object
+ * @param contents The String to process
+ *
+ * @returns The String with gas prices replaced.
+ */
+export const parseGasPrices = (common: Common, contents: string) => {
+  return contents.replace(reGasVariable, (str) => {
+    const value = str.match(reFences)
+    if (!value?.[1]) return str
+
+    const [namespace, key] = value[1].split('|')
+    if (!namespaces.includes(namespace) || !key) return str
+
+    if (namespace === 'gasPrices') {
+      const gasPrice = common.param('gasPrices', key)
+      return gasPrice
+    }
+    return str
+  })
 }

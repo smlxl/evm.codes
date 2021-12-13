@@ -1,12 +1,16 @@
 import fs from 'fs'
 import path from 'path'
 
+import Common, { Chain } from '@ethereumjs/common'
 import matter from 'gray-matter'
 import type { NextPage } from 'next'
+import { GetServerSideProps } from 'next'
+import cookies from 'next-cookies'
 import { serialize } from 'next-mdx-remote/serialize'
 import { IOpcodeDocs, IOpcodeDocMeta } from 'types'
 
-import { GITHUB_REPO_URL } from 'util/constants'
+import { CURRENT_FORK, GITHUB_REPO_URL } from 'util/constants'
+import { parseGasPrices } from 'util/gas'
 
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
@@ -46,9 +50,22 @@ HomePage.getLayout = function getLayout(page: NextPage) {
   return <HomeLayout>{page}</HomeLayout>
 }
 
-export const getStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const files = fs.readdirSync(path.join(docsDir))
   const opcodeDocs: IOpcodeDocs = {}
+  let common: Common
+
+  try {
+    common = new Common({
+      chain: Chain.Mainnet,
+      hardfork: cookies(context).fork,
+    })
+  } catch (error) {
+    common = new Common({
+      chain: Chain.Mainnet,
+      hardfork: CURRENT_FORK,
+    })
+  }
 
   await Promise.all(
     files.map(async (filename) => {
@@ -61,7 +78,7 @@ export const getStaticProps = async () => {
 
       const { data, content } = matter(markdownWithMeta)
       const meta = data as IOpcodeDocMeta
-      const mdxSource = await serialize(content)
+      const mdxSource = await serialize(parseGasPrices(common, content))
 
       opcodeDocs[opcode] = {
         meta,

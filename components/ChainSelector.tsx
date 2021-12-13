@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
+import Cookies from 'js-cookie'
 import { useRegisterActions, Action } from 'kbar'
 import Select, { OnChangeValue, components } from 'react-select'
 
@@ -44,14 +45,19 @@ const ChainSelector = () => {
     (option: OnChangeValue<any, any>) => {
       setForkValue(option)
       onForkChange(option.value)
-      setSetting(Setting.VmFork, option)
+      setSetting(Setting.VmFork, option.value)
+      Cookies.set('fork', option.value)
     },
     [onForkChange, setSetting],
   )
 
   useEffect(() => {
     if (defaultForkOption) {
-      handleForkChange(getSetting(Setting.VmFork) || defaultForkOption)
+      const setting = getSetting(Setting.VmFork)
+      const storedFork = forkOptions.find(
+        (fork) => fork.value === setting?.value,
+      )
+      handleForkChange(storedFork || defaultForkOption)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded, defaultForkOption])

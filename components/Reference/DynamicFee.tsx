@@ -69,7 +69,7 @@ const DynamicFee = ({ opcode }: Props) => {
         </div>
       </div>
 
-      <div className="bg-indigo-100 dark:bg-black-500 p-4 rounded">
+      <div className="bg-indigo-100 dark:bg-black-500 p-4 rounded shadow">
         {Object.keys(dynamicFee.inputs).map((key: string) => {
           const input = dynamicFee.inputs[key]
 
