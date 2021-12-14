@@ -38,8 +38,12 @@ const accountBalance = 18 // 1eth
 
 // Run these only client-side
 if (typeof window !== 'undefined') {
-  accountAddress = window.EvmCodes.Address.fromPrivateKey(privateKey)
-  gasLimit = new window.EvmCodes.BN(0xffffffffffff)
+  try {
+    accountAddress = window.EvmCodes.Address.fromPrivateKey(privateKey)
+    gasLimit = new window.EvmCodes.BN(0xffffffffffff)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 type ContextProps = {
