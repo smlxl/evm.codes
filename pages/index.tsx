@@ -51,7 +51,7 @@ HomePage.getLayout = function getLayout(page: NextPage) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const files = fs.readdirSync(path.resolve(process.cwd(), docsDir))
+  const files = fs.readdirSync(path.join(docsDir))
   const opcodeDocs: IOpcodeDocs = {}
   let common: Common
 
@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       try {
         const markdownWithMeta = fs.readFileSync(
-          path.resolve(process.cwd(), `${docsDir}/${filename}`),
+          path.join(docsDir, filename),
           'utf-8',
         )
 
@@ -86,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           mdxSource,
         }
       } catch (error) {
-        console.error("Can't read the doc", error)
+        console.debug("Can't read the doc", error)
       }
     }),
   )
