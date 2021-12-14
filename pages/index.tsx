@@ -7,7 +7,10 @@ import type { NextPage } from 'next'
 import { GetServerSideProps } from 'next'
 import cookies from 'next-cookies'
 import { serialize } from 'next-mdx-remote/serialize'
+import getConfig from 'next/config'
 import { IOpcodeDocs, IOpcodeDocMeta } from 'types'
+
+const { serverRuntimeConfig } = getConfig()
 
 import { CURRENT_FORK, GITHUB_REPO_URL } from 'util/constants'
 import { parseGasPrices } from 'util/gas'
@@ -51,7 +54,7 @@ HomePage.getLayout = function getLayout(page: NextPage) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const files = fs.readdirSync(path.join(docsDir))
+  const files = fs.readdirSync(path.join(serverRuntimeConfig.APP_ROOT, docsDir))
   const opcodeDocs: IOpcodeDocs = {}
   let common: Common
 
@@ -73,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       try {
         const markdownWithMeta = fs.readFileSync(
-          path.join(docsDir, filename),
+          path.join(serverRuntimeConfig.APP_ROOT, docsDir, filename),
           'utf-8',
         )
 
