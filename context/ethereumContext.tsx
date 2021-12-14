@@ -42,7 +42,7 @@ if (typeof window !== 'undefined') {
     accountAddress = window.EvmCodes.Address.fromPrivateKey(privateKey)
     gasLimit = new window.EvmCodes.BN(0xffffffffffff)
   } catch (error) {
-    console.error(error)
+    console.log(error)
   }
 }
 
