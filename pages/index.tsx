@@ -51,7 +51,7 @@ HomePage.getLayout = function getLayout(page: NextPage) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const files = fs.readdirSync(path.join(docsDir))
+  const files = fs.readdirSync(path.resolve(process.cwd(), docsDir))
   const opcodeDocs: IOpcodeDocs = {}
   let common: Common
 
@@ -71,18 +71,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     files.map(async (filename) => {
       const opcode = filename.split('.')[0].toString().toLowerCase()
 
-      const markdownWithMeta = fs.readFileSync(
-        path.join(docsDir, filename),
-        'utf-8',
-      )
+      try {
+        const markdownWithMeta = fs.readFileSync(
+          path.resolve(process.cwd(), `${docsDir}/${filename}`),
+          'utf-8',
+        )
 
-      const { data, content } = matter(markdownWithMeta)
-      const meta = data as IOpcodeDocMeta
-      const mdxSource = await serialize(parseGasPrices(common, content))
+        const { data, content } = matter(markdownWithMeta)
+        const meta = data as IOpcodeDocMeta
+        const mdxSource = await serialize(parseGasPrices(common, content))
 
-      opcodeDocs[opcode] = {
-        meta,
-        mdxSource,
+        opcodeDocs[opcode] = {
+          meta,
+          mdxSource,
+        }
+      } catch (error) {
+        console.error("Can't read the doc", error)
       }
     }),
   )
