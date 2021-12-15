@@ -71,3 +71,11 @@ export interface IOpcodeDoc {
 export interface IOpcodeDocs {
   [opcode: string]: IOpcodeDoc
 }
+
+export interface IOpcodeGasDoc {
+  mdxSource: any
+}
+
+export interface IOpcodeGasDocs {
+  [opcode: string]: IOpcodeGasDoc
+}

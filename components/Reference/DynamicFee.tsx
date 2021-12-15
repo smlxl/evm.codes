@@ -27,6 +27,12 @@ const DynamicFee = ({ opcode }: Props) => {
   const [inputs, setInputs] = useState<InputValue>({})
   const [result, setResult] = useState('0')
 
+  const handleCompute = debounce((inputs) => {
+    if (common) {
+      setResult(calculateDynamicFee(opcode, common, inputs))
+    }
+  }, debounceTimeout)
+
   // Initialize inputs with default keys & values
   useEffect(() => {
     const inputValues: InputValue = {}
@@ -34,13 +40,10 @@ const DynamicFee = ({ opcode }: Props) => {
       inputValues[key] = '0' // false for boolean, zero for numbers
     })
     setInputs(inputValues)
-  }, [dynamicFee])
 
-  const handleCompute = debounce((inputs) => {
-    if (common) {
-      setResult(calculateDynamicFee(opcode, common, inputs))
-    }
-  }, debounceTimeout)
+    handleCompute(inputs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dynamicFee])
 
   const handleChange = (key: string, value: string) => {
     const newInputs = {
@@ -54,9 +57,6 @@ const DynamicFee = ({ opcode }: Props) => {
   if (!dynamicFee?.inputs) {
     return null
   }
-
-  // Initialise the cost with the default values
-  handleCompute(inputs)
 
   return (
     <div className="w-96">
@@ -107,10 +107,10 @@ const DynamicFee = ({ opcode }: Props) => {
           )
         })}
 
-        <p>
+        <div className="flex items-center pt-2">
           <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
           Static gas + dynamic gas = {result}
-        </p>
+        </div>
       </div>
     </div>
   )

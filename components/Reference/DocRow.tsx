@@ -1,6 +1,5 @@
-import cn from 'classnames'
 import { MDXRemote } from 'next-mdx-remote'
-import { IOpcode, IOpcodeDoc } from 'types'
+import { IOpcode, IOpcodeDoc, IOpcodeGasDoc } from 'types'
 
 import { GITHUB_REPO_URL } from 'util/constants'
 
@@ -11,6 +10,7 @@ import DynamicFee from './DynamicFee'
 type Props = {
   opcodeDoc: IOpcodeDoc
   opcode: IOpcode
+  gasDoc: IOpcodeGasDoc
 }
 
 const docComponents = {
@@ -27,7 +27,7 @@ const docComponents = {
   a: Doc.A,
 }
 
-const DocRow = ({ opcodeDoc, opcode }: Props) => {
+const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
   return (
     <div className="text-sm px-4 md:px-8 py-8 bg-indigo-50 dark:bg-black-600">
       {opcodeDoc && (
@@ -47,13 +47,13 @@ const DocRow = ({ opcodeDoc, opcode }: Props) => {
             </tbody>
           </table>
 
-          <div className="flex flex-col lg:flex-row">
-            <div className={cn({ 'flex-1 lg:pr-8': !!opcode.dynamicFee })}>
-              <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
-            </div>
+          <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
 
-            {opcode.dynamicFee && <DynamicFee opcode={opcode} />}
-          </div>
+          {opcode.dynamicFee && <DynamicFee opcode={opcode} />}
+
+          {gasDoc && (
+            <MDXRemote {...gasDoc.mdxSource} components={docComponents} />
+          )}
         </>
       )}
       {!opcodeDoc && (

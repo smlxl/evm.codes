@@ -12,7 +12,7 @@ import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IOpcode, IOpcodeDocs } from 'types'
+import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -36,7 +36,13 @@ const DynamicFeeTooltip = () => (
   </span>
 )
 
-const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
+const ReferenceTable = ({
+  opcodeDocs,
+  gasDocs,
+}: {
+  opcodeDocs: IOpcodeDocs
+  gasDocs: IOpcodeGasDocs
+}) => {
   const router = useRouter()
   const { opcodes } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
@@ -217,6 +223,7 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       <DocRow
                         opcodeDoc={opcodeDocs[code]}
                         opcode={opcodes[rowId]}
+                        gasDoc={gasDocs[code]}
                       />
                     </td>
                   </tr>

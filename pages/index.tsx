@@ -1,27 +1,21 @@
-import fs from 'fs'
-import path from 'path'
-
-import Common, { Chain } from '@ethereumjs/common'
-import matter from 'gray-matter'
 import type { NextPage } from 'next'
-import { GetServerSideProps } from 'next'
-import cookies from 'next-cookies'
-import { serialize } from 'next-mdx-remote/serialize'
-import getConfig from 'next/config'
-import { IOpcodeDocs, IOpcodeDocMeta } from 'types'
+import { IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
-const { serverRuntimeConfig } = getConfig()
-
-import { CURRENT_FORK, GITHUB_REPO_URL } from 'util/constants'
-import { parseGasPrices } from 'util/gas'
+import { GITHUB_REPO_URL } from 'util/constants'
 
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import { H1, H2, Container, Button } from 'components/ui'
 
-const docsDir = 'docs/opcodes'
+import { opcodeDocsProps } from './serverProps'
 
-const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
+const HomePage = ({
+  opcodeDocs,
+  gasDocs,
+}: {
+  opcodeDocs: IOpcodeDocs
+  gasDocs: IOpcodeGasDocs
+}) => {
   return (
     <>
       <Container>
@@ -33,7 +27,7 @@ const HomePage = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
 
       <section className="py-10 md:py-20 bg-gray-50 dark:bg-black-700">
         <Container>
-          <ReferenceTable opcodeDocs={opcodeDocs} />
+          <ReferenceTable opcodeDocs={opcodeDocs} gasDocs={gasDocs} />
         </Container>
       </section>
 
@@ -53,52 +47,6 @@ HomePage.getLayout = function getLayout(page: NextPage) {
   return <HomeLayout>{page}</HomeLayout>
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const files = fs.readdirSync(path.join(serverRuntimeConfig.APP_ROOT, docsDir))
-  const opcodeDocs: IOpcodeDocs = {}
-  let common: Common
-
-  try {
-    common = new Common({
-      chain: Chain.Mainnet,
-      hardfork: cookies(context).fork,
-    })
-  } catch (error) {
-    common = new Common({
-      chain: Chain.Mainnet,
-      hardfork: CURRENT_FORK,
-    })
-  }
-
-  await Promise.all(
-    files.map(async (filename) => {
-      const opcode = filename.split('.')[0].toString().toLowerCase()
-
-      try {
-        const markdownWithMeta = fs.readFileSync(
-          path.join(serverRuntimeConfig.APP_ROOT, docsDir, filename),
-          'utf-8',
-        )
-
-        const { data, content } = matter(markdownWithMeta)
-        const meta = data as IOpcodeDocMeta
-        const mdxSource = await serialize(parseGasPrices(common, content))
-
-        opcodeDocs[opcode] = {
-          meta,
-          mdxSource,
-        }
-      } catch (error) {
-        console.debug("Can't read the doc", error)
-      }
-    }),
-  )
-
-  return {
-    props: {
-      opcodeDocs,
-    },
-  }
-}
+export const getServerSideProps = opcodeDocsProps
 
 export default HomePage
