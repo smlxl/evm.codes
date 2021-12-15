@@ -32,10 +32,8 @@ export const calculateDynamicFee = (
   switch (opcode.code) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
-      const byteLength = exponent.byteLength()
       const gasPrice = common.param('gasPrices', 'expByte')
-      result = new BN(byteLength).muln(gasPrice)
-
+      result = new BN(exponent.byteLength()).muln(gasPrice)
       break
     }
     case '20': {
@@ -48,7 +46,7 @@ export const calculateDynamicFee = (
     }
   }
 
-  return result.toString()
+  return result.add(new BN(opcode.fee)).toString()
 }
 
 /*

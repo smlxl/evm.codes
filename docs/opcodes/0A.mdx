@@ -24,3 +24,9 @@ group: Stop and Arithmetic Operations
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
+
+## Dynamic gas
+
+`dynamic_gas = {gasPrices|expByte} * exponent_byte_length`
+
+The dynamic gas is simply function of how many bytes we need to represent the exponent in [binary](https://en.wikipedia.org/wiki/Binary_number).

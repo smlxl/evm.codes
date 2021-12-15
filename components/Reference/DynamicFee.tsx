@@ -55,14 +55,13 @@ const DynamicFee = ({ opcode }: Props) => {
     return null
   }
 
+  // Initialise the cost with the default values
+  handleCompute(inputs)
+
   return (
     <div className="w-96">
       <div className="flex justify-between items-center">
-        <H2>Dynamic gas fee</H2>
-        <div className="flex items-center text-right">
-          <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
-          {result}
-        </div>
+        <H2>Estimate your gas usage</H2>
       </div>
 
       <div className="bg-indigo-100 dark:bg-black-500 p-4 rounded shadow">
@@ -107,6 +106,11 @@ const DynamicFee = ({ opcode }: Props) => {
             </div>
           )
         })}
+
+        <p>
+          <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
+          Static gas + dynamic gas = {result}
+        </p>
       </div>
     </div>
   )
