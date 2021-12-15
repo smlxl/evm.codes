@@ -5,17 +5,17 @@ group: Stack Memory Storage and Flow Operations
 
 ## Notes
 
-The program counter (PC) is a byte index (starting from 0) in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
+The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
 
 The **JUMP** instruction alters the program counter, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like functions.
 
 ## Stack input
 
-0. `Counter`: byte index in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
+0. `Counter`: byte offset in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
 
 ## Error cases
 
 The transaction is reverted in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- `Counter` index is not a [JUMPDEST](/#5B). The error is generated even if the JUMP would not have been done.
+- `Counter` offset is not a [JUMPDEST](/#5B). The error is generated even if the JUMP would not have been done.

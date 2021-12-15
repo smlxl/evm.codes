@@ -175,13 +175,13 @@
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Offset"
+          "label": "Byte offset"
         },
-        "byteSize": {
+        "count": {
           "type": "number",
-          "label": "Byte size"
+          "label": "Byte count"
         },
-        "memSize": {
+        "memorySize": {
           "type": "number",
           "label": "Current memory size"
         }

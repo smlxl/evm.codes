@@ -10,6 +10,7 @@ const OLink = ({ opcode, title }: { opcode?: string; title: string }) => (
   </Link>
 )
 
+// It seems the memory expansion computation and constants did not change since frontier, but we have to keep an eye on new fork to keep this up to date
 const AboutPage = () => {
   return (
     <Container className="text-sm leading-6">
@@ -128,10 +129,11 @@ const AboutPage = () => {
         factors, including the amount of data sent or the amount of work that a
         transaction requires. That fee is calculated through two mechanisms. The
         first is a fixed cost that is defined by Ethereum, depending on what is
-        executed. The unit for that is called gas, and remains the same, though
-        it can be changed by a hardfork. The second component is the price of
-        one gas unit, which varies over time according to what people are
-        willing to pay to run their transactions. Its unit is ETH per gas.
+        executed. The unit for that is called gas, and remains the same for all
+        transactions, though it can be changed by a hardfork. The second
+        component is the price of one gas unit, which varies over time according
+        to what people are willing to pay to run their transactions. Its unit is
+        ETH per gas.
       </p>
 
       <p className="pb-8">
@@ -165,6 +167,58 @@ const AboutPage = () => {
           Truffle
         </a>
         .
+      </p>
+
+      <H3 className="mb-4">Intrinsic Gas</H3>
+      <p className="pb-8">
+        Each transaction has an intrinsic cost of 21000 gas. Creating a contract
+        costs 32000 gas, on top of the transaction cost. And finally, the
+        calldata costs 4 gas per byte equal to 0, and 16 gas for the others (64
+        before Istanbul fork). This cost is payed from the transaction before
+        any opcode or transfer is executed.
+      </p>
+
+      <H3 className="mb-4">Memory expansion</H3>
+      <p className="pb-8">
+        During an execution, the whole memory is accessible, but not for free.
+        When an offset is accessed for the first time (either read or write), it
+        may trigger a memory expansion, which will cost gas. A memory expansion
+        may be triggered when the offset used is bigger than any used before.
+        When that happens, the cost of accessing that higher offset is computed
+        and removed from the total gas available in the current context.
+      </p>
+
+      <p className="pb-8">
+        The total cost for a given memory size is computed as follows:
+        <code>
+          <br />
+          memory_size_word = (memory_byte_size + 31) / 32
+          <br />
+          memory_cost = (memory_size_word ** 2) / 512 + (3 * memory_size_word)
+          <br />
+        </code>
+      </p>
+
+      <p className="pb-8">
+        When a memory expansion is triggered however, only the additional chunk
+        of memory has to be payed. The cost of memory expansion for a specific
+        opcode is thus:
+        <br />
+        <code>memory_expansion_cost = new_memory_cost - last_memory_cost</code>
+      </p>
+
+      <p className="pb-8">
+        The <code>memory_byte_size</code> can be obtained with{' '}
+        <OLink opcode="59" title="MSIZE" />. We can see that the cost grows
+        quadratically with the size, making higher offsets more costly and
+        discouraging to use too much memory. Any opcode accessing memory may
+        trigger an expansion (including, for example,{' '}
+        <OLink opcode="51" title="MLOAD" />,{' '}
+        <OLink opcode="F3" title="RETURN" /> or{' '}
+        <OLink opcode="37" title="CALLDATACOPY" />
+        ). Each opcode that can is mentionned in the <OLink title="reference" />
+        . Note also that an opcode with a byte count parameter of 0 will not
+        trigger a memory expansion, regardless of its offset parameters.
       </p>
     </Container>
   )

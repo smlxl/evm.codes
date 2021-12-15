@@ -6,6 +6,18 @@ const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
 const reGasVariable = /\{\s*[a-zA-Z0-9_|]*\s*\}/g
 
+function toWordCount(a: BN): BN {
+  const wordSize = new BN(32)
+  const div = a.div(wordSize)
+  const mod = a.mod(wordSize)
+
+  // Fast case - exact division
+  if (mod.isZero()) return div
+
+  // Round up
+  return div.isNeg() ? div.isubn(1) : div.iaddn(1)
+}
+
 /*
  * Calculates dynamic gas fee
  *
@@ -29,6 +41,31 @@ export const calculateDynamicFee = (
   // FIXME: Remove when all formulas are implemented
   console.info('Received inputs for dynamic fee calc', { opcode, inputs })
 
+  const memoryCost = (wordCount: BN) => {
+    const fee = new BN(common.param('gasPrices', 'memory'))
+    const quadCoeff = new BN(common.param('gasPrices', 'quadCoeffDiv'))
+    return wordCount.mul(fee).add(wordCount.mul(wordCount).div(quadCoeff))
+  }
+
+  const memoryExtensionCost = (
+    offset: number,
+    byteCount: number,
+    currentMemorySize: number,
+  ) => {
+    if (byteCount == 0) return new BN(0)
+
+    const newMemoryWordCount = toWordCount(
+      new BN(offset).add(new BN(byteCount)),
+    )
+    const oldMemoryWordCount = toWordCount(new BN(currentMemorySize))
+    if (newMemoryWordCount.lte(oldMemoryWordCount)) return new BN(0)
+
+    const newCost = memoryCost(newMemoryWordCount)
+    const oldCost = memoryCost(oldMemoryWordCount)
+    if (newCost.gt(oldCost)) newCost.isub(oldCost)
+    return newCost
+  }
+
   switch (opcode.code) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
@@ -37,7 +74,15 @@ export const calculateDynamicFee = (
       break
     }
     case '20': {
-      // calculate SHA3
+      const sha3WordCost = new BN(common.param('gasPrices', 'sha3Word'))
+      const expansion_cost = memoryExtensionCost(
+        inputs.offset,
+        inputs.count,
+        inputs.memorySize,
+      )
+      result = expansion_cost.iadd(
+        sha3WordCost.imul(toWordCount(new BN(inputs.count))),
+      )
       break
     }
     case 'ff': {
