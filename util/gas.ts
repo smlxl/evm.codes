@@ -52,7 +52,7 @@ export const calculateDynamicFee = (
     byteCount: number,
     currentMemorySize: number,
   ) => {
-    if (byteCount == 0) return new BN(0)
+    if (byteCount === 0) return new BN(0)
 
     const newMemoryWordCount = toWordCount(
       new BN(offset).add(new BN(byteCount)),
@@ -116,4 +116,32 @@ export const parseGasPrices = (common: Common, contents: string) => {
     }
     return str
   })
+}
+
+/*
+ * Checks if dynamic fee is active - current fork is later than given
+ *
+ * @param common The Common object
+ * @param currentFork The String current fork name
+ * @param sinceFork The String since fork name
+ */
+export const isDynamicFeeActive = (
+  common: Common,
+  currentFork: string | undefined,
+  sinceFork: string,
+) => {
+  let sinceBlock: number | null = 0
+  let currentBlock: number | null = 0
+
+  common.hardforks().forEach((fork) => {
+    if (fork.name === sinceFork) {
+      sinceBlock = fork.block
+    }
+
+    if (fork.name === currentFork) {
+      currentBlock = fork.block
+    }
+  })
+
+  return sinceBlock <= currentBlock
 }

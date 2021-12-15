@@ -272,7 +272,9 @@
     "input": "address",
     "output": "balance",
     "description": "Get balance of the given account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "since": "berlin"
+    }
   },
   "32": {
     "input": "",

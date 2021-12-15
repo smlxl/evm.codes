@@ -11,6 +11,7 @@ type Props = {
   opcodeDoc: IOpcodeDoc
   opcode: IOpcode
   gasDoc: IOpcodeGasDoc
+  isDynamicFeeActive: boolean
 }
 
 const docComponents = {
@@ -27,7 +28,7 @@ const docComponents = {
   a: Doc.A,
 }
 
-const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
+const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
   return (
     <div className="text-sm px-4 md:px-8 py-8 bg-indigo-50 dark:bg-black-600">
       {opcodeDoc && (
@@ -49,9 +50,11 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
 
           <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
 
-          {opcode.dynamicFee && <DynamicFee opcode={opcode} />}
+          {isDynamicFeeActive && opcode.dynamicFee && (
+            <DynamicFee opcode={opcode} />
+          )}
 
-          {gasDoc && (
+          {isDynamicFeeActive && gasDoc && (
             <MDXRemote {...gasDoc.mdxSource} components={docComponents} />
           )}
         </>

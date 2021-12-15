@@ -16,6 +16,8 @@ import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
+import { isDynamicFeeActive } from 'util/gas'
+
 import { Button, Icon } from 'components/ui'
 
 import tableData from './data'
@@ -44,7 +46,7 @@ const ReferenceTable = ({
   gasDocs: IOpcodeGasDocs
 }) => {
   const router = useRouter()
-  const { opcodes } = useContext(EthereumContext)
+  const { opcodes, common, selectedFork } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => tableData, [])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -179,7 +181,17 @@ const ReferenceTable = ({
             const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === rowId
-            const hasDynamicFee = opcodes[rowId]?.dynamicFee
+
+            const hasDynamicFee = !!(
+              common &&
+              opcodes[rowId]?.dynamicFee &&
+              (!opcodes[rowId].dynamicFee?.since ||
+                isDynamicFeeActive(
+                  common,
+                  selectedFork?.name,
+                  opcodes[rowId].dynamicFee?.since || '',
+                ))
+            )
 
             return (
               <Fragment key={row.getRowProps().key}>
@@ -223,6 +235,7 @@ const ReferenceTable = ({
                       <DocRow
                         opcodeDoc={opcodeDocs[code]}
                         opcode={opcodes[rowId]}
+                        isDynamicFeeActive={hasDynamicFee}
                         gasDoc={gasDocs[code]}
                       />
                     </td>

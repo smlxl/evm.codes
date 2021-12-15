@@ -17,6 +17,7 @@ export interface IOpcode {
         label: string
       }
     }
+    since?: string
   }
 }
 

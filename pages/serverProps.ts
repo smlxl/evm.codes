@@ -18,7 +18,6 @@ const docsDir = 'docs/opcodes'
 const { serverRuntimeConfig } = getConfig()
 
 export const opcodeDocsProps: GetServerSideProps = async (context) => {
-  console.log('GENERATING DOCS')
   const docsPath = path.join(serverRuntimeConfig.APP_ROOT, docsDir)
   const docs = fs.readdirSync(docsPath)
 
