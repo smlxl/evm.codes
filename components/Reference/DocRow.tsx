@@ -51,12 +51,14 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
       {},
     )
 
-    // filter by known forks, sort by block number, and
-    // find the one matching selected fork
+    // filter all forks with block number below or equal to the selected,
+    // sort in descending order and pick the first found
     const foundFork = Object.keys(gasDoc)
-      .filter((forkName) => forkName in knownForksWithBlocks)
-      .sort((a, b) => knownForksWithBlocks[a] - knownForksWithBlocks[b])
-      .find((doc) => knownForksWithBlocks[doc] >= (selectedFork?.block || 0))
+      .filter(
+        (forkName) =>
+          knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
+      )
+      .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
 
     // parse fork dependent dynamic variables
     return foundFork && common
