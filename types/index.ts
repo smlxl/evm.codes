@@ -74,7 +74,7 @@ export interface IOpcodeDocs {
 }
 
 export interface IOpcodeGasDoc {
-  mdxSource: any
+  [fork: string]: string
 }
 
 export interface IOpcodeGasDocs {

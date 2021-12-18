@@ -1,8 +1,6 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
-import Cookies from 'js-cookie'
 import { useRegisterActions, Action } from 'kbar'
-import { useRouter } from 'next/router'
 import Select, { OnChangeValue, components } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -26,7 +24,6 @@ const ChainOption = (props: any) => {
 }
 
 const ChainSelector = () => {
-  const router = useRouter()
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
   const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
 
@@ -43,26 +40,13 @@ const ChainSelector = () => {
     [forkOptions, selectedFork],
   )
 
-  const refreshIndexPage = useCallback(() => {
-    const { route } = router
-
-    if (route === '/') {
-      router.replace(router.asPath)
-    }
-  }, [router])
-
   const handleForkChange = useCallback(
     (option: OnChangeValue<any, any>) => {
       setForkValue(option)
       onForkChange(option.value)
       setSetting(Setting.VmFork, option.value)
-
-      // NOTE: Index page server side props rely on an up-to-date fork cookie,
-      // hence set it here and refresh the index page
-      Cookies.set('fork', option.value)
-      refreshIndexPage()
     },
-    [onForkChange, setSetting, refreshIndexPage],
+    [onForkChange, setSetting],
   )
 
   useEffect(() => {

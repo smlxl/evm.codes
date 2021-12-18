@@ -126,8 +126,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   /**
    * Initializes the EVM instance.
    */
-  const initVmInstance = async (skipChainsLoading?: boolean) => {
-    common = new Common({ chain: Chain.Mainnet, hardfork: CURRENT_FORK })
+  const initVmInstance = async (
+    skipChainsLoading?: boolean,
+    chainId?: Chain,
+    fork?: string,
+  ) => {
+    common = new Common({
+      chain: Chain.Mainnet,
+      hardfork: fork || CURRENT_FORK,
+    })
     vm = new VM({ common })
 
     if (!skipChainsLoading) {
@@ -146,12 +153,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param chainId The chain ID.
    */
   const onChainChange = (chainId: number) => {
-    common.setChain(chainId)
-    resetExecution()
-    initVmInstance(true)
-
     const chain = chains.find((chain) => chain.id === chainId)
-    if (chain) setSelectedChain(chain)
+    if (chain) {
+      setSelectedChain(chain)
+      resetExecution()
+      initVmInstance(true, chainId, selectedFork?.name)
+    }
   }
 
   /**
@@ -161,11 +168,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const onForkChange = (forkName: string) => {
     const fork = forks.find((f) => f.name === forkName)
     if (fork) {
-      common.setHardfork(fork.name)
-      resetExecution()
-      initVmInstance(true)
-
       setSelectedFork(fork)
+      resetExecution()
+      initVmInstance(true, selectedChain?.id, fork.name)
     }
   }
 
