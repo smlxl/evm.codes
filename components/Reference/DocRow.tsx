@@ -67,17 +67,29 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
   }, [gasDoc, common, forks, selectedFork])
 
   useEffect(() => {
-    if (dynamicDoc) {
-      fetch('/api/getDynamicDoc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: dynamicDoc }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setDynamicDocMdx(data.mdx)
+    let controller: AbortController | null = new AbortController()
+
+    const fetchDynamicDoc = async () => {
+      try {
+        const response = await fetch('/api/getDynamicDoc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: dynamicDoc }),
+          signal: controller?.signal,
         })
+        const data = await response.json()
+        setDynamicDocMdx(data.mdx)
+        controller = null
+      } catch (error) {
+        setDynamicDocMdx(undefined)
+      }
     }
+
+    if (dynamicDoc) {
+      fetchDynamicDoc()
+    }
+
+    return () => controller?.abort()
   }, [dynamicDoc])
 
   return (

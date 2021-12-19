@@ -17,14 +17,14 @@ type Props = {
 }
 
 type InputValue = {
-  [name: string]: string
+  [name: string]: string | undefined
 }
 
 const DynamicFee = ({ opcode }: Props) => {
   const { dynamicFee } = opcode
 
   const { common } = useContext(EthereumContext)
-  const [inputs, setInputs] = useState<InputValue>({})
+  const [inputs, setInputs] = useState<InputValue | undefined>()
   const [result, setResult] = useState('0')
 
   const handleCompute = debounce((inputs) => {
@@ -40,8 +40,7 @@ const DynamicFee = ({ opcode }: Props) => {
       inputValues[key] = '0' // false for boolean, zero for numbers
     })
     setInputs(inputValues)
-
-    handleCompute(inputs)
+    handleCompute(inputValues)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dynamicFee])
 
@@ -54,7 +53,7 @@ const DynamicFee = ({ opcode }: Props) => {
     handleCompute(newInputs)
   }
 
-  if (!dynamicFee?.inputs) {
+  if (!dynamicFee?.inputs || !inputs) {
     return null
   }
 
@@ -81,7 +80,6 @@ const DynamicFee = ({ opcode }: Props) => {
                   max={1000000000000}
                   name={key}
                   value={inputs[key]}
-                  defaultValue={'0'}
                   onChange={(e) => handleChange(key, e.target.value)}
                   className="bg-white bg-opacity-75 dark:bg-black-400 mb-4 text-sm font-mono"
                 />
