@@ -32,7 +32,7 @@ type CustomHeaderGroup = {
 const DynamicFeeTooltip = () => (
   <span
     className="inline-block pl-2 text-gray-400 dark:text-black-400"
-    data-tip="Contains dynamic gas fee, expand the row to calculate it."
+    data-tip="Has additional dynamic gas cost, expand to estimate it"
   >
     <Icon name="question-line" />
   </span>
