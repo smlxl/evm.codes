@@ -311,7 +311,22 @@
     "input": "destOffset | offset | length",
     "output": "",
     "description": "Copy input data in current environment to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "38": {
     "input": "",
@@ -322,7 +337,22 @@
     "input": "destOffset | offset | length",
     "output": "",
     "description": "Copy code running in current environment to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "3a": {
     "input": "",
@@ -333,13 +363,40 @@
     "input": "address",
     "output": "size",
     "description": "Get size of an account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "since": "berlin",
+      "inputs": {
+        "warm": {
+          "type": "boolean",
+          "label": "Is warm?"
+        }
+      }
+    }
   },
   "3c": {
     "input": "address | destOffset | offset | length",
     "output": "",
     "description": "Copy an account’s code to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        },
+        "warm": {
+          "type": "boolean",
+          "label": "Is warm?"
+        }
+      }
+    }
   },
   "3d": {
     "input": "",
@@ -350,13 +407,36 @@
     "input": "destOffset | offset | length",
     "output": "",
     "description": "Copy output data from the previous call to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "3f": {
     "input": "address",
     "output": "hash",
     "description": "Get hash of an account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "since": "berlin",
+      "inputs": {
+        "warm": {
+          "type": "boolean",
+          "label": "Is warm?"
+        }
+      }
+    }
   },
   "40": {
     "input": "blockNumber",

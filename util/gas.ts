@@ -1,4 +1,4 @@
-import Common from '@ethereumjs/common'
+import Common, { Hardfork } from '@ethereumjs/common'
 import { BN } from 'ethereumjs-util'
 import { IOpcode } from 'types'
 
@@ -66,6 +66,18 @@ export const calculateDynamicFee = (
     return newCost
   }
 
+  const memoryCostCopy = (param: string) => {
+    const paramWordCost = new BN(common.param('gasPrices', param))
+    const expansionCost = memoryExtensionCost(
+      inputs.offset,
+      inputs.count,
+      inputs.memorySize,
+    )
+    return expansionCost.iadd(
+      paramWordCost.imul(toWordCount(new BN(inputs.count))),
+    )
+  }
+
   switch (opcode.code) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
@@ -74,21 +86,31 @@ export const calculateDynamicFee = (
       break
     }
     case '20': {
-      const sha3WordCost = new BN(common.param('gasPrices', 'sha3Word'))
-      const expansion_cost = memoryExtensionCost(
-        inputs.offset,
-        inputs.count,
-        inputs.memorySize,
-      )
-      result = expansion_cost.iadd(
-        sha3WordCost.imul(toWordCount(new BN(inputs.count))),
-      )
+      result = memoryCostCopy('sha3Word')
       break
     }
-    case '31': {
+    case '31':
+    case '3b':
+    case '3f': {
       if (inputs.warm == 1)
         result = new BN(common.param('gasPrices', 'warmstorageread'))
       else result = new BN(common.param('gasPrices', 'coldaccountaccess'))
+      break
+    }
+    case '37':
+    case '39':
+    case '3e': {
+      result = memoryCostCopy('copy')
+      break
+    }
+    case '3c': {
+      result = memoryCostCopy('copy')
+
+      if (common.gteHardfork(Hardfork.MuirGlacier)) {
+        if (inputs.warm == 1)
+          result.iadd(new BN(common.param('gasPrices', 'warmstorageread')))
+        else result.iadd(new BN(common.param('gasPrices', 'coldaccountaccess')))
+      }
       break
     }
     case 'ff': {
@@ -97,7 +119,7 @@ export const calculateDynamicFee = (
     }
   }
 
-  return result.add(new BN(opcode.fee)).toString()
+  return result.iadd(new BN(opcode.fee)).toString()
 }
 
 /*
