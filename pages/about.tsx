@@ -220,6 +220,22 @@ const AboutPage = () => {
         . Note also that an opcode with a byte count parameter of 0 will not
         trigger a memory expansion, regardless of its offset parameters.
       </p>
+
+      <H3 className="mb-4">Access sets</H3>
+      <p className="pb-8">
+        Access sets have been introduced in the hardfork <b>Berlin</b>. They are kept per transaction (and not per call context). Two of them exist: the touched contracts addresses, and the touched contract slots. If an address or slot is present in the set, it is called 'warm', otherwise it is 'cold'. The dynamic cost of some opcodes depends on whether the address or slot is warm or cold.
+
+        <ul class="list-disc mb-2"><li class="ml-6">Addresses: a set of contract addresses that have been touched in the current transaction. It is initialised with the sender and receiver (or the new contract address in case of a creation) of the transaction, as well as all the precompiled contracts. When an opcode accesses an address that is not present in the set, it adds it in it. The relevant opcodes are <OLink opcode="3B" title="EXTCODESIZE" />, <OLink opcode="3C" title="EXTCODECOPY" />, <OLink opcode="3F" title="EXTCODEHASH" />, <OLink opcode="31" title="BALANCE" />, <OLink opcode="F1" title="CALL" />, <OLink opcode="F2" title="CALLCODE" />, <OLink opcode="F4" title="DELEGATECALL" />, <OLink opcode="FA" title="STATICCALL" />, <OLink opcode="F0" title="CREATE" />, <OLink opcode="F5" title="CREATE2" /> and <OLink opcode="FF" title="SELFDESTRUCT" />.</li><li class="ml-6">Slots: a set of contract address and their slot keys that have been accessed. It is initialised to empty. When an opcode accesses a slot that is not present in the set, it adds it to it. The relevant opcodes are <OLink opcode="54" title="SLOAD" /> and <OLink opcode="55" title="SSTORE" /></li></ul>
+
+        When a context reverts, the sets are also reverted to the state they had before that context.
+      </p>
+
+      <em>Acknowledgment to <a
+        href="https://github.com/wolflo/evm-opcodes"
+        target="_blank"
+        rel="noreferrer"
+        className="underline"
+      >wolflo</a> for the cost descriptions.</em>
     </Container>
   )
 }
