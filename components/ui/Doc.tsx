@@ -79,3 +79,9 @@ export const A: React.FC<LinkProps> = ({ children, href }) => (
     <a className="underline">{children}</a>
   </Link>
 )
+
+export const Pre: React.FC<Props> = ({ children }) => (
+  <pre className="inline-block p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
+    {children}
+  </pre>
+)

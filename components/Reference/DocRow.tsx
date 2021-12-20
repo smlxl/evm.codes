@@ -1,5 +1,6 @@
 import { useContext, useMemo, useEffect, useState } from 'react'
 
+import cn from 'classnames'
 import { MDXRemote } from 'next-mdx-remote'
 import { IOpcode, IOpcodeDoc, IOpcodeGasDoc } from 'types'
 
@@ -31,6 +32,7 @@ const docComponents = {
   th: Doc.TH,
   td: Doc.TD,
   a: Doc.A,
+  pre: Doc.Pre,
 }
 
 const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
@@ -111,15 +113,22 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
             </tbody>
           </table>
 
-          <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
+          <div className="flex flex-col lg:flex-row">
+            <div
+              className={cn({
+                'flex-1 lg:pr-8': !!isDynamicFeeActive && opcode.dynamicFee,
+              })}
+            >
+              <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
+              {isDynamicFeeActive && dynamicDocMdx && (
+                <MDXRemote {...dynamicDocMdx} components={docComponents} />
+              )}
+            </div>
 
-          {isDynamicFeeActive && opcode.dynamicFee && (
-            <DynamicFee opcode={opcode} />
-          )}
-
-          {isDynamicFeeActive && dynamicDocMdx && (
-            <MDXRemote {...dynamicDocMdx} components={docComponents} />
-          )}
+            {isDynamicFeeActive && opcode.dynamicFee && (
+              <DynamicFee opcode={opcode} />
+            )}
+          </div>
         </>
       )}
       {!opcodeDoc && (
