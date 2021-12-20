@@ -36,8 +36,6 @@ export const calculateDynamicFee = (
   common: Common,
   inputs: any,
 ) => {
-  let result = new BN(0)
-
   // FIXME: Remove when all formulas are implemented
   console.info('Received inputs for dynamic fee calc', { opcode, inputs })
 
@@ -78,6 +76,13 @@ export const calculateDynamicFee = (
     )
   }
 
+  const addressAccessCost = () => {
+    if (inputs.warm == 1)
+      return new BN(common.param('gasPrices', 'warmstorageread'))
+    else return new BN(common.param('gasPrices', 'coldaccountaccess'))
+  }
+
+  let result = null
   switch (opcode.code) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
@@ -92,9 +97,7 @@ export const calculateDynamicFee = (
     case '31':
     case '3b':
     case '3f': {
-      if (inputs.warm == 1)
-        result = new BN(common.param('gasPrices', 'warmstorageread'))
-      else result = new BN(common.param('gasPrices', 'coldaccountaccess'))
+      result = addressAccessCost()
       break
     }
     case '37':
@@ -106,17 +109,21 @@ export const calculateDynamicFee = (
     case '3c': {
       result = memoryCostCopy('copy')
 
-      if (common.gteHardfork(Hardfork.MuirGlacier)) {
-        if (inputs.warm == 1)
-          result.iadd(new BN(common.param('gasPrices', 'warmstorageread')))
-        else result.iadd(new BN(common.param('gasPrices', 'coldaccountaccess')))
-      }
+      if (common.gteHardfork(Hardfork.MuirGlacier))
+        result.iadd(addressAccessCost())
       break
     }
-    case 'ff': {
-      // calculate SELFDESTRUCT
+    case '51':
+    case '52': {
+      result = memoryExtensionCost(inputs.offset, 32, inputs.memorySize)
       break
     }
+    case '53': {
+      result = memoryExtensionCost(inputs.offset, 1, inputs.memorySize)
+      break
+    }
+    default:
+      result = new BN(0)
   }
 
   return result.iadd(new BN(opcode.fee)).toString()

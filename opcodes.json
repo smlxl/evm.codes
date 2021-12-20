@@ -527,19 +527,52 @@
     "input": "offset",
     "output": "value",
     "description": "Load word from memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "52": {
     "input": "offset | value",
     "output": "",
     "description": "Save word to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "53": {
     "input": "offset | value",
     "output": "",
     "description": "Save byte to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "54": {
     "input": "key",
