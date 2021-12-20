@@ -16,6 +16,7 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
+import { getTargetEvmVersion } from 'util/compiler'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
@@ -163,7 +164,7 @@ const Editor = ({ readOnly = false }: Props) => {
       if (solcWorkerRef?.current) {
         solcWorkerRef.current.postMessage({
           language: codeType,
-          evmVersion: selectedFork?.name,
+          evmVersion: getTargetEvmVersion(selectedFork?.name),
           source: code,
         })
       }
