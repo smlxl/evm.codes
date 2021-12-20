@@ -88,8 +88,8 @@ export const calculateDynamicFee = (
     case '31': {
       if (inputs.warm == 1)
         result = new BN(common.param('gasPrices', 'warmstorageread'))
-      else
-        result = new BN(common.param('gasPrices', 'coldaccountaccess'))
+      else result = new BN(common.param('gasPrices', 'coldaccountaccess'))
+      break
     }
     case 'ff': {
       // calculate SELFDESTRUCT
