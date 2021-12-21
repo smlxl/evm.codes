@@ -217,7 +217,7 @@ const AboutPage = () => {
         <OLink opcode="F3" title="RETURN" /> or{' '}
         <OLink opcode="37" title="CALLDATACOPY" />
         ). Each opcode that can is mentionned in the <OLink title="reference" />
-        . Note also that an opcode with a byte count parameter of 0 will not
+        . Note also that an opcode with a byte size parameter of 0 will not
         trigger a memory expansion, regardless of its offset parameters.
       </p>
 

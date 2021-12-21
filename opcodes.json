@@ -50,14 +50,14 @@
     "description": "Modulo multiplication operation"
   },
   "0a": {
-    "input": "a | b",
-    "output": "a ** b",
+    "input": "a | exponent",
+    "output": "a ** exponent",
     "description": "Exponential operation",
     "dynamicFee": {
       "inputs": {
         "exponent": {
           "type": "number",
-          "label": "Exponent"
+          "label": "exponent"
         }
       }
     }
@@ -168,18 +168,18 @@
     "description": ""
   },
   "20": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "hash",
     "description": "Compute Keccak-256 hash",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -308,18 +308,18 @@
     "description": "Get size of input data in current environment"
   },
   "37": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy input data in current environment to memory",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "destOffset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -334,18 +334,18 @@
     "description": "Get size of code running in current environment"
   },
   "39": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy code running in current environment to memory",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "destOffset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -374,18 +374,18 @@
     }
   },
   "3c": {
-    "input": "address | destOffset | offset | length",
+    "input": "address | destOffset | offset | size",
     "output": "",
     "description": "Copy an account’s code to memory",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "destOffset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -404,18 +404,18 @@
     "description": "Get size of output data from the previous call from the current environment"
   },
   "3e": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy output data from the previous call to memory",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "destOffset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -531,7 +531,7 @@
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
         "memorySize": {
           "type": "number",
@@ -548,7 +548,7 @@
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
         "memorySize": {
           "type": "number",
@@ -565,7 +565,7 @@
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
         "memorySize": {
           "type": "number",
@@ -596,7 +596,7 @@
       "inputs": {
         "newValue": {
           "type": "number",
-          "label": "New value to store"
+          "label": "value"
         },
         "currentValue": {
           "type": "number",
@@ -984,18 +984,18 @@
     "description": "Exchange 1st and 17th stack items"
   },
   "a0": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Append log record with no topics",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -1005,18 +1005,18 @@
     }
   },
   "a1": {
-    "input": "offset | length | topic",
+    "input": "offset | size | topic",
     "output": "",
     "description": "Append log record with one topic",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -1026,18 +1026,18 @@
     }
   },
   "a2": {
-    "input": "offset | length | topic1 | topic2",
+    "input": "offset | size | topic1 | topic2",
     "output": "",
     "description": "Append log record with two topics",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -1047,18 +1047,18 @@
     }
   },
   "a3": {
-    "input": "offset | length | topic1 | topic2 | topic3",
+    "input": "offset | size | topic1 | topic2 | topic3",
     "output": "",
     "description": "Append log record with three topics",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -1068,18 +1068,18 @@
     }
   },
   "a4": {
-    "input": "offset | length | topic1 | topic2 | topic3 | topic4",
+    "input": "offset | size | topic1 | topic2 | topic3 | topic4",
     "output": "",
     "description": "Append log record with four topics",
     "dynamicFee": {
       "inputs": {
         "offset": {
           "type": "number",
-          "label": "Byte offset"
+          "label": "offset"
         },
-        "count": {
+        "size": {
           "type": "number",
-          "label": "Byte count"
+          "label": "size"
         },
         "memorySize": {
           "type": "number",
@@ -1464,37 +1464,60 @@
     "description": ""
   },
   "f0": {
-    "input": "value | offset | length",
+    "input": "value | offset | size",
     "output": "address",
     "description": "Create a new account with associated code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "offset"
+        },
+        "size": {
+          "type": "number",
+          "label": "size"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        },
+        "executionCost": {
+          "type": "number",
+          "label": "Estimated deployment execution cost"
+        },
+        "deployedSize": {
+          "type": "number",
+          "label": "Estimated deployed code size in bytes"
+        }
+      }
+    }
   },
   "f1": {
-    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into an account",
     "dynamicFee": true
   },
   "f2": {
-    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with alternative account’s code",
     "dynamicFee": true
   },
   "f3": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Halt execution returning output data",
     "dynamicFee": true
   },
   "f4": {
-    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value",
     "dynamicFee": true
   },
   "f5": {
-    "input": "value | offset | length | salt",
+    "input": "value | offset | size | salt",
     "output": "address",
     "description": "Create a new account with associated code",
     "dynamicFee": true
@@ -1520,7 +1543,7 @@
     "description": ""
   },
   "fa": {
-    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Static message-call into an account",
     "dynamicFee": true
@@ -1536,7 +1559,7 @@
     "description": ""
   },
   "fd": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Halt execution reverting state changes but returning data and remaining gas",
     "dynamicFee": true

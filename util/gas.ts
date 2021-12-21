@@ -6,7 +6,7 @@ const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
 const reGasVariable = /\{\s*[a-zA-Z0-9_|]*\s*\}/g
 
-function toWordCount(a: BN): BN {
+function toWordSize(a: BN): BN {
   const wordSize = new BN(32)
   const div = a.div(wordSize)
   const mod = a.mod(wordSize)
@@ -63,25 +63,25 @@ export const calculateDynamicFee = (
   // FIXME: Remove when all formulas are implemented
   console.info('Received inputs for dynamic fee calc', { opcode, inputs })
 
-  const memoryCost = (wordCount: BN) => {
+  const memoryCost = (wordSize: BN) => {
     const fee = new BN(common.param('gasPrices', 'memory'))
     const quadCoeff = new BN(common.param('gasPrices', 'quadCoeffDiv'))
-    return wordCount.mul(fee).add(wordCount.mul(wordCount).div(quadCoeff))
+    return wordSize.mul(fee).add(wordSize.mul(wordSize).div(quadCoeff))
   }
 
   const memoryExtensionCost = (
     offset: BN,
-    byteCount: BN,
+    byteSize: BN,
     currentMemorySize: BN,
   ) => {
-    if (byteCount.isZero()) return byteCount
+    if (byteSize.isZero()) return byteSize
 
-    const newMemoryWordCount = toWordCount(offset.add(byteCount))
-    const oldMemoryWordCount = toWordCount(currentMemorySize)
-    if (newMemoryWordCount.lte(oldMemoryWordCount)) return new BN(0)
+    const newMemoryWordSize = toWordSize(offset.add(byteSize))
+    const oldMemoryWordSize = toWordSize(currentMemorySize)
+    if (newMemoryWordSize.lte(oldMemoryWordSize)) return new BN(0)
 
-    const newCost = memoryCost(newMemoryWordCount)
-    const oldCost = memoryCost(oldMemoryWordCount)
+    const newCost = memoryCost(newMemoryWordSize)
+    const oldCost = memoryCost(oldMemoryWordSize)
     if (newCost.gt(oldCost)) newCost.isub(oldCost)
     return newCost
   }
@@ -90,11 +90,11 @@ export const calculateDynamicFee = (
     const paramWordCost = new BN(common.param('gasPrices', param))
     const expansionCost = memoryExtensionCost(
       new BN(inputs.offset),
-      new BN(inputs.count),
+      new BN(inputs.size),
       new BN(inputs.memorySize),
     )
     return expansionCost.iadd(
-      paramWordCost.imul(toWordCount(new BN(inputs.count))),
+      paramWordCost.imul(toWordSize(new BN(inputs.size))),
     )
   }
 
@@ -162,8 +162,8 @@ export const calculateDynamicFee = (
 
       if (common.gteHardfork('berlin')) {
         if (inputs.warm === '1')
-          result.iadd(new BN(common.param('gasPrices', 'warmstorageread')))
-        else result.iadd(new BN(common.param('gasPrices', 'coldsload')))
+          result.iaddn(common.param('gasPrices', 'warmstorageread'))
+        else result.iaddn(common.param('gasPrices', 'coldsload'))
       }
       break
     }
@@ -175,13 +175,23 @@ export const calculateDynamicFee = (
       const topicsCount = new BN(opcode.code, 'hex').isubn(0xa0)
       const expansionCost = memoryExtensionCost(
         new BN(inputs.offset),
-        new BN(inputs.count),
+        new BN(inputs.size),
         new BN(inputs.memorySize),
       )
       result = new BN(common.param('gasPrices', 'logTopic'))
         .imul(topicsCount)
         .iadd(expansionCost)
-        .iadd(new BN(inputs.count).muln(common.param('gasPrices', 'logData')))
+        .iadd(new BN(inputs.size).muln(common.param('gasPrices', 'logData')))
+      break
+    }
+    case 'f0': {
+      const expansionCost = memoryExtensionCost(
+        new BN(inputs.offset),
+        new BN(inputs.size),
+        new BN(inputs.memorySize),
+      )
+      const depositCost = new BN(inputs.deployedSize).imuln(common.param('gasPrices', 'createData'))
+      result = expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
       break
     }
     default:

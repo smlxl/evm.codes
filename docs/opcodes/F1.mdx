@@ -11,17 +11,17 @@ If the size of the [return data](/about) is not known, it can also be retrieved 
 
 ## Stack input
 
-0. `Integer`: amount of gas to send to the sub [context](/about) to execute.
-1. `Address`: the account which [context](/about) to execute.
-2. `Integer`: [value](/#34) in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the account.
-3. `Integer`: offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
-4. `Integer`: how many bytes to copy (size of the [calldata](/about)).
-5. `Integer`: offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
-6. `Integer`: how many bytes to copy (size of the [return data](/about)).
+0. `gas`: amount of gas to send to the sub [context](/about) to execute.
+1. `address`: the account which [context](/about) to execute.
+2. `value`: [value](/#34) in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the account.
+3. `argsOffset`: byte offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+4. `argsSize`: byte size to copy (size of the [calldata](/about)).
+5. `retOffset`: byte offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
+6. `retSize`: byte size to copy (size of the [return data](/about)).
 
 ## Stack output
 
-0. `Boolean`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
+0. `success`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
 
 ## Error cases
 

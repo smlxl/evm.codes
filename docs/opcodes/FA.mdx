@@ -13,16 +13,16 @@ If the size of the [return data](/about) is not known, it can also be retrieved 
 
 ## Stack input
 
-0. `Integer`: amount of gas to send to the sub [context](/about) to execute.
-1. `Address`: the account which [context](/about) to execute.
-2. `Integer`: offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
-3. `Integer`: how many bytes to copy (size of the [calldata](/about)).
-4. `Integer`: offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
-5. `Integer`: how many bytes to copy (size of the [return data](/about)).
+0. `gas`: amount of gas to send to the sub [context](/about) to execute.
+1. `address`: the account which [context](/about) to execute.
+2. `argsOffset`: byte offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+3. `argsSize`: byte size to copy (size of the [calldata](/about)).
+4. `retOffset`: byte offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
+5. `retSize`: byte size to copy (size of the [return data](/about)).
 
 ## Stack output
 
-0. `Boolean`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
+0. `success`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
 
 ## Error cases
 

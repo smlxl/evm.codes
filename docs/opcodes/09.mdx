@@ -9,13 +9,13 @@ All intermediate calculations of this operation are not subject to the 2<sup>256
 
 ## Stack input
 
-0. `Integer`: first value to multiply.
-1. `Integer`: second value to multiply.
-2. `Integer`: denominator.
+0. `a`: first integer value to multiply.
+1. `b`: second integer value to multiply.
+2. `N`: integer denominator.
 
 ## Stack output
 
-0. `Integer`: result of the multiplication followed by a modulo. If the denominator is 0, the result will be 0.
+0. `(a * b) % N`: integer result of the multiplication followed by a modulo. If the denominator is 0, the result will be 0.
 
 ## Examples
 
