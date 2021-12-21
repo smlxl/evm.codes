@@ -1,4 +1,4 @@
-import Common, { Hardfork } from '@ethereumjs/common'
+import Common from '@ethereumjs/common'
 import { BN } from 'ethereumjs-util'
 import { IOpcode } from 'types'
 
@@ -16,6 +16,37 @@ function toWordCount(a: BN): BN {
 
   // Round up
   return div.isNeg() ? div.isubn(1) : div.iaddn(1)
+}
+
+function sstoreCost(common: Common, inputs: any): BN {
+  if (common.hardfork() === 'constantinople') {
+    if (inputs.newValue === inputs.currentValue)
+      return new BN(common.param('gasPrices', 'netSstoreNoopGas'))
+    else if (inputs.currentValue === inputs.originalValue) {
+      if (inputs.originalValue === '0')
+        return new BN(common.param('gasPrices', 'netSstoreInitGas'))
+      else
+        return new BN(common.param('gasPrices', 'netSstoreCleanGas'))
+    }
+    else
+      return new BN(common.param('gasPrices', 'netSstoreDirtyGas'))
+  } else if (common.gteHardfork('istanbul')) {
+    if (inputs.newValue === inputs.currentValue)
+      return new BN(common.param('gasPrices', 'sstoreNoopGasEIP2200'))
+    else if (inputs.currentValue === inputs.originalValue) {
+      if (inputs.originalValue === '0')
+        return new BN(common.param('gasPrices', 'sstoreInitGasEIP2200'))
+      else
+        return new BN(common.param('gasPrices', 'sstoreCleanGasEIP2200'))
+    }
+    else
+      return new BN(common.param('gasPrices', 'sstoreDirtyGasEIP2200'))
+  } else {
+    if (inputs.newValue !== '0' && inputs.currentValue === '0')
+      return new BN(common.param('gasPrices', 'sstoreSet'))
+    else
+      return new BN(common.param('gasPrices', 'sstoreReset'))
+  }
 }
 
 /*
@@ -77,7 +108,7 @@ export const calculateDynamicFee = (
   }
 
   const addressAccessCost = () => {
-    if (inputs.warm == 1)
+    if (inputs.warm === '1')
       return new BN(common.param('gasPrices', 'warmstorageread'))
     else return new BN(common.param('gasPrices', 'coldaccountaccess'))
   }
@@ -109,7 +140,7 @@ export const calculateDynamicFee = (
     case '3c': {
       result = memoryCostCopy('copy')
 
-      if (common.gteHardfork(Hardfork.MuirGlacier))
+      if (common.gteHardfork('berlin'))
         result.iadd(addressAccessCost())
       break
     }
@@ -120,6 +151,22 @@ export const calculateDynamicFee = (
     }
     case '53': {
       result = memoryExtensionCost(inputs.offset, 1, inputs.memorySize)
+      break
+    }
+    case '54': {
+      if (inputs.warm === '1')
+        result = new BN(common.param('gasPrices', 'warmstorageread'))
+      else result = new BN(common.param('gasPrices', 'coldsload'))
+      break
+    }
+    case '55': {
+      result = sstoreCost(common, inputs)
+
+      if (common.gteHardfork('berlin')) {
+        if (inputs.warm === '1')
+          result.iadd(new BN(common.param('gasPrices', 'warmstorageread')))
+        else result.iadd(new BN(common.param('gasPrices', 'coldsload')))
+      }
       break
     }
     default:

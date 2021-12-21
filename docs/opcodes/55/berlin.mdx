@@ -1,0 +1,5 @@
+## Dynamic gas
+
+If the new value is the same as the current value, then the cost is {gasPrices|sstoreNoopGasEIP2200}. Otherwise if the current value is not the original value, then the cost is {gasPrices|sstoreDirtyGasEIP2200}. Otherwise if the original value was zero, then the cost is {gasPrices|sstoreInitGasEIP2200}. Finally, in other cases the cost is {gasPrices|sstoreCleanGasEIP2200}.
+
+On top of the cost above, {gasPrices|warmstorageread} is added if the slot is warm, or {gasPrices|coldsload} otherwise. See section [access sets](/about).

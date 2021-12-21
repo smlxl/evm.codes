@@ -578,13 +578,40 @@
     "input": "key",
     "output": "value",
     "description": "Load word from storage",
-    "dynamicFee": true
+    "dynamicFee": {
+      "since": "berlin",
+      "inputs": {
+        "warm": {
+          "type": "boolean",
+          "label": "Is warm?"
+        }
+      }
+    }
   },
   "55": {
     "input": "key | value",
     "output": "",
     "description": "Save word to storage",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "newValue": {
+          "type": "number",
+          "label": "New value to store"
+        },
+        "currentValue": {
+          "type": "number",
+          "label": "Current value in storage"
+        },
+        "originalValue": {
+          "type": "number",
+          "label": "Original value at the beginning of the transaction"
+        },
+        "warm": {
+          "type": "boolean",
+          "label": "Is warm?"
+        }
+      }
+    }
   },
   "56": {
     "input": "counter",

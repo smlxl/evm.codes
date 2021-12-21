@@ -1,0 +1,3 @@
+## Dynamic gas
+
+If the new value is the same as the current value, then the cost is {gasPrices|netSstoreNoopGas}. Otherwise if the current value is not the original value, then the cost is {gasPrices|netSstoreDirtyGas}. Otherwise if the original value was zero, then the cost is {gasPrices|netSstoreInitGas}. Finally, in other cases the cost is {gasPrices|netSstoreCleanGas}.
