@@ -70,16 +70,14 @@ export const calculateDynamicFee = (
   }
 
   const memoryExtensionCost = (
-    offset: number,
-    byteCount: number,
-    currentMemorySize: number,
+    offset: BN,
+    byteCount: BN,
+    currentMemorySize: BN,
   ) => {
-    if (byteCount === 0) return new BN(0)
+    if (byteCount.isZero()) return byteCount
 
-    const newMemoryWordCount = toWordCount(
-      new BN(offset).add(new BN(byteCount)),
-    )
-    const oldMemoryWordCount = toWordCount(new BN(currentMemorySize))
+    const newMemoryWordCount = toWordCount(offset.add(byteCount))
+    const oldMemoryWordCount = toWordCount(currentMemorySize)
     if (newMemoryWordCount.lte(oldMemoryWordCount)) return new BN(0)
 
     const newCost = memoryCost(newMemoryWordCount)
@@ -91,9 +89,9 @@ export const calculateDynamicFee = (
   const memoryCostCopy = (param: string) => {
     const paramWordCost = new BN(common.param('gasPrices', param))
     const expansionCost = memoryExtensionCost(
-      parseInt(inputs.offset),
-      parseInt(inputs.count),
-      parseInt(inputs.memorySize),
+      new BN(inputs.offset),
+      new BN(inputs.count),
+      new BN(inputs.memorySize),
     )
     return expansionCost.iadd(
       paramWordCost.imul(toWordCount(new BN(inputs.count))),
@@ -138,11 +136,19 @@ export const calculateDynamicFee = (
     }
     case '51':
     case '52': {
-      result = memoryExtensionCost(parseInt(inputs.offset), 32, parseInt(inputs.memorySize))
+      result = memoryExtensionCost(
+        new BN(inputs.offset),
+        new BN(32),
+        new BN(inputs.memorySize),
+      )
       break
     }
     case '53': {
-      result = memoryExtensionCost(parseInt(inputs.offset), 1, parseInt(inputs.memorySize))
+      result = memoryExtensionCost(
+        new BN(inputs.offset),
+        new BN(1),
+        new BN(inputs.memorySize),
+      )
       break
     }
     case '54': {
@@ -166,18 +172,16 @@ export const calculateDynamicFee = (
     case 'a2':
     case 'a3':
     case 'a4': {
-      const topicsCount = parseInt('0x' + opcode.code) - 0xa0
+      const topicsCount = new BN(opcode.code, 'hex').isubn(0xa0)
       const expansionCost = memoryExtensionCost(
-        parseInt(inputs.offset),
-        parseInt(inputs.count),
-        parseInt(inputs.memorySize),
+        new BN(inputs.offset),
+        new BN(inputs.count),
+        new BN(inputs.memorySize),
       )
       result = new BN(common.param('gasPrices', 'logTopic'))
-        .imuln(topicsCount)
+        .imul(topicsCount)
         .iadd(expansionCost)
-        .iadd(
-          new BN(inputs.memorySize).muln(common.param('gasPrices', 'logData')),
-        )
+        .iadd(new BN(inputs.count).muln(common.param('gasPrices', 'logData')))
       break
     }
     default:
