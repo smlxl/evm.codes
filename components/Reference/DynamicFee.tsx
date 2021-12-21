@@ -105,7 +105,7 @@ const DynamicFee = ({ opcode }: Props) => {
           )
         })}
 
-        <div className="flex items-center pt-2 justify-end">
+        <div className="flex items-center pt-2">
           <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
           Static gas + dynamic gas = {result}
         </div>
