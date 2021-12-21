@@ -91,9 +91,9 @@ export const calculateDynamicFee = (
   const memoryCostCopy = (param: string) => {
     const paramWordCost = new BN(common.param('gasPrices', param))
     const expansionCost = memoryExtensionCost(
-      inputs.offset,
-      inputs.count,
-      inputs.memorySize,
+      parseInt(inputs.offset),
+      parseInt(inputs.count),
+      parseInt(inputs.memorySize),
     )
     return expansionCost.iadd(
       paramWordCost.imul(toWordCount(new BN(inputs.count))),
@@ -138,11 +138,11 @@ export const calculateDynamicFee = (
     }
     case '51':
     case '52': {
-      result = memoryExtensionCost(inputs.offset, 32, inputs.memorySize)
+      result = memoryExtensionCost(parseInt(inputs.offset), 32, parseInt(inputs.memorySize))
       break
     }
     case '53': {
-      result = memoryExtensionCost(inputs.offset, 1, inputs.memorySize)
+      result = memoryExtensionCost(parseInt(inputs.offset), 1, parseInt(inputs.memorySize))
       break
     }
     case '54': {
@@ -159,6 +159,25 @@ export const calculateDynamicFee = (
           result.iadd(new BN(common.param('gasPrices', 'warmstorageread')))
         else result.iadd(new BN(common.param('gasPrices', 'coldsload')))
       }
+      break
+    }
+    case 'a0':
+    case 'a1':
+    case 'a2':
+    case 'a3':
+    case 'a4': {
+      const topicsCount = parseInt('0x' + opcode.code) - 0xa0
+      const expansionCost = memoryExtensionCost(
+        parseInt(inputs.offset),
+        parseInt(inputs.count),
+        parseInt(inputs.memorySize),
+      )
+      result = new BN(common.param('gasPrices', 'logTopic'))
+        .imuln(topicsCount)
+        .iadd(expansionCost)
+        .iadd(
+          new BN(inputs.memorySize).muln(common.param('gasPrices', 'logData')),
+        )
       break
     }
     default:

@@ -987,31 +987,106 @@
     "input": "offset | length",
     "output": "",
     "description": "Append log record with no topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "a1": {
     "input": "offset | length | topic",
     "output": "",
     "description": "Append log record with one topic",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "a2": {
     "input": "offset | length | topic1 | topic2",
     "output": "",
     "description": "Append log record with two topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "a3": {
     "input": "offset | length | topic1 | topic2 | topic3",
     "output": "",
     "description": "Append log record with three topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "a4": {
     "input": "offset | length | topic1 | topic2 | topic3 | topic4",
     "output": "",
     "description": "Append log record with four topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "Byte offset"
+        },
+        "count": {
+          "type": "number",
+          "label": "Byte count"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        }
+      }
+    }
   },
   "a5": {
     "input": "",
