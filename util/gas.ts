@@ -110,7 +110,9 @@ export const calculateDynamicFee = (
       new BN(inputs.size),
       new BN(inputs.memorySize),
     )
-    const depositCost = new BN(inputs.deployedSize).imuln(common.param('gasPrices', 'createData'))
+    const depositCost = new BN(inputs.deployedSize).imuln(
+      common.param('gasPrices', 'createData'),
+    )
     return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
   }
 
@@ -199,7 +201,11 @@ export const calculateDynamicFee = (
       break
     }
     case 'f5': {
-      result = createCost().iadd(toWordSize(new BN(inputs.size)).muln(common.param('gasPrices', 'sha3Word')))
+      result = createCost().iadd(
+        toWordSize(new BN(inputs.size)).muln(
+          common.param('gasPrices', 'sha3Word'),
+        ),
+      )
       break
     }
     default:
