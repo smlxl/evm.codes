@@ -1520,7 +1520,30 @@
     "input": "value | offset | size | salt",
     "output": "address",
     "description": "Create a new account with associated code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "inputs": {
+        "offset": {
+          "type": "number",
+          "label": "offset"
+        },
+        "size": {
+          "type": "number",
+          "label": "size"
+        },
+        "memorySize": {
+          "type": "number",
+          "label": "Current memory size"
+        },
+        "executionCost": {
+          "type": "number",
+          "label": "Estimated deployment execution cost"
+        },
+        "deployedSize": {
+          "type": "number",
+          "label": "Estimated deployed code size in bytes"
+        }
+      }
+    }
   },
   "f6": {
     "input": "",

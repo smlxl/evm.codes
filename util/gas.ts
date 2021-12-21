@@ -104,6 +104,16 @@ export const calculateDynamicFee = (
     else return new BN(common.param('gasPrices', 'coldaccountaccess'))
   }
 
+  const createCost = () => {
+    const expansionCost = memoryExtensionCost(
+      new BN(inputs.offset),
+      new BN(inputs.size),
+      new BN(inputs.memorySize),
+    )
+    const depositCost = new BN(inputs.deployedSize).imuln(common.param('gasPrices', 'createData'))
+    return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
+  }
+
   let result = null
   switch (opcode.code) {
     case '0a': {
@@ -185,13 +195,11 @@ export const calculateDynamicFee = (
       break
     }
     case 'f0': {
-      const expansionCost = memoryExtensionCost(
-        new BN(inputs.offset),
-        new BN(inputs.size),
-        new BN(inputs.memorySize),
-      )
-      const depositCost = new BN(inputs.deployedSize).imuln(common.param('gasPrices', 'createData'))
-      result = expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
+      result = createCost()
+      break
+    }
+    case 'f5': {
+      result = createCost().iadd(toWordSize(new BN(inputs.size)).muln(common.param('gasPrices', 'sha3Word')))
       break
     }
     default:

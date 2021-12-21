@@ -1,6 +1,6 @@
 ## Dynamic gas
 
-    minimum_word_size = (byte_size + 31) / 32
+    minimum_word_size = (size + 31) / 32
     dynamic_gas = {gasPrices|copy} * minimum_word_size + memory_expansion_cost
 
 The memory expansion cost explanation can be found [here](/about).
