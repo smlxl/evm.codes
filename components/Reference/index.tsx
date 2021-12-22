@@ -185,12 +185,11 @@ const ReferenceTable = ({
             const hasDynamicFee = !!(
               common &&
               opcodes[rowId]?.dynamicFee &&
-              (!opcodes[rowId].dynamicFee?.since ||
-                isDynamicFeeActive(
-                  common,
-                  selectedFork?.name,
-                  opcodes[rowId].dynamicFee?.since || '',
-                ))
+              isDynamicFeeActive(
+                common,
+                selectedFork?.name,
+                opcodes[rowId].dynamicFeeSince || '',
+              )
             )
 
             return (
@@ -235,7 +234,6 @@ const ReferenceTable = ({
                       <DocRow
                         opcodeDoc={opcodeDocs[code]}
                         opcode={opcodes[rowId]}
-                        isDynamicFeeActive={hasDynamicFee}
                         gasDoc={gasDocs[code]}
                       />
                     </td>

@@ -54,10 +54,12 @@
     "output": "a ** exponent",
     "description": "Exponential operation",
     "dynamicFee": {
-      "inputs": {
-        "exponent": {
-          "type": "number",
-          "label": "exponent"
+      "homestead": {
+        "inputs": {
+          "exponent": {
+            "type": "number",
+            "label": "exponent"
+          }
         }
       }
     }
@@ -172,18 +174,20 @@
     "output": "hash",
     "description": "Compute Keccak-256 hash",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -272,12 +276,14 @@
     "input": "address",
     "output": "balance",
     "description": "Get balance of the given account",
+    "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "since": "berlin",
-      "inputs": {
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -312,18 +318,20 @@
     "output": "",
     "description": "Copy input data in current environment to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "destOffset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -338,18 +346,20 @@
     "output": "",
     "description": "Copy code running in current environment to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "destOffset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -363,12 +373,14 @@
     "input": "address",
     "output": "size",
     "description": "Get size of an account’s code",
+    "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "since": "berlin",
-      "inputs": {
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -378,22 +390,24 @@
     "output": "",
     "description": "Copy an account’s code to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "destOffset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
-        },
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -408,18 +422,20 @@
     "output": "",
     "description": "Copy output data from the previous call to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "destOffset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -428,12 +444,14 @@
     "input": "address",
     "output": "hash",
     "description": "Get hash of an account’s code",
+    "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "since": "berlin",
-      "inputs": {
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -528,14 +546,16 @@
     "output": "value",
     "description": "Load word from memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -545,14 +565,16 @@
     "output": "",
     "description": "Save word to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -562,14 +584,16 @@
     "output": "",
     "description": "Save byte to memory",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -578,12 +602,14 @@
     "input": "key",
     "output": "value",
     "description": "Load word from storage",
+    "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "since": "berlin",
-      "inputs": {
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -593,22 +619,24 @@
     "output": "",
     "description": "Save word to storage",
     "dynamicFee": {
-      "inputs": {
-        "newValue": {
-          "type": "number",
-          "label": "value"
-        },
-        "currentValue": {
-          "type": "number",
-          "label": "Current value in storage"
-        },
-        "originalValue": {
-          "type": "number",
-          "label": "Original value at the beginning of the transaction"
-        },
-        "warm": {
-          "type": "boolean",
-          "label": "Is warm?"
+      "homestead": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "Current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "Original value at the beginning of the transaction"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "Is warm?"
+          }
         }
       }
     }
@@ -988,18 +1016,20 @@
     "output": "",
     "description": "Append log record with no topics",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -1009,18 +1039,20 @@
     "output": "",
     "description": "Append log record with one topic",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -1030,18 +1062,20 @@
     "output": "",
     "description": "Append log record with two topics",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -1051,18 +1085,20 @@
     "output": "",
     "description": "Append log record with three topics",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -1072,18 +1108,20 @@
     "output": "",
     "description": "Append log record with four topics",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
         }
       }
     }
@@ -1468,26 +1506,28 @@
     "output": "address",
     "description": "Create a new account with associated code",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
-        },
-        "executionCost": {
-          "type": "number",
-          "label": "Estimated deployment execution cost"
-        },
-        "deployedSize": {
-          "type": "number",
-          "label": "Estimated deployed code size in bytes"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
         }
       }
     }
@@ -1521,26 +1561,28 @@
     "output": "address",
     "description": "Create a new account with associated code",
     "dynamicFee": {
-      "inputs": {
-        "offset": {
-          "type": "number",
-          "label": "offset"
-        },
-        "size": {
-          "type": "number",
-          "label": "size"
-        },
-        "memorySize": {
-          "type": "number",
-          "label": "Current memory size"
-        },
-        "executionCost": {
-          "type": "number",
-          "label": "Estimated deployment execution cost"
-        },
-        "deployedSize": {
-          "type": "number",
-          "label": "Estimated deployed code size in bytes"
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
         }
       }
     }
@@ -1598,22 +1640,24 @@
     "output": "",
     "description": "Halt execution and register account for later deletion",
     "dynamicFee": {
-      "inputs": {
-        "callValue": {
-          "type": "number",
-          "label": "Call value"
-        },
-        "address": {
-          "type": "boolean",
-          "label": "Is called account Warm (no for 'Cold')?"
-        },
-        "accountEmpty": {
-          "type": "boolean",
-          "label": "Is called account empty?"
-        },
-        "gasSent": {
-          "type": "number",
-          "label": "Gas sent with the call"
+      "homestead": {
+        "inputs": {
+          "callValue": {
+            "type": "number",
+            "label": "Call value"
+          },
+          "address": {
+            "type": "boolean",
+            "label": "Is called account Warm (no for 'Cold')?"
+          },
+          "accountEmpty": {
+            "type": "boolean",
+            "label": "Is called account empty?"
+          },
+          "gasSent": {
+            "type": "number",
+            "label": "Gas sent with the call"
+          }
         }
       }
     }

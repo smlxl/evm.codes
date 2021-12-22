@@ -1,5 +1,6 @@
 import { useContext, useMemo, useEffect, useState } from 'react'
 
+import { Hardfork } from '@ethereumjs/common/dist/types'
 import cn from 'classnames'
 import { MDXRemote } from 'next-mdx-remote'
 import { IOpcode, IOpcodeDoc, IOpcodeGasDoc } from 'types'
@@ -17,7 +18,6 @@ type Props = {
   opcodeDoc: IOpcodeDoc
   opcode: IOpcode
   gasDoc: IOpcodeGasDoc
-  isDynamicFeeActive: boolean
 }
 
 const docComponents = {
@@ -35,38 +35,58 @@ const docComponents = {
   pre: Doc.Pre,
 }
 
-const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
+// Finds matching fork between available ones and provided list
+const findFork = (
+  forks: Hardfork[],
+  forkNames: string[],
+  selectedFork: Hardfork | undefined,
+) => {
+  // get all known forks mapped to a block number
+  const knownForksWithBlocks = forks.reduce(
+    (res: { [forkName: string]: number }, fork: Hardfork) => {
+      if (fork.block) {
+        res[fork.name] = fork.block
+      }
+      return res
+    },
+    {},
+  )
+
+  // filter all forks with block number below or equal to the selected,
+  // sort in descending order and pick the first found
+  let foundFork: string = forkNames
+    .filter(
+      (forkName) =>
+        knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
+    )
+    .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
+
+  // NOTE: Petersburg and Constantinople have the same block number & hash,
+  // so when both are present, Constantinople is picked, so this handles it.
+  if (
+    selectedFork?.name === 'petersburg' &&
+    forkNames.includes(selectedFork?.name)
+  ) {
+    foundFork = selectedFork?.name
+  }
+
+  return foundFork
+}
+
+const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
   const { common, forks, selectedFork } = useContext(EthereumContext)
   const [dynamicDocMdx, setDynamicDocMdx] = useState()
 
   const dynamicDoc = useMemo(() => {
     if (!gasDoc) return null
+    const fork = findFork(forks, Object.keys(gasDoc), selectedFork)
+    return fork && common ? parseGasPrices(common, gasDoc[fork]) : null
+  }, [forks, selectedFork, gasDoc, common])
 
-    // get all known forks mapped to a block number
-    const knownForksWithBlocks = forks.reduce(
-      (res: { [forkName: string]: number }, fork) => {
-        if (fork.block) {
-          res[fork.name] = fork.block
-        }
-        return res
-      },
-      {},
-    )
-
-    // filter all forks with block number below or equal to the selected,
-    // sort in descending order and pick the first found
-    const foundFork = Object.keys(gasDoc)
-      .filter(
-        (forkName) =>
-          knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
-      )
-      .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
-
-    // parse fork dependent dynamic variables
-    return foundFork && common
-      ? parseGasPrices(common, gasDoc[foundFork])
-      : null
-  }, [gasDoc, common, forks, selectedFork])
+  const dynamicFeeFork = useMemo(() => {
+    if (!opcode.dynamicFee) return null
+    return findFork(forks, Object.keys(opcode.dynamicFee), selectedFork)
+  }, [forks, selectedFork, opcode.dynamicFee])
 
   useEffect(() => {
     let controller: AbortController | null = new AbortController()
@@ -116,17 +136,17 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
           <div className="flex flex-col lg:flex-row">
             <div
               className={cn({
-                'flex-1 lg:pr-8': !!isDynamicFeeActive && opcode.dynamicFee,
+                'flex-1 lg:pr-8': opcode.dynamicFee,
               })}
             >
               <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
-              {isDynamicFeeActive && dynamicDocMdx && (
+              {dynamicDocMdx && (
                 <MDXRemote {...dynamicDocMdx} components={docComponents} />
               )}
             </div>
 
-            {isDynamicFeeActive && opcode.dynamicFee && (
-              <DynamicFee opcode={opcode} />
+            {dynamicFeeFork && (
+              <DynamicFee opcode={opcode} fork={dynamicFeeFork} />
             )}
           </div>
         </>

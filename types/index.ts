@@ -11,14 +11,16 @@ export interface IOpcode {
   description: string
   fee: number
   dynamicFee?: {
-    inputs: {
-      [name: string]: {
-        type: 'number' | 'boolean'
-        label: string
+    [fork: string]: {
+      inputs: {
+        [name: string]: {
+          type: 'number' | 'boolean'
+          label: string
+        }
       }
     }
-    since?: string
   }
+  dynamicFeeSince?: string
 }
 
 export interface IOpcodeMeta {

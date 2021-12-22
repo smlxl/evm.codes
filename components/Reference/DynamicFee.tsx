@@ -14,14 +14,16 @@ const debounceTimeout = 100 // ms
 
 type Props = {
   opcode: IOpcode
+  fork: string
 }
 
 type InputValue = {
   [name: string]: string | undefined
 }
 
-const DynamicFee = ({ opcode }: Props) => {
+const DynamicFee = ({ opcode, fork }: Props) => {
   const { dynamicFee } = opcode
+  const forkInputs = dynamicFee ? dynamicFee[fork].inputs : null
 
   const { common } = useContext(EthereumContext)
   const [inputs, setInputs] = useState<InputValue | undefined>()
@@ -36,7 +38,7 @@ const DynamicFee = ({ opcode }: Props) => {
   // Initialize inputs with default keys & values
   useEffect(() => {
     const inputValues: InputValue = {}
-    Object.keys(dynamicFee?.inputs || []).map((key: string) => {
+    Object.keys(forkInputs || []).map((key: string) => {
       inputValues[key] = '0' // false for boolean, zero for numbers
     })
     setInputs(inputValues)
@@ -53,7 +55,7 @@ const DynamicFee = ({ opcode }: Props) => {
     handleCompute(newInputs)
   }
 
-  if (!dynamicFee?.inputs || !inputs) {
+  if (!forkInputs || !inputs) {
     return null
   }
 
@@ -64,8 +66,8 @@ const DynamicFee = ({ opcode }: Props) => {
       </div>
 
       <div className="bg-indigo-100 dark:bg-black-500 p-4 rounded shadow">
-        {Object.keys(dynamicFee.inputs).map((key: string) => {
-          const input = dynamicFee.inputs[key]
+        {Object.keys(forkInputs).map((key: string) => {
+          const input = forkInputs[key]
 
           return (
             <div key={key}>
