@@ -186,7 +186,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -281,7 +281,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "'address' is warm?"
+            "label": "State: 'address' is warm?"
           }
         }
       }
@@ -329,7 +329,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -357,7 +357,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -377,7 +377,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "'address' is warm?"
+            "label": "State: 'address' is warm?"
           }
         }
       }
@@ -400,7 +400,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       },
@@ -416,11 +416,11 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "warm": {
             "type": "boolean",
-            "label": "'address' is warm?"
+            "label": "State: 'address' is warm?"
           }
         }
       }
@@ -448,7 +448,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -463,7 +463,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "'address' is warm?"
+            "label": "State: 'address' is warm?"
           }
         }
       }
@@ -567,7 +567,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -586,7 +586,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -605,7 +605,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -620,7 +620,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "'key' is warm?"
+            "label": "State: 'key' is warm?"
           }
         }
       }
@@ -639,7 +639,7 @@
           },
           "currentValue": {
             "type": "number",
-            "label": "Current value in storage"
+            "label": "State: current value in storage"
           }
         }
       },
@@ -651,11 +651,11 @@
           },
           "currentValue": {
             "type": "number",
-            "label": "Current value in storage"
+            "label": "State: current value in storage"
           },
           "originalValue": {
             "type": "number",
-            "label": "Original value at the beginning of the transaction"
+            "label": "State: original value at the beginning of the transaction"
           }
         }
       },
@@ -667,7 +667,7 @@
           },
           "currentValue": {
             "type": "number",
-            "label": "Current value in storage"
+            "label": "State: current value in storage"
           }
         }
       },
@@ -679,11 +679,11 @@
           },
           "currentValue": {
             "type": "number",
-            "label": "Current value in storage"
+            "label": "State: current value in storage"
           },
           "originalValue": {
             "type": "number",
-            "label": "Original value at the beginning of the transaction"
+            "label": "State: original value at the beginning of the transaction"
           }
         }
       },
@@ -695,15 +695,15 @@
           },
           "currentValue": {
             "type": "number",
-            "label": "Current value in storage"
+            "label": "State: current value in storage"
           },
           "originalValue": {
             "type": "number",
-            "label": "Original value at the beginning of the transaction"
+            "label": "State: original value at the beginning of the transaction"
           },
           "warm": {
             "type": "boolean",
-            "label": "'key' is warm?"
+            "label": "State: 'key' is warm?"
           }
         }
       }
@@ -1096,7 +1096,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1119,7 +1119,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1142,7 +1142,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1165,7 +1165,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1188,7 +1188,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1586,7 +1586,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1629,15 +1629,15 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: Current memory size"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account new?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "empty": {
-            "type": "boolean",
-            "label": "Is the called account new?"
           }
         }
       },
@@ -1665,15 +1665,15 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "empty": {
-            "type": "boolean",
-            "label": "Is the called account empty?"
           }
         }
       },
@@ -1701,19 +1701,19 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "State: 'address' is warm?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "warm": {
-            "type": "boolean",
-            "label": "'address' is warm?"
-          },
-          "empty": {
-            "type": "boolean",
-            "label": "Is the called account empty?"
           }
         }
       }
@@ -1748,7 +1748,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1780,15 +1780,15 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "State: 'address' is warm?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "warm": {
-            "type": "boolean",
-            "label": "'address' is warm?"
           }
         }
       }
@@ -1811,7 +1811,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -1842,7 +1842,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1870,15 +1870,15 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "State: 'address' is warm?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "warm": {
-            "type": "boolean",
-            "label": "'address' is warm?"
           }
         }
       }
@@ -1901,7 +1901,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1960,7 +1960,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1988,15 +1988,15 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "State: 'address' is warm?"
           },
           "executionCost": {
             "type": "number",
             "label": "Estimated execution cost"
-          },
-          "warm": {
-            "type": "boolean",
-            "label": "'address' is warm?"
           }
         }
       }
@@ -2029,7 +2029,7 @@
           },
           "memorySize": {
             "type": "number",
-            "label": "Current memory size"
+            "label": "State: current memory size"
           }
         }
       }
@@ -2044,7 +2044,7 @@
         "inputs": {
           "remaining": {
             "type": "number",
-            "label": "Remaining gas in the current context"
+            "label": "State: remaining gas in the current context"
           }
         }
       }
@@ -2059,7 +2059,7 @@
         "inputs": {
           "empty": {
             "type": "boolean",
-            "label": "Is the beneficiary account new?"
+            "label": "State: is the beneficiary account new?"
           }
         }
       },
@@ -2067,11 +2067,11 @@
         "inputs": {
           "hasNoBalance": {
             "type": "boolean",
-            "label": "Is the current account balance empty?"
+            "label": "State: is the current account balance empty?"
           },
           "empty": {
             "type": "boolean",
-            "label": "Is the beneficiary account empty?"
+            "label": "State: is the beneficiary account empty?"
           }
         }
       },
@@ -2079,15 +2079,15 @@
         "inputs": {
           "hasNoBalance": {
             "type": "boolean",
-            "label": "Is the current account balance empty?"
+            "label": "State: is the current account balance empty?"
           },
           "empty": {
             "type": "boolean",
-            "label": "Is the beneficiary account empty?"
+            "label": "State: is the beneficiary account empty?"
           },
           "warm": {
             "type": "boolean",
-            "label": "'address' is warm?"
+            "label": "State: 'address' is warm?"
           }
         }
       }
