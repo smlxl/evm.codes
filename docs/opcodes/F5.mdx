@@ -20,7 +20,7 @@ Equivalent to [CREATE](/#F0), except the salt allows the new contract to be depl
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA).

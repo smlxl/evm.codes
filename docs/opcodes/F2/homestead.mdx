@@ -1,0 +1,8 @@
+## Dynamic gas
+
+    base_dynamic_gas = memory_expansion_cost + code_execution_cost
+
+The `code_execution_cost` is the cost of the called code execution (limited by the `gas` parameter).
+The memory expansion cost explanation can be found [here](/about).
+
+On top of the `base_dynamic_gas`, if `value` is not 0, then add {gasPrices|callValueTransfer}.

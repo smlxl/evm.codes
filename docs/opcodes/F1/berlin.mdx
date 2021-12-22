@@ -1,0 +1,11 @@
+## Dynamic gas
+
+    base_dynamic_gas = memory_expansion_cost + code_execution_cost
+
+The `code_execution_cost` is the cost of the called code execution (limited by the `gas` parameter).
+The memory expansion cost explanation can be found [here](/about).
+
+On top of the `base_dynamic_gas` can be added more gas cost:
+ - If `address` is warm, then add {gasPrices|warmstorageread}. Otherwise add {gasPrices|coldaccountaccess}. See section [access sets](/about).
+ - If `value` is not 0, then add {gasPrices|callValueTransfer}.
+ - If `value` is not 0 and the `address` given points to an empty account, add {gasPrices|callNewAccount}. An account is empty if its balance is 0, its nonce is 0 and it has no code.

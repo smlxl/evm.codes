@@ -13,7 +13,7 @@ The current account is registered to be destroyed, and will be at the end of the
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

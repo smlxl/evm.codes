@@ -282,7 +282,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'address' is warm?"
           }
         }
       }
@@ -379,7 +379,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'address' is warm?"
           }
         }
       }
@@ -422,7 +422,7 @@
           },
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'address' is warm?"
           }
         }
       }
@@ -466,7 +466,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'address' is warm?"
           }
         }
       }
@@ -624,7 +624,7 @@
         "inputs": {
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'key' is warm?"
           }
         }
       }
@@ -707,7 +707,7 @@
           },
           "warm": {
             "type": "boolean",
-            "label": "Is warm?"
+            "label": "'key' is warm?"
           }
         }
       }
@@ -1608,25 +1608,285 @@
     "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into an account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "Is the called account new?"
+          }
+        }
+      },
+      "spuriousDragon": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "Is the called account empty?"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "'address' is warm?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "Is the called account empty?"
+          }
+        }
+      }
+    }
   },
   "f2": {
     "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with alternative account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "'address' is warm?"
+          }
+        }
+      }
+    }
   },
   "f3": {
     "input": "offset | size",
     "output": "",
     "description": "Halt execution returning output data",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
+        }
+      }
+    }
   },
   "f4": {
     "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "'address' is warm?"
+          }
+        }
+      }
+    }
   },
   "f5": {
     "input": "value | offset | size | salt",
@@ -1683,7 +1943,68 @@
     "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Static message-call into an account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "'address' is warm?"
+          }
+        }
+      }
+    }
   },
   "fb": {
     "input": "",
@@ -1699,36 +2020,79 @@
     "input": "offset | size",
     "output": "",
     "description": "Halt execution reverting state changes but returning data and remaining gas",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
+        }
+      }
+    }
   },
   "fe": {
     "input": "",
     "output": "",
     "description": "Designated invalid instruction",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "remaining": {
+            "type": "number",
+            "label": "Remaining gas in the current context"
+          }
+        }
+      }
+    }
   },
   "ff": {
     "input": "address",
     "output": "",
     "description": "Halt execution and register account for later deletion",
+    "dynamicFeeSince": "tangerineWhistle",
     "dynamicFee": {
-      "homestead": {
+      "tangerineWhistle": {
         "inputs": {
-          "callValue": {
-            "type": "number",
-            "label": "Call value"
-          },
-          "address": {
+          "empty": {
             "type": "boolean",
-            "label": "Is called account Warm (no for 'Cold')?"
-          },
-          "accountEmpty": {
+            "label": "Is the beneficiary account new?"
+          }
+        }
+      },
+      "spuriousDragon": {
+        "inputs": {
+          "hasNoBalance": {
             "type": "boolean",
-            "label": "Is called account empty?"
+            "label": "Is the current account balance empty?"
           },
-          "gasSent": {
-            "type": "number",
-            "label": "Gas sent with the call"
+          "empty": {
+            "type": "boolean",
+            "label": "Is the beneficiary account empty?"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "hasNoBalance": {
+            "type": "boolean",
+            "label": "Is the current account balance empty?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "Is the beneficiary account empty?"
+          },
+          "warm": {
+            "type": "boolean",
+            "label": "'address' is warm?"
           }
         }
       }

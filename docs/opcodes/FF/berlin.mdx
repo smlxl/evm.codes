@@ -1,0 +1,3 @@
+## Dynamic gas
+
+If a positive balance is sent to an empty account, the dynamic gas is {gasPrices|callNewAccount}. An account is empty if its balance is 0, its nonce is 0 and it has no code. Additionaly, if `address` is cold, there is an additional cost of {gasPrices|coldaccountaccess}. See section [access sets](/about). There is no additional cost otherwise.

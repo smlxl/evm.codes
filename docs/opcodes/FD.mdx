@@ -5,7 +5,7 @@ group: System operations
 
 ## Notes
 
-Stop the current context execution, revert the state changes (see [STATICCALL](/#FA) for a list of state changing opcodes) and return unused gas to the caller. If the execution is stopped with REVERT, the value 0 is put on the stack of the calling context, which continues to execute normally.
+Stop the current context execution, revert the state changes (see [STATICCALL](/#FA) for a list of state changing opcodes) and return the unused gas to the caller. If the execution is stopped with REVERT, the value 0 is put on the stack of the calling context, which continues to execute normally.
 The [return data](/about) of the calling context is set as the given chunk of memory of this context.
 
 ## Stack input
@@ -30,6 +30,6 @@ The [return data](/about) of the calling context is set as the given chunk of me
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

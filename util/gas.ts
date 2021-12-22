@@ -50,7 +50,7 @@ function memoryCostCopy(inputs: any, param: string, common: Common): BN {
     new BN(inputs.memorySize),
     common,
   )
-  return expansionCost.iadd(paramWordCost.imul(toWordSize(new BN(inputs.size))))
+  return expansionCost.iadd(paramWordCost.mul(toWordSize(new BN(inputs.size))))
 }
 
 function addressAccessCost(common: Common, inputs: any): BN {
@@ -96,6 +96,49 @@ function createCost(common: Common, inputs: any): BN {
   return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
 }
 
+function callCost(common: Common, inputs: any): BN {
+  const argsOffset = new BN(inputs.argsOffset)
+  const argsSize = new BN(inputs.argsSize)
+  const retOffset = new BN(inputs.retOffset)
+  const retSize = new BN(inputs.retSize)
+  let result = null
+
+  if (argsOffset.add(argsSize).gt(retOffset.add(retSize)))
+    result = memoryExtensionCost(
+      argsOffset,
+      argsSize,
+      new BN(inputs.memorySize),
+      common,
+    )
+  else
+    result = memoryExtensionCost(
+      retOffset,
+      retSize,
+      new BN(inputs.memorySize),
+      common,
+    )
+
+  result.iadd(new BN(inputs.executionCost))
+
+  if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
+    result.iadd(new BN(common.param('gasPrices', 'callValueTransfer')))
+  }
+
+  if (common.gteHardfork('spuriousDragon')) {
+    if (inputs.empty === '1' && inputs.value !== '0')
+      result.iadd(new BN(common.param('gasPrices', 'callNewAccount')))
+  } else if (inputs.empty === '1')
+    result.iadd(new BN(common.param('gasPrices', 'callNewAccount')))
+
+  if (common.gteHardfork('berlin')) {
+    if (inputs.warm === '1')
+      result.iaddn(common.param('gasPrices', 'warmstorageread'))
+    else result.iaddn(common.param('gasPrices', 'coldaccountaccess'))
+  }
+
+  return result
+}
+
 /*
  * Calculates dynamic gas fee
  *
@@ -122,7 +165,7 @@ export const calculateDynamicFee = (
     case '0a': {
       const exponent = new BN(inputs.exponent)
       const gasPrice = common.param('gasPrices', 'expByte')
-      result = new BN(exponent.byteLength()).muln(gasPrice)
+      result = new BN(exponent.byteLength()).imuln(gasPrice)
       break
     }
     case '20': {
@@ -205,12 +248,45 @@ export const calculateDynamicFee = (
       result = createCost(common, inputs)
       break
     }
+    case 'f1':
+    case 'f2':
+    case 'f4':
+    case 'fa': {
+      result = callCost(common, inputs)
+      break
+    }
+    case 'f3':
+    case 'fd': {
+      result = memoryExtensionCost(
+        new BN(inputs.offset),
+        new BN(inputs.size),
+        new BN(inputs.memorySize),
+        common,
+      )
+      break
+    }
     case 'f5': {
       result = createCost(common, inputs).iadd(
         toWordSize(new BN(inputs.size)).imuln(
           common.param('gasPrices', 'sha3Word'),
         ),
       )
+      break
+    }
+    case 'fe': {
+      result = new BN(inputs.remaining)
+      break
+    }
+    case 'ff': {
+      if (inputs.empty === '1' && inputs.hasNoBalance !== '1')
+        result = new BN(common.param('gasPrices', 'callNewAccount'))
+      else
+        result = new BN(0)
+
+      if (common.gteHardfork('berlin')) {
+        if (inputs.warm === '0')
+          result.iaddn(common.param('gasPrices', 'coldaccountaccess'))
+      }
       break
     }
     default:
