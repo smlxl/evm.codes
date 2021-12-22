@@ -20,7 +20,6 @@ export interface IOpcode {
       }
     }
   }
-  dynamicFeeSince?: string
 }
 
 export interface IOpcodeMeta {

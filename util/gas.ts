@@ -1,4 +1,5 @@
 import Common from '@ethereumjs/common'
+import { Hardfork } from '@ethereumjs/common/dist/types'
 import { BN } from 'ethereumjs-util'
 import { IOpcode } from 'types'
 
@@ -321,29 +322,45 @@ export const parseGasPrices = (common: Common, contents: string) => {
 }
 
 /*
- * Checks if dynamic fee is active - current fork is later than given
+ * Finds matching fork name from the list
  *
- * @param common The Common object
- * @param currentFork The String current fork name
- * @param sinceFork The String since fork name
+ * @param forks The Array of known Hardforks
+ * @param forkNames The Array of string fork names to match against
+ * @param selectedFork The Hardfork selected by the user
  */
-export const isDynamicFeeActive = (
-  common: Common,
-  currentFork: string | undefined,
-  sinceFork: string,
+export const findMatchingForkName = (
+  forks: Hardfork[],
+  forkNames: string[],
+  selectedFork: Hardfork | undefined,
 ) => {
-  let sinceBlock: number | null = 0
-  let currentBlock: number | null = 0
+  // get all known forks mapped to a block number
+  const knownForksWithBlocks = forks.reduce(
+    (res: { [forkName: string]: number }, fork: Hardfork) => {
+      if (fork.block) {
+        res[fork.name] = fork.block
+      }
+      return res
+    },
+    {},
+  )
 
-  common.hardforks().forEach((fork) => {
-    if (fork.name === sinceFork) {
-      sinceBlock = fork.block
-    }
+  // filter all forks with block number below or equal to the selected,
+  // sort in descending order and pick the first found
+  let foundFork: string = forkNames
+    .filter(
+      (forkName) =>
+        knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
+    )
+    .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
 
-    if (fork.name === currentFork) {
-      currentBlock = fork.block
-    }
-  })
+  // NOTE: Petersburg and Constantinople have the same block number & hash,
+  // so when both are present, Constantinople is picked, so this handles it.
+  if (
+    selectedFork?.name === 'petersburg' &&
+    forkNames.includes(selectedFork?.name)
+  ) {
+    foundFork = selectedFork?.name
+  }
 
-  return sinceBlock <= currentBlock
+  return foundFork
 }

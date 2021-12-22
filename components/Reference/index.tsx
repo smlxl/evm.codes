@@ -16,7 +16,7 @@ import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { isDynamicFeeActive } from 'util/gas'
+import { findMatchingForkName } from 'util/gas'
 
 import { Button, Icon } from 'components/ui'
 
@@ -46,7 +46,7 @@ const ReferenceTable = ({
   gasDocs: IOpcodeGasDocs
 }) => {
   const router = useRouter()
-  const { opcodes, common, selectedFork } = useContext(EthereumContext)
+  const { opcodes, forks, selectedFork } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => tableData, [])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -181,15 +181,10 @@ const ReferenceTable = ({
             const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === rowId
-
-            const hasDynamicFee = !!(
-              common &&
-              opcodes[rowId]?.dynamicFee &&
-              isDynamicFeeActive(
-                common,
-                selectedFork?.name,
-                opcodes[rowId].dynamicFeeSince || '',
-              )
+            const dynamicFeeForkName = findMatchingForkName(
+              forks,
+              Object.keys(opcodes[rowId]?.dynamicFee || {}),
+              selectedFork,
             )
 
             return (
@@ -220,7 +215,7 @@ const ReferenceTable = ({
                     >
                       <div className="flex items-center flex-wrap">
                         {cell.render('Cell')}
-                        {cell.column.id === 'fee' && hasDynamicFee && (
+                        {cell.column.id === 'fee' && !!dynamicFeeForkName && (
                           <DynamicFeeTooltip />
                         )}
                       </div>
@@ -232,10 +227,10 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        isDynamicFeeActive={hasDynamicFee}
                         opcodeDoc={opcodeDocs[code]}
                         opcode={opcodes[rowId]}
-                        gasDoc={gasDocs[code]}
+                        gasDocs={gasDocs[code]}
+                        dynamicFeeForkName={dynamicFeeForkName}
                       />
                     </td>
                   </tr>
