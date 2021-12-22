@@ -117,7 +117,9 @@ const ReferenceTable = ({
     )
   }
 
-  if (opcodes.length === 0) return null
+  if (opcodes.length === 0) {
+    return null
+  }
 
   return (
     <>
@@ -197,7 +199,9 @@ const ReferenceTable = ({
                       isExpanded,
                   })}
                   ref={(el) => {
-                    if (el) rowRefs.current[row.index] = el
+                    if (el) {
+                      rowRefs.current[row.index] = el
+                    }
                   }}
                   // @ts-ignore: Waiting for 8.x of react-table to have better types
                   onClick={() => row.toggleRowExpanded()}

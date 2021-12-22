@@ -15,7 +15,9 @@ export const StackBox: React.FC<Props> = ({
   isFullWidth,
   className,
 }) => {
-  if (!showEmpty && value.length === 0) return null
+  if (!showEmpty && value.length === 0) {
+    return null
+  }
 
   const parts = value.split('|')
 

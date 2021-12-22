@@ -42,7 +42,9 @@ const DocRow = ({ opcodeDoc, opcode, gasDocs, dynamicFeeForkName }: Props) => {
   const [dynamicFeeDocMdx, setDynamicFeeDocMdx] = useState()
 
   const dynamicFeeDoc = useMemo(() => {
-    if (!gasDocs) return null
+    if (!gasDocs) {
+      return null
+    }
     const fork = findMatchingForkName(forks, Object.keys(gasDocs), selectedFork)
     return fork && common ? parseGasPrices(common, gasDocs[fork]) : null
   }, [forks, selectedFork, gasDocs, common])

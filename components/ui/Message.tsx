@@ -11,9 +11,15 @@ type Props = {
 
 export const Message: React.FC<Props> = ({ type, text }) => {
   const bgColor = useMemo(() => {
-    if (type === 'success') return 'bg-green-400'
-    if (type === 'warning') return 'bg-yellow-400'
-    if (type === 'error') return 'bg-red-400'
+    if (type === 'success') {
+      return 'bg-green-400'
+    }
+    if (type === 'warning') {
+      return 'bg-yellow-400'
+    }
+    if (type === 'error') {
+      return 'bg-red-400'
+    }
   }, [type])
 
   const iconName = useMemo(() => {

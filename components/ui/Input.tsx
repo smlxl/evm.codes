@@ -20,12 +20,16 @@ export const Input: React.FC<Props> = ({
 
   const handleFocus = (e: any) => {
     setIsFocused(true)
-    if (onFocus) onFocus(e)
+    if (onFocus) {
+      onFocus(e)
+    }
   }
 
   const handleBlur = (e: any) => {
     setIsFocused(false)
-    if (onBlur && e) onBlur(e)
+    if (onBlur && e) {
+      onBlur(e)
+    }
   }
 
   return (

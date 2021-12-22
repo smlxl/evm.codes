@@ -345,7 +345,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // FIXME: Instead of allowing to get into exception,
     // prevent from executing when all instructions have been completed.
     try {
-      if (nextStepFunction.current) nextStepFunction.current()
+      if (nextStepFunction.current) {
+        nextStepFunction.current()
+      }
     } catch (_e) {
       const error = _e as Error
 
@@ -478,7 +480,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   const _getBlock = () => {
     // base fee is only applicable since london hardfork, ie block 12965000
-    if (selectedFork && (selectedFork.block || 0) < 12965000) return undefined
+    if (selectedFork && (selectedFork.block || 0) < 12965000) {
+      return undefined
+    }
 
     return Block.fromBlockData(
       {

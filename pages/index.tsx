@@ -75,7 +75,9 @@ export const getStaticProps = async () => {
               'utf-8',
             )
             const forkName = path.parse(fileName).name
-            if (!(opcode in gasDocs)) gasDocs[opcode] = {}
+            if (!(opcode in gasDocs)) {
+              gasDocs[opcode] = {}
+            }
             gasDocs[opcode][forkName] = markdown
           })
         } else {
