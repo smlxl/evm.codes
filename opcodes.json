@@ -58,7 +58,7 @@
         "inputs": {
           "exponent": {
             "type": "number",
-            "label": "exponent"
+            "label": "Input: exponent"
           }
         }
       }
@@ -178,11 +178,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -321,11 +321,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "destOffset"
+            "label": "Input: destOffset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -349,11 +349,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "destOffset"
+            "label": "Input: destOffset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -392,11 +392,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "destOffset"
+            "label": "Input: destOffset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -408,11 +408,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "destOffset"
+            "label": "Input: destOffset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -440,11 +440,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "destOffset"
+            "label": "Input: destOffset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -563,7 +563,7 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "memorySize": {
             "type": "number",
@@ -582,7 +582,7 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "memorySize": {
             "type": "number",
@@ -601,7 +601,7 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "memorySize": {
             "type": "number",
@@ -635,7 +635,7 @@
         "inputs": {
           "newValue": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "currentValue": {
             "type": "number",
@@ -647,7 +647,7 @@
         "inputs": {
           "newValue": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "currentValue": {
             "type": "number",
@@ -663,7 +663,7 @@
         "inputs": {
           "newValue": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "currentValue": {
             "type": "number",
@@ -675,7 +675,7 @@
         "inputs": {
           "newValue": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "currentValue": {
             "type": "number",
@@ -691,7 +691,7 @@
         "inputs": {
           "newValue": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "currentValue": {
             "type": "number",
@@ -1088,11 +1088,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1111,11 +1111,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1134,11 +1134,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1157,11 +1157,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1180,11 +1180,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1578,11 +1578,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1609,23 +1609,23 @@
         "inputs": {
           "value": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1645,23 +1645,23 @@
         "inputs": {
           "value": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1681,23 +1681,23 @@
         "inputs": {
           "value": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1728,23 +1728,23 @@
         "inputs": {
           "value": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1760,23 +1760,23 @@
         "inputs": {
           "value": {
             "type": "number",
-            "label": "value"
+            "label": "Input: value"
           },
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1803,11 +1803,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1826,19 +1826,19 @@
         "inputs": {
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1854,19 +1854,19 @@
         "inputs": {
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1893,11 +1893,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1944,19 +1944,19 @@
         "inputs": {
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -1972,19 +1972,19 @@
         "inputs": {
           "argsOffset": {
             "type": "number",
-            "label": "argsOffset"
+            "label": "Input: argsOffset"
           },
           "argsSize": {
             "type": "number",
-            "label": "argsSize"
+            "label": "Input: argsSize"
           },
           "retOffset": {
             "type": "number",
-            "label": "retOffset"
+            "label": "Input: retOffset"
           },
           "retSize": {
             "type": "number",
-            "label": "retSize"
+            "label": "Input: retSize"
           },
           "memorySize": {
             "type": "number",
@@ -2021,11 +2021,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "offset"
+            "label": "Input: offset"
           },
           "size": {
             "type": "number",
-            "label": "size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
