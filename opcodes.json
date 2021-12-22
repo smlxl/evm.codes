@@ -2054,7 +2054,6 @@
     "input": "address",
     "output": "",
     "description": "Halt execution and register account for later deletion",
-    "dynamicFeeSince": "tangerineWhistle",
     "dynamicFee": {
       "tangerineWhistle": {
         "inputs": {

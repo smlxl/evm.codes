@@ -281,8 +281,7 @@ export const calculateDynamicFee = (
     case 'ff': {
       if (inputs.empty === '1' && inputs.hasNoBalance !== '1')
         result = new BN(common.param('gasPrices', 'callNewAccount'))
-      else
-        result = new BN(0)
+      else result = new BN(0)
 
       if (common.gteHardfork('berlin')) {
         if (inputs.warm === '0')
