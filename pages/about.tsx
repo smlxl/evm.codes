@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3 } from 'components/ui'
+import { Pre } from 'components/ui/Doc'
 
 const OLink = ({ opcode, title }: { opcode?: string; title: string }) => (
   <Link href={opcode ? `/#${opcode}` : '/'} passHref>
@@ -16,8 +17,8 @@ const AboutPage = () => {
     <Container className="text-sm leading-6">
       <H1>About the EVM</H1>
 
-      <H2 className="mb-6">Introduction</H2>
-      <p>
+      <H2 className="mb-4">Introduction</H2>
+      <p className="pb-6">
         The ethereum virtual machine (or{' '}
         <a
           href="https://ethereum.org/en/developers/docs/evm/"
@@ -37,7 +38,7 @@ const AboutPage = () => {
         instruction. The list of instructions available, with their opcodes, is
         shown <OLink title="here" />.
       </p>
-      <p className="pt-4 pb-10">
+      <p className="pb-8">
         An instruction is assigned an arbitrary value between 0 and 255 (or FF
         in hexadecimal), called the opcode, and a mnemonic, which is a text
         representation that helps us human read the instruction. A smart
@@ -47,7 +48,7 @@ const AboutPage = () => {
         values on the stack), the smart contract fails.
       </p>
 
-      <H2 className="mb-6">Execution environment</H2>
+      <H2 className="mb-4">Execution environment</H2>
       <p className="pb-8">
         When the EVM executes a smart contract, a context is created for it. The
         context is made of several memory regions, each with its own purpose.
@@ -122,8 +123,8 @@ const AboutPage = () => {
         <OLink opcode="3E" title="RETURNDATACOPY" />.
       </p>
 
-      <H2 className="mb-6">Gas costs</H2>
-      <p className="pb-8">
+      <H2 className="mb-4">Gas costs</H2>
+      <p className="pb-6">
         As an incentive to provide resources to run transactions, a fee is paid
         to send and execute a transaction. The fee is determined by several
         factors, including the amount of data sent or the amount of work that a
@@ -179,7 +180,7 @@ const AboutPage = () => {
       </p>
 
       <H3 className="mb-4">Memory expansion</H3>
-      <p className="pb-8">
+      <p className="pb-6">
         During an execution, the whole memory is accessible, but not for free.
         When an offset is accessed for the first time (either read or write), it
         may trigger a memory expansion, which will cost gas. A memory expansion
@@ -188,23 +189,30 @@ const AboutPage = () => {
         and removed from the total gas available in the current context.
       </p>
 
-      <p className="pb-8">
-        The total cost for a given memory size is computed as follows:
-        <code>
-          <br />
-          memory_size_word = (memory_byte_size + 31) / 32
-          <br />
-          memory_cost = (memory_size_word ** 2) / 512 + (3 * memory_size_word)
-          <br />
-        </code>
+      <p className="pb-4">
+        <p className="pb-4">
+          The total cost for a given memory size is computed as follows:
+        </p>
+        <Pre>
+          <code>
+            memory_size_word = (memory_byte_size + 31) / 32
+            <br />
+            memory_cost = (memory_size_word ** 2) / 512 + (3 * memory_size_word)
+          </code>
+        </Pre>
       </p>
 
-      <p className="pb-8">
-        When a memory expansion is triggered however, only the additional chunk
-        of memory has to be payed. The cost of memory expansion for a specific
-        opcode is thus:
-        <br />
-        <code>memory_expansion_cost = new_memory_cost - last_memory_cost</code>
+      <p className="pb-4">
+        <p className="pb-4">
+          When a memory expansion is triggered however, only the additional
+          chunk of memory has to be payed. The cost of memory expansion for a
+          specific opcode is thus:
+        </p>
+        <Pre>
+          <code>
+            memory_expansion_cost = new_memory_cost - last_memory_cost
+          </code>
+        </Pre>
       </p>
 
       <p className="pb-8">
