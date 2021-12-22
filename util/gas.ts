@@ -18,6 +18,47 @@ function toWordSize(a: BN): BN {
   return div.isNeg() ? div.isubn(1) : div.iaddn(1)
 }
 
+function memoryCost(wordSize: BN, common: Common): BN {
+  const fee = new BN(common.param('gasPrices', 'memory'))
+  const quadCoeff = new BN(common.param('gasPrices', 'quadCoeffDiv'))
+  return wordSize.mul(fee).add(wordSize.mul(wordSize).div(quadCoeff))
+}
+
+function memoryExtensionCost(
+  offset: BN,
+  byteSize: BN,
+  currentMemorySize: BN,
+  common: Common,
+): BN {
+  if (byteSize.isZero()) return byteSize
+
+  const newMemoryWordSize = toWordSize(offset.add(byteSize))
+  const oldMemoryWordSize = toWordSize(currentMemorySize)
+  if (newMemoryWordSize.lte(oldMemoryWordSize)) return new BN(0)
+
+  const newCost = memoryCost(newMemoryWordSize, common)
+  const oldCost = memoryCost(oldMemoryWordSize, common)
+  if (newCost.gt(oldCost)) newCost.isub(oldCost)
+  return newCost
+}
+
+function memoryCostCopy(inputs: any, param: string, common: Common): BN {
+  const paramWordCost = new BN(common.param('gasPrices', param))
+  const expansionCost = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
+  return expansionCost.iadd(paramWordCost.imul(toWordSize(new BN(inputs.size))))
+}
+
+function addressAccessCost(common: Common, inputs: any): BN {
+  if (inputs.warm === '1')
+    return new BN(common.param('gasPrices', 'warmstorageread'))
+  else return new BN(common.param('gasPrices', 'coldaccountaccess'))
+}
+
 function sstoreCost(common: Common, inputs: any): BN {
   if (common.hardfork() === 'constantinople') {
     if (inputs.newValue === inputs.currentValue)
@@ -42,6 +83,19 @@ function sstoreCost(common: Common, inputs: any): BN {
   }
 }
 
+function createCost(common: Common, inputs: any): BN {
+  const expansionCost = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
+  const depositCost = new BN(inputs.deployedSize).imuln(
+    common.param('gasPrices', 'createData'),
+  )
+  return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
+}
+
 /*
  * Calculates dynamic gas fee
  *
@@ -63,59 +117,6 @@ export const calculateDynamicFee = (
   // FIXME: Remove when all formulas are implemented
   console.info('Received inputs for dynamic fee calc', { opcode, inputs })
 
-  const memoryCost = (wordSize: BN) => {
-    const fee = new BN(common.param('gasPrices', 'memory'))
-    const quadCoeff = new BN(common.param('gasPrices', 'quadCoeffDiv'))
-    return wordSize.mul(fee).add(wordSize.mul(wordSize).div(quadCoeff))
-  }
-
-  const memoryExtensionCost = (
-    offset: BN,
-    byteSize: BN,
-    currentMemorySize: BN,
-  ) => {
-    if (byteSize.isZero()) return byteSize
-
-    const newMemoryWordSize = toWordSize(offset.add(byteSize))
-    const oldMemoryWordSize = toWordSize(currentMemorySize)
-    if (newMemoryWordSize.lte(oldMemoryWordSize)) return new BN(0)
-
-    const newCost = memoryCost(newMemoryWordSize)
-    const oldCost = memoryCost(oldMemoryWordSize)
-    if (newCost.gt(oldCost)) newCost.isub(oldCost)
-    return newCost
-  }
-
-  const memoryCostCopy = (param: string) => {
-    const paramWordCost = new BN(common.param('gasPrices', param))
-    const expansionCost = memoryExtensionCost(
-      new BN(inputs.offset),
-      new BN(inputs.size),
-      new BN(inputs.memorySize),
-    )
-    return expansionCost.iadd(
-      paramWordCost.imul(toWordSize(new BN(inputs.size))),
-    )
-  }
-
-  const addressAccessCost = () => {
-    if (inputs.warm === '1')
-      return new BN(common.param('gasPrices', 'warmstorageread'))
-    else return new BN(common.param('gasPrices', 'coldaccountaccess'))
-  }
-
-  const createCost = () => {
-    const expansionCost = memoryExtensionCost(
-      new BN(inputs.offset),
-      new BN(inputs.size),
-      new BN(inputs.memorySize),
-    )
-    const depositCost = new BN(inputs.deployedSize).imuln(
-      common.param('gasPrices', 'createData'),
-    )
-    return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
-  }
-
   let result = null
   switch (opcode.code) {
     case '0a': {
@@ -125,25 +126,26 @@ export const calculateDynamicFee = (
       break
     }
     case '20': {
-      result = memoryCostCopy('sha3Word')
+      result = memoryCostCopy(inputs, 'sha3Word', common)
       break
     }
     case '31':
     case '3b':
     case '3f': {
-      result = addressAccessCost()
+      result = addressAccessCost(common, inputs)
       break
     }
     case '37':
     case '39':
     case '3e': {
-      result = memoryCostCopy('copy')
+      result = memoryCostCopy(inputs, 'copy', common)
       break
     }
     case '3c': {
-      result = memoryCostCopy('copy')
+      result = memoryCostCopy(inputs, 'copy', common)
 
-      if (common.gteHardfork('berlin')) result.iadd(addressAccessCost())
+      if (common.gteHardfork('berlin'))
+        result.iadd(addressAccessCost(common, inputs))
       break
     }
     case '51':
@@ -152,6 +154,7 @@ export const calculateDynamicFee = (
         new BN(inputs.offset),
         new BN(32),
         new BN(inputs.memorySize),
+        common,
       )
       break
     }
@@ -160,6 +163,7 @@ export const calculateDynamicFee = (
         new BN(inputs.offset),
         new BN(1),
         new BN(inputs.memorySize),
+        common,
       )
       break
     }
@@ -189,6 +193,7 @@ export const calculateDynamicFee = (
         new BN(inputs.offset),
         new BN(inputs.size),
         new BN(inputs.memorySize),
+        common,
       )
       result = new BN(common.param('gasPrices', 'logTopic'))
         .imul(topicsCount)
@@ -197,12 +202,12 @@ export const calculateDynamicFee = (
       break
     }
     case 'f0': {
-      result = createCost()
+      result = createCost(common, inputs)
       break
     }
     case 'f5': {
-      result = createCost().iadd(
-        toWordSize(new BN(inputs.size)).muln(
+      result = createCost(common, inputs).iadd(
+        toWordSize(new BN(inputs.size)).imuln(
           common.param('gasPrices', 'sha3Word'),
         ),
       )

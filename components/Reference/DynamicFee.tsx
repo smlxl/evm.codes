@@ -31,7 +31,11 @@ const DynamicFee = ({ opcode, fork }: Props) => {
 
   const handleCompute = debounce((inputs) => {
     if (common) {
-      setResult(calculateDynamicFee(opcode, common, inputs))
+      try {
+        setResult(calculateDynamicFee(opcode, common, inputs))
+      } catch (error) {
+        console.error(error)
+      }
     }
   }, debounceTimeout)
 

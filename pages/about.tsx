@@ -272,7 +272,7 @@ const AboutPage = () => {
       <H3 className="mb-4">Gas refunds</H3>
       <p className="pb-8">
         Some opcodes can trigger gas refunds, which reduces the gas cost of a
-        transaction. TODO
+        transaction. Coming soon.
       </p>
 
       <em>

@@ -278,7 +278,7 @@
     "description": "Get balance of the given account",
     "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "homestead": {
+      "berlin": {
         "inputs": {
           "warm": {
             "type": "boolean",
@@ -375,7 +375,7 @@
     "description": "Get size of an account’s code",
     "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "homestead": {
+      "berlin": {
         "inputs": {
           "warm": {
             "type": "boolean",
@@ -391,6 +391,22 @@
     "description": "Copy an account’s code to memory",
     "dynamicFee": {
       "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "Current memory size"
+          }
+        }
+      },
+      "berlin": {
         "inputs": {
           "offset": {
             "type": "number",
@@ -446,7 +462,7 @@
     "description": "Get hash of an account’s code",
     "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "homestead": {
+      "berlin": {
         "inputs": {
           "warm": {
             "type": "boolean",
@@ -604,7 +620,7 @@
     "description": "Load word from storage",
     "dynamicFeeSince": "berlin",
     "dynamicFee": {
-      "homestead": {
+      "berlin": {
         "inputs": {
           "warm": {
             "type": "boolean",
@@ -620,6 +636,62 @@
     "description": "Save word to storage",
     "dynamicFee": {
       "homestead": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "Current value in storage"
+          }
+        }
+      },
+      "constantinople": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "Current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "Original value at the beginning of the transaction"
+          }
+        }
+      },
+      "petersburg": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "Current value in storage"
+          }
+        }
+      },
+      "istanbul": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "Current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "Original value at the beginning of the transaction"
+          }
+        }
+      },
+      "berlin": {
         "inputs": {
           "newValue": {
             "type": "number",
