@@ -232,6 +232,7 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
+                        isDynamicFeeActive={hasDynamicFee}
                         opcodeDoc={opcodeDocs[code]}
                         opcode={opcodes[rowId]}
                         gasDoc={gasDocs[code]}

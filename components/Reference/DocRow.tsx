@@ -18,6 +18,7 @@ type Props = {
   opcodeDoc: IOpcodeDoc
   opcode: IOpcode
   gasDoc: IOpcodeGasDoc
+  isDynamicFeeActive: boolean
 }
 
 const docComponents = {
@@ -73,7 +74,7 @@ const findFork = (
   return foundFork
 }
 
-const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
+const DocRow = ({ opcodeDoc, opcode, gasDoc, isDynamicFeeActive }: Props) => {
   const { common, forks, selectedFork } = useContext(EthereumContext)
   const [dynamicDocMdx, setDynamicDocMdx] = useState()
 
@@ -140,12 +141,12 @@ const DocRow = ({ opcodeDoc, opcode, gasDoc }: Props) => {
               })}
             >
               <MDXRemote {...opcodeDoc.mdxSource} components={docComponents} />
-              {dynamicDocMdx && (
+              {isDynamicFeeActive && dynamicDocMdx && (
                 <MDXRemote {...dynamicDocMdx} components={docComponents} />
               )}
             </div>
 
-            {dynamicFeeFork && (
+            {isDynamicFeeActive && dynamicFeeFork && (
               <DynamicFee opcode={opcode} fork={dynamicFeeFork} />
             )}
           </div>
