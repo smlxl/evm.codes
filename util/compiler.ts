@@ -1,3 +1,6 @@
+export const compilerSemVer = 'v0.8.10'
+export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
+
 /**
  * Gets target EVM version from a hardfork name
  *

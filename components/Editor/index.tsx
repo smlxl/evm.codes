@@ -16,7 +16,7 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
-import { getTargetEvmVersion } from 'util/compiler'
+import { getTargetEvmVersion, compilerSemVer } from 'util/compiler'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
@@ -39,9 +39,6 @@ type SCEditorRef = {
 const editorHeight = 350
 const consoleHeight = 350
 
-// FIXME: Handle compiler detection
-const compilerVersion = 'v0.8.9'
-
 const Editor = ({ readOnly = false }: Props) => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
 
@@ -61,7 +58,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [output, setOutput] = useState<IConsoleOutput[]>([
     {
       type: 'info',
-      message: `Loading Solidity compiler ${compilerVersion}...`,
+      message: `Loading Solidity compiler ${compilerSemVer}...`,
     },
   ])
   const solcWorkerRef = useRef<null | Worker>(null)
@@ -262,7 +259,7 @@ const Editor = ({ readOnly = false }: Props) => {
       </div>
 
       <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900 border-opacity-25 text-gray-400 dark:text-gray-600 text-xs">
-        Solidity Compiler {compilerVersion}
+        Solidity Compiler {compilerSemVer}
       </div>
     </div>
   )
