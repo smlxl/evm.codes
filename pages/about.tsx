@@ -272,7 +272,14 @@ const AboutPage = () => {
       <H3 className="mb-4">Gas refunds</H3>
       <p className="pb-8">
         Some opcodes can trigger gas refunds, which reduces the gas cost of a
-        transaction. Coming soon.
+        transaction. However the gas refund is applied at the end of a
+        transaction, meaning that a transaction always need enough gas to run as
+        if there was no refunds. The amount of gas that can be refunded is also
+        limited, to half of the total transaction cost before the hardfork{' '}
+        <b>Berlin</b>, and to a fifth after that. Starting from the hardfork{' '}
+        <b>Berlin</b> also, only <OLink opcode="55" title="SSTORE" /> may
+        trigger refunds. Before that, <OLink opcode="FF" title="SELFDESTRUCT" />{' '}
+        could also trigger refunds.
       </p>
 
       <em>
