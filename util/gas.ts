@@ -22,9 +22,9 @@ function toWordSize(a: BN): BN {
 }
 
 function memoryCost(wordSize: BN, common: Common): BN {
-  const fee = new BN(common.param('gasPrices', 'memory'))
-  const quadCoeff = new BN(common.param('gasPrices', 'quadCoeffDiv'))
-  return wordSize.mul(fee).add(wordSize.mul(wordSize).div(quadCoeff))
+  const fee = common.param('gasPrices', 'memory')
+  const quadCoeff = common.param('gasPrices', 'quadCoeffDiv')
+  return wordSize.muln(fee).add(wordSize.mul(wordSize).divn(quadCoeff))
 }
 
 function memoryExtensionCost(
@@ -63,10 +63,10 @@ function memoryCostCopy(inputs: any, param: string, common: Common): BN {
 }
 
 function addressAccessCost(common: Common, inputs: any): BN {
-  if (inputs.warm === '1') {
-    return new BN(common.param('gasPrices', 'warmstorageread'))
-  } else {
+  if (inputs.cold === '1') {
     return new BN(common.param('gasPrices', 'coldaccountaccess'))
+  } else {
+    return new BN(common.param('gasPrices', 'warmstorageread'))
   }
 }
 
@@ -156,11 +156,7 @@ function callCost(common: Common, inputs: any): BN {
   }
 
   if (common.gteHardfork('berlin')) {
-    if (inputs.warm === '1') {
-      result.iaddn(common.param('gasPrices', 'warmstorageread'))
-    } else {
-      result.iaddn(common.param('gasPrices', 'coldaccountaccess'))
-    }
+    result.iadd(addressAccessCost(common, inputs))
   }
 
   return result
@@ -172,7 +168,7 @@ function callCost(common: Common, inputs: any): BN {
  * @param opcode The IOpcode
  * @param common The Common object
  * @param inputs The Object of user inputs based on the `dynamicFee` inputs
- *                 in the opcodes.json
+ *                 in the opcodes.json. If empty, we want to return the minimum fee for that code.
  *
  * @returns The String representation of the gas fee.
  *
@@ -199,7 +195,11 @@ export const calculateDynamicFee = (
     case '31':
     case '3b':
     case '3f': {
-      result = addressAccessCost(common, inputs)
+      if (common.gteHardfork('berlin')) {
+        result = addressAccessCost(common, inputs)
+      } else {
+        result = new BN(0)
+      }
       break
     }
     case '37':
@@ -218,28 +218,34 @@ export const calculateDynamicFee = (
     }
     case '51':
     case '52': {
+      // If no value is provided, we want a value that gives us the minimum cost
       result = memoryExtensionCost(
         new BN(inputs.offset),
         new BN(32),
-        new BN(inputs.memorySize),
+        new BN(inputs.memorySize || 32),
         common,
       )
       break
     }
     case '53': {
+      // If no value is provided, we want a value that gives us the minimum cost
       result = memoryExtensionCost(
         new BN(inputs.offset),
         new BN(1),
-        new BN(inputs.memorySize),
+        new BN(inputs.memorySize || 32),
         common,
       )
       break
     }
     case '54': {
-      if (inputs.warm === '1') {
-        result = new BN(common.param('gasPrices', 'warmstorageread'))
+      if (common.gteHardfork('berlin')) {
+        if (inputs.cold === '1') {
+          result = new BN(common.param('gasPrices', 'coldsload'))
+        } else {
+          result = new BN(common.param('gasPrices', 'warmstorageread'))
+        }
       } else {
-        result = new BN(common.param('gasPrices', 'coldsload'))
+        result = new BN(0)
       }
       break
     }
@@ -247,10 +253,10 @@ export const calculateDynamicFee = (
       result = sstoreCost(common, inputs)
 
       if (common.gteHardfork('berlin')) {
-        if (inputs.warm === '1') {
-          result.iaddn(common.param('gasPrices', 'warmstorageread'))
-        } else {
+        if (inputs.cold === '1') {
           result.iaddn(common.param('gasPrices', 'coldsload'))
+        } else {
+          result.iaddn(common.param('gasPrices', 'warmstorageread'))
         }
       }
       break
@@ -303,7 +309,12 @@ export const calculateDynamicFee = (
       break
     }
     case 'fe': {
-      result = new BN(inputs.remaining)
+      // If no value is provided, we want a value that gives us the minimum cost, which in this case is everything
+      if (inputs.remaining) {
+        result = new BN(inputs.remaining)
+      } else {
+        return 'NaN'
+      }
       break
     }
     case 'ff': {
@@ -313,10 +324,8 @@ export const calculateDynamicFee = (
         result = new BN(0)
       }
 
-      if (common.gteHardfork('berlin')) {
-        if (inputs.warm === '0') {
-          result.iaddn(common.param('gasPrices', 'coldaccountaccess'))
-        }
+      if (common.gteHardfork('berlin') && inputs.cold === '1') {
+        result.iaddn(common.param('gasPrices', 'coldaccountaccess'))
       }
       break
     }
@@ -324,7 +333,7 @@ export const calculateDynamicFee = (
       result = new BN(0)
   }
 
-  return result.iadd(new BN(opcode.fee)).toString()
+  return result.iaddn(opcode.staticFee).toString()
 }
 
 /*

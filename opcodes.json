@@ -279,9 +279,9 @@
     "dynamicFee": {
       "berlin": {
         "inputs": {
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           }
         }
       }
@@ -375,9 +375,9 @@
     "dynamicFee": {
       "berlin": {
         "inputs": {
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           }
         }
       }
@@ -418,9 +418,9 @@
             "type": "number",
             "label": "State: current memory size"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           }
         }
       }
@@ -461,9 +461,9 @@
     "dynamicFee": {
       "berlin": {
         "inputs": {
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           }
         }
       }
@@ -618,9 +618,9 @@
     "dynamicFee": {
       "berlin": {
         "inputs": {
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'key' is warm?"
+            "label": "State: 'key' is cold?"
           }
         }
       }
@@ -701,9 +701,9 @@
             "type": "number",
             "label": "State: original value at the beginning of the transaction"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'key' is warm?"
+            "label": "State: 'key' is cold?"
           }
         }
       }
@@ -1703,9 +1703,9 @@
             "type": "number",
             "label": "State: current memory size"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           },
           "empty": {
             "type": "boolean",
@@ -1782,9 +1782,9 @@
             "type": "number",
             "label": "State: current memory size"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           },
           "executionCost": {
             "type": "number",
@@ -1872,9 +1872,9 @@
             "type": "number",
             "label": "State: current memory size"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           },
           "executionCost": {
             "type": "number",
@@ -1990,9 +1990,9 @@
             "type": "number",
             "label": "State: current memory size"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           },
           "executionCost": {
             "type": "number",
@@ -2085,9 +2085,9 @@
             "type": "boolean",
             "label": "State: is the beneficiary account empty?"
           },
-          "warm": {
+          "cold": {
             "type": "boolean",
-            "label": "State: 'address' is warm?"
+            "label": "State: 'address' is cold?"
           }
         }
       }

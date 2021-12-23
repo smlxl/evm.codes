@@ -140,16 +140,14 @@ const AboutPage = () => {
       <p className="pb-8">
         Each opcode has its own gas cost. There are two parts to their gas cost.
         The first one is the static cost, which has to be paid for running that
-        opcode. This is the value that is displayed in our{' '}
-        <OLink title="reference" />. The second is a dynamic cost, which depends
-        on several factors during the execution of a transaction. The factors
-        that are used to determine the dynamic gas cost can change from fork to
-        fork. Use our reference to learn about the specific computations per
-        opcode and fork. And finally, remember that the gas cost still has other
-        components, for example the transaction fee, or the size of the
-        calldata. To get a complete estimation of the gas cost for your
-        programm, with your compiler options and specific state and inputs, use
-        a tool like{' '}
+        opcode. The second is a dynamic cost, which depends on several factors
+        during the execution of a transaction. The factors that are used to
+        determine the dynamic gas cost can change from fork to fork. Use our
+        reference to learn about the specific computations per opcode and fork.
+        And finally, remember that the gas cost still has other components, for
+        example the transaction fee, or the size of the calldata. To get a
+        complete estimation of the gas cost for your programm, with your
+        compiler options and specific state and inputs, use a tool like{' '}
         <a
           href="https://remix.ethereum.org/"
           target="_blank"

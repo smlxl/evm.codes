@@ -219,9 +219,8 @@ const ReferenceTable = ({
                     >
                       <div className="flex items-center flex-wrap">
                         {cell.render('Cell')}
-                        {cell.column.id === 'fee' && !!dynamicFeeForkName && (
-                          <DynamicFeeTooltip />
-                        )}
+                        {cell.column.id === 'minimumFee' &&
+                          !!dynamicFeeForkName && <DynamicFeeTooltip />}
                       </div>
                     </td>
                   ))}

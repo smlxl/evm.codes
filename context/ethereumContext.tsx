@@ -21,6 +21,7 @@ import {
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
+import { calculateDynamicFee } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -403,15 +404,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm.getActiveOpcodes().forEach((op: Opcode) => {
       const meta = OpcodesMeta as IOpcodeMetaList
-
-      opcodes.push({
+      const opcode = {
         ...meta[toHex(op.code)],
         ...{
           code: toHex(op.code),
-          fee: op.fee,
+          staticFee: op.fee,
+          minimumFee: 0,
           name: op.fullName,
         },
-      })
+      }
+
+      opcode.minimumFee = parseInt(calculateDynamicFee(opcode, common, {}))
+      opcodes.push(opcode)
     })
 
     setOpcodes(opcodes)

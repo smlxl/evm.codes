@@ -9,7 +9,8 @@ export interface IOpcode {
   input: string
   output: string
   description: string
-  fee: number
+  staticFee: number
+  minimumFee: number
   dynamicFee?: {
     [fork: string]: {
       inputs: {
