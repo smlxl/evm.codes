@@ -29,15 +29,6 @@ type CustomHeaderGroup = {
   className?: string
 } & HeaderGroup<IOpcode>
 
-const DynamicFeeTooltip = () => (
-  <span
-    className="inline-block pl-2 text-gray-400 dark:text-black-400"
-    data-tip="Has additional dynamic gas cost, expand to estimate it"
-  >
-    <Icon name="question-line" />
-  </span>
-)
-
 const ReferenceTable = ({
   opcodeDocs,
   gasDocs,
@@ -220,7 +211,20 @@ const ReferenceTable = ({
                       <div className="flex items-center flex-wrap">
                         {cell.render('Cell')}
                         {cell.column.id === 'minimumFee' &&
-                          !!dynamicFeeForkName && <DynamicFeeTooltip />}
+                          !!dynamicFeeForkName && (
+                            <span
+                              className="inline-block pl-2 text-gray-400 dark:text-black-400"
+                              data-tip="Has additional dynamic gas cost, expand to estimate it"
+                              data-for={`tip-${cell.row.id}`}
+                            >
+                              <Icon name="question-line" />
+                              <ReactTooltip
+                                className="tooltip"
+                                effect="solid"
+                                id={`tip-${cell.row.id}`}
+                              />
+                            </span>
+                          )}
                       </div>
                     </td>
                   ))}
@@ -243,8 +247,6 @@ const ReferenceTable = ({
           })}
         </tbody>
       </table>
-
-      <ReactTooltip className="tooltip" effect="solid" />
     </>
   )
 }
