@@ -184,9 +184,6 @@ export const calculateDynamicFee = (
   common: Common,
   inputs: any,
 ) => {
-  // FIXME: Remove when all formulas are implemented
-  console.info('Received inputs for dynamic fee calc', { opcode, inputs })
-
   let result = null
   switch (opcode.code) {
     case '0a': {
