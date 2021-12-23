@@ -143,7 +143,8 @@ function callCost(common: Common, inputs: any): BN {
   result.iadd(new BN(inputs.executionCost))
 
   if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
-    result.iadd(new BN(common.param('gasPrices', 'callValueTransfer')))
+    result.iaddn(common.param('gasPrices', 'callValueTransfer'))
+    result.isubn(common.param('gasPrices', 'callStipend'))
   }
 
   if (common.gteHardfork('spuriousDragon')) {

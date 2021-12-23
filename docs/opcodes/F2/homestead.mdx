@@ -5,4 +5,4 @@
 The `code_execution_cost` is the cost of the called code execution (limited by the `gas` parameter).
 The memory expansion cost explanation can be found [here](/about).
 
-On top of the `base_dynamic_gas`, if `value` is not 0, then add {gasPrices|callValueTransfer}.
+On top of the `base_dynamic_gas`, if `value` is not 0, then add {gasPrices|callValueTransfer}. In this case there is also a call stipend that is given to make sure that a basic fallback function can be called. {gasPrices|callStipend} is thus removed from the cost, and also added to the `gas` input.
