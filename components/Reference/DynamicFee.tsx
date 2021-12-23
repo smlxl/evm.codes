@@ -64,7 +64,7 @@ const DynamicFee = ({ opcode, fork }: Props) => {
   }
 
   return (
-    <div className="w-96">
+    <div className="md:w-96">
       <div className="flex justify-between items-center">
         <H2>Estimate your gas cost</H2>
       </div>

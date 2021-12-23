@@ -82,7 +82,7 @@ export const A: React.FC<LinkProps> = ({ children, href }) => (
 
 export const Pre: React.FC<Props> = ({ children }) => (
   <div>
-    <pre className="inline-block p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
+    <pre className="inline-block whitespace-pre-wrap p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
       {children}
     </pre>
   </div>
