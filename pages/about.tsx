@@ -175,8 +175,8 @@ const AboutPage = () => {
         Each transaction has an intrinsic cost of 21000 gas. Creating a contract
         costs 32000 gas, on top of the transaction cost. And finally, the
         calldata costs 4 gas per byte equal to 0, and 16 gas for the others (64
-        before Istanbul fork). This cost is payed from the transaction before
-        any opcode or transfer is executed.
+        before Istanbul fork). This cost is paid from the transaction before any
+        opcode or transfer is executed.
       </p>
 
       <H3 className="mb-4">Memory expansion</H3>
@@ -205,7 +205,7 @@ const AboutPage = () => {
       <p className="pb-4">
         <p className="pb-4">
           When a memory expansion is triggered however, only the additional
-          chunk of memory has to be payed. The cost of memory expansion for a
+          chunk of memory has to be paid. The cost of memory expansion for a
           specific opcode is thus:
         </p>
         <Pre>
