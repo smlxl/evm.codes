@@ -231,9 +231,9 @@ const AboutPage = () => {
       <p className="pb-8">
         Access sets have been introduced in the hardfork <b>Berlin</b>. They are
         kept per transaction (and not per call context). Two of them exist: the
-        touched contracts addresses, and the touched contract slots. If an
-        address or slot is present in the set, it is called 'warm', otherwise it
-        is 'cold'. The dynamic cost of some opcodes depends on whether the
+        touched contracts addresses, and the touched contract storage slots. If
+        an address or slot is present in the set, it is called 'warm', otherwise
+        it is 'cold'. The dynamic cost of some opcodes depends on whether the
         address or slot is warm or cold.
         <ul className="list-disc mb-2">
           <li className="ml-6">
@@ -256,10 +256,10 @@ const AboutPage = () => {
             <OLink opcode="FF" title="SELFDESTRUCT" />.
           </li>
           <li className="ml-6">
-            Slots: a set of contract address and their slot keys that have been
-            accessed. It is initialised to empty. When an opcode accesses a slot
-            that is not present in the set, it adds it to it. The relevant
-            opcodes are <OLink opcode="54" title="SLOAD" /> and{' '}
+            Slots: a set of contract address and their storage slot keys that
+            have been accessed. It is initialised to empty. When an opcode
+            accesses a slot that is not present in the set, it adds it to it.
+            The relevant opcodes are <OLink opcode="54" title="SLOAD" /> and{' '}
             <OLink opcode="55" title="SSTORE" />
           </li>
         </ul>
