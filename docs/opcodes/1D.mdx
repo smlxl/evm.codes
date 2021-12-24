@@ -9,12 +9,12 @@ Shift the bits towards the least significant one. The bits moved before the firs
 
 ## Stack input
 
-0. `Integer`: number of bits to shift to the right.
-1. `Integer`: value.
+0. `shift`: number of bits to shift to the right.
+1. `value`: integer to shift.
 
 ## Stack output
 
-0. `Integer`: the shifted value.
+0. `value >> shift`: the shifted value.
 
 ## Examples
 
@@ -30,6 +30,6 @@ Shift the bits towards the least significant one. The bits moved before the firs
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

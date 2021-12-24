@@ -5,8 +5,8 @@ group: Stack Memory Storage and Flow Operations
 
 ## Stack input
 
-0. `Integer`: offset in the [memory](/about) in bytes.
-1. `Integer`: 32-byte value to write in the [memory](/about).
+0. `offset`: offset in the [memory](/about) in bytes.
+1. `value`: 32-byte value to write in the [memory](/about).
 
 ## Examples
 
@@ -29,6 +29,6 @@ group: Stack Memory Storage and Flow Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

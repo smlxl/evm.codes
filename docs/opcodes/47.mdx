@@ -9,7 +9,7 @@ Semantically equivalent of calling [BALANCE](/#31) with [ADDRESS](/#30) as param
 
 ## Stack output
 
-0. `Integer`: balance of the current account in [wei](https://www.investopedia.com/terms/w/wei.asp).
+0. `balance`: balance of the current account in [wei](https://www.investopedia.com/terms/w/wei.asp).
 
 ## Example
 
@@ -19,6 +19,6 @@ Semantically equivalent of calling [BALANCE](/#31) with [ADDRESS](/#30) as param
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Stack overflow.

@@ -105,7 +105,9 @@ const Editor = ({ readOnly = false }: Props) => {
     log('Solidity compiler loaded')
 
     return () => {
-      if (solcWorkerRef?.current) solcWorkerRef.current.terminate()
+      if (solcWorkerRef?.current) {
+        solcWorkerRef.current.terminate()
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -130,7 +132,9 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const highlightCode = (value: string) => {
-    if (!codeType) return value
+    if (!codeType) {
+      return value
+    }
 
     return codeHighlight(value, codeType)
       .value.split('\n')

@@ -5,7 +5,7 @@ group: Block Information
 
 ## Stack output
 
-0. `Integer`: current [block difficulty](https://ethereum.org/en/developers/docs/consensus-mechanisms/pow/#how-it-works).
+0. `difficulty`: current [block difficulty](https://ethereum.org/en/developers/docs/consensus-mechanisms/pow/#how-it-works).
 
 ## Example
 
@@ -15,6 +15,6 @@ group: Block Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Stack overflow.

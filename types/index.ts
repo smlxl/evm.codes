@@ -9,8 +9,18 @@ export interface IOpcode {
   input: string
   output: string
   description: string
-  fee: number
-  dynamicFee?: boolean
+  staticFee: number
+  minimumFee: number
+  dynamicFee?: {
+    [fork: string]: {
+      inputs: {
+        [name: string]: {
+          type: 'number' | 'boolean'
+          label: string
+        }
+      }
+    }
+  }
 }
 
 export interface IOpcodeMeta {
@@ -63,4 +73,12 @@ export interface IOpcodeDoc {
 
 export interface IOpcodeDocs {
   [opcode: string]: IOpcodeDoc
+}
+
+export interface IOpcodeGasDoc {
+  [fork: string]: string
+}
+
+export interface IOpcodeGasDocs {
+  [opcode: string]: IOpcodeGasDoc
 }

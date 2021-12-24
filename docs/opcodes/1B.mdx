@@ -9,12 +9,12 @@ Shift the bits towards the most significant one. The bits moved after the 256th 
 
 ## Stack input
 
-0. `Integer`: number of bits to shift to the left.
-1. `Integer`: value.
+0. `shift`: number of bits to shift to the left.
+1. `value`: 32 bytes to shift.
 
 ## Stack output
 
-0. `Integer`: the shifted value. If the shift value is bigger than 255, returns 0.
+0. `value << shift`: the shifted value. If `shift` is bigger than 255, returns 0.
 
 ## Examples
 
@@ -30,6 +30,6 @@ Shift the bits towards the most significant one. The bits moved after the 256th 
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

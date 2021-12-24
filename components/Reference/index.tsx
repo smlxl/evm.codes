@@ -12,9 +12,11 @@ import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IOpcode, IOpcodeDocs } from 'types'
+import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
+
+import { findMatchingForkName } from 'util/gas'
 
 import { Button, Icon } from 'components/ui'
 
@@ -27,19 +29,15 @@ type CustomHeaderGroup = {
   className?: string
 } & HeaderGroup<IOpcode>
 
-// FIXME: Remove once https://github.com/comitylabs/evm.codes/issues/57 is done
-const DynamicFeeTooltip = () => (
-  <span
-    className="inline-block pl-2 text-gray-400 dark:text-black-400"
-    data-tip="Dynamic gas portion is not included yet and coming soon."
-  >
-    <Icon name="question-line" />
-  </span>
-)
-
-const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
+const ReferenceTable = ({
+  opcodeDocs,
+  gasDocs,
+}: {
+  opcodeDocs: IOpcodeDocs
+  gasDocs: IOpcodeGasDocs
+}) => {
   const router = useRouter()
-  const { opcodes } = useContext(EthereumContext)
+  const { opcodes, forks, selectedFork } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
   const columns = useMemo(() => tableData, [])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -110,7 +108,9 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
     )
   }
 
-  if (opcodes.length === 0) return null
+  if (opcodes.length === 0) {
+    return null
+  }
 
   return (
     <>
@@ -171,11 +171,14 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
             prepareRow(row)
 
             const { code } = row.values
+            const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
-            const isExpanded = row.isExpanded || focusedOpcode === row.id
-            const hasDynamicFee = opcodes.find(
-              (opcode) => opcode.code == code,
-            )?.dynamicFee
+            const isExpanded = row.isExpanded || focusedOpcode === rowId
+            const dynamicFeeForkName = findMatchingForkName(
+              forks,
+              Object.keys(opcodes[rowId]?.dynamicFee || {}),
+              selectedFork,
+            )
 
             return (
               <Fragment key={row.getRowProps().key}>
@@ -187,7 +190,9 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                       isExpanded,
                   })}
                   ref={(el) => {
-                    if (el) rowRefs.current[row.index] = el
+                    if (el) {
+                      rowRefs.current[row.index] = el
+                    }
                   }}
                   // @ts-ignore: Waiting for 8.x of react-table to have better types
                   onClick={() => row.toggleRowExpanded()}
@@ -205,9 +210,21 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                     >
                       <div className="flex items-center flex-wrap">
                         {cell.render('Cell')}
-                        {cell.column.id === 'fee' && hasDynamicFee && (
-                          <DynamicFeeTooltip />
-                        )}
+                        {cell.column.id === 'minimumFee' &&
+                          !!dynamicFeeForkName && (
+                            <span
+                              className="inline-block pl-2 text-gray-400 dark:text-black-400"
+                              data-tip="Has additional dynamic gas cost, expand to estimate it"
+                              data-for={`tip-${cell.row.id}`}
+                            >
+                              <Icon name="question-line" />
+                              <ReactTooltip
+                                className="tooltip"
+                                effect="solid"
+                                id={`tip-${cell.row.id}`}
+                              />
+                            </span>
+                          )}
                       </div>
                     </td>
                   ))}
@@ -216,7 +233,12 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
                 {isExpanded ? (
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
-                      <DocRow opcode={opcodeDocs[code.toUpperCase()]} />
+                      <DocRow
+                        opcodeDoc={opcodeDocs[code]}
+                        opcode={opcodes[rowId]}
+                        gasDocs={gasDocs[code]}
+                        dynamicFeeForkName={dynamicFeeForkName}
+                      />
                     </td>
                   </tr>
                 ) : null}
@@ -225,8 +247,6 @@ const ReferenceTable = ({ opcodeDocs }: { opcodeDocs: IOpcodeDocs }) => {
           })}
         </tbody>
       </table>
-
-      <ReactTooltip className="tooltip" effect="solid" />
     </>
   )
 }

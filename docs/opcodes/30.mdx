@@ -5,7 +5,7 @@ group: Environmental Information
 
 ## Stack output
 
-0. `Address`: the 20-byte address of the current account.
+0. `address`: the 20-byte address of the current account.
 
 ## Example
 
@@ -15,6 +15,6 @@ group: Environmental Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Stack overflow.

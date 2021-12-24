@@ -5,12 +5,12 @@ group: Stop and Arithmetic Operations
 
 ## Stack input
 
-0. `Integer`: base.
-1. `Integer`: exponent.
+0. `a`: integer base.
+1. `exponent`: integer exponent.
 
 ## Stack output
 
-0. `Integer`: result of the exponential operation modulo 2<sup>256</sup>.
+0. `a ** exponent`: integer result of the exponential operation modulo 2<sup>256</sup>.
 
 ## Examples
 
@@ -21,6 +21,6 @@ group: Stop and Arithmetic Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

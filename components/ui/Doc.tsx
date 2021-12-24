@@ -7,7 +7,7 @@ import Link from 'next/link'
 const EMPTY_MARK = '*'
 
 type Props = {
-  children: string
+  children: string | JSX.Element
 }
 
 type LinkProps = {
@@ -78,4 +78,12 @@ export const A: React.FC<LinkProps> = ({ children, href }) => (
   <Link href={href as string} scroll={false}>
     <a className="underline">{children}</a>
   </Link>
+)
+
+export const Pre: React.FC<Props> = ({ children }) => (
+  <div>
+    <pre className="inline-block whitespace-pre-wrap p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
+      {children}
+    </pre>
+  </div>
 )

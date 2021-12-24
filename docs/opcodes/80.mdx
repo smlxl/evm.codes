@@ -5,12 +5,12 @@ group: Duplication Operations
 
 ## Stack input
 
-0. `Integer`: value to duplicate.
+0. `value`: value to duplicate.
 
 ## Stack output
 
-0. `Integer`: duplicated value.
-1. `Integer`: original value.
+0. `value`: duplicated value.
+1. `value`: original value.
 
 ## Example
 
@@ -21,7 +21,7 @@ group: Duplication Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
 - Stack overflow.

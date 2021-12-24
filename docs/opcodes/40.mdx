@@ -5,11 +5,11 @@ group: Block Information
 
 ## Stack input
 
-0. `Integer`: block number to get the hash from. Valid range is the last 256 blocks (not including the current one). Current block number can be queried with [NUMBER](/#43).
+0. `blockNumber`: block number to get the hash from. Valid range is the last 256 blocks (not including the current one). Current block number can be queried with [NUMBER](/#43).
 
 ## Stack output
 
-0. `Integer`: hash of the chosen block, or 0 if the block number is not in the valid range.
+0. `hash`: hash of the chosen block, or 0 if the block number is not in the valid range.
 
 ## Examples
 
@@ -19,6 +19,6 @@ group: Block Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

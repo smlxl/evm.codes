@@ -5,12 +5,12 @@ group: Stop and Arithmetic Operations
 
 ## Stack input
 
-0. `Integer`: numerator.
-1. `Integer`: denominator.
+0. `a`: integer numerator.
+1. `b`: integer denominator.
 
 ## Stack output
 
-0. `Integer`: result of the integer modulo. If the denominator is 0, the result will be 0.
+0. `a % b`: integer result of the integer modulo. If the denominator is 0, the result will be 0.
 
 ## Examples
 
@@ -21,6 +21,6 @@ group: Stop and Arithmetic Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

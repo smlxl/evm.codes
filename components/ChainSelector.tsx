@@ -44,14 +44,16 @@ const ChainSelector = () => {
     (option: OnChangeValue<any, any>) => {
       setForkValue(option)
       onForkChange(option.value)
-      setSetting(Setting.VmFork, option)
+      setSetting(Setting.VmFork, option.value)
     },
     [onForkChange, setSetting],
   )
 
   useEffect(() => {
-    if (defaultForkOption) {
-      handleForkChange(getSetting(Setting.VmFork) || defaultForkOption)
+    if (settingsLoaded && defaultForkOption) {
+      const setting = getSetting(Setting.VmFork)
+      const storedFork = forkOptions.find((fork) => fork.value === setting)
+      handleForkChange(storedFork || defaultForkOption)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded, defaultForkOption])

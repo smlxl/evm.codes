@@ -9,9 +9,9 @@ For out of bound bytes, 0s will be copied.
 
 ## Stack input
 
-0. `Integer`: byte index in the [memory](/about) where the result will be copied.
-1. `Integer`: byte index in the [calldata](/about) to copy.
-2. `Integer`: how many bytes to copy.
+0. `destOffset`: byte offset in the [memory](/about) where the result will be copied.
+1. `offset`: byte offset in the [calldata](/about) to copy.
+2. `size`: byte size to copy.
 
 ## Examples
 
@@ -39,6 +39,6 @@ For out of bound bytes, 0s will be copied.
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

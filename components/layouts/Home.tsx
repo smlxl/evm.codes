@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Script from 'next/script'
 
 import { getAbsoluteURL } from 'util/browser'
 
@@ -28,8 +27,6 @@ const HomeLayout: NextPage = ({ children }) => {
 
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Script src="/ethereum.min.js" strategy="beforeInteractive" />
 
       <div className="flex flex-col h-screen justify-between">
         <Nav />

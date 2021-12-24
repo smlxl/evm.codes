@@ -5,36 +5,36 @@ group: Duplication Operations
 
 ## Stack input
 
-0. `Integer`: ignored value.
-1. `Integer`: ignored value.
-2. `Integer`: ignored value.
-3. `Integer`: ignored value.
-4. `Integer`: ignored value.
-5. `Integer`: ignored value.
-6. `Integer`: ignored value.
-7. `Integer`: ignored value.
-8. `Integer`: ignored value.
-9. `Integer`: ignored value.
-10. `Integer`: ignored value.
-11. `Integer`: ignored value.
-12. `Integer`: value to duplicate.
+0. ignored value.
+1. ignored value.
+2. ignored value.
+3. ignored value.
+4. ignored value.
+5. ignored value.
+6. ignored value.
+7. ignored value.
+8. ignored value.
+9. ignored value.
+10. ignored value.
+11. ignored value.
+12. `value`: value to duplicate.
 
 ## Stack output
 
-0. `Integer`: duplicated value.
-1. `Integer`: ignored value.
-2. `Integer`: ignored value.
-3. `Integer`: ignored value.
-4. `Integer`: ignored value.
-5. `Integer`: ignored value.
-6. `Integer`: ignored value.
-7. `Integer`: ignored value.
-8. `Integer`: ignored value.
-9. `Integer`: ignored value.
-10. `Integer`: ignored value.
-11. `Integer`: ignored value.
-12. `Integer`: ignored value.
-13. `Integer`: original value.
+0. `value`: duplicated value.
+1. ignored value.
+2. ignored value.
+3. ignored value.
+4. ignored value.
+5. ignored value.
+6. ignored value.
+7. ignored value.
+8. ignored value.
+9. ignored value.
+10. ignored value.
+11. ignored value.
+12. ignored value.
+13. `value`: original value.
 
 ## Example
 
@@ -57,7 +57,7 @@ group: Duplication Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
 - Stack overflow.

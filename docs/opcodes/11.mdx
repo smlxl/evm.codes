@@ -5,12 +5,12 @@ group: Comparison & Bitwise Logic Operations
 
 ## Stack input
 
-0. `Integer`: left side value.
-1. `Integer`: right side value.
+0. `a`: left side integer.
+1. `b`: right side integer.
 
 ## Stack output
 
-0. `Boolean`: 1 if the left side is bigger, 0 otherwise.
+0. `a > b`: 1 if the left side is bigger, 0 otherwise.
 
 ## Examples
 
@@ -21,6 +21,6 @@ group: Comparison & Bitwise Logic Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

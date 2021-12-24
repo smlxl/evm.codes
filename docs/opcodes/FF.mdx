@@ -9,11 +9,11 @@ The current account is registered to be destroyed, and will be at the end of the
 
 ## Stack input
 
-0. `Address`: account to send the current balance to (see [BALANCE](/#31) or [SELFBALANCE](/#47) since Istanbul fork).
+0. `address`: account to send the current balance to (see [BALANCE](/#31) or [SELFBALANCE](/#47) since Istanbul fork).
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

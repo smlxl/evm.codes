@@ -29,5 +29,7 @@ export const H2: React.FC<Props> = ({ children, className }) => {
 }
 
 export const H3: React.FC<Props> = ({ children, className }) => {
-  return <h3 className={cn('font-medium', className)}>{children}</h3>
+  return (
+    <h3 className={cn('font-semibold text-2base', className)}>{children}</h3>
+  )
 }

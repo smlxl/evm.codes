@@ -9,12 +9,12 @@ All values are treated as two’s complement signed 256-bit integers.
 
 ## Stack input
 
-0. `Integer`: left side signed value.
-1. `Integer`: right side signed value.
+0. `a`: left side signed integer.
+1. `b`: right side signed integer.
 
 ## Stack output
 
-0. `Boolean`: 1 if the left side is smaller, 0 otherwise.
+0. `a < b`: 1 if the left side is smaller, 0 otherwise.
 
 ## Examples
 
@@ -25,6 +25,6 @@ All values are treated as two’s complement signed 256-bit integers.
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

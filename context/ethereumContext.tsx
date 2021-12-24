@@ -1,15 +1,14 @@
 import React, { createContext, useEffect, useState, useRef } from 'react'
 
-// These imports are here for types only, since they can't be used client-side
-// See `lib/ethereum.js` for globals
-import Common from '@ethereumjs/common'
+import { Block } from '@ethereumjs/block'
+import Common, { Chain } from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/src/types'
-import { TypedTransaction, TxData } from '@ethereumjs/tx'
+import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
 import VM from '@ethereumjs/vm'
 import { RunState, InterpreterStep } from '@ethereumjs/vm/dist/evm/interpreter'
 import { Opcode } from '@ethereumjs/vm/dist/evm/opcodes'
 import { VmError } from '@ethereumjs/vm/dist/exceptions'
-import { BN, Address } from 'ethereumjs-util'
+import { BN, Address, Account } from 'ethereumjs-util'
 //
 import OpcodesMeta from 'opcodes.json'
 import {
@@ -22,12 +21,11 @@ import {
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
+import { calculateDynamicFee } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
 let common: Common
-let accountAddress: Address
-let gasLimit: BN
 
 const storageMemory = new Map()
 const privateKey = Buffer.from(
@@ -35,14 +33,11 @@ const privateKey = Buffer.from(
   'hex',
 )
 const accountBalance = 18 // 1eth
-
-// Run these only client-side
-if (typeof window !== 'undefined') {
-  accountAddress = window.EvmCodes.Address.fromPrivateKey(privateKey)
-  gasLimit = new window.EvmCodes.BN(0xffffffffffff)
-}
+const accountAddress = Address.fromPrivateKey(privateKey)
+const gasLimit = new BN(0xffffffffffff)
 
 type ContextProps = {
+  common: Common | undefined
   chains: IChain[]
   forks: Hardfork[]
   selectedChain: IChain | undefined
@@ -77,6 +72,7 @@ const initialExecutionState = {
 }
 
 export const EthereumContext = createContext<ContextProps>({
+  common: undefined,
   chains: [],
   forks: [],
   selectedChain: undefined,
@@ -131,9 +127,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   /**
    * Initializes the EVM instance.
    */
-  const initVmInstance = async (skipChainsLoading?: boolean) => {
-    const { VM, Common, Chain } = window.EvmCodes
-    common = new Common({ chain: Chain.Mainnet, hardfork: CURRENT_FORK })
+  const initVmInstance = async (
+    skipChainsLoading?: boolean,
+    chainId?: Chain,
+    fork?: string,
+  ) => {
+    common = new Common({
+      chain: Chain.Mainnet,
+      hardfork: fork || CURRENT_FORK,
+    })
     vm = new VM({ common })
 
     if (!skipChainsLoading) {
@@ -152,12 +154,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param chainId The chain ID.
    */
   const onChainChange = (chainId: number) => {
-    common.setChain(chainId)
-    resetExecution()
-    initVmInstance(true)
-
     const chain = chains.find((chain) => chain.id === chainId)
-    if (chain) setSelectedChain(chain)
+    if (chain) {
+      setSelectedChain(chain)
+      resetExecution()
+      initVmInstance(true, chainId, selectedFork?.name)
+    }
   }
 
   /**
@@ -167,11 +169,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const onForkChange = (forkName: string) => {
     const fork = forks.find((f) => f.name === forkName)
     if (fork) {
-      common.setHardfork(fork.name)
-      resetExecution()
-      initVmInstance(true)
-
       setSelectedFork(fork)
+      resetExecution()
+      initVmInstance(true, selectedChain?.id, fork.name)
     }
   }
 
@@ -181,7 +181,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @returns The deployed contract transaction data.
    */
   const deployContract = async (byteCode: string) => {
-    const { Transaction } = window.EvmCodes
     const account = await vm.stateManager.getAccount(accountAddress)
 
     const txData = {
@@ -347,7 +346,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // FIXME: Instead of allowing to get into exception,
     // prevent from executing when all instructions have been completed.
     try {
-      if (nextStepFunction.current) nextStepFunction.current()
+      if (nextStepFunction.current) {
+        nextStepFunction.current()
+      }
     } catch (_e) {
       const error = _e as Error
 
@@ -360,8 +361,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _loadChainAndForks = (common: Common) => {
-    const { Chain } = window.EvmCodes
-
     const chainIds: number[] = []
     const chainNames: string[] = []
     const forks: Hardfork[] = []
@@ -405,15 +404,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm.getActiveOpcodes().forEach((op: Opcode) => {
       const meta = OpcodesMeta as IOpcodeMetaList
-
-      opcodes.push({
+      const opcode = {
         ...meta[toHex(op.code)],
         ...{
           code: toHex(op.code),
-          fee: op.fee,
+          staticFee: op.fee,
+          minimumFee: 0,
           name: op.fullName,
         },
-      })
+      }
+
+      opcode.minimumFee = parseInt(calculateDynamicFee(opcode, common, {}))
+      opcodes.push(opcode)
     })
 
     setOpcodes(opcodes)
@@ -435,8 +437,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _setupAccount = () => {
-    const { BN, Account } = window.EvmCodes
-
     // Add a fake account
     const accountData = {
       nonce: 0,
@@ -484,8 +484,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   const _getBlock = () => {
     // base fee is only applicable since london hardfork, ie block 12965000
-    if (selectedFork && (selectedFork.block || 0) < 12965000) return null
-    const { Block } = window.EvmCodes
+    if (selectedFork && (selectedFork.block || 0) < 12965000) {
+      return undefined
+    }
 
     return Block.fromBlockData(
       {
@@ -599,6 +600,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   return (
     <EthereumContext.Provider
       value={{
+        common,
         chains,
         forks,
         selectedChain,

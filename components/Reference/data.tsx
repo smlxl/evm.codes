@@ -22,8 +22,8 @@ const tableData = [
     width: 128,
   },
   {
-    Header: 'Static Gas',
-    accessor: 'fee',
+    Header: 'Minimum Gas',
+    accessor: 'minimumFee',
     width: 96,
   },
   {

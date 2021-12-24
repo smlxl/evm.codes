@@ -5,12 +5,12 @@ group: Comparison & Bitwise Logic Operations
 
 ## Stack input
 
-0. `Integer`: first value.
-1. `Integer`: second value.
+0. `a`: first binary value.
+1. `b`: second binary value.
 
 ## Stack output
 
-0. `Integer`: the bitwise AND result.
+0. `a & b`: the bitwise AND result.
 
 ## Examples
 
@@ -21,6 +21,6 @@ group: Comparison & Bitwise Logic Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

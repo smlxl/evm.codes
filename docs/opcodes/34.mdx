@@ -5,7 +5,7 @@ group: Environmental Information
 
 ## Stack output
 
-0. `Integer`: the value of the current call in [wei](https://www.investopedia.com/terms/w/wei.asp).
+0. `value`: the value of the current call in [wei](https://www.investopedia.com/terms/w/wei.asp).
 
 ## Example
 
@@ -15,6 +15,6 @@ group: Environmental Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Stack overflow.

@@ -17,6 +17,7 @@ module.exports = {
       fontSize: {
         '2xs': '10px',
         tiny: '13px',
+        '2base': '16px',
       },
       colors: {
         black: {

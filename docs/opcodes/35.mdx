@@ -5,11 +5,11 @@ group: Environmental Information
 
 ## Stack input
 
-0. `Integer`: byte index in the [calldata](/about).
+0. `i`: byte offset in the [calldata](/about).
 
 ## Stack output
 
-0. `Integer`: 32-byte value starting from the given index of the [calldata](/about). All bytes after the end of the [calldata](/about) are set to 0.
+0. `data[i]`: 32-byte value starting from the given offset of the [calldata](/about). All bytes after the end of the [calldata](/about) are set to 0.
 
 ## Examples
 
@@ -27,6 +27,6 @@ group: Environmental Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

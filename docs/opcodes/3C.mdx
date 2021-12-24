@@ -9,10 +9,10 @@ For out of bound bytes, 0s will be copied.
 
 ## Stack input
 
-0. `Address`: 20-byte address of the contract to query.
-1. `Integer`: byte index in the [memory](/about) where the result will be copied.
-2. `Integer`: byte index in the [code](/about) to copy.
-3. `Integer`: how many bytes to copy.
+0. `address`: 20-byte address of the contract to query.
+1. `destOffset`: byte offset in the [memory](/about) where the result will be copied.
+2. `offset`: byte offset in the [code](/about) to copy.
+3. `size`: byte size to copy.
 
 ## Examples
 
@@ -41,6 +41,6 @@ For out of bound bytes, 0s will be copied.
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

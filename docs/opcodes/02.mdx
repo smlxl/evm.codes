@@ -5,12 +5,12 @@ group: Stop and Arithmetic Operations
 
 ## Stack input
 
-0. `Integer`: first value to multiply.
-1. `Integer`: second value to multiply.
+0. `a`: first integer value to multiply.
+1. `b`: second integer value to multiply.
 
 ## Stack output
 
-0. `Integer`: result of the multiplication modulo 2<sup>256</sup>.
+0. `a * b`: integer result of the multiplication modulo 2<sup>256</sup>.
 
 ## Examples
 
@@ -26,6 +26,6 @@ group: Stop and Arithmetic Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

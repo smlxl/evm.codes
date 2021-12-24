@@ -62,6 +62,7 @@ const Filters = ({ onSetFilter }: Props) => {
           handleKeywordChange(e.target.value)
         }}
         placeholder={`Enter keyword...`}
+        className="bg-gray-100 dark:bg-black-500"
       />
     </div>
   )

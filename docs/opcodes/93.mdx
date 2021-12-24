@@ -5,19 +5,19 @@ group: Exchange Operations
 
 ## Stack input
 
-0. `Integer`: value to swap.
-1. `Integer`: ignored value.
-2. `Integer`: ignored value.
-3. `Integer`: ignored value.
-4. `Integer`: value to swap.
+0. `a`: value to swap.
+1. ignored value.
+2. ignored value.
+3. ignored value.
+4. `b`: value to swap.
 
 ## Stack output
 
-0. `Integer`: swapped value.
-1. `Integer`: ignored value.
-2. `Integer`: ignored value.
-3. `Integer`: ignored value.
-4. `Integer`: swapped value.
+0. `b`: swapped value.
+1. ignored value.
+2. ignored value.
+3. ignored value.
+4. `a`: swapped value.
 
 ## Example
 
@@ -31,6 +31,6 @@ group: Exchange Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

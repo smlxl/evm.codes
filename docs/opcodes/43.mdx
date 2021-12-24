@@ -5,7 +5,7 @@ group: Block Information
 
 ## Stack output
 
-0. `Integer`: current block number.
+0. `blockNumber`: current block number.
 
 ## Example
 
@@ -15,6 +15,6 @@ group: Block Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Stack overflow.

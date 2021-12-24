@@ -5,12 +5,12 @@ group: SHA3
 
 ## Stack input
 
-0. `Integer`: byte offset in the memory.
-1. `Integer`: byte count to read in the memory.
+0. `offset`: byte offset in the memory.
+1. `size`: byte size to read in the memory.
 
 ## Stack output
 
-0. `Integer`: Keccak-256 hash of the given data in memory.
+0. `hash`: Keccak-256 hash of the given data in memory.
 
 ## Examples
 
@@ -25,6 +25,6 @@ group: SHA3
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

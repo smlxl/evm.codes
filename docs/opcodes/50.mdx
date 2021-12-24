@@ -5,7 +5,7 @@ group: Stack Memory Storage and Flow Operations
 
 ## Stack input
 
-0. `Integer`: a value.
+0. `y`: a stack item.
 
 ## Example
 
@@ -15,6 +15,6 @@ group: Stack Memory Storage and Flow Operations
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.

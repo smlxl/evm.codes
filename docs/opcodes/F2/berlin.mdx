@@ -1,0 +1,11 @@
+## Gas
+
+    static_gas = {gasPrices|call}
+    dynamic_gas = memory_expansion_cost + code_execution_cost + address_access_cost + positive_value_cost
+
+The memory expansion cost explanation can be found [here](/about).
+
+The different costs are:
+ - `code_execution_cost` is the cost of the called code execution (limited by the `gas` parameter).
+ - If `address` is warm, then `address_access_cost` is {gasPrices|warmstorageread}, otherwise it is {gasPrices|coldaccountaccess}. See section [access sets](/about).
+ - If `value` is not 0, then `positive_value_cost` is {gasPrices|callValueTransfer}. In this case there is also a call stipend that is given to make sure that a basic fallback function can be called. {gasPrices|callStipend} is thus removed from the cost, and also added to the `gas` input.

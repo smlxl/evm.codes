@@ -50,10 +50,19 @@
     "description": "Modulo multiplication operation"
   },
   "0a": {
-    "input": "a | b",
-    "output": "a ** b",
+    "input": "a | exponent",
+    "output": "a ** exponent",
     "description": "Exponential operation",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "exponent": {
+            "type": "number",
+            "label": "Input: exponent"
+          }
+        }
+      }
+    }
   },
   "0b": {
     "input": "b | x",
@@ -161,10 +170,27 @@
     "description": ""
   },
   "20": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "hash",
     "description": "Compute Keccak-256 hash",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "21": {
     "input": "",
@@ -250,7 +276,16 @@
     "input": "address",
     "output": "balance",
     "description": "Get balance of the given account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "berlin": {
+        "inputs": {
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          }
+        }
+      }
+    }
   },
   "32": {
     "input": "",
@@ -278,10 +313,27 @@
     "description": "Get size of input data in current environment"
   },
   "37": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy input data in current environment to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "38": {
     "input": "",
@@ -289,10 +341,27 @@
     "description": "Get size of code running in current environment"
   },
   "39": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy code running in current environment to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "3a": {
     "input": "",
@@ -303,13 +372,59 @@
     "input": "address",
     "output": "size",
     "description": "Get size of an account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "berlin": {
+        "inputs": {
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          }
+        }
+      }
+    }
   },
   "3c": {
-    "input": "address | destOffset | offset | length",
+    "input": "address | destOffset | offset | size",
     "output": "",
     "description": "Copy an account’s code to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          }
+        }
+      }
+    }
   },
   "3d": {
     "input": "",
@@ -317,16 +432,42 @@
     "description": "Get size of output data from the previous call from the current environment"
   },
   "3e": {
-    "input": "destOffset | offset | length",
+    "input": "destOffset | offset | size",
     "output": "",
     "description": "Copy output data from the previous call to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "3f": {
     "input": "address",
     "output": "hash",
     "description": "Get hash of an account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "berlin": {
+        "inputs": {
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          }
+        }
+      }
+    }
   },
   "40": {
     "input": "blockNumber",
@@ -417,31 +558,156 @@
     "input": "offset",
     "output": "value",
     "description": "Load word from memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "52": {
     "input": "offset | value",
     "output": "",
     "description": "Save word to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "53": {
     "input": "offset | value",
     "output": "",
     "description": "Save byte to memory",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "54": {
     "input": "key",
     "output": "value",
     "description": "Load word from storage",
-    "dynamicFee": true
+    "dynamicFee": {
+      "berlin": {
+        "inputs": {
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'key' is cold?"
+          }
+        }
+      }
+    }
   },
   "55": {
     "input": "key | value",
     "output": "",
     "description": "Save word to storage",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "State: current value in storage"
+          }
+        }
+      },
+      "constantinople": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "State: current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "State: original value at the beginning of the transaction"
+          }
+        }
+      },
+      "petersburg": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "State: current value in storage"
+          }
+        }
+      },
+      "istanbul": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "State: current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "State: original value at the beginning of the transaction"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "newValue": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "currentValue": {
+            "type": "number",
+            "label": "State: current value in storage"
+          },
+          "originalValue": {
+            "type": "number",
+            "label": "State: original value at the beginning of the transaction"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'key' is cold?"
+          }
+        }
+      }
+    }
   },
   "56": {
     "input": "counter",
@@ -814,34 +1080,119 @@
     "description": "Exchange 1st and 17th stack items"
   },
   "a0": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Append log record with no topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "a1": {
-    "input": "offset | length | topic",
+    "input": "offset | size | topic",
     "output": "",
     "description": "Append log record with one topic",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "a2": {
-    "input": "offset | length | topic1 | topic2",
+    "input": "offset | size | topic1 | topic2",
     "output": "",
     "description": "Append log record with two topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "a3": {
-    "input": "offset | length | topic1 | topic2 | topic3",
+    "input": "offset | size | topic1 | topic2 | topic3",
     "output": "",
     "description": "Append log record with three topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "a4": {
-    "input": "offset | length | topic1 | topic2 | topic3 | topic4",
+    "input": "offset | size | topic1 | topic2 | topic3 | topic4",
     "output": "",
     "description": "Append log record with four topics",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "a5": {
     "input": "",
@@ -1219,40 +1570,350 @@
     "description": ""
   },
   "f0": {
-    "input": "value | offset | length",
+    "input": "value | offset | size",
     "output": "address",
     "description": "Create a new account with associated code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
+        }
+      }
+    }
   },
   "f1": {
-    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into an account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: Current memory size"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account new?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "spuriousDragon": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "f2": {
-    "input": "gas | address | value | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | value | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with alternative account’s code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "f3": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Halt execution returning output data",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "f4": {
-    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Message-call into this account with an alternative account’s code, but persisting the current values for sender and value",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "f5": {
-    "input": "value | offset | length | salt",
+    "input": "value | offset | size | salt",
     "output": "address",
     "description": "Create a new account with associated code",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
+        }
+      }
+    }
   },
   "f6": {
     "input": "",
@@ -1275,10 +1936,71 @@
     "description": ""
   },
   "fa": {
-    "input": "gas | address | argsOffset | argsLength | retOffset | retLength",
+    "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
     "output": "success",
     "description": "Static message-call into an account",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "argsOffset": {
+            "type": "number",
+            "label": "Input: argsOffset"
+          },
+          "argsSize": {
+            "type": "number",
+            "label": "Input: argsSize"
+          },
+          "retOffset": {
+            "type": "number",
+            "label": "Input: retOffset"
+          },
+          "retSize": {
+            "type": "number",
+            "label": "Input: retSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "fb": {
     "input": "",
@@ -1291,21 +2013,84 @@
     "description": ""
   },
   "fd": {
-    "input": "offset | length",
+    "input": "offset | size",
     "output": "",
     "description": "Halt execution reverting state changes but returning data and remaining gas",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "fe": {
     "input": "",
     "output": "",
     "description": "Designated invalid instruction",
-    "dynamicFee": true
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "remaining": {
+            "type": "number",
+            "label": "State: remaining gas in the current context"
+          }
+        }
+      }
+    }
   },
   "ff": {
     "input": "address",
     "output": "",
     "description": "Halt execution and register account for later deletion",
-    "dynamicFee": true
+    "dynamicFee": {
+      "tangerineWhistle": {
+        "inputs": {
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the beneficiary account new?"
+          }
+        }
+      },
+      "spuriousDragon": {
+        "inputs": {
+          "hasNoBalance": {
+            "type": "boolean",
+            "label": "State: is the current account balance empty?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the beneficiary account empty?"
+          }
+        }
+      },
+      "berlin": {
+        "inputs": {
+          "hasNoBalance": {
+            "type": "boolean",
+            "label": "State: is the current account balance empty?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the beneficiary account empty?"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          }
+        }
+      }
+    }
   }
 }

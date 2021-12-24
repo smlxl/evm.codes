@@ -5,11 +5,11 @@ group: Environmental Information
 
 ## Stack input
 
-0. `Address`: 20-byte address of the account.
+0. `address`: 20-byte address of the account.
 
 ## Stack output
 
-0. `Integer`: hash of the chosen account's [code](/about), or 0 if the account has no [code](/about).
+0. `hash`: hash of the chosen account's [code](/about), or 0 if the account has no [code](/about).
 
 ## Examples
 
@@ -19,6 +19,6 @@ group: Environmental Information
 
 ## Error cases
 
-The transaction is reverted in those cases:
+The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
