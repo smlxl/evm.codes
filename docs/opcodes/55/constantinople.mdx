@@ -1,11 +1,10 @@
 ## Gas
 
 ### Definitions:
-- **value**: Value from the stack input.
-- **current_value**: Current value of the storage slot.
-- **original_value**: Value of the storage slot before the current transaction.
+- **value**: value from the stack input.
+- **current_value**: current value of the storage slot.
+- **original_value**: value of the storage slot before the current transaction.
 
-```
     static_gas = {gasPrices|sstore}
 
     if value == current_value
@@ -17,7 +16,6 @@
             dynamic_gas = {gasPrices|netSstoreCleanGas}
     else
         dynamic_gas = {gasPrices|netSstoreDirtyGas}
-```
 
 ## Gas refunds
 
