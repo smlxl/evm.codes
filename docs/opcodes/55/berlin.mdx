@@ -1,10 +1,11 @@
 ## Gas
 
 ### Definitions:
-- **value**: The value of the storage slot after executing the opcode SSTORE.
-- **current_value**: The value of the storage slot before executing the opcode SSTORE.
-- **original_value**: The value of the storage slot at the beginning of the transaction.
-##
+- **value**: Value from the stack input.
+- **current_value**: Current value of the storage slot.
+- **original_value**: Value of the storage slot before the current transaction.
+
+```
     static_gas = {gasPrices|sstore}
 
     if value == current_value
@@ -16,6 +17,7 @@
             base_dynamic_gas = {gasPrices|sstoreCleanGasEIP2200}
     else
         base_dynamic_gas = {gasPrices|sstoreDirtyGasEIP2200}
+```
 
 On top of the cost above, {gasPrices|warmstorageread} is added if the slot is warm, or {gasPrices|coldsload} otherwise. See section [access sets](/about).
 
