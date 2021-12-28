@@ -23,7 +23,31 @@ export interface IOpcode {
   }
 }
 
+export interface IPrecompiled {
+  address: string
+  input: string
+  output: string
+  description: string
+  minimumFee: number
+  dynamicFee?: {
+    [fork: string]: {
+      inputs: {
+        [name: string]: {
+          type: 'number' | 'boolean'
+          label: string
+        }
+      }
+    }
+  }
+}
+
 export interface IOpcodeMeta {
+  input: string
+  output: string
+  description: string
+}
+
+export interface IPrecompiledMeta {
   input: string
   output: string
   description: string
@@ -31,6 +55,10 @@ export interface IOpcodeMeta {
 
 export interface IOpcodeMetaList {
   [code: string]: IOpcodeMeta
+}
+
+export interface IPrecompiledMetaList {
+  [address: string]: IPrecompiledMeta
 }
 
 export interface IInstruction {
@@ -81,4 +109,21 @@ export interface IOpcodeGasDoc {
 
 export interface IOpcodeGasDocs {
   [opcode: string]: IOpcodeGasDoc
+}
+
+export interface IPrecompiledDoc {
+  fork: string
+  mdxSource: any
+}
+
+export interface IPrecompiledDocs {
+  [address: string]: IPrecompiledDoc
+}
+
+export interface IPrecompiledGasDoc {
+  [fork: string]: string
+}
+
+export interface IPrecompiledGasDocs {
+  [address: string]: IPrecompiledGasDoc
 }

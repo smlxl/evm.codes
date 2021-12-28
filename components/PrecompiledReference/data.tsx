@@ -9,11 +9,10 @@ const filter = (rows: Row[], id: string, filterValue: string) => {
 
 const tableData = [
   {
-    Header: 'Opcode',
-    accessor: 'code',
-    className: 'uppercase',
+    Header: 'Address',
+    accessor: 'address',
     filter,
-    width: 48,
+    width: 210,
   },
   {
     Header: 'Name',
@@ -24,10 +23,10 @@ const tableData = [
   {
     Header: 'Minimum Gas',
     accessor: 'minimumFee',
-    width: 50,
+    width: 70,
   },
   {
-    Header: 'Stack Input',
+    Header: 'Input',
     accessor: 'input',
     Cell: ({ value }: { value: string }) => (
       <StackBox
@@ -39,7 +38,7 @@ const tableData = [
     className: 'hidden lg:table-cell',
   },
   {
-    Header: 'Stack Ouput',
+    Header: 'Ouput',
     accessor: 'output',
     Cell: ({ value }: { value: string }) => (
       <StackBox

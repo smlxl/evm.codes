@@ -9,8 +9,14 @@ export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
  * @see https://docs.soliditylang.org/en/v0.8.10/using-the-compiler.html#target-options
  */
 export const getTargetEvmVersion = (forkName: string | undefined) => {
-  if (forkName === 'dao') return 'homestead'
-  if (forkName === 'muirGlacier') return 'berlin'
-  if (forkName === 'arrowGlacier') return 'london'
+  if (forkName === 'dao') {
+    return 'homestead'
+  }
+  if (forkName === 'muirGlacier') {
+    return 'berlin'
+  }
+  if (forkName === 'arrowGlacier') {
+    return 'london'
+  }
   return forkName
 }

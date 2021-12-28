@@ -7,13 +7,17 @@ import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
 import VM from '@ethereumjs/vm'
 import { RunState, InterpreterStep } from '@ethereumjs/vm/dist/evm/interpreter'
 import { Opcode } from '@ethereumjs/vm/dist/evm/opcodes'
+import { getActivePrecompiles } from '@ethereumjs/vm/dist/evm/precompiles'
 import { VmError } from '@ethereumjs/vm/dist/exceptions'
 import { BN, Address, Account } from 'ethereumjs-util'
 //
 import OpcodesMeta from 'opcodes.json'
+import PrecompiledMeta from 'precompiled.json'
 import {
   IOpcode,
+  IPrecompiled,
   IOpcodeMetaList,
+  IPrecompiledMetaList,
   IInstruction,
   IStorage,
   IExecutionState,
@@ -21,7 +25,7 @@ import {
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
-import { calculateDynamicFee } from 'util/gas'
+import { calculateDynamicFee, calculatePrecompiledDynamicFee } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -43,6 +47,7 @@ type ContextProps = {
   selectedChain: IChain | undefined
   selectedFork: Hardfork | undefined
   opcodes: IOpcode[]
+  precompiled: IPrecompiled[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
@@ -78,6 +83,7 @@ export const EthereumContext = createContext<ContextProps>({
   selectedChain: undefined,
   selectedFork: undefined,
   opcodes: [],
+  precompiled: [],
   instructions: [],
   deployedContractAddress: undefined,
   isExecuting: false,
@@ -105,6 +111,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [selectedChain, setSelectedChain] = useState<IChain>()
   const [selectedFork, setSelectedFork] = useState<Hardfork>()
   const [opcodes, setOpcodes] = useState<IOpcode[]>([])
+  const [precompiled, setPrecompiled] = useState<IPrecompiled[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -143,6 +150,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     _loadOpcodes()
+    _loadPrecompiled(common)
     _setupStateManager()
     _setupAccount()
 
@@ -421,6 +429,29 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setOpcodes(opcodes)
   }
 
+  const _loadPrecompiled = (common: Common) => {
+    const precompiled: IPrecompiled[] = []
+
+    getActivePrecompiles(common).forEach((address: Address) => {
+      const meta = PrecompiledMeta as IPrecompiledMetaList
+      const addressString = address.toString()
+      const precompile = {
+        ...meta[addressString],
+        ...{
+          address: addressString,
+          minimumFee: 0,
+        },
+      }
+
+      precompile.minimumFee = parseInt(
+        calculatePrecompiledDynamicFee(precompile, common, {}),
+      )
+      precompiled.push(precompile)
+    })
+
+    setPrecompiled(precompiled)
+  }
+
   const _setupStateManager = () => {
     // Hack the state manager so that we can track the stored variables
     // @ts-ignore: Store original contract storage to access later
@@ -606,6 +637,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         selectedChain,
         selectedFork,
         opcodes,
+        precompiled,
         instructions,
         deployedContractAddress,
         isExecuting,

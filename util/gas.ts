@@ -1,7 +1,7 @@
 import Common from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/dist/types'
 import { BN } from 'ethereumjs-util'
-import { IOpcode } from 'types'
+import { IOpcode, IPrecompiled } from 'types'
 
 const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
@@ -334,6 +334,36 @@ export const calculateDynamicFee = (
   }
 
   return result.iaddn(opcode.staticFee).toString()
+}
+/*
+ * Calculates dynamic gas fee for precompiled contracts
+ *
+ * @param opcode The IPrecompiled
+ * @param common The Common object
+ * @param inputs The Object of user inputs based on the `dynamicFee` inputs
+ *                 in the precompiled.json. If empty, we want to return the minimum fee for that code.
+ *
+ * @returns The String representation of the gas fee.
+ *
+ * Fee calculation is based on the ethereumjs-vm functions,
+ * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/precompiles/index.ts
+ */
+export const calculatePrecompiledDynamicFee = (
+  precompile: IPrecompiled,
+  common: Common,
+  inputs: any,
+) => {
+  let result = null
+  switch (precompile.address) {
+    case '0x0000000000000000000000000000000000000001': {
+      result = new BN(common.param('gasPrices', 'ecRecover'))
+      break
+    }
+    default:
+      result = new BN(0)
+  }
+
+  return result.toString()
 }
 
 /*

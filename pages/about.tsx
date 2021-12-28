@@ -5,8 +5,8 @@ import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3 } from 'components/ui'
 import { Pre } from 'components/ui/Doc'
 
-const OLink = ({ opcode, title }: { opcode?: string; title: string }) => (
-  <Link href={opcode ? `/#${opcode}` : '/'} passHref>
+const ILink = ({ link, title }: { link?: string; title: string }) => (
+  <Link href={link ? `/${link}` : '/'} passHref>
     <a className="underline font-mono">{title}</a>
   </Link>
 )
@@ -33,10 +33,10 @@ const AboutPage = () => {
         instruction thus has a stack input, the parameters that it needs (if
         any), and a stack output, the return values (if any). All instructions
         are encoded on 1 byte, with the exception of the{' '}
-        <OLink opcode="60" title="PUSH1" /> instruction, which allows to put an
+        <ILink link="#60" title="PUSH1" /> instruction, which allows to put an
         arbitrary value on the stack and encode the value directly after the
         instruction. The list of instructions available, with their opcodes, is
-        shown <OLink title="here" />.
+        shown in the <ILink title="reference" />.
       </p>
       <p className="pb-8">
         An instruction is assigned an arbitrary value between 0 and 255 (or FF
@@ -60,10 +60,10 @@ const AboutPage = () => {
         persistent and part of an account properties. During smart contract
         execution, these are the bytes that the EVM will read, interpret and
         execute. This is a region that cannot be modified, but can be read with
-        the instructions <OLink opcode="38" title="CODESIZE" /> and{' '}
-        <OLink opcode="39" title="CODECOPY" />. Other contracts code can also be
-        read with <OLink opcode="3B" title="EXTCODESIZE" /> and{' '}
-        <OLink opcode="3B" title="EXTCODECOPY" />. The program counter (PC)
+        the instructions <ILink link="#38" title="CODESIZE" /> and{' '}
+        <ILink link="#39" title="CODECOPY" />. Other contracts code can also be
+        read with <ILink link="#3B" title="EXTCODESIZE" /> and{' '}
+        <ILink link="#3B" title="EXTCODECOPY" />. The program counter (PC)
         encodes which instruction should be read next by the EVM in this region.
         An externally owned account (or EOA) has an empty code region.
       </p>
@@ -76,9 +76,9 @@ const AboutPage = () => {
         values are used by the instructions. The stack currently has a maximum
         limit of 1024 values. All instructions interact with the stack, but it
         can be directly manipulated with instructions like{' '}
-        <OLink opcode="60" title="PUSH1" />, <OLink opcode="50" title="POP" />,{' '}
-        <OLink opcode="80" title="DUP1" />, or{' '}
-        <OLink opcode="90" title="SWAP1" />.
+        <ILink link="#60" title="PUSH1" />, <ILink link="#50" title="POP" />,{' '}
+        <ILink link="#80" title="DUP1" />, or{' '}
+        <ILink link="#90" title="SWAP1" />.
       </p>
 
       <H3 className="mb-4">The memory</H3>
@@ -87,10 +87,10 @@ const AboutPage = () => {
         execution, and is accessed with a byte offset. While all the 32-byte
         address space is available and initialized to 0, the size is counted
         with the highest address that was accessed. It is generally read and
-        written with <OLink opcode="51" title="MLOAD" /> and{' '}
-        <OLink opcode="52" title="MSTORE" /> instructions, but is also used by
-        other instructions like <OLink opcode="F0" title="CREATE" /> or{' '}
-        <OLink opcode="F3" title="EXTCODECOPY" />.
+        written with <ILink link="#51" title="MLOAD" /> and{' '}
+        <ILink link="#52" title="MSTORE" /> instructions, but is also used by
+        other instructions like <ILink link="#F0" title="CREATE" /> or{' '}
+        <ILink link="#F3" title="EXTCODECOPY" />.
       </p>
 
       <H3 className="mb-4">The storage</H3>
@@ -99,8 +99,8 @@ const AboutPage = () => {
         of the 32-byte slot to 32-byte value, and each value written is kept
         until it is set to 0 or the contract self-destruction. Reading from an
         unset key also returns 0. It is read and written with the instructions{' '}
-        <OLink opcode="54" title="SLOAD" /> and{' '}
-        <OLink opcode="55" title="SSTORE" />.
+        <ILink link="#54" title="SLOAD" /> and{' '}
+        <ILink link="#55" title="SSTORE" />.
       </p>
 
       <H3 className="mb-4">The call data</H3>
@@ -108,19 +108,19 @@ const AboutPage = () => {
         The call data region is the data that is sent with a transaction. In the
         case of contract creation, it would be the constructor code. This region
         is immutable and can be read with the instructions{' '}
-        <OLink opcode="35" title="CALLDATALOAD" />,{' '}
-        <OLink opcode="36" title="CALLDATASIZE" />, and{' '}
-        <OLink opcode="37" title="CALLDATACOPY" />.
+        <ILink link="#35" title="CALLDATALOAD" />,{' '}
+        <ILink link="#36" title="CALLDATASIZE" />, and{' '}
+        <ILink link="#37" title="CALLDATACOPY" />.
       </p>
 
       <H3 className="mb-4">The return data</H3>
       <p className="pb-8">
         The return data region is the way a smart contract can return a value
         after a call. It can be set by external contract calls through the{' '}
-        <OLink opcode="F3" title="RETURN" /> and{' '}
-        <OLink opcode="FD" title="REVERT" /> instructions and can be read by the
-        calling contract with <OLink opcode="3D" title="RETURNDATASIZE" /> and{' '}
-        <OLink opcode="3E" title="RETURNDATACOPY" />.
+        <ILink link="#F3" title="RETURN" /> and{' '}
+        <ILink link="#FD" title="REVERT" /> instructions and can be read by the
+        calling contract with <ILink link="#3D" title="RETURNDATASIZE" /> and{' '}
+        <ILink link="#3E" title="RETURNDATACOPY" />.
       </p>
 
       <H2 className="mb-4">Gas costs</H2>
@@ -173,7 +173,7 @@ const AboutPage = () => {
         Each transaction has an intrinsic cost of 21000 gas. Creating a contract
         costs 32000 gas, on top of the transaction cost. And finally, the
         calldata costs 4 gas per byte equal to 0, and 16 gas for the others (64
-        before Istanbul fork). This cost is paid from the transaction before any
+        before the hardfork <b>Istanbul</b>). This cost is paid from the transaction before any
         opcode or transfer is executed.
       </p>
 
@@ -215,14 +215,14 @@ const AboutPage = () => {
 
       <p className="pb-8">
         The <code>memory_byte_size</code> can be obtained with{' '}
-        <OLink opcode="59" title="MSIZE" />. We can see that the cost grows
+        <ILink link="#59" title="MSIZE" />. We can see that the cost grows
         quadratically with the size, making higher offsets more costly and
         discouraging to use too much memory. Any opcode accessing memory may
         trigger an expansion (including, for example,{' '}
-        <OLink opcode="51" title="MLOAD" />,{' '}
-        <OLink opcode="F3" title="RETURN" /> or{' '}
-        <OLink opcode="37" title="CALLDATACOPY" />
-        ). Each opcode that can is mentionned in the <OLink title="reference" />
+        <ILink link="#51" title="MLOAD" />,{' '}
+        <ILink link="#F3" title="RETURN" /> or{' '}
+        <ILink link="#37" title="CALLDATACOPY" />
+        ). Each opcode that can is mentionned in the <ILink title="reference" />
         . Note also that an opcode with a byte size parameter of 0 will not
         trigger a memory expansion, regardless of its offset parameters.
       </p>
@@ -240,27 +240,27 @@ const AboutPage = () => {
             Addresses: a set of contract addresses that have been touched in the
             current transaction. It is initialised with the sender and receiver
             (or the new contract address in case of a creation) of the
-            transaction, as well as all the precompiled contracts. When an
+            transaction, as well as all the <ILink link="precompiled" title="precompiled contracts" />. When an
             opcode accesses an address that is not present in the set, it adds
             it in it. The relevant opcodes are{' '}
-            <OLink opcode="3B" title="EXTCODESIZE" />,{' '}
-            <OLink opcode="3C" title="EXTCODECOPY" />,{' '}
-            <OLink opcode="3F" title="EXTCODEHASH" />,{' '}
-            <OLink opcode="31" title="BALANCE" />,{' '}
-            <OLink opcode="F1" title="CALL" />,{' '}
-            <OLink opcode="F2" title="CALLCODE" />,{' '}
-            <OLink opcode="F4" title="DELEGATECALL" />,{' '}
-            <OLink opcode="FA" title="STATICCALL" />,{' '}
-            <OLink opcode="F0" title="CREATE" />,{' '}
-            <OLink opcode="F5" title="CREATE2" /> and{' '}
-            <OLink opcode="FF" title="SELFDESTRUCT" />.
+            <ILink link="#3B" title="EXTCODESIZE" />,{' '}
+            <ILink link="#3C" title="EXTCODECOPY" />,{' '}
+            <ILink link="#3F" title="EXTCODEHASH" />,{' '}
+            <ILink link="#31" title="BALANCE" />,{' '}
+            <ILink link="#F1" title="CALL" />,{' '}
+            <ILink link="#F2" title="CALLCODE" />,{' '}
+            <ILink link="#F4" title="DELEGATECALL" />,{' '}
+            <ILink link="#FA" title="STATICCALL" />,{' '}
+            <ILink link="#F0" title="CREATE" />,{' '}
+            <ILink link="#F5" title="CREATE2" /> and{' '}
+            <ILink link="#FF" title="SELFDESTRUCT" />.
           </li>
           <li className="ml-6">
             Slots: a set of contract address and their storage slot keys that
             have been accessed. It is initialised to empty. When an opcode
             accesses a slot that is not present in the set, it adds it to it.
-            The relevant opcodes are <OLink opcode="54" title="SLOAD" /> and{' '}
-            <OLink opcode="55" title="SSTORE" />
+            The relevant opcodes are <ILink link="#54" title="SLOAD" /> and{' '}
+            <ILink link="#55" title="SSTORE" />
           </li>
         </ul>
         When a context reverts, the sets are also reverted to the state they had
@@ -274,9 +274,9 @@ const AboutPage = () => {
         transaction, meaning that a transaction always need enough gas to run as
         if there was no refunds. The amount of gas that can be refunded is also
         limited, to half of the total transaction cost before the hardfork{' '}
-        <b>Berlin</b>, and to a fifth after that. Starting from the hardfork{' '}
-        <b>Berlin</b> also, only <OLink opcode="55" title="SSTORE" /> may
-        trigger refunds. Before that, <OLink opcode="FF" title="SELFDESTRUCT" />{' '}
+        <b>Berlin</b>, otherwise to a fifth. Starting from the hardfork{' '}
+        <b>Berlin</b> also, only <ILink link="#55" title="SSTORE" /> may
+        trigger refunds. Before that, <ILink link="#FF" title="SELFDESTRUCT" />{' '}
         could also trigger refunds.
       </p>
 
