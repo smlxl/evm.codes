@@ -3,6 +3,8 @@ fork: Frontier
 group: Stop and Arithmetic Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 All values are treated as two’s complement signed 256-bit integers. Note the overflow semantic when −2<sup>255</sup> is negated.
@@ -18,15 +20,15 @@ All values are treated as two’s complement signed 256-bit integers. Note the o
 
 ## Examples
 
-| Input | Output |
-|------:|-------:|
-| `10` | `1` |
-| `3` | |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `10` | `1` |
+| `2` | `3` | |
 
-| Input | Output |
-|------:|-------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` |
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD` | |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` |
+| `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD` | |
 
 ## Error cases
 

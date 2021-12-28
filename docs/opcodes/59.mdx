@@ -3,6 +3,8 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 The [memory](/about) is always fully accessible. What this instruction tracks is the highest offset that was accessed in the current execution. A first write or read to a bigger offset will trigger a [memory expansion](/about), which will cost gas.
@@ -13,9 +15,9 @@ The [memory](/about) is always fully accessible. What this instruction tracks is
 
 ## Example
 
-| Input | Output |
-|------:|-------:|
-| | `2848` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `2848` |
 
 ## Error cases
 

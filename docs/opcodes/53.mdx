@@ -3,6 +3,8 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Stack input
 
 0. `offset`: offset in the [memory](/about) in bytes.
@@ -10,10 +12,10 @@ group: Stack Memory Storage and Flow Operations
 
 ## Examples
 
-| Input 1 | * | Input 2 |
-|------:|--:|--:|
-| `0` | * | `1` |
-| `0xFFFF` | * | `0xFF` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `1` |
+| `2` | `0xFFFF` | * | `2` | `0xFF` |
 
 | Memory before |
 |--------------:|

@@ -3,6 +3,8 @@ fork: Frontier
 group: Stop and Arithmetic Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 All intermediate calculations of this operation are not subject to the 2<sup>256</sup> modulo.
@@ -19,11 +21,11 @@ All intermediate calculations of this operation are not subject to the 2<sup>256
 
 ## Examples
 
-| Input | Output | * | Input | Output |
-|------:|-------:|-|------:|-------:|
-| `10` | `4` | * | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | `9` |
-| `10` | | * | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | |
-| `8` | | * | `12` | |
+| * | Input | Output | * | * | Input | Output |
+|--:|------:|-------:|--:|--:|------:|-------:|
+| `1` | `10` | `4` | * | `1` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | `9` |
+| `2` | `10` | | * | `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | |
+| `3` | `8` | | * | `3` | `12` | |
 
 ## Error cases
 
