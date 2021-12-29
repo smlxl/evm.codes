@@ -15,13 +15,15 @@ The new value is put on top of the stack, incrementing all the other value indic
 
 ## Example
 
-| Code |
-|-----:|
-| `0x66FFFFFFFFFFFFFF` |
+| * | * |
+|---|---|
+| **Code** | `0x66FFFFFFFFFFFFFF6600000000000000` |
+| **Text** | `PUSH7 FFFFFFFFFFFFFF PUSH7 00000000000000` |
 
 | * | Input | Output |
 |--:|------:|-------:|
-| `1` | | `0xFFFFFFFFFFFFFF` |
+| `1` | | `0x00000000000000` |
+| `2` | | `0xFFFFFFFFFFFFFF` |
 
 ## Error cases
 
