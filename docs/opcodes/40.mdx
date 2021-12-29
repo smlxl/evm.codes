@@ -3,6 +3,8 @@ fork: Frontier
 group: Block Information
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Stack input
 
 0. `blockNumber`: block number to get the hash from. Valid range is the last 256 blocks (not including the current one). Current block number can be queried with [NUMBER](/#43).
@@ -13,9 +15,9 @@ group: Block Information
 
 ## Examples
 
-| Input | Output |
-|------:|-------:|
-| `599423545` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `599423545` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
 
 ## Error cases
 

@@ -3,6 +3,8 @@ fork: Constantinople
 group: Comparison & Bitwise Logic Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 Shift the bits towards the least significant one. The bits moved before the first one are discarded, the new bits are set to 0 if the previous most significant bit was 0, otherwise the new bits are set to 1.
@@ -18,15 +20,15 @@ Shift the bits towards the least significant one. The bits moved before the firs
 
 ## Examples
 
-| Input | Output |
-|------:|-------:|
-| `1` | `1` |
-| `2` | |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `1` | `1` |
+| `2` | `2` | |
 
-| Input | Output |
-|------:|-------:|
-| `4` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0` | |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `4` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0` | |
 
 ## Error cases
 

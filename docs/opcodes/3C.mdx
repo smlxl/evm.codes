@@ -3,6 +3,8 @@ fork: Frontier
 group: Environmental Information
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 For out of bound bytes, 0s will be copied.
@@ -17,15 +19,15 @@ For out of bound bytes, 0s will be copied.
 ## Examples
 
 | Code |
-|---------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+|-----:|
+|`0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| Input 1 | * | Input 2 |
-|------:|--:|--:|
-| `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4` | * | `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4` |
-| `0` | * | `0` |
-| `0` | * | `31` |
-| `32` | * | `8` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4` | * | `1` | `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4` |
+| `2` | `0` | * | `2` | `0` |
+| `3` | `0` | * | `3` | `31` |
+| `4` | `32` | * | `4` | `8` |
 
 | Memory before |
 |--------------:|

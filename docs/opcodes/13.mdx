@@ -3,6 +3,8 @@ fork: Frontier
 group: Comparison & Bitwise Logic Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Notes
 
 All values are treated as two’s complement signed 256-bit integers.
@@ -18,10 +20,10 @@ All values are treated as two’s complement signed 256-bit integers.
 
 ## Examples
 
-| Input | Output | * | Input | Output |
-|------:|-------:|-|------:|-------:|
-| `0` | `1` | * | `10` | `0` |
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | | * | `10` | |
+| * | Input | Output | * | * | Input | Output |
+|--:|------:|-------:|--:|--:|------:|-------:|
+| `1` | `0` | `1` | * | `1` | `10` | `0` |
+| `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | | * | `2` | `10` | |
 
 ## Error cases
 

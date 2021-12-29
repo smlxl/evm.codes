@@ -3,19 +3,27 @@ fork: Frontier
 group: Push Operations
 ---
 
+*Index 1 is top of the stack.*
+
+## Notes
+
+The new value is put on top of the stack, incrementing all the other value indices. The values for a specific opcode thus have to be pushed in reverse order of the stack. For example, with [MSTORE](/#52), the first value pushed would have to be `value`, and then `offset`.
+
 ## Stack output
 
 0. `value`: pushed value, aligned to the right (put in the lowest significant bytes).
 
 ## Example
 
-| Code |
-|------|
-| `0x61FFFF` |
+| * | * |
+|---|---|
+| **Code** | `0x61FFFF610000` |
+| **Text** | `PUSH2 FFFF PUSH2 0000` |
 
-| Input | Output |
-|------:|-------:|
-| | `0xFFFF` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `0x0000` |
+| `2` | | `0xFFFF` |
 
 ## Error cases
 

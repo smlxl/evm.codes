@@ -3,6 +3,8 @@ fork: Frontier
 group: SHA3
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Stack input
 
 0. `offset`: byte offset in the memory.
@@ -18,10 +20,10 @@ group: SHA3
 |-------:|
 | `0xFFFFFFFF`|
 
-| Input | Output |
-|------:|-------:|
-| `0` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
-| `4` | |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `0` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
+| `2` | `4` | |
 
 ## Error cases
 

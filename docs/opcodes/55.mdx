@@ -3,6 +3,8 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
 ## Stack input
 
 0. `key`: 32-byte key in [storage](/about).
@@ -10,21 +12,21 @@ group: Stack Memory Storage and Flow Operations
 
 ## Examples
 
-| Input 1 | * | Input 2 |
-|------:|--:|--:|
-| `0` | * | `8965` |
-| `0xFFFF` | * | `0xFF` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `8965` |
+| `2` | `0xFFFF` | * | `2` | `0xFF` |
 
 | Storage key before | Storage value |
-|-------------|---------------|
+|-------------------:|--------------:|
 | | |
 
 | Storage key after input 1 | Storage value |
-|-------------|---------------|
+|--------------------------:|--------------:|
 | `0` | `0xFFFF` |
 
 | Storage key after input 1 then 2 | Storage value |
-|-------------|---------------|
+|---------------------------------:|--------------:|
 | `0` | `0xFFFF` |
 | `8965` | `0xFF` |
 
