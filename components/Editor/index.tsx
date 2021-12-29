@@ -27,6 +27,8 @@ import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
 import { IConsoleOutput, CodeType } from './types'
+import { passThroughSymbol } from 'next/dist/server/web/spec-compliant/fetch-event'
+import { IOpcode } from 'types'
 
 type Props = {
   readOnly?: boolean
@@ -49,6 +51,7 @@ const Editor = ({ readOnly = false }: Props) => {
     deployedContractAddress,
     vmError,
     selectedFork,
+    opcodes,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -146,8 +149,71 @@ const Editor = ({ readOnly = false }: Props) => {
     return value
   }
 
+  const highlightMnemonic = (value: string) => {
+    if (!codeType) {
+      return value
+    }
+
+    return value.split('\n')
+      .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
+      .join('\n')
+  }
+
   const handleRun = useCallback(() => {
-    if (codeType === CodeType.Bytecode) {
+    if (codeType === CodeType.Mnemonic) {
+      let bytecode = ''
+
+      const lines = code.split('\n')
+      for (let i = 0; i < lines.length; ++i) {
+        const line = lines[i].replace(/\/\/.*/, '').trim().toUpperCase()
+        if (line.length === 0) {
+          continue
+        }
+
+        if (line.startsWith('PUSH')) {
+          const parts = line.split(/\s+/)
+          if (parts.length != 2) {
+            log('Expect PUSH instruction followed by a number: ' + line, 'warn')
+            return
+          }
+
+          const code = opcodes.find((opcode: IOpcode) => {
+            return opcode.name === parts[0]
+          })
+          if (typeof code === 'undefined') {
+            log('Unknown mnemonic: ' + parts[0], 'warn')
+            return
+          }
+
+          const number = parseInt(parts[0].substring(4))
+          const digits = number * 2
+          if (parts[1].length > digits) {
+            log('Number should have at most ' + digits + ' digits: ' + line)
+            return
+          }
+
+          // TODO number checks
+
+          bytecode += code.code
+          bytecode = bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') + parts[1]
+        }
+        else {
+          const code = opcodes.find((opcode: IOpcode) => {
+            return opcode.name === line
+          })
+          if (typeof code === 'undefined') {
+            log('Unknown mnemonic: ' + line, 'warn')
+            return
+          }
+
+          bytecode += code.code
+        }
+      }
+
+      loadInstructions(bytecode)
+      startExecution(bytecode)
+    }
+    else if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
         log('There should be at least 2 characters per byte.', 'warn')
         return
@@ -195,6 +261,7 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [compiling, code])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
+  const isMnemonic = useMemo(() => codeType === CodeType.Mnemonic, [codeType])
 
   return (
     <div className="bg-gray-100 dark:bg-black-700 rounded-lg">
@@ -219,7 +286,7 @@ const Editor = ({ readOnly = false }: Props) => {
               value={code}
               readOnly={readOnly}
               onValueChange={handleCodeChange}
-              highlight={isBytecode ? highlightBytecode : highlightCode}
+              highlight={isBytecode ? highlightBytecode : (isMnemonic ? highlightMnemonic : highlightCode)}
               tabSize={4}
               className={cn('code-editor', {
                 'with-numbers': !isBytecode,

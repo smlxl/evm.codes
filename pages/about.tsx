@@ -77,8 +77,8 @@ const AboutPage = () => {
         limit of 1024 values. All instructions interact with the stack, but it
         can be directly manipulated with instructions like{' '}
         <ILink link="#60" title="PUSH1" />, <ILink link="#50" title="POP" />,{' '}
-        <ILink link="#80" title="DUP1" />, or{' '}
-        <ILink link="#90" title="SWAP1" />.
+        <ILink link="#80" title="DUP1" />, or <ILink link="#90" title="SWAP1" />
+        .
       </p>
 
       <H3 className="mb-4">The memory</H3>
@@ -173,8 +173,8 @@ const AboutPage = () => {
         Each transaction has an intrinsic cost of 21000 gas. Creating a contract
         costs 32000 gas, on top of the transaction cost. And finally, the
         calldata costs 4 gas per byte equal to 0, and 16 gas for the others (64
-        before the hardfork <b>Istanbul</b>). This cost is paid from the transaction before any
-        opcode or transfer is executed.
+        before the hardfork <b>Istanbul</b>). This cost is paid from the
+        transaction before any opcode or transfer is executed.
       </p>
 
       <H3 className="mb-4">Memory expansion</H3>
@@ -219,9 +219,8 @@ const AboutPage = () => {
         quadratically with the size, making higher offsets more costly and
         discouraging to use too much memory. Any opcode accessing memory may
         trigger an expansion (including, for example,{' '}
-        <ILink link="#51" title="MLOAD" />,{' '}
-        <ILink link="#F3" title="RETURN" /> or{' '}
-        <ILink link="#37" title="CALLDATACOPY" />
+        <ILink link="#51" title="MLOAD" />, <ILink link="#F3" title="RETURN" />{' '}
+        or <ILink link="#37" title="CALLDATACOPY" />
         ). Each opcode that can is mentionned in the <ILink title="reference" />
         . Note also that an opcode with a byte size parameter of 0 will not
         trigger a memory expansion, regardless of its offset parameters.
@@ -240,7 +239,8 @@ const AboutPage = () => {
             Addresses: a set of contract addresses that have been touched in the
             current transaction. It is initialised with the sender and receiver
             (or the new contract address in case of a creation) of the
-            transaction, as well as all the <ILink link="precompiled" title="precompiled contracts" />. When an
+            transaction, as well as all the{' '}
+            <ILink link="precompiled" title="precompiled contracts" />. When an
             opcode accesses an address that is not present in the set, it adds
             it in it. The relevant opcodes are{' '}
             <ILink link="#3B" title="EXTCODESIZE" />,{' '}
@@ -275,9 +275,9 @@ const AboutPage = () => {
         if there was no refunds. The amount of gas that can be refunded is also
         limited, to half of the total transaction cost before the hardfork{' '}
         <b>Berlin</b>, otherwise to a fifth. Starting from the hardfork{' '}
-        <b>Berlin</b> also, only <ILink link="#55" title="SSTORE" /> may
-        trigger refunds. Before that, <ILink link="#FF" title="SELFDESTRUCT" />{' '}
-        could also trigger refunds.
+        <b>Berlin</b> also, only <ILink link="#55" title="SSTORE" /> may trigger
+        refunds. Before that, <ILink link="#FF" title="SELFDESTRUCT" /> could
+        also trigger refunds.
       </p>
 
       <em>

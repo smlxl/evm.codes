@@ -2,6 +2,7 @@ export enum CodeType {
   Yul = 'Yul',
   Solidity = 'Solidity',
   Bytecode = 'Bytecode',
+  Mnemonic = 'Mnemonic',
 }
 
 export interface IConsoleOutput {

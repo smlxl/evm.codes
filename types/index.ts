@@ -6,6 +6,7 @@ declare global {
 
 export interface IOpcode {
   code: string
+  name: string
   input: string
   output: string
   description: string
@@ -25,6 +26,7 @@ export interface IOpcode {
 
 export interface IPrecompiled {
   address: string
+  name: string
   input: string
   output: string
   description: string

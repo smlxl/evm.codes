@@ -85,6 +85,14 @@ contract Counter {
 }`,
   ],
   Bytecode: ['604260005260206000F3'],
+  Mnemonic: [
+    `PUSH1 42
+PUSH1 00
+MSTORE
+PUSH1 20
+PUSH1 00
+RETURN`,
+  ],
 }
 
 export default examples

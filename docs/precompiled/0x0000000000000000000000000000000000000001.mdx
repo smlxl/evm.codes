@@ -8,16 +8,54 @@ In the case of an invalid signature, no output is returned.
 
 ## Inputs
 
-0. `hash`
-1. `v`
-2. `r`
-3. `s`
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| [0; 31] (32 bytes) | hash | |
+| [32; 63] (32 bytes) | v | |
+| [64; 95] (32 bytes) | r | |
+| [96; 127] (32 bytes) | s | |
 
 ## Output
 
-0. `publicKey`
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| [0; 19] (20 bytes) | publicAddress | The recovered address. If an address cannot be recovered, then there is no return data |
 
+## Example
 
-## Error cases
+| Input | Output |
+|------:|-------:|
+| `0x456e9aea5e197a1f1af7a3e85a3212fa4049a3ba34c2289b4c860fc0b0c64ef3` | `0x7156526fbd7a3c72969b54f64e42c10fbb768c8a` |
+| `28` | |
+| `0x9242685bf161793cc25603c231bc2f568eb630ea16aa137d2664ac8038825608` | |
+| `0x4f8ae3bd7535248d0bd448298cc2e2071e56992d0774dc340c368ae950852ada` | |
 
-See
+### Reproduce in playground
+
+    // First place the parameters in memory
+    PUSH32 456e9aea5e197a1f1af7a3e85a3212fa4049a3ba34c2289b4c860fc0b0c64ef3 // hash
+    PUSH1 0
+    MSTORE
+    PUSH1 1C // v
+    PUSH1 20
+    MSTORE
+    PUSH32 9242685bf161793cc25603c231bc2f568eb630ea16aa137d2664ac8038825608 // r
+    PUSH1 40
+    MSTORE
+    PUSH32 4f8ae3bd7535248d0bd448298cc2e2071e56992d0774dc340c368ae950852ada // s
+    PUSH1 60
+    MSTORE
+
+    // Do the call
+    PUSH1 20 // retSize
+    PUSH1 80 // retOffset
+    PUSH1 80 // argsSize
+    PUSH1 0 // argsOffset
+    PUSH1 1 // address
+    PUSH4 FFFFFFFF // gas
+    STATICCALL
+
+    // Put the result alone on the stack
+    POP
+    PUSH1 80
+    MLOAD

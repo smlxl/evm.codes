@@ -8,6 +8,8 @@ import getConfig from 'next/config'
 import Link from 'next/link'
 import { IPrecompiledDocs, IPrecompiledGasDocs } from 'types'
 
+import { GITHUB_REPO_URL } from 'util/constants'
+
 import HomeLayout from 'components/layouts/Home'
 import PrecompiledReferenceTable from 'components/PrecompiledReference'
 import { H1, H2, Container, Button } from 'components/ui'
@@ -40,20 +42,18 @@ const PrecompiledPage = ({
           On top of having a set of opcodes to choose from, the EVM also offers
           a set of more advanced functionalities through precompiled contracts.
           These are a special kind of contracts that are bundled with the EVM at
-          fixed addresses, and can be called with a reduced gas cost. The
+          fixed addresses, and can be called with a determined gas cost. The
           addresses start from 1, and increment for each contract. New hardforks
           may introduce new precompiled contracts. They are called from the
           opcodes like regular contracts, with instructions like{' '}
-          <ILink link="#F1" title="CALL" />.
+          <ILink link="#F1" title="CALL" />. The gas cost mentionned here is purely the cost of the contract, and does not consider the cost of the call itself nor the instructions to put the parameters in memory.
+          The precompiled contracts are also available in the{' '}
+          <ILink link="playground" title="playground" />.
         </p>
         <p className="pb-6">
           After the hardfork <b>Berlin</b>, all the precompiled contracts
           addresses are always considered warm. See section{' '}
           <ILink link="about" title="access sets" />.
-        </p>
-        <p className="pb-6">
-          The precompiled contracts are also available in the{' '}
-          <ILink link="playground" title="playground" />.
         </p>
       </Container>
 
@@ -63,6 +63,15 @@ const PrecompiledPage = ({
             precompiledDocs={precompiledDocs}
             gasDocs={gasDocs}
           />
+        </Container>
+      </section>
+
+      <section className="pt-20 pb-10 text-center">
+        <Container>
+          <H2 className="mb-10">Have ideas to make evm.codes better?</H2>
+          <Button external href={GITHUB_REPO_URL}>
+            Contribute on GitHub
+          </Button>
         </Container>
       </section>
     </>

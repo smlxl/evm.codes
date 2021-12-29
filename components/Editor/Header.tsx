@@ -66,6 +66,13 @@ const EditorHeader = ({
             isChecked={codeType === CodeType.Bytecode}
             onChange={onCodeTypeChange}
           />
+
+          <Radio
+            text="Mnemonic"
+            value={CodeType.Mnemonic}
+            isChecked={codeType === CodeType.Mnemonic}
+            onChange={onCodeTypeChange}
+          />
         </div>
 
         <Button
