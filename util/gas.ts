@@ -412,21 +412,21 @@ export const calculatePrecompiledDynamicFee = (
       break
     }
     case '0x0000000000000000000000000000000000000002': {
-      result = toWordSize(new BN(inputs.size)).imuln(
-        common.param('gasPrices', 'sha256Word'),
-      ).iaddn(common.param('gasPrices', 'sha256'))
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'sha256Word'))
+        .iaddn(common.param('gasPrices', 'sha256'))
       break
     }
     case '0x0000000000000000000000000000000000000003': {
-      result = toWordSize(new BN(inputs.size)).imuln(
-        common.param('gasPrices', 'ripemd160Word'),
-      ).iaddn(common.param('gasPrices', 'ripemd160'))
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'ripemd160Word'))
+        .iaddn(common.param('gasPrices', 'ripemd160'))
       break
     }
     case '0x0000000000000000000000000000000000000004': {
-      result = toWordSize(new BN(inputs.size)).imuln(
-        common.param('gasPrices', 'identityWord'),
-      ).iaddn(common.param('gasPrices', 'identity'))
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'identityWord'))
+        .iaddn(common.param('gasPrices', 'identity'))
       break
     }
     case '0x0000000000000000000000000000000000000005': {
@@ -444,8 +444,7 @@ export const calculatePrecompiledDynamicFee = (
         if (result.ltn(200)) {
           result = new BN(200)
         }
-      }
-      else {
+      } else {
         result.imul(multComplexity(maxLen)).divn(Gquaddivisor)
       }
       break
@@ -468,8 +467,9 @@ export const calculatePrecompiledDynamicFee = (
     }
     case '0x0000000000000000000000000000000000000008': {
       const inputDataSize = Math.floor(parseInt(inputs.size || 0) / 192)
-      result = new BN(common.param('gasPrices', 'ecPairing') +
-        inputDataSize * common.param('gasPrices', 'ecPairingWord')
+      result = new BN(
+        common.param('gasPrices', 'ecPairing') +
+          inputDataSize * common.param('gasPrices', 'ecPairingWord'),
       )
       break
     }
