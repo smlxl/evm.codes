@@ -50,6 +50,7 @@ export interface IOpcodeMeta {
 }
 
 export interface IPrecompiledMeta {
+  name: string
   input: string
   output: string
   description: string
