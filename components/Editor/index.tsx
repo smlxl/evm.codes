@@ -11,7 +11,6 @@ import React, {
 } from 'react'
 
 import cn from 'classnames'
-import { passThroughSymbol } from 'next/dist/server/web/spec-compliant/fetch-event'
 import SCEditor from 'react-simple-code-editor'
 import { IOpcode } from 'types'
 
@@ -240,7 +239,15 @@ const Editor = ({ readOnly = false }: Props) => {
         })
       }
     }
-  }, [code, codeType, selectedFork, loadInstructions, log, startExecution])
+  }, [
+    code,
+    codeType,
+    opcodes,
+    selectedFork,
+    loadInstructions,
+    log,
+    startExecution,
+  ])
 
   const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value

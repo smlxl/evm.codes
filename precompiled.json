@@ -13,9 +13,9 @@
     "dynamicFee": {
       "homestead": {
         "inputs": {
-          "exponent": {
+          "size": {
             "type": "number",
-            "label": "Input: exponent"
+            "label": "Byte size of data"
           }
         }
       }
@@ -25,37 +25,113 @@
     "name": "RIPEMD-160",
     "input": "data",
     "output": "hash",
-    "description": "Hash function"
+    "description": "Hash function",
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "size": {
+            "type": "number",
+            "label": "Byte size of data"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000004": {
     "name": "identity",
     "input": "data",
     "output": "data",
-    "description": "Returns the input"
+    "description": "Returns the input",
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "size": {
+            "type": "number",
+            "label": "Byte size of data"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000005": {
     "name": "modexp",
     "input": "Bsize | Esize | Msize | B | E | M",
     "output": "value",
-    "description": "Arbitrary-precision exponentiation under modulo"
+    "description": "Arbitrary-precision exponentiation under modulo",
+    "dynamicFee": {
+      "byzantium": {
+        "inputs": {
+          "Bsize": {
+            "type": "number",
+            "label": "Input: Bsize"
+          },
+          "Msize": {
+            "type": "number",
+            "label": "Input: Msize"
+          },
+          "exponent": {
+            "type": "number",
+            "label": "Input: E"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000006": {
     "name": "ecAdd",
-    "input": "",
-    "output": "",
-    "description": "bla"
+    "input": "x1 | y1 | x2 | y2",
+    "output": "x | y",
+    "description": "Point addition (ADD) on the elliptic curve 'alt_bn128'",
+    "dynamicFee": {
+      "byzantium": {
+        "inputs": {
+          "invalid": {
+            "type": "boolean",
+            "label": "Is the input invalid?"
+          },
+          "remaining": {
+            "type": "number",
+            "label": "State: remaining gas in the current context"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000007": {
     "name": "ecMul",
-    "input": "",
-    "output": "",
-    "description": "bla"
+    "input": "x1 | y1 | s",
+    "output": "x | y",
+    "description": "Scalar multiplication (MUL) on the elliptic curve 'alt_bn128'",
+    "dynamicFee": {
+      "byzantium": {
+        "inputs": {
+          "invalid": {
+            "type": "boolean",
+            "label": "Is the input invalid?"
+          },
+          "remaining": {
+            "type": "number",
+            "label": "State: remaining gas in the current context"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000008": {
     "name": "ecPairing",
-    "input": "",
-    "output": "",
-    "description": "bla"
+    "input": "x1 | y1 | x2 | y2 | ... | xk | yk",
+    "output": "success",
+    "description": "Bilinear function on groups on the elliptic curve 'alt_bn128'",
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "size": {
+            "type": "number",
+            "label": "Byte size of data"
+          }
+        }
+      }
+    }
   },
   "0x0000000000000000000000000000000000000009": {
     "name": "blake2f",

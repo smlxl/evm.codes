@@ -53,6 +53,9 @@ const PrecompiledPage = ({
           <ILink link="playground" title="playground" />.
         </p>
         <p className="pb-6">
+          For all precompiled contracts, if the input is shorter than expected, it is assumed to be virtually padded with zeros at the end. If the input is longer than expected, surplus bytes at the end are ignored.
+        </p>
+        <p className="pb-6">
           After the hardfork <b>Berlin</b>, all the precompiled contracts
           addresses are always considered warm. See section{' '}
           <ILink link="about" title="access sets" />.

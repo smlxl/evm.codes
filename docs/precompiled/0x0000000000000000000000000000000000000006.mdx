@@ -1,0 +1,66 @@
+---
+fork: Byzantium
+---
+
+## Notes
+
+The point at infinity is encoded with both field `x` and `y` at `0`.
+
+## Inputs
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| `[0; 31]` (32 bytes) | x1 | X coordinate of the first point on the elliptic curve 'alt_bn128'|
+| `[31; 63]` (32 bytes) | y1 | Y coordinate of the first point on the elliptic curve 'alt_bn128' |
+| `[64; 95]` (32 bytes) | x2 | X coordinate of the second point on the elliptic curve 'alt_bn128' |
+| `[64; 95]` (32 bytes) | y1 | Y coordinate of the second point on the elliptic curve 'alt_bn128' |
+
+## Output
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| `[0; 31]` (32 bytes) | x | X coordinate of the result point on the elliptic curve 'alt_bn128' |
+| `[31; 63]` (32 bytes) | y | Y coordinate of the result point on the elliptic curve 'alt_bn128' |
+
+If the input is not valid, or if not enough gas was given, then there is no return data.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| `1` | `0x030644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd3` |
+| `2` | `0x15ed738c0e0a7c92e7845f96b2ae9c0a68a6a449e3538fc7ff3ebf7a5a18a2c4` |
+| `1` | |
+| `2` | |
+
+Reproduce in playground:
+
+    // First place the parameters in memory
+    PUSH1 1 // x1
+    PUSH1 0
+    MSTORE
+    PUSH1 2 // y1
+    PUSH1 20
+    MSTORE
+    PUSH1 1 // x2
+    PUSH1 40
+    MSTORE
+    PUSH1 2 // y2
+    PUSH1 60
+    MSTORE
+
+    // Do the call
+    PUSH1 40 // retSize
+    PUSH1 80 // retOffset
+    PUSH1 80 // argsSize
+    PUSH1 0 // argsOffset
+    PUSH1 6 // address
+    PUSH4 FFFFFFFF // gas
+    STATICCALL
+
+    // Put the result alone on the stack
+    POP
+    PUSH1 A0
+    MLOAD
+    PUSH1 80
+    MLOAD

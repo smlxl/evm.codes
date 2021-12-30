@@ -1,6 +1,6 @@
 import Common from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/dist/types'
-import { BN } from 'ethereumjs-util'
+import { setLengthRight, BN } from 'ethereumjs-util'
 import { IOpcode, IPrecompiled } from 'types'
 
 const namespaces = ['gasPrices']
@@ -335,6 +335,58 @@ export const calculateDynamicFee = (
 
   return result.iaddn(opcode.staticFee).toString()
 }
+
+function getAdjustedExponentLength(exponent: BN): BN {
+  const expLen = new BN(exponent.byteLength())
+  let firstExpBytes = Buffer.from(exponent.toArray().slice(0, 32)) // first word of the exponent data
+  firstExpBytes = setLengthRight(firstExpBytes, 32) // reading past the data reads virtual zeros
+  let firstExpBN = new BN(firstExpBytes)
+  let max32expLen = 0
+  if (expLen.ltn(32)) {
+    max32expLen = 32 - expLen.toNumber()
+  }
+  firstExpBN = firstExpBN.shrn(8 * Math.max(max32expLen, 0))
+
+  let bitLen = -1
+  while (firstExpBN.gtn(0)) {
+    bitLen = bitLen + 1
+    firstExpBN = firstExpBN.ushrn(1)
+  }
+  let expLenMinus32OrZero = expLen.subn(32)
+  if (expLenMinus32OrZero.ltn(0)) {
+    expLenMinus32OrZero = new BN(0)
+  }
+  const eightTimesExpLenMinus32OrZero = expLenMinus32OrZero.muln(8)
+  const adjustedExpLen = eightTimesExpLenMinus32OrZero
+  if (bitLen > 0) {
+    adjustedExpLen.iaddn(bitLen)
+  }
+  return adjustedExpLen
+}
+
+function multComplexity(x: BN): BN {
+  let fac1
+  let fac2
+  if (x.lten(64)) {
+    return x.sqr()
+  } else if (x.lten(1024)) {
+    // return Math.floor(Math.pow(x, 2) / 4) + 96 * x - 3072
+    fac1 = x.sqr().divn(4)
+    fac2 = x.muln(96)
+    return fac1.add(fac2).subn(3072)
+  } else {
+    // return Math.floor(Math.pow(x, 2) / 16) + 480 * x - 199680
+    fac1 = x.sqr().divn(16)
+    fac2 = x.muln(480)
+    return fac1.add(fac2).subn(199680)
+  }
+}
+
+function multComplexityEIP2565(x: BN): BN {
+  const words = x.addn(7).divn(8)
+  return words.mul(words)
+}
+
 /*
  * Calculates dynamic gas fee for precompiled contracts
  *
@@ -357,6 +409,68 @@ export const calculatePrecompiledDynamicFee = (
   switch (precompile.address) {
     case '0x0000000000000000000000000000000000000001': {
       result = new BN(common.param('gasPrices', 'ecRecover'))
+      break
+    }
+    case '0x0000000000000000000000000000000000000002': {
+      result = toWordSize(new BN(inputs.size)).imuln(
+        common.param('gasPrices', 'sha256Word'),
+      ).iaddn(common.param('gasPrices', 'sha256'))
+      break
+    }
+    case '0x0000000000000000000000000000000000000003': {
+      result = toWordSize(new BN(inputs.size)).imuln(
+        common.param('gasPrices', 'ripemd160Word'),
+      ).iaddn(common.param('gasPrices', 'ripemd160'))
+      break
+    }
+    case '0x0000000000000000000000000000000000000004': {
+      result = toWordSize(new BN(inputs.size)).imuln(
+        common.param('gasPrices', 'identityWord'),
+      ).iaddn(common.param('gasPrices', 'identity'))
+      break
+    }
+    case '0x0000000000000000000000000000000000000005': {
+      const Gquaddivisor = common.param('gasPrices', 'modexpGquaddivisor')
+      result = getAdjustedExponentLength(new BN(inputs.exponent))
+
+      let maxLen = new BN(inputs.Bsize)
+      const mLen = new BN(inputs.Msize)
+      if (maxLen.lt(mLen)) {
+        maxLen = mLen
+      }
+
+      if (common.gteHardfork('berlin')) {
+        result.imul(multComplexityEIP2565(maxLen)).divn(Gquaddivisor)
+        if (result.ltn(200)) {
+          result = new BN(200)
+        }
+      }
+      else {
+        result.imul(multComplexity(maxLen)).divn(Gquaddivisor)
+      }
+      break
+    }
+    case '0x0000000000000000000000000000000000000006': {
+      if (inputs.invalid === '1') {
+        result = new BN(inputs.remaining)
+      } else {
+        result = new BN(common.param('gasPrices', 'ecAdd'))
+      }
+      break
+    }
+    case '0x0000000000000000000000000000000000000007': {
+      if (inputs.invalid === '1') {
+        result = new BN(inputs.remaining)
+      } else {
+        result = new BN(common.param('gasPrices', 'ecMul'))
+      }
+      break
+    }
+    case '0x0000000000000000000000000000000000000008': {
+      const inputDataSize = Math.floor(parseInt(inputs.size || 0) / 192)
+      result = new BN(common.param('gasPrices', 'ecPairing') +
+        inputDataSize * common.param('gasPrices', 'ecPairingWord')
+      )
       break
     }
     default:
