@@ -11,7 +11,9 @@ import React, {
 } from 'react'
 
 import cn from 'classnames'
+import { passThroughSymbol } from 'next/dist/server/web/spec-compliant/fetch-event'
 import SCEditor from 'react-simple-code-editor'
+import { IOpcode } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
@@ -27,8 +29,6 @@ import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
 import { IConsoleOutput, CodeType } from './types'
-import { passThroughSymbol } from 'next/dist/server/web/spec-compliant/fetch-event'
-import { IOpcode } from 'types'
 
 type Props = {
   readOnly?: boolean
@@ -154,7 +154,8 @@ const Editor = ({ readOnly = false }: Props) => {
       return value
     }
 
-    return value.split('\n')
+    return value
+      .split('\n')
       .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
       .join('\n')
   }
@@ -165,7 +166,10 @@ const Editor = ({ readOnly = false }: Props) => {
 
       const lines = code.split('\n')
       for (let i = 0; i < lines.length; ++i) {
-        const line = lines[i].replace(/\/\/.*/, '').trim().toUpperCase()
+        const line = lines[i]
+          .replace(/\/\/.*/, '')
+          .trim()
+          .toUpperCase()
         if (line.length === 0) {
           continue
         }
@@ -195,9 +199,10 @@ const Editor = ({ readOnly = false }: Props) => {
           // TODO number checks
 
           bytecode += code.code
-          bytecode = bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') + parts[1]
-        }
-        else {
+          bytecode =
+            bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') +
+            parts[1]
+        } else {
           const code = opcodes.find((opcode: IOpcode) => {
             return opcode.name === line
           })
@@ -212,8 +217,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
       loadInstructions(bytecode)
       startExecution(bytecode)
-    }
-    else if (codeType === CodeType.Bytecode) {
+    } else if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
         log('There should be at least 2 characters per byte.', 'warn')
         return
@@ -286,7 +290,13 @@ const Editor = ({ readOnly = false }: Props) => {
               value={code}
               readOnly={readOnly}
               onValueChange={handleCodeChange}
-              highlight={isBytecode ? highlightBytecode : (isMnemonic ? highlightMnemonic : highlightCode)}
+              highlight={
+                isBytecode
+                  ? highlightBytecode
+                  : isMnemonic
+                  ? highlightMnemonic
+                  : highlightCode
+              }
               tabSize={4}
               className={cn('code-editor', {
                 'with-numbers': !isBytecode,

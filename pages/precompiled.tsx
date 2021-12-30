@@ -46,8 +46,10 @@ const PrecompiledPage = ({
           addresses start from 1, and increment for each contract. New hardforks
           may introduce new precompiled contracts. They are called from the
           opcodes like regular contracts, with instructions like{' '}
-          <ILink link="#F1" title="CALL" />. The gas cost mentionned here is purely the cost of the contract, and does not consider the cost of the call itself nor the instructions to put the parameters in memory.
-          The precompiled contracts are also available in the{' '}
+          <ILink link="#F1" title="CALL" />. The gas cost mentionned here is
+          purely the cost of the contract, and does not consider the cost of the
+          call itself nor the instructions to put the parameters in memory. The
+          precompiled contracts are also available in the{' '}
           <ILink link="playground" title="playground" />.
         </p>
         <p className="pb-6">
