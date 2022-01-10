@@ -473,6 +473,11 @@ export const calculatePrecompiledDynamicFee = (
       )
       break
     }
+    case '0x0000000000000000000000000000000000000009': {
+      result = new BN(common.param('gasPrices', 'blake2Round'))
+      result.imul(new BN(inputs.rounds))
+      break
+    }
     default:
       result = new BN(0)
   }

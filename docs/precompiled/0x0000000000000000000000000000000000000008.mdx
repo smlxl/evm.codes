@@ -10,14 +10,14 @@ The point at infinity is encoded with both field `x` and `y` at `0`.
 
 The input must always be a multiple of 6 32-byte values. 0 inputs is valid and returns 1. One set of inputs is defined as follows:
 
-| Byte range | Name | Description |
-|-----------:|-----:|------------:|
-| `[0; 31]` (32 bytes) | x1 | X coordinate of the first point on the elliptic curve 'alt_bn128'|
-| `[31; 63]` (32 bytes) | y1 | Y coordinate of the first point on the elliptic curve 'alt_bn128' |
-| `[64; 95]` (32 bytes) | x2 | Scalar to use for the multiplication |
-| `[64; 95]` (32 bytes) | y2 | Scalar to use for the multiplication |
-| `[64; 95]` (32 bytes) | x3 | Scalar to use for the multiplication |
-| `[64; 95]` (32 bytes) | y3 | Scalar to use for the multiplication |
+| Byte range | Name |
+|-----------:|-----:|
+| `[0; 31]` (32 bytes) | x1 |
+| `[31; 63]` (32 bytes) | y1 |
+| `[64; 95]` (32 bytes) | x2 |
+| `[64; 95]` (32 bytes) | y2 |
+| `[64; 95]` (32 bytes) | x3 |
+| `[64; 95]` (32 bytes) | y3 |
 
 ## Output
 
@@ -26,40 +26,3 @@ The input must always be a multiple of 6 32-byte values. 0 inputs is valid and r
 | `[0; 31]` (32 bytes) | success | 1 if the pairing was a success, 0 otherwise |
 
 If the input is not valid, or if not enough gas was given, then there is no return data.
-
-## Example
-
-| Input | Output |
-|------:|-------:|
-| `1` | `1` |
-| `2` | |
-| `2` | |
-
-Reproduce in playground:
-
-    // First place the parameters in memory
-    PUSH1 1 // x1
-    PUSH1 0
-    MSTORE
-    PUSH1 2 // y1
-    PUSH1 20
-    MSTORE
-    PUSH1 2 // s
-    PUSH1 40
-    MSTORE
-
-    // Do the call
-    PUSH1 40 // retSize
-    PUSH1 60 // retOffset
-    PUSH1 60 // argsSize
-    PUSH1 0 // argsOffset
-    PUSH1 8 // address
-    PUSH4 FFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 80
-    MLOAD
-    PUSH1 60
-    MLOAD

@@ -1,0 +1,21 @@
+---
+fork: Istanbul
+---
+
+## Inputs
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| `[0; 3]` (4 bytes) | rounds | Number of rounds (big-endian unsigned integer) |
+| `[4; 67]` (64 bytes) | h | State vector (8 8-byte little-endian unsigned integer) |
+| `[68; 195]` (128 bytes) | m | Message block vector (16 8-byte little-endian unsigned integer) |
+| `[196; 211]` (16 bytes) | t | Offset counters (2 8-byte little-endian integer) |
+| `[212; 212]` (1 bytes) | f | Final block indicator flag (0 or 1) |
+
+## Output
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| `[0; 63]` (64 bytes) | h | State vector (8 8-byte little-endian unsigned integer) |
+
+If the input is not valid, or if not enough gas was given, then there is no return data.

@@ -135,8 +135,18 @@
   },
   "0x0000000000000000000000000000000000000009": {
     "name": "blake2f",
-    "input": "",
-    "output": "",
-    "description": "Compression function F used in the BLAKE2 cryptographic hashing algorithm"
+    "input": "rounds | h | m | t | f",
+    "output": "h",
+    "description": "Compression function F used in the BLAKE2 cryptographic hashing algorithm",
+    "dynamicFee": {
+      "homestead": {
+        "inputs": {
+          "rounds": {
+            "type": "number",
+            "label": "Input: rounds"
+          }
+        }
+      }
+    }
   }
 }
