@@ -1,41 +1,31 @@
-import fs from 'fs'
-import path from 'path'
+import { useContext } from 'react'
 
-import matter from 'gray-matter'
 import type { NextPage } from 'next'
-import { serialize } from 'next-mdx-remote/serialize'
-import getConfig from 'next/config'
-import Link from 'next/link'
-import { IPrecompiledDocs, IPrecompiledGasDocs } from 'types'
+import { IOpcodeDocs, IOpcodeGasDocs } from 'types'
 
-import { GITHUB_REPO_URL } from 'util/constants'
+import { EthereumContext } from 'context/ethereumContext'
 
+import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
-import PrecompiledReferenceTable from 'components/PrecompiledReference'
-import { H1, H2, Container, Button } from 'components/ui'
+import ReferenceTable from 'components/Reference'
+import { H1, H2, Container, RelativeLink as Link } from 'components/ui'
 
-const docsDir = 'docs/precompiled'
-
-const { serverRuntimeConfig } = getConfig()
-
-const ILink = ({ link, title }: { link?: string; title: string }) => (
-  <Link href={link ? `/${link}` : '/'} passHref>
-    <a className="underline font-mono">{title}</a>
-  </Link>
-)
+import generateDocs from './static/generateDocs'
 
 // It seems the memory expansion computation and constants did not change since frontier, but we have to keep an eye on new fork to keep this up to date
 const PrecompiledPage = ({
-  precompiledDocs,
+  opcodeDocs,
   gasDocs,
 }: {
-  precompiledDocs: IPrecompiledDocs
-  gasDocs: IPrecompiledGasDocs
+  opcodeDocs: IOpcodeDocs
+  gasDocs: IOpcodeGasDocs
 }) => {
+  const { precompiled } = useContext(EthereumContext)
+
   return (
     <>
       <Container className="text-sm leading-6">
-        <H1>Precompiled contracts</H1>
+        <H1>Precompiled Contracts</H1>
 
         <H2 className="mb-4">Introduction</H2>
         <p className="pb-6">
@@ -46,11 +36,11 @@ const PrecompiledPage = ({
           addresses start from 1, and increment for each contract. New hardforks
           may introduce new precompiled contracts. They are called from the
           opcodes like regular contracts, with instructions like{' '}
-          <ILink link="#F1" title="CALL" />. The gas cost mentionned here is
-          purely the cost of the contract, and does not consider the cost of the
-          call itself nor the instructions to put the parameters in memory. The
+          <Link to="#F1" title="CALL" />. The gas cost mentioned here is purely
+          the cost of the contract, and does not consider the cost of the call
+          itself nor the instructions to put the parameters in memory. The
           precompiled contracts are also available in the{' '}
-          <ILink link="playground" title="playground" />.
+          <Link to="playground" title="playground" />.
         </p>
         <p className="pb-6">
           For all precompiled contracts, if the input is shorter than expected,
@@ -60,26 +50,23 @@ const PrecompiledPage = ({
         <p className="pb-6">
           After the hardfork <b>Berlin</b>, all the precompiled contracts
           addresses are always considered warm. See section{' '}
-          <ILink link="about" title="access sets" />.
+          <Link to="about" title="access sets" />.
         </p>
       </Container>
 
       <section className="py-10 md:py-20 bg-gray-50 dark:bg-black-700">
         <Container>
-          <PrecompiledReferenceTable
-            precompiledDocs={precompiledDocs}
+          <ReferenceTable
+            isPrecompiled
+            opcodes={precompiled}
+            opcodeDocs={opcodeDocs}
             gasDocs={gasDocs}
           />
         </Container>
       </section>
 
       <section className="pt-20 pb-10 text-center">
-        <Container>
-          <H2 className="mb-10">Have ideas to make evm.codes better?</H2>
-          <Button external href={GITHUB_REPO_URL}>
-            Contribute on GitHub
-          </Button>
-        </Container>
+        <ContributeBox />
       </section>
     </>
   )
@@ -88,59 +75,10 @@ const PrecompiledPage = ({
 PrecompiledPage.getLayout = function getLayout(page: NextPage) {
   return <HomeLayout>{page}</HomeLayout>
 }
+
 export const getStaticProps = async () => {
-  const docsPath = path.join(serverRuntimeConfig.APP_ROOT, docsDir)
-  const docs = fs.readdirSync(docsPath)
-
-  const precompiledDocs: IPrecompiledDocs = {}
-  const gasDocs: IPrecompiledGasDocs = {}
-
-  await Promise.all(
-    docs.map(async (doc) => {
-      const stat = fs.statSync(path.join(docsPath, doc))
-      const address = path.parse(doc).name.toLowerCase()
-
-      try {
-        if (stat?.isDirectory()) {
-          fs.readdirSync(path.join(docsPath, doc)).map((fileName) => {
-            const markdown = fs.readFileSync(
-              path.join(docsPath, doc, fileName),
-              'utf-8',
-            )
-            const forkName = path.parse(fileName).name
-            if (!(address in gasDocs)) {
-              gasDocs[address] = {}
-            }
-            gasDocs[address][forkName] = markdown
-          })
-        } else {
-          const markdownWithMeta = fs.readFileSync(
-            path.join(docsPath, doc),
-            'utf-8',
-          )
-          const { data, content } = matter(markdownWithMeta)
-          const fork = data['fork']
-          const mdxSource = await serialize(content)
-
-          precompiledDocs[address] = {
-            fork,
-            mdxSource,
-          }
-        }
-      } catch (error) {
-        console.debug(
-          "Couldn't read the Markdown doc for the precompiled",
-          error,
-        )
-      }
-    }),
-  )
-  return {
-    props: {
-      precompiledDocs,
-      gasDocs,
-    },
-  }
+  const props = await generateDocs('docs/precompiled')
+  return props
 }
 
 export default PrecompiledPage

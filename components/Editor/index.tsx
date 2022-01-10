@@ -1,5 +1,4 @@
 import React, {
-  ChangeEvent,
   useState,
   useRef,
   useEffect,
@@ -11,6 +10,7 @@ import React, {
 } from 'react'
 
 import cn from 'classnames'
+import { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 import { IOpcode } from 'types'
 
@@ -249,8 +249,8 @@ const Editor = ({ readOnly = false }: Props) => {
     startExecution,
   ])
 
-  const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
+  const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
+    const value = option.value
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
 

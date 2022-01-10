@@ -7,11 +7,11 @@ const filter = (rows: Row[], id: string, filterValue: string) => {
   return rows.filter((row: any) => row.original[id].match(re))
 }
 
-const tableData = [
+const columns = (isPrecompiled: boolean) => [
   {
-    Header: 'Opcode',
+    Header: !isPrecompiled ? 'Opcode' : 'Address',
     accessor: 'code',
-    className: 'uppercase',
+    className: !isPrecompiled ? 'uppercase' : undefined,
     filter,
     width: 48,
   },
@@ -27,7 +27,7 @@ const tableData = [
     width: 50,
   },
   {
-    Header: 'Stack Input',
+    Header: !isPrecompiled ? 'Stack Input' : 'Input',
     accessor: 'input',
     Cell: ({ value }: { value: string }) => (
       <StackBox
@@ -39,7 +39,7 @@ const tableData = [
     className: 'hidden lg:table-cell',
   },
   {
-    Header: 'Stack Ouput',
+    Header: !isPrecompiled ? 'Stack Ouput' : 'Output',
     accessor: 'output',
     Cell: ({ value }: { value: string }) => (
       <StackBox
@@ -57,4 +57,4 @@ const tableData = [
   },
 ]
 
-export default tableData
+export default columns

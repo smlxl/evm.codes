@@ -83,13 +83,15 @@ const DocRow = ({ opcodeDoc, opcode, gasDocs, dynamicFeeForkName }: Props) => {
             <thead>
               <tr className="text-gray-500 uppercase text-xs">
                 <td className="pt-3 px-4">Since</td>
-                <td className="pt-3 px-4">Group</td>
+                {opcodeDoc.meta.group && <td className="pt-3 px-4">Group</td>}
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td className="pb-3 px-4">{opcodeDoc.meta.fork}</td>
-                <td className="pb-3 px-4">{opcodeDoc.meta.group}</td>
+                {opcodeDoc.meta.group && (
+                  <td className="pb-3 px-4">{opcodeDoc.meta.group}</td>
+                )}
               </tr>
             </tbody>
           </table>

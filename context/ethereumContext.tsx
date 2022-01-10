@@ -15,9 +15,7 @@ import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
   IOpcode,
-  IPrecompiled,
   IOpcodeMetaList,
-  IPrecompiledMetaList,
   IInstruction,
   IStorage,
   IExecutionState,
@@ -47,7 +45,7 @@ type ContextProps = {
   selectedChain: IChain | undefined
   selectedFork: Hardfork | undefined
   opcodes: IOpcode[]
-  precompiled: IPrecompiled[]
+  precompiled: IOpcode[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
@@ -111,7 +109,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [selectedChain, setSelectedChain] = useState<IChain>()
   const [selectedFork, setSelectedFork] = useState<Hardfork>()
   const [opcodes, setOpcodes] = useState<IOpcode[]>([])
-  const [precompiled, setPrecompiled] = useState<IPrecompiled[]>([])
+  const [precompiled, setPrecompiled] = useState<IOpcode[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -150,7 +148,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     _loadOpcodes()
-    _loadPrecompiled(common)
+    _loadPrecompiled()
     _setupStateManager()
     _setupAccount()
 
@@ -429,25 +427,25 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setOpcodes(opcodes)
   }
 
-  const _loadPrecompiled = (common: Common) => {
-    const precompiled: IPrecompiled[] = []
+  const _loadPrecompiled = () => {
+    const precompiled: IOpcode[] = []
 
     getActivePrecompiles(common).forEach((address: Address) => {
-      const meta = PrecompiledMeta as IPrecompiledMetaList
+      const meta = PrecompiledMeta as IOpcodeMetaList
       const addressString = '0x' + address.buf.toString('hex', 19)
-      const precompile = {
+      const contract = {
         ...meta[addressString],
         ...{
-          address: addressString,
+          code: addressString,
           minimumFee: 0,
+          name: meta[addressString].name,
         },
       }
 
-      precompile.minimumFee = parseInt(
-        calculatePrecompiledDynamicFee(precompile, common, {}),
+      contract.minimumFee = parseInt(
+        calculatePrecompiledDynamicFee(contract, common, {}),
       )
-      console.log('precompile', precompile)
-      precompiled.push(precompile)
+      precompiled.push(contract)
     })
 
     setPrecompiled(precompiled)
@@ -537,7 +535,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     continueFunc: () => void,
   ) => {
     // We skip over the calls
-    if (depth != 0) {
+    if (depth !== 0) {
       continueFunc()
       return
     }

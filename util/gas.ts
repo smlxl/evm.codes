@@ -1,7 +1,7 @@
 import Common from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/dist/types'
 import { setLengthRight, BN } from 'ethereumjs-util'
-import { IOpcode, IPrecompiled } from 'types'
+import { IOpcode } from 'types'
 
 const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
@@ -333,7 +333,7 @@ export const calculateDynamicFee = (
       result = new BN(0)
   }
 
-  return result.iaddn(opcode.staticFee).toString()
+  return result.iaddn(opcode.staticFee || 0).toString()
 }
 
 function getAdjustedExponentLength(exponent: BN): BN {
@@ -390,7 +390,7 @@ function multComplexityEIP2565(x: BN): BN {
 /*
  * Calculates dynamic gas fee for precompiled contracts
  *
- * @param opcode The IPrecompiled
+ * @param opcode The IOpcode
  * @param common The Common object
  * @param inputs The Object of user inputs based on the `dynamicFee` inputs
  *                 in the precompiled.json. If empty, we want to return the minimum fee for that code.
@@ -401,12 +401,12 @@ function multComplexityEIP2565(x: BN): BN {
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/precompiles/index.ts
  */
 export const calculatePrecompiledDynamicFee = (
-  precompile: IPrecompiled,
+  contract: IOpcode,
   common: Common,
   inputs: any,
 ) => {
   let result = null
-  switch (precompile.address) {
+  switch (contract.code) {
     case '0x01': {
       result = new BN(common.param('gasPrices', 'ecRecover'))
       break

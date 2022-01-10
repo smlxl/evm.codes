@@ -20,7 +20,7 @@ import { findMatchingForkName } from 'util/gas'
 
 import { Button, Icon } from 'components/ui'
 
-import tableData from './data'
+import tableColumns from './columns'
 import DocRow from './DocRow'
 import Filters from './Filters'
 import Header from './Header'
@@ -32,14 +32,18 @@ type CustomHeaderGroup = {
 const ReferenceTable = ({
   opcodeDocs,
   gasDocs,
+  opcodes,
+  isPrecompiled = false,
 }: {
   opcodeDocs: IOpcodeDocs
   gasDocs: IOpcodeGasDocs
+  opcodes: IOpcode[]
+  isPrecompiled?: boolean
 }) => {
   const router = useRouter()
-  const { opcodes, forks, selectedFork } = useContext(EthereumContext)
+  const { forks, selectedFork } = useContext(EthereumContext)
   const data = useMemo(() => opcodes, [opcodes])
-  const columns = useMemo(() => tableData, [])
+  const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
   const { width: screenWidth } = useWindowSize()
@@ -116,7 +120,7 @@ const ReferenceTable = ({
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
         <Header />
-        <Filters onSetFilter={setFilter} />
+        <Filters onSetFilter={setFilter} isPrecompiled={isPrecompiled} />
       </div>
 
       <table {...getTableProps()} className="w-full table-fixed">
@@ -162,7 +166,9 @@ const ReferenceTable = ({
                 colSpan={colSpan}
                 className="text-center pt-20 pb-4 text-lg text-gray-400 dark:text-gray-600"
               >
-                No opcodes found
+                {!isPrecompiled
+                  ? 'No opcodes found'
+                  : 'No precompiled contracts found'}
               </td>
             </tr>
           )}
