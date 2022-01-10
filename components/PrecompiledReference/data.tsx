@@ -12,7 +12,7 @@ const tableData = [
     Header: 'Address',
     accessor: 'address',
     filter,
-    width: 210,
+    width: 50,
   },
   {
     Header: 'Name',

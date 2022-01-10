@@ -407,29 +407,29 @@ export const calculatePrecompiledDynamicFee = (
 ) => {
   let result = null
   switch (precompile.address) {
-    case '0x0000000000000000000000000000000000000001': {
+    case '0x01': {
       result = new BN(common.param('gasPrices', 'ecRecover'))
       break
     }
-    case '0x0000000000000000000000000000000000000002': {
+    case '0x02': {
       result = toWordSize(new BN(inputs.size))
         .imuln(common.param('gasPrices', 'sha256Word'))
         .iaddn(common.param('gasPrices', 'sha256'))
       break
     }
-    case '0x0000000000000000000000000000000000000003': {
+    case '0x03': {
       result = toWordSize(new BN(inputs.size))
         .imuln(common.param('gasPrices', 'ripemd160Word'))
         .iaddn(common.param('gasPrices', 'ripemd160'))
       break
     }
-    case '0x0000000000000000000000000000000000000004': {
+    case '0x04': {
       result = toWordSize(new BN(inputs.size))
         .imuln(common.param('gasPrices', 'identityWord'))
         .iaddn(common.param('gasPrices', 'identity'))
       break
     }
-    case '0x0000000000000000000000000000000000000005': {
+    case '0x05': {
       const Gquaddivisor = common.param('gasPrices', 'modexpGquaddivisor')
       result = getAdjustedExponentLength(new BN(inputs.exponent))
 
@@ -449,7 +449,7 @@ export const calculatePrecompiledDynamicFee = (
       }
       break
     }
-    case '0x0000000000000000000000000000000000000006': {
+    case '0x06': {
       if (inputs.invalid === '1') {
         result = new BN(inputs.remaining)
       } else {
@@ -457,7 +457,7 @@ export const calculatePrecompiledDynamicFee = (
       }
       break
     }
-    case '0x0000000000000000000000000000000000000007': {
+    case '0x07': {
       if (inputs.invalid === '1') {
         result = new BN(inputs.remaining)
       } else {
@@ -465,7 +465,7 @@ export const calculatePrecompiledDynamicFee = (
       }
       break
     }
-    case '0x0000000000000000000000000000000000000008': {
+    case '0x08': {
       const inputDataSize = Math.floor(parseInt(inputs.size || 0) / 192)
       result = new BN(
         common.param('gasPrices', 'ecPairing') +
@@ -473,7 +473,7 @@ export const calculatePrecompiledDynamicFee = (
       )
       break
     }
-    case '0x0000000000000000000000000000000000000009': {
+    case '0x09': {
       result = new BN(common.param('gasPrices', 'blake2Round'))
       result.imul(new BN(inputs.rounds))
       break

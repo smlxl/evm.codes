@@ -434,7 +434,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     getActivePrecompiles(common).forEach((address: Address) => {
       const meta = PrecompiledMeta as IPrecompiledMetaList
-      const addressString = address.toString()
+      const addressString = '0x' + address.buf.toString('hex', 19)
       const precompile = {
         ...meta[addressString],
         ...{
@@ -446,6 +446,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       precompile.minimumFee = parseInt(
         calculatePrecompiledDynamicFee(precompile, common, {}),
       )
+      console.log('precompile', precompile)
       precompiled.push(precompile)
     })
 
