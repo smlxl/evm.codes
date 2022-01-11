@@ -1,19 +1,25 @@
-import { useContext, ChangeEvent } from 'react'
+import { useContext, useMemo } from 'react'
 
 import { useRegisterActions } from 'kbar'
+import Select, { OnChangeValue } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { Button, Radio, Label } from 'components/ui'
+import { Button, Label } from 'components/ui'
 
 import { CodeType } from './types'
 
 type Props = {
   codeType: string | undefined
   isRunDisabled: boolean
-  onCodeTypeChange: (event: ChangeEvent<HTMLInputElement>) => void
+  onCodeTypeChange: (option: OnChangeValue<any, any>) => void
   onRun: () => void
 }
+
+const codeLangOptions = Object.keys(CodeType).map((lang) => ({
+  value: lang,
+  label: lang,
+}))
 
 const EditorHeader = ({
   codeType,
@@ -35,6 +41,14 @@ const EditorHeader = ({
     },
   ]
 
+  const codeTypeOption = useMemo(
+    () => ({
+      value: codeType,
+      label: codeType,
+    }),
+    [codeType],
+  )
+
   useRegisterActions(actions, [onRun])
 
   return (
@@ -45,28 +59,14 @@ const EditorHeader = ({
       </h3>
 
       <div className="flex items-center justify-between w-full xl:w-auto">
-        <div>
-          <Radio
-            text="Yul"
-            value={CodeType.Yul}
-            isChecked={codeType === CodeType.Yul}
-            onChange={onCodeTypeChange}
-          />
-
-          <Radio
-            text="Solidity"
-            value={CodeType.Solidity}
-            isChecked={codeType === CodeType.Solidity}
-            onChange={onCodeTypeChange}
-          />
-
-          <Radio
-            text="Bytecode"
-            value={CodeType.Bytecode}
-            isChecked={codeType === CodeType.Bytecode}
-            onChange={onCodeTypeChange}
-          />
-        </div>
+        <Select
+          onChange={onCodeTypeChange}
+          options={codeLangOptions}
+          value={codeTypeOption}
+          isSearchable={false}
+          classNamePrefix="select"
+          menuPlacement="auto"
+        />
 
         <Button
           onClick={onRun}

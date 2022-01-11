@@ -7,13 +7,15 @@ import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
 import VM from '@ethereumjs/vm'
 import { RunState, InterpreterStep } from '@ethereumjs/vm/dist/evm/interpreter'
 import { Opcode } from '@ethereumjs/vm/dist/evm/opcodes'
+import { getActivePrecompiles } from '@ethereumjs/vm/dist/evm/precompiles'
 import { VmError } from '@ethereumjs/vm/dist/exceptions'
 import { BN, Address, Account } from 'ethereumjs-util'
 //
 import OpcodesMeta from 'opcodes.json'
+import PrecompiledMeta from 'precompiled.json'
 import {
-  IOpcode,
-  IOpcodeMetaList,
+  IReferenceItem,
+  IReferenceItemMetaList,
   IInstruction,
   IStorage,
   IExecutionState,
@@ -21,7 +23,10 @@ import {
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
-import { calculateDynamicFee } from 'util/gas'
+import {
+  calculateOpcodeDynamicFee,
+  calculatePrecompiledDynamicFee,
+} from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -42,7 +47,8 @@ type ContextProps = {
   forks: Hardfork[]
   selectedChain: IChain | undefined
   selectedFork: Hardfork | undefined
-  opcodes: IOpcode[]
+  opcodes: IReferenceItem[]
+  precompiled: IReferenceItem[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
@@ -78,6 +84,7 @@ export const EthereumContext = createContext<ContextProps>({
   selectedChain: undefined,
   selectedFork: undefined,
   opcodes: [],
+  precompiled: [],
   instructions: [],
   deployedContractAddress: undefined,
   isExecuting: false,
@@ -104,7 +111,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [forks, setForks] = useState<Hardfork[]>([])
   const [selectedChain, setSelectedChain] = useState<IChain>()
   const [selectedFork, setSelectedFork] = useState<Hardfork>()
-  const [opcodes, setOpcodes] = useState<IOpcode[]>([])
+  const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
+  const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -143,6 +151,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     _loadOpcodes()
+    _loadPrecompiled()
     _setupStateManager()
     _setupAccount()
 
@@ -400,25 +409,51 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _loadOpcodes = () => {
-    const opcodes: IOpcode[] = []
+    const opcodes: IReferenceItem[] = []
 
     vm.getActiveOpcodes().forEach((op: Opcode) => {
-      const meta = OpcodesMeta as IOpcodeMetaList
+      const meta = OpcodesMeta as IReferenceItemMetaList
       const opcode = {
         ...meta[toHex(op.code)],
         ...{
-          code: toHex(op.code),
+          opcodeOrAddress: toHex(op.code),
           staticFee: op.fee,
           minimumFee: 0,
           name: op.fullName,
         },
       }
 
-      opcode.minimumFee = parseInt(calculateDynamicFee(opcode, common, {}))
+      opcode.minimumFee = parseInt(
+        calculateOpcodeDynamicFee(opcode, common, {}),
+      )
       opcodes.push(opcode)
     })
 
     setOpcodes(opcodes)
+  }
+
+  const _loadPrecompiled = () => {
+    const precompiled: IReferenceItem[] = []
+
+    getActivePrecompiles(common).forEach((address: Address) => {
+      const meta = PrecompiledMeta as IReferenceItemMetaList
+      const addressString = '0x' + address.buf.toString('hex', 19)
+      const contract = {
+        ...meta[addressString],
+        ...{
+          opcodeOrAddress: addressString,
+          minimumFee: 0,
+          name: meta[addressString].name,
+        },
+      }
+
+      contract.minimumFee = parseInt(
+        calculatePrecompiledDynamicFee(contract, common, {}),
+      )
+      precompiled.push(contract)
+    })
+
+    setPrecompiled(precompiled)
   }
 
   const _setupStateManager = () => {
@@ -505,7 +540,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     continueFunc: () => void,
   ) => {
     // We skip over the calls
-    if (depth != 0) {
+    if (depth !== 0) {
       continueFunc()
       return
     }
@@ -606,6 +641,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         selectedChain,
         selectedFork,
         opcodes,
+        precompiled,
         instructions,
         deployedContractAddress,
         isExecuting,

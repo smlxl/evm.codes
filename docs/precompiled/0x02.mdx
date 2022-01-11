@@ -1,0 +1,46 @@
+---
+fork: Frontier
+---
+
+## Inputs
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| `[0; length[` | data | Data to hash with SHA2-256 |
+
+## Output
+
+| Byte range | Name | Description |
+|-----------:|-----:|------------:|
+| [0; 31] (32 bytes) | hash | The result hash |
+
+ If not enough gas was given, then there is no return data.
+
+## Example
+
+| Input | Output |
+|------:|-------:|
+| `0xFF` | TODO code is failing |
+
+Reproduce in playground:
+
+TODO code is failing
+
+    // First place the parameters in memory
+    PUSH1 0xFF // data
+    PUSH1 0
+    MSTORE
+
+    // Do the call
+    PUSH1 0x20 // retSize
+    PUSH1 0x20 // retOffset
+    PUSH1 1 // argsSize
+    PUSH1 0x1F // argsOffset
+    PUSH1 2 // address
+    PUSH4 0xFFFFFFFF // gas
+    STATICCALL
+
+    // Put the result alone on the stack
+    POP
+    PUSH1 0x20
+    MLOAD

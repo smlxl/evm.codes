@@ -1,7 +1,7 @@
 import Common from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/dist/types'
-import { BN } from 'ethereumjs-util'
-import { IOpcode } from 'types'
+import { setLengthRight, BN } from 'ethereumjs-util'
+import { IReferenceItem } from 'types'
 
 const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
@@ -162,10 +162,22 @@ function callCost(common: Common, inputs: any): BN {
   return result
 }
 
+export const calculateDynamicFee = (
+  opcodeOrPrecompiled: IReferenceItem,
+  common: Common,
+  inputs: any,
+) => {
+  if (opcodeOrPrecompiled.opcodeOrAddress.startsWith('0x')) {
+    return calculatePrecompiledDynamicFee(opcodeOrPrecompiled, common, inputs)
+  } else {
+    return calculateOpcodeDynamicFee(opcodeOrPrecompiled, common, inputs)
+  }
+}
+
 /*
  * Calculates dynamic gas fee
  *
- * @param opcode The IOpcode
+ * @param opcode The IReferenceItem
  * @param common The Common object
  * @param inputs The Object of user inputs based on the `dynamicFee` inputs
  *                 in the opcodes.json. If empty, we want to return the minimum fee for that code.
@@ -175,13 +187,13 @@ function callCost(common: Common, inputs: any): BN {
  * Fee calculation is based on the ethereumjs-vm functions,
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/opcodes/functions.ts
  */
-export const calculateDynamicFee = (
-  opcode: IOpcode,
+export const calculateOpcodeDynamicFee = (
+  opcode: IReferenceItem,
   common: Common,
   inputs: any,
 ) => {
   let result = null
-  switch (opcode.code) {
+  switch (opcode.opcodeOrAddress) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
       const gasPrice = common.param('gasPrices', 'expByte')
@@ -266,7 +278,7 @@ export const calculateDynamicFee = (
     case 'a2':
     case 'a3':
     case 'a4': {
-      const topicsCount = new BN(opcode.code, 'hex').isubn(0xa0)
+      const topicsCount = new BN(opcode.opcodeOrAddress, 'hex').isubn(0xa0)
       const expansionCost = memoryExtensionCost(
         new BN(inputs.offset),
         new BN(inputs.size),
@@ -333,7 +345,156 @@ export const calculateDynamicFee = (
       result = new BN(0)
   }
 
-  return result.iaddn(opcode.staticFee).toString()
+  return result.iaddn(opcode.staticFee || 0).toString()
+}
+
+function getAdjustedExponentLength(exponent: BN): BN {
+  const expLen = new BN(exponent.byteLength())
+  let firstExpBytes = Buffer.from(exponent.toArray().slice(0, 32)) // first word of the exponent data
+  firstExpBytes = setLengthRight(firstExpBytes, 32) // reading past the data reads virtual zeros
+  let firstExpBN = new BN(firstExpBytes)
+  let max32expLen = 0
+  if (expLen.ltn(32)) {
+    max32expLen = 32 - expLen.toNumber()
+  }
+  firstExpBN = firstExpBN.shrn(8 * Math.max(max32expLen, 0))
+
+  let bitLen = -1
+  while (firstExpBN.gtn(0)) {
+    bitLen = bitLen + 1
+    firstExpBN = firstExpBN.ushrn(1)
+  }
+  let expLenMinus32OrZero = expLen.subn(32)
+  if (expLenMinus32OrZero.ltn(0)) {
+    expLenMinus32OrZero = new BN(0)
+  }
+  const eightTimesExpLenMinus32OrZero = expLenMinus32OrZero.muln(8)
+  const adjustedExpLen = eightTimesExpLenMinus32OrZero
+  if (bitLen > 0) {
+    adjustedExpLen.iaddn(bitLen)
+  }
+  return adjustedExpLen
+}
+
+function multComplexity(x: BN): BN {
+  let fac1
+  let fac2
+  if (x.lten(64)) {
+    return x.sqr()
+  } else if (x.lten(1024)) {
+    // return Math.floor(Math.pow(x, 2) / 4) + 96 * x - 3072
+    fac1 = x.sqr().divn(4)
+    fac2 = x.muln(96)
+    return fac1.add(fac2).subn(3072)
+  } else {
+    // return Math.floor(Math.pow(x, 2) / 16) + 480 * x - 199680
+    fac1 = x.sqr().divn(16)
+    fac2 = x.muln(480)
+    return fac1.add(fac2).subn(199680)
+  }
+}
+
+function multComplexityEIP2565(x: BN): BN {
+  const words = x.addn(7).divn(8)
+  return words.mul(words)
+}
+
+/*
+ * Calculates dynamic gas fee for precompiled contracts
+ *
+ * @param opcode The IReferenceItem
+ * @param common The Common object
+ * @param inputs The Object of user inputs based on the `dynamicFee` inputs
+ *                 in the precompiled.json. If empty, we want to return the minimum fee for that code.
+ *
+ * @returns The String representation of the gas fee.
+ *
+ * Fee calculation is based on the ethereumjs-vm functions,
+ * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/precompiles/index.ts
+ */
+export const calculatePrecompiledDynamicFee = (
+  precompiled: IReferenceItem,
+  common: Common,
+  inputs: any,
+) => {
+  let result = null
+  switch (precompiled.opcodeOrAddress) {
+    case '0x01': {
+      result = new BN(common.param('gasPrices', 'ecRecover'))
+      break
+    }
+    case '0x02': {
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'sha256Word'))
+        .iaddn(common.param('gasPrices', 'sha256'))
+      break
+    }
+    case '0x03': {
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'ripemd160Word'))
+        .iaddn(common.param('gasPrices', 'ripemd160'))
+      break
+    }
+    case '0x04': {
+      result = toWordSize(new BN(inputs.size))
+        .imuln(common.param('gasPrices', 'identityWord'))
+        .iaddn(common.param('gasPrices', 'identity'))
+      break
+    }
+    case '0x05': {
+      const Gquaddivisor = common.param('gasPrices', 'modexpGquaddivisor')
+      result = getAdjustedExponentLength(new BN(inputs.exponent))
+
+      let maxLen = new BN(inputs.Bsize)
+      const mLen = new BN(inputs.Msize)
+      if (maxLen.lt(mLen)) {
+        maxLen = mLen
+      }
+
+      if (common.gteHardfork('berlin')) {
+        result.imul(multComplexityEIP2565(maxLen)).divn(Gquaddivisor)
+        if (result.ltn(200)) {
+          result = new BN(200)
+        }
+      } else {
+        result.imul(multComplexity(maxLen)).divn(Gquaddivisor)
+      }
+      break
+    }
+    case '0x06': {
+      if (inputs.invalid === '1') {
+        result = new BN(inputs.remaining)
+      } else {
+        result = new BN(common.param('gasPrices', 'ecAdd'))
+      }
+      break
+    }
+    case '0x07': {
+      if (inputs.invalid === '1') {
+        result = new BN(inputs.remaining)
+      } else {
+        result = new BN(common.param('gasPrices', 'ecMul'))
+      }
+      break
+    }
+    case '0x08': {
+      const inputDataSize = Math.floor(parseInt(inputs.size || 0) / 192)
+      result = new BN(
+        common.param('gasPrices', 'ecPairing') +
+          inputDataSize * common.param('gasPrices', 'ecPairingWord'),
+      )
+      break
+    }
+    case '0x09': {
+      result = new BN(common.param('gasPrices', 'blake2Round'))
+      result.imul(new BN(inputs.rounds))
+      break
+    }
+    default:
+      return 'Missing precompiled'
+  }
+
+  return result.toString()
 }
 
 /*

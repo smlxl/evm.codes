@@ -32,7 +32,7 @@ The Opcodes reference table relies on the [MDX](https://mdxjs.com/) powered [doc
 
 The dynamic gas fee calculation is handled by the following pieces of code:
 
-1. [opcodes.json](../opcodes.json) defines the user input metadata in `dynamicFee` section of the opcodes, where each field is represented by a `number` or `boolean` with their corresponding labels. The app then builds the gas calculation UI form dynamically.
+1. [opcodes.json](../opcodes.json) defines the user input metadata in `dynamicFee` section of the opcodes, where each field is represented by a `number` or `boolean` with their corresponding labels. The app then builds the gas calculation UI form dynamically. The same happens for the precompiled contracts with [precompiled.json](../precompiled.json).
 
 1. The actual gas calculation is performed by the [util/gas.ts#calculateDynamicFee](../util/gas.ts) based on the selected [EthereumJS Common](https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common) object, via the get `param` method.
 

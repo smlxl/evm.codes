@@ -1,5 +1,4 @@
 import React, {
-  ChangeEvent,
   useState,
   useRef,
   useEffect,
@@ -11,12 +10,17 @@ import React, {
 } from 'react'
 
 import cn from 'classnames'
+import { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
-import { getTargetEvmVersion, compilerSemVer } from 'util/compiler'
+import {
+  getTargetEvmVersion,
+  compilerSemVer,
+  getBytecodeFromMnemonic,
+} from 'util/compiler'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
@@ -49,6 +53,7 @@ const Editor = ({ readOnly = false }: Props) => {
     deployedContractAddress,
     vmError,
     selectedFork,
+    opcodes,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -146,8 +151,27 @@ const Editor = ({ readOnly = false }: Props) => {
     return value
   }
 
+  const highlightMnemonic = (value: string) => {
+    if (!codeType) {
+      return value
+    }
+
+    return value
+      .split('\n')
+      .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
+      .join('\n')
+  }
+
   const handleRun = useCallback(() => {
-    if (codeType === CodeType.Bytecode) {
+    if (codeType === CodeType.Mnemonic) {
+      try {
+        const bytecode = getBytecodeFromMnemonic(code, opcodes)
+        loadInstructions(bytecode)
+        startExecution(bytecode)
+      } catch (error) {
+        log((error as Error).message, 'warn')
+      }
+    } else if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
         log('There should be at least 2 characters per byte.', 'warn')
         return
@@ -170,10 +194,18 @@ const Editor = ({ readOnly = false }: Props) => {
         })
       }
     }
-  }, [code, codeType, selectedFork, loadInstructions, log, startExecution])
+  }, [
+    code,
+    codeType,
+    opcodes,
+    selectedFork,
+    loadInstructions,
+    log,
+    startExecution,
+  ])
 
-  const handleCodeTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
+  const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
+    const value = option.value
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
 
@@ -195,6 +227,7 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [compiling, code])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
+  const isMnemonic = useMemo(() => codeType === CodeType.Mnemonic, [codeType])
 
   return (
     <div className="bg-gray-100 dark:bg-black-700 rounded-lg">
@@ -219,7 +252,13 @@ const Editor = ({ readOnly = false }: Props) => {
               value={code}
               readOnly={readOnly}
               onValueChange={handleCodeChange}
-              highlight={isBytecode ? highlightBytecode : highlightCode}
+              highlight={
+                isBytecode
+                  ? highlightBytecode
+                  : isMnemonic
+                  ? highlightMnemonic
+                  : highlightCode
+              }
               tabSize={4}
               className={cn('code-editor', {
                 'with-numbers': !isBytecode,

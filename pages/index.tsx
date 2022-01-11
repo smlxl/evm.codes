@@ -1,19 +1,20 @@
 import fs from 'fs'
 import path from 'path'
 
+import { useContext } from 'react'
+
 import matter from 'gray-matter'
 import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
-import { IOpcodeDocs, IOpcodeGasDocs, IOpcodeDocMeta } from 'types'
+import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
-import { GITHUB_REPO_URL } from 'util/constants'
+import { EthereumContext } from 'context/ethereumContext'
 
+import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
-import { H1, H2, Container, Button } from 'components/ui'
-
-const docsDir = 'docs/opcodes'
+import { H1, Container } from 'components/ui'
 
 const { serverRuntimeConfig } = getConfig()
 
@@ -21,9 +22,11 @@ const HomePage = ({
   opcodeDocs,
   gasDocs,
 }: {
-  opcodeDocs: IOpcodeDocs
-  gasDocs: IOpcodeGasDocs
+  opcodeDocs: IItemDocs
+  gasDocs: IGasDocs
 }) => {
+  const { opcodes } = useContext(EthereumContext)
+
   return (
     <>
       <Container>
@@ -35,17 +38,16 @@ const HomePage = ({
 
       <section className="py-10 md:py-20 bg-gray-50 dark:bg-black-700">
         <Container>
-          <ReferenceTable opcodeDocs={opcodeDocs} gasDocs={gasDocs} />
+          <ReferenceTable
+            reference={opcodes}
+            itemDocs={opcodeDocs}
+            gasDocs={gasDocs}
+          />
         </Container>
       </section>
 
       <section className="pt-20 pb-10 text-center">
-        <Container>
-          <H2 className="mb-10">Have ideas to make evm.codes better?</H2>
-          <Button external href={GITHUB_REPO_URL}>
-            Contribute on GitHub
-          </Button>
-        </Container>
+        <ContributeBox />
       </section>
     </>
   )
@@ -56,11 +58,11 @@ HomePage.getLayout = function getLayout(page: NextPage) {
 }
 
 export const getStaticProps = async () => {
-  const docsPath = path.join(serverRuntimeConfig.APP_ROOT, docsDir)
+  const docsPath = path.join(serverRuntimeConfig.APP_ROOT, 'docs/opcodes')
   const docs = fs.readdirSync(docsPath)
 
-  const opcodeDocs: IOpcodeDocs = {}
-  const gasDocs: IOpcodeGasDocs = {}
+  const opcodeDocs: IItemDocs = {}
+  const gasDocs: IGasDocs = {}
 
   await Promise.all(
     docs.map(async (doc) => {
@@ -86,7 +88,7 @@ export const getStaticProps = async () => {
             'utf-8',
           )
           const { data, content } = matter(markdownWithMeta)
-          const meta = data as IOpcodeDocMeta
+          const meta = data as IDocMeta
           const mdxSource = await serialize(content)
 
           opcodeDocs[opcode] = {

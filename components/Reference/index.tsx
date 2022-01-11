@@ -12,7 +12,7 @@ import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
+import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -20,26 +20,30 @@ import { findMatchingForkName } from 'util/gas'
 
 import { Button, Icon } from 'components/ui'
 
-import tableData from './data'
+import tableColumns from './columns'
 import DocRow from './DocRow'
 import Filters from './Filters'
 import Header from './Header'
 
 type CustomHeaderGroup = {
   className?: string
-} & HeaderGroup<IOpcode>
+} & HeaderGroup<IReferenceItem>
 
 const ReferenceTable = ({
-  opcodeDocs,
+  itemDocs,
   gasDocs,
+  reference,
+  isPrecompiled = false,
 }: {
-  opcodeDocs: IOpcodeDocs
-  gasDocs: IOpcodeGasDocs
+  itemDocs: IItemDocs
+  gasDocs: IGasDocs
+  reference: IReferenceItem[]
+  isPrecompiled?: boolean
 }) => {
   const router = useRouter()
-  const { opcodes, forks, selectedFork } = useContext(EthereumContext)
-  const data = useMemo(() => opcodes, [opcodes])
-  const columns = useMemo(() => tableData, [])
+  const { forks, selectedFork } = useContext(EthereumContext)
+  const data = useMemo(() => reference, [reference])
+  const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
   const { width: screenWidth } = useWindowSize()
@@ -68,11 +72,11 @@ const ReferenceTable = ({
     [screenWidth, visibleColumns],
   )
 
-  // Focus and expand anchored opcode
+  // Focus and expand anchored reference
   useEffect(() => {
-    if (opcodes && rowRefs?.current) {
-      const idx = opcodes.findIndex((opcode) => {
-        const re = new RegExp(`/#${opcode.code}`, 'gi')
+    if (reference && rowRefs?.current) {
+      const idx = reference.findIndex((referenceItem) => {
+        const re = new RegExp(`/#${referenceItem.opcodeOrAddress}`, 'gi')
         return router.asPath.match(re)
       })
 
@@ -85,7 +89,7 @@ const ReferenceTable = ({
         }, 300)
       }
     }
-  }, [opcodes, router.asPath])
+  }, [reference, router.asPath])
 
   const renderExpandButton = () => {
     return (
@@ -108,15 +112,15 @@ const ReferenceTable = ({
     )
   }
 
-  if (opcodes.length === 0) {
+  if (reference.length === 0) {
     return null
   }
 
   return (
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
-        <Header />
-        <Filters onSetFilter={setFilter} />
+        <Header isPrecompiled={isPrecompiled} />
+        <Filters onSetFilter={setFilter} isPrecompiled={isPrecompiled} />
       </div>
 
       <table {...getTableProps()} className="w-full table-fixed">
@@ -162,7 +166,9 @@ const ReferenceTable = ({
                 colSpan={colSpan}
                 className="text-center pt-20 pb-4 text-lg text-gray-400 dark:text-gray-600"
               >
-                No opcodes found
+                {!isPrecompiled
+                  ? 'No opcodes found'
+                  : 'No precompiled contracts found'}
               </td>
             </tr>
           )}
@@ -170,13 +176,13 @@ const ReferenceTable = ({
           {rows.map((row) => {
             prepareRow(row)
 
-            const { code } = row.values
+            const { opcodeOrAddress } = row.values
             const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === rowId
             const dynamicFeeForkName = findMatchingForkName(
               forks,
-              Object.keys(opcodes[rowId]?.dynamicFee || {}),
+              Object.keys(reference[rowId]?.dynamicFee || {}),
               selectedFork,
             )
 
@@ -234,9 +240,9 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        opcodeDoc={opcodeDocs[code]}
-                        opcode={opcodes[rowId]}
-                        gasDocs={gasDocs[code]}
+                        itemDoc={itemDocs[opcodeOrAddress]}
+                        referenceItem={reference[rowId]}
+                        gasDocs={gasDocs[opcodeOrAddress]}
                         dynamicFeeForkName={dynamicFeeForkName}
                       />
                     </td>

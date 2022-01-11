@@ -7,11 +7,11 @@ const filter = (rows: Row[], id: string, filterValue: string) => {
   return rows.filter((row: any) => row.original[id].match(re))
 }
 
-const tableData = [
+const columns = (isPrecompiled: boolean) => [
   {
-    Header: 'Opcode',
-    accessor: 'code',
-    className: 'uppercase',
+    Header: !isPrecompiled ? 'Opcode' : 'Address',
+    accessor: 'opcodeOrAddress',
+    className: !isPrecompiled ? 'uppercase' : undefined,
     filter,
     width: 48,
   },
@@ -19,15 +19,15 @@ const tableData = [
     Header: 'Name',
     accessor: 'name',
     filter,
-    width: 128,
+    width: 80,
   },
   {
     Header: 'Minimum Gas',
     accessor: 'minimumFee',
-    width: 96,
+    width: 50,
   },
   {
-    Header: 'Stack Input',
+    Header: !isPrecompiled ? 'Stack Input' : 'Input',
     accessor: 'input',
     Cell: ({ value }: { value: string }) => (
       <StackBox
@@ -39,7 +39,7 @@ const tableData = [
     className: 'hidden lg:table-cell',
   },
   {
-    Header: 'Stack Ouput',
+    Header: !isPrecompiled ? 'Stack Ouput' : 'Output',
     accessor: 'output',
     Cell: ({ value }: { value: string }) => (
       <StackBox
@@ -47,7 +47,7 @@ const tableData = [
         className="text-xs border-indigo-300 dark:border-indigo-900 text-gray-800 dark:text-gray-200"
       />
     ),
-    width: 200,
+    width: 100,
     className: 'hidden lg:table-cell',
   },
   {
@@ -57,4 +57,4 @@ const tableData = [
   },
 ]
 
-export default tableData
+export default columns

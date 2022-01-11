@@ -1,28 +1,32 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import debounce from 'lodash.debounce'
 import Select, { OnChangeValue } from 'react-select'
 
 import { Input } from 'components/ui'
 
-const filterByOptions = [
-  { label: 'Opcode', value: 'code' },
-  { label: 'Name', value: 'name' },
-  { label: 'Description', value: 'description' },
-]
-
 const debounceTimeout = 100 // ms
 
 type Props = {
   onSetFilter: (columnId: string, value: string) => void
+  isPrecompiled?: boolean
 }
 
-const Filters = ({ onSetFilter }: Props) => {
+const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [searchFilter, setSearchFilter] = useState({
     value: 'name',
     label: 'Name',
   })
+
+  const filterByOptions = useMemo(
+    () => [
+      { label: !isPrecompiled ? 'Opcode' : 'Address', value: 'code' },
+      { label: 'Name', value: 'name' },
+      { label: 'Description', value: 'description' },
+    ],
+    [isPrecompiled],
+  )
 
   const handleKeywordChange = debounce(
     (value: string) => onSetFilter(searchFilter.value, value),

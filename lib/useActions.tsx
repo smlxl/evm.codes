@@ -19,6 +19,16 @@ const useActions = () => {
       icon: <Icon name="home-2-line" />,
     },
     {
+      id: 'precompiled',
+      name: 'Precompiled',
+      shortcut: ['a'],
+      keywords: 'precompiled contracts',
+      section: 'Navigation',
+      subtitle: 'Precompiled contracts reference',
+      perform: () => router.push('/precompiled'),
+      icon: <Icon name="information-line" />,
+    },
+    {
       id: 'playground',
       name: 'Playground',
       shortcut: ['p'],
