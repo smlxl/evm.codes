@@ -30,7 +30,10 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
  * @param opcodes The IReferenceItem array of opcodes
  * @returns The string bytecode
  */
-export const getBytecodeFromMnemonic = (code: string, opcodes: IReferenceItem[]) => {
+export const getBytecodeFromMnemonic = (
+  code: string,
+  opcodes: IReferenceItem[],
+) => {
   let bytecode = ''
   const lines = code.split('\n')
 

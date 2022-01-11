@@ -37,7 +37,12 @@ const docComponents = {
 
 const API_DYNAMIC_FEE_DOC_URL = '/api/getDynamicDoc'
 
-const DocRow = ({ itemDoc, referenceItem, gasDocs, dynamicFeeForkName }: Props) => {
+const DocRow = ({
+  itemDoc,
+  referenceItem,
+  gasDocs,
+  dynamicFeeForkName,
+}: Props) => {
   const { common, forks, selectedFork } = useContext(EthereumContext)
   const [dynamicFeeDocMdx, setDynamicFeeDocMdx] = useState()
 
@@ -109,7 +114,10 @@ const DocRow = ({ itemDoc, referenceItem, gasDocs, dynamicFeeForkName }: Props) 
             </div>
 
             {dynamicFeeForkName && (
-              <DynamicFee referenceItem={referenceItem} fork={dynamicFeeForkName} />
+              <DynamicFee
+                referenceItem={referenceItem}
+                fork={dynamicFeeForkName}
+              />
             )}
           </div>
         </>
