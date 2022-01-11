@@ -7,7 +7,7 @@ import matter from 'gray-matter'
 import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
-import { IOpcodeDocs, IOpcodeGasDocs, IOpcodeDocMeta } from 'types'
+import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -22,8 +22,8 @@ const HomePage = ({
   opcodeDocs,
   gasDocs,
 }: {
-  opcodeDocs: IOpcodeDocs
-  gasDocs: IOpcodeGasDocs
+  opcodeDocs: IItemDocs
+  gasDocs: IGasDocs
 }) => {
   const { opcodes } = useContext(EthereumContext)
 
@@ -39,8 +39,8 @@ const HomePage = ({
       <section className="py-10 md:py-20 bg-gray-50 dark:bg-black-700">
         <Container>
           <ReferenceTable
-            opcodes={opcodes}
-            opcodeDocs={opcodeDocs}
+            reference={opcodes}
+            itemDocs={opcodeDocs}
             gasDocs={gasDocs}
           />
         </Container>
@@ -61,8 +61,8 @@ export const getStaticProps = async () => {
   const docsPath = path.join(serverRuntimeConfig.APP_ROOT, 'docs/opcodes')
   const docs = fs.readdirSync(docsPath)
 
-  const opcodeDocs: IOpcodeDocs = {}
-  const gasDocs: IOpcodeGasDocs = {}
+  const opcodeDocs: IItemDocs = {}
+  const gasDocs: IGasDocs = {}
 
   await Promise.all(
     docs.map(async (doc) => {
@@ -88,7 +88,7 @@ export const getStaticProps = async () => {
             'utf-8',
           )
           const { data, content } = matter(markdownWithMeta)
-          const meta = data as IOpcodeDocMeta
+          const meta = data as IDocMeta
           const mdxSource = await serialize(content)
 
           opcodeDocs[opcode] = {

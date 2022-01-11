@@ -1,7 +1,7 @@
 import Common from '@ethereumjs/common'
 import { Hardfork } from '@ethereumjs/common/dist/types'
 import { setLengthRight, BN } from 'ethereumjs-util'
-import { IOpcode } from 'types'
+import { IReferenceItem } from 'types'
 
 const namespaces = ['gasPrices']
 const reFences = /{(.+)}/
@@ -163,11 +163,11 @@ function callCost(common: Common, inputs: any): BN {
 }
 
 export const calculateDynamicFee = (
-  opcodeOrPrecompiled: IOpcode,
+  opcodeOrPrecompiled: IReferenceItem,
   common: Common,
   inputs: any,
 ) => {
-  if (opcodeOrPrecompiled.code.startsWith('0x')) {
+  if (opcodeOrPrecompiled.opcodeOrAddress.startsWith('0x')) {
     return calculatePrecompiledDynamicFee(opcodeOrPrecompiled, common, inputs)
   } else {
     return calculateOpcodeDynamicFee(opcodeOrPrecompiled, common, inputs)
@@ -177,7 +177,7 @@ export const calculateDynamicFee = (
 /*
  * Calculates dynamic gas fee
  *
- * @param opcode The IOpcode
+ * @param opcode The IReferenceItem
  * @param common The Common object
  * @param inputs The Object of user inputs based on the `dynamicFee` inputs
  *                 in the opcodes.json. If empty, we want to return the minimum fee for that code.
@@ -188,12 +188,12 @@ export const calculateDynamicFee = (
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/opcodes/functions.ts
  */
 export const calculateOpcodeDynamicFee = (
-  opcode: IOpcode,
+  opcode: IReferenceItem,
   common: Common,
   inputs: any,
 ) => {
   let result = null
-  switch (opcode.code) {
+  switch (opcode.opcodeOrAddress) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
       const gasPrice = common.param('gasPrices', 'expByte')
@@ -278,7 +278,7 @@ export const calculateOpcodeDynamicFee = (
     case 'a2':
     case 'a3':
     case 'a4': {
-      const topicsCount = new BN(opcode.code, 'hex').isubn(0xa0)
+      const topicsCount = new BN(opcode.opcodeOrAddress, 'hex').isubn(0xa0)
       const expansionCost = memoryExtensionCost(
         new BN(inputs.offset),
         new BN(inputs.size),
@@ -402,7 +402,7 @@ function multComplexityEIP2565(x: BN): BN {
 /*
  * Calculates dynamic gas fee for precompiled contracts
  *
- * @param opcode The IOpcode
+ * @param opcode The IReferenceItem
  * @param common The Common object
  * @param inputs The Object of user inputs based on the `dynamicFee` inputs
  *                 in the precompiled.json. If empty, we want to return the minimum fee for that code.
@@ -413,12 +413,12 @@ function multComplexityEIP2565(x: BN): BN {
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/precompiles/index.ts
  */
 export const calculatePrecompiledDynamicFee = (
-  precompiled: IOpcode,
+  precompiled: IReferenceItem,
   common: Common,
   inputs: any,
 ) => {
   let result = null
-  switch (precompiled.code) {
+  switch (precompiled.opcodeOrAddress) {
     case '0x01': {
       result = new BN(common.param('gasPrices', 'ecRecover'))
       break

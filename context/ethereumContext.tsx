@@ -14,8 +14,8 @@ import { BN, Address, Account } from 'ethereumjs-util'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
-  IOpcode,
-  IOpcodeMetaList,
+  IReferenceItem,
+  IReferenceItemMetaList,
   IInstruction,
   IStorage,
   IExecutionState,
@@ -47,8 +47,8 @@ type ContextProps = {
   forks: Hardfork[]
   selectedChain: IChain | undefined
   selectedFork: Hardfork | undefined
-  opcodes: IOpcode[]
-  precompiled: IOpcode[]
+  opcodes: IReferenceItem[]
+  precompiled: IReferenceItem[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
@@ -111,8 +111,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [forks, setForks] = useState<Hardfork[]>([])
   const [selectedChain, setSelectedChain] = useState<IChain>()
   const [selectedFork, setSelectedFork] = useState<Hardfork>()
-  const [opcodes, setOpcodes] = useState<IOpcode[]>([])
-  const [precompiled, setPrecompiled] = useState<IOpcode[]>([])
+  const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
+  const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -409,14 +409,14 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _loadOpcodes = () => {
-    const opcodes: IOpcode[] = []
+    const opcodes: IReferenceItem[] = []
 
     vm.getActiveOpcodes().forEach((op: Opcode) => {
-      const meta = OpcodesMeta as IOpcodeMetaList
+      const meta = OpcodesMeta as IReferenceItemMetaList
       const opcode = {
         ...meta[toHex(op.code)],
         ...{
-          code: toHex(op.code),
+          opcodeOrAddress: toHex(op.code),
           staticFee: op.fee,
           minimumFee: 0,
           name: op.fullName,
@@ -433,15 +433,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _loadPrecompiled = () => {
-    const precompiled: IOpcode[] = []
+    const precompiled: IReferenceItem[] = []
 
     getActivePrecompiles(common).forEach((address: Address) => {
-      const meta = PrecompiledMeta as IOpcodeMetaList
+      const meta = PrecompiledMeta as IReferenceItemMetaList
       const addressString = '0x' + address.buf.toString('hex', 19)
       const contract = {
         ...meta[addressString],
         ...{
-          code: addressString,
+          opcodeOrAddress: addressString,
           minimumFee: 0,
           name: meta[addressString].name,
         },

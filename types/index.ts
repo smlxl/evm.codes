@@ -4,8 +4,8 @@ declare global {
   }
 }
 
-export interface IOpcode {
-  code: string
+export interface IReferenceItem {
+  opcodeOrAddress: string
   name: string | undefined
   input: string
   output: string
@@ -24,15 +24,15 @@ export interface IOpcode {
   }
 }
 
-export interface IOpcodeMeta {
+export interface IReferenceItemMeta {
   name?: string
   input: string
   output: string
   description: string
 }
 
-export interface IOpcodeMetaList {
-  [code: string]: IOpcodeMeta
+export interface IReferenceItemMetaList {
+  [opcodeOrAddress: string]: IReferenceItemMeta
 }
 
 export interface IInstruction {
@@ -63,24 +63,24 @@ export interface IChain {
   name: string
 }
 
-export interface IOpcodeDocMeta {
+export interface IDocMeta {
   fork: string
   group: string
 }
 
-export interface IOpcodeDoc {
-  meta: IOpcodeDocMeta
+export interface IItemDoc {
+  meta: IDocMeta
   mdxSource: any
 }
 
-export interface IOpcodeDocs {
-  [opcode: string]: IOpcodeDoc
+export interface IItemDocs {
+  [opcodeOrAddress: string]: IItemDoc
 }
 
-export interface IOpcodeGasDoc {
+export interface IGasDoc {
   [fork: string]: string
 }
 
-export interface IOpcodeGasDocs {
-  [opcode: string]: IOpcodeGasDoc
+export interface IGasDocs {
+  [opcodeOrAddress: string]: IGasDoc
 }

@@ -10,7 +10,7 @@ const filter = (rows: Row[], id: string, filterValue: string) => {
 const columns = (isPrecompiled: boolean) => [
   {
     Header: !isPrecompiled ? 'Opcode' : 'Address',
-    accessor: 'code',
+    accessor: 'opcodeOrAddress',
     className: !isPrecompiled ? 'uppercase' : undefined,
     filter,
     width: 48,

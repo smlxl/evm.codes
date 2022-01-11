@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 
 import debounce from 'lodash.debounce'
-import { IOpcode } from 'types'
+import { IReferenceItem } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -13,7 +13,7 @@ import { H2 } from 'components/ui/Doc'
 const debounceTimeout = 100 // ms
 
 type Props = {
-  opcode: IOpcode
+  referenceItem: IReferenceItem
   fork: string
 }
 
@@ -21,8 +21,8 @@ type InputValue = {
   [name: string]: string | undefined
 }
 
-const DynamicFee = ({ opcode, fork }: Props) => {
-  const { dynamicFee } = opcode
+const DynamicFee = ({ referenceItem, fork }: Props) => {
+  const { dynamicFee } = referenceItem
   const forkInputs = dynamicFee ? dynamicFee[fork].inputs : null
 
   const { common } = useContext(EthereumContext)
@@ -32,7 +32,7 @@ const DynamicFee = ({ opcode, fork }: Props) => {
   const handleCompute = debounce((inputs) => {
     if (common) {
       try {
-        setResult(calculateDynamicFee(opcode, common, inputs))
+        setResult(calculateDynamicFee(referenceItem, common, inputs))
       } catch (error) {
         console.error(error)
       }

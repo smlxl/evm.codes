@@ -12,7 +12,7 @@ import useWindowSize from 'lib/useWindowResize'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IOpcode, IOpcodeDocs, IOpcodeGasDocs } from 'types'
+import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -27,22 +27,22 @@ import Header from './Header'
 
 type CustomHeaderGroup = {
   className?: string
-} & HeaderGroup<IOpcode>
+} & HeaderGroup<IReferenceItem>
 
 const ReferenceTable = ({
-  opcodeDocs,
+  itemDocs,
   gasDocs,
-  opcodes,
+  reference,
   isPrecompiled = false,
 }: {
-  opcodeDocs: IOpcodeDocs
-  gasDocs: IOpcodeGasDocs
-  opcodes: IOpcode[]
+  itemDocs: IItemDocs
+  gasDocs: IGasDocs
+  reference: IReferenceItem[]
   isPrecompiled?: boolean
 }) => {
   const router = useRouter()
   const { forks, selectedFork } = useContext(EthereumContext)
-  const data = useMemo(() => opcodes, [opcodes])
+  const data = useMemo(() => reference, [reference])
   const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
@@ -72,11 +72,11 @@ const ReferenceTable = ({
     [screenWidth, visibleColumns],
   )
 
-  // Focus and expand anchored opcode
+  // Focus and expand anchored reference
   useEffect(() => {
-    if (opcodes && rowRefs?.current) {
-      const idx = opcodes.findIndex((opcode) => {
-        const re = new RegExp(`/#${opcode.code}`, 'gi')
+    if (reference && rowRefs?.current) {
+      const idx = reference.findIndex((referenceItem) => {
+        const re = new RegExp(`/#${referenceItem.opcodeOrAddress}`, 'gi')
         return router.asPath.match(re)
       })
 
@@ -89,7 +89,7 @@ const ReferenceTable = ({
         }, 300)
       }
     }
-  }, [opcodes, router.asPath])
+  }, [reference, router.asPath])
 
   const renderExpandButton = () => {
     return (
@@ -112,7 +112,7 @@ const ReferenceTable = ({
     )
   }
 
-  if (opcodes.length === 0) {
+  if (reference.length === 0) {
     return null
   }
 
@@ -176,13 +176,13 @@ const ReferenceTable = ({
           {rows.map((row) => {
             prepareRow(row)
 
-            const { code } = row.values
+            const { opcodeOrAddress } = row.values
             const rowId = parseInt(row.id)
             // @ts-ignore: Waiting for 8.x of react-table to have better types
             const isExpanded = row.isExpanded || focusedOpcode === rowId
             const dynamicFeeForkName = findMatchingForkName(
               forks,
-              Object.keys(opcodes[rowId]?.dynamicFee || {}),
+              Object.keys(reference[rowId]?.dynamicFee || {}),
               selectedFork,
             )
 
@@ -240,9 +240,9 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        opcodeDoc={opcodeDocs[code]}
-                        opcode={opcodes[rowId]}
-                        gasDocs={gasDocs[code]}
+                        itemDoc={itemDocs[opcodeOrAddress]}
+                        referenceItem={reference[rowId]}
+                        gasDocs={gasDocs[opcodeOrAddress]}
                         dynamicFeeForkName={dynamicFeeForkName}
                       />
                     </td>

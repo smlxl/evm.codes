@@ -1,4 +1,4 @@
-import { IOpcode } from 'types'
+import { IReferenceItem } from 'types'
 
 export const compilerSemVer = 'v0.8.10'
 export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
@@ -27,10 +27,10 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
  * Gets bytecode from mnemonic
  *
  * @param code The string code
- * @param opcodes The IOpcode array of opcodes
+ * @param opcodes The IReferenceItem array of opcodes
  * @returns The string bytecode
  */
-export const getBytecodeFromMnemonic = (code: string, opcodes: IOpcode[]) => {
+export const getBytecodeFromMnemonic = (code: string, opcodes: IReferenceItem[]) => {
   let bytecode = ''
   const lines = code.split('\n')
 
@@ -51,7 +51,7 @@ export const getBytecodeFromMnemonic = (code: string, opcodes: IOpcode[]) => {
         throw new Error('Expect PUSH instruction followed by a number: ' + line)
       }
 
-      const code = opcodes.find((opcode: IOpcode) => {
+      const code = opcodes.find((opcode: IReferenceItem) => {
         return opcode.name === parts[0]
       })
 
@@ -69,19 +69,19 @@ export const getBytecodeFromMnemonic = (code: string, opcodes: IOpcode[]) => {
       }
 
       // TODO: Add number checks
-      bytecode += code.code
+      bytecode += code.opcodeOrAddress
       bytecode =
         bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') +
         parts[1]
     } else {
-      const code = opcodes.find((opcode: IOpcode) => {
+      const code = opcodes.find((opcode: IReferenceItem) => {
         return opcode.name === line
       })
       if (typeof code === 'undefined') {
         throw new Error('Unknown mnemonic: ' + line)
       }
 
-      bytecode += code.code
+      bytecode += code.opcodeOrAddress
     }
   }
 

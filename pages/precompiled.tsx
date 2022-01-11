@@ -7,7 +7,7 @@ import matter from 'gray-matter'
 import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
-import { IOpcodeDocs, IOpcodeGasDocs, IOpcodeDocMeta } from 'types'
+import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -20,11 +20,11 @@ const { serverRuntimeConfig } = getConfig()
 
 // It seems the memory expansion computation and constants did not change since frontier, but we have to keep an eye on new fork to keep this up to date
 const PrecompiledPage = ({
-  opcodeDocs,
+  precompiledDocs,
   gasDocs,
 }: {
-  opcodeDocs: IOpcodeDocs
-  gasDocs: IOpcodeGasDocs
+  precompiledDocs: IItemDocs
+  gasDocs: IGasDocs
 }) => {
   const { precompiled } = useContext(EthereumContext)
 
@@ -64,8 +64,8 @@ const PrecompiledPage = ({
         <Container>
           <ReferenceTable
             isPrecompiled
-            opcodes={precompiled}
-            opcodeDocs={opcodeDocs}
+            reference={precompiled}
+            itemDocs={precompiledDocs}
             gasDocs={gasDocs}
           />
         </Container>
@@ -86,13 +86,13 @@ export const getStaticProps = async () => {
   const docsPath = path.join(serverRuntimeConfig.APP_ROOT, 'docs/precompiled')
   const docs = fs.readdirSync(docsPath)
 
-  const opcodeDocs: IOpcodeDocs = {}
-  const gasDocs: IOpcodeGasDocs = {}
+  const precompiledDocs: IItemDocs = {}
+  const gasDocs: IGasDocs = {}
 
   await Promise.all(
     docs.map(async (doc) => {
       const stat = fs.statSync(path.join(docsPath, doc))
-      const opcode = path.parse(doc).name.toLowerCase()
+      const address = path.parse(doc).name.toLowerCase()
 
       try {
         if (stat?.isDirectory()) {
@@ -102,10 +102,10 @@ export const getStaticProps = async () => {
               'utf-8',
             )
             const forkName = path.parse(fileName).name
-            if (!(opcode in gasDocs)) {
-              gasDocs[opcode] = {}
+            if (!(address in gasDocs)) {
+              gasDocs[address] = {}
             }
-            gasDocs[opcode][forkName] = markdown
+            gasDocs[address][forkName] = markdown
           })
         } else {
           const markdownWithMeta = fs.readFileSync(
@@ -113,10 +113,10 @@ export const getStaticProps = async () => {
             'utf-8',
           )
           const { data, content } = matter(markdownWithMeta)
-          const meta = data as IOpcodeDocMeta
+          const meta = data as IDocMeta
           const mdxSource = await serialize(content)
 
-          opcodeDocs[opcode] = {
+          precompiledDocs[address] = {
             meta,
             mdxSource,
           }
@@ -128,7 +128,7 @@ export const getStaticProps = async () => {
   )
   return {
     props: {
-      opcodeDocs,
+      precompiledDocs,
       gasDocs,
     },
   }
