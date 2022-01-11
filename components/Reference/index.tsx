@@ -119,7 +119,7 @@ const ReferenceTable = ({
   return (
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
-        <Header />
+        <Header isPrecompiled={isPrecompiled} />
         <Filters onSetFilter={setFilter} isPrecompiled={isPrecompiled} />
       </div>
 
