@@ -50,7 +50,7 @@ export const TH: React.FC<Props> = ({ children }) => {
   return (
     <th
       className={cn(
-        'py-1 px-2 border-indigo-200 dark:border-black-400 text-gray-800 dark:text-gray-400 text-xs font-medium break-all',
+        'py-1 px-2 border-indigo-200 dark:border-black-400 text-gray-800 dark:text-gray-400 text-tiny font-medium break-all',
         {
           border: children !== EMPTY_MARK,
         },
@@ -64,7 +64,7 @@ export const TH: React.FC<Props> = ({ children }) => {
 export const TD: React.FC<Props> = ({ children }) => (
   <td
     className={cn(
-      'py-1 px-2 border-indigo-200 dark:border-black-400 text-xs font-normal break-all',
+      'py-1 px-2 border-indigo-200 dark:border-black-400 text-tiny font-normal break-all',
       {
         border: children !== EMPTY_MARK,
       },
@@ -82,7 +82,7 @@ export const A: React.FC<LinkProps> = ({ children, href }) => (
 
 export const Pre: React.FC<Props> = ({ children }) => (
   <div>
-    <pre className="inline-block whitespace-pre-wrap p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
+    <pre className="text-tiny inline-block whitespace-pre-wrap p-5 mb-4 bg-indigo-100 dark:bg-black-500 rounded">
       {children}
     </pre>
   </div>
