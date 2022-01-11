@@ -10,7 +10,8 @@ import React, {
 } from 'react'
 
 import cn from 'classnames'
-import { OnChangeValue } from 'react-select'
+import { BN } from 'ethereumjs-util'
+import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -25,12 +26,13 @@ import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
+import { Button, Input } from 'components/ui'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { IConsoleOutput, CodeType } from './types'
+import { IConsoleOutput, CodeType, ValueCurrency } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -43,6 +45,11 @@ type SCEditorRef = {
 const editorHeight = 350
 const consoleHeight = 350
 
+const currencyOptions = Object.keys(ValueCurrency).map((value) => ({
+  value: value,
+  label: value,
+}))
+
 const Editor = ({ readOnly = false }: Props) => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
 
@@ -50,6 +57,7 @@ const Editor = ({ readOnly = false }: Props) => {
     deployContract,
     loadInstructions,
     startExecution,
+    startTransaction,
     deployedContractAddress,
     vmError,
     selectedFork,
@@ -82,7 +90,7 @@ const Editor = ({ readOnly = false }: Props) => {
     deployContract(byteCode).then((tx) => {
       loadInstructions(byteCode)
       setIsCompiling(false)
-      startExecution(byteCode, tx)
+      startTransaction(byteCode, tx)
     })
   }
 
@@ -163,11 +171,15 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const handleRun = useCallback(() => {
+    // console.log(document.getElementById('calldata').value)
+    // log(document.getElementById('calldata').value)
+    // log('bla', 'warn')
+
     if (codeType === CodeType.Mnemonic) {
       try {
         const bytecode = getBytecodeFromMnemonic(code, opcodes)
         loadInstructions(bytecode)
-        startExecution(bytecode)
+        startExecution(bytecode, new BN(0), Buffer.from(''))
       } catch (error) {
         log((error as Error).message, 'warn')
       }
@@ -181,10 +193,23 @@ const Editor = ({ readOnly = false }: Props) => {
         return
       }
       loadInstructions(code)
-      startExecution(code)
+      startExecution(code, new BN(0), Buffer.from(''))
     } else {
+      if (document.getElementById('calldata').value !== '') {
+        setOutput([
+          ...output,
+          {
+            type: 'warn',
+            message:
+              'Calldata value is ignored when compiling with ' + codeType,
+          },
+          { type: 'info', message: 'Starting compilation...' },
+        ])
+      } else {
+        log('Starting compilation...')
+      }
+
       setIsCompiling(true)
-      log('Starting compilation...')
 
       if (solcWorkerRef?.current) {
         solcWorkerRef.current.postMessage({
@@ -198,6 +223,7 @@ const Editor = ({ readOnly = false }: Props) => {
     code,
     codeType,
     opcodes,
+    output,
     selectedFork,
     loadInstructions,
     log,
@@ -235,9 +261,7 @@ const Editor = ({ readOnly = false }: Props) => {
         <div className="w-full md:w-1/2">
           <div className="border-b border-gray-200 dark:border-black-500 flex items-center px-6 h-14 md:border-r">
             <Header
-              isRunDisabled={isRunDisabled}
               onCodeTypeChange={handleCodeTypeChange}
-              onRun={handleRun}
               codeType={codeType}
             />
           </div>
@@ -264,6 +288,37 @@ const Editor = ({ readOnly = false }: Props) => {
                 'with-numbers': !isBytecode,
               })}
             />
+          </div>
+
+          <div className="flex items-center gap-1 justify-end w-full xl:w-auto">
+            <Input
+              id="calldata"
+              placeholder={`Calldata (hex string)`}
+              className="bg-gray-100 dark:bg-black-500"
+            />
+
+            <Input
+              id="value"
+              placeholder={`Value to send`}
+              className="bg-gray-100 dark:bg-black-500"
+            />
+
+            <Select
+              id="valueCurrency"
+              options={currencyOptions}
+              value={currencyOptions}
+              classNamePrefix="select"
+              menuPlacement="auto"
+            />
+
+            <Button
+              onClick={handleRun}
+              disabled={isRunDisabled}
+              size="sm"
+              className="ml-3"
+            >
+              Run
+            </Button>
           </div>
         </div>
 
