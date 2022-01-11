@@ -25,20 +25,20 @@ fork: Frontier
 Reproduce in playground:
 
     // First place the parameters in memory
-    PUSH1 FF // data
+    PUSH1 0xFF // data
     PUSH1 0
     MSTORE
 
     // Do the call
-    PUSH1 20 // retSize
-    PUSH1 20 // retOffset
+    PUSH1 0x20 // retSize
+    PUSH1 0x20 // retOffset
     PUSH1 1 // argsSize
-    PUSH1 1F // argsOffset
+    PUSH1 0x1F // argsOffset
     PUSH1 3 // address
-    PUSH4 FFFFFFFF // gas
+    PUSH4 0xFFFFFFFF // gas
     STATICCALL
 
     // Put the result alone on the stack
     POP
-    PUSH1 20
+    PUSH1 0x20
     MLOAD

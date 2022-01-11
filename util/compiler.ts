@@ -1,3 +1,4 @@
+import { BN } from 'ethereumjs-util'
 import { IReferenceItem } from 'types'
 
 export const compilerSemVer = 'v0.8.10'
@@ -21,6 +22,30 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
     return 'london'
   }
   return forkName
+}
+
+function toHexString(number: string, byteSize: number): string {
+  let parsedNumber = null
+
+  if (number.startsWith('0x') || number.startsWith('0X')) {
+    if (!/^(0x|0X)[0-9a-fA-F]+$/.test(number)) {
+      throw new Error('Not a valid hexadecimal number: ' + number)
+    }
+
+    parsedNumber = new BN(number.substring(2), 'hex')
+  } else {
+    if (!/^[0-9]+$/.test(number)) {
+      throw new Error('Not a valid decimal number: ' + number)
+    }
+
+    parsedNumber = new BN(number)
+  }
+
+  if (parsedNumber.byteLength() > byteSize) {
+    throw new Error('Value is too big for ' + byteSize + ' byte(s): ' + number)
+  }
+
+  return parsedNumber.toString('hex', byteSize * 2)
 }
 
 /**
@@ -63,19 +88,7 @@ export const getBytecodeFromMnemonic = (
       }
 
       const number = parseInt(parts[0].substring(4))
-      const digits = number * 2
-
-      if (parts[1].length > digits) {
-        throw new Error(
-          'Number should have at most ' + digits + ' digits: ' + line,
-        )
-      }
-
-      // TODO: Add number checks
-      bytecode += code.opcodeOrAddress
-      bytecode =
-        bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') +
-        parts[1]
+      bytecode += code.opcodeOrAddress + toHexString(parts[1], number)
     } else {
       const code = opcodes.find((opcode: IReferenceItem) => {
         return opcode.name === line

@@ -39,25 +39,25 @@ Reproduce in playground:
     PUSH1 0
     MSTORE
     PUSH1 1 // Esize
-    PUSH1 20
+    PUSH1 0x20
     MSTORE
     PUSH1 1 // Msize
-    PUSH1 40
+    PUSH1 0x40
     MSTORE
-    PUSH32 08090A0000000000000000000000000000000000000000000000000000000000 // B, E and M
-    PUSH1 60
+    PUSH32 0x08090A0000000000000000000000000000000000000000000000000000000000 // B, E and M
+    PUSH1 0x60
     MSTORE
 
     // Do the call
     PUSH1 1 // retSize
-    PUSH1 9F // retOffset
-    PUSH1 63 // argsSize
+    PUSH1 0x9F // retOffset
+    PUSH1 0x63 // argsSize
     PUSH1 0 // argsOffset
     PUSH1 5 // address
-    PUSH4 FFFFFFFF // gas
+    PUSH4 0xFFFFFFFF // gas
     STATICCALL
 
     // Put the result alone on the stack
     POP
-    PUSH1 80
+    PUSH1 0x80
     MLOAD
