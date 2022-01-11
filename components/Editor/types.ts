@@ -5,7 +5,7 @@ export enum CodeType {
   Mnemonic = 'Mnemonic',
 }
 
-export enum ValueCurrency {
+export enum ValueUnit {
   Wei = 'Wei',
   Gwei = 'Gwei',
   Finney = 'Finney',
