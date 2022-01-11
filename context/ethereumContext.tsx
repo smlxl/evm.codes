@@ -23,7 +23,10 @@ import {
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
-import { calculateDynamicFee, calculatePrecompiledDynamicFee } from 'util/gas'
+import {
+  calculateOpcodeDynamicFee,
+  calculatePrecompiledDynamicFee,
+} from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
@@ -420,7 +423,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         },
       }
 
-      opcode.minimumFee = parseInt(calculateDynamicFee(opcode, common, {}))
+      opcode.minimumFee = parseInt(
+        calculateOpcodeDynamicFee(opcode, common, {}),
+      )
       opcodes.push(opcode)
     })
 

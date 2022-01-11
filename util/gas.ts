@@ -162,6 +162,18 @@ function callCost(common: Common, inputs: any): BN {
   return result
 }
 
+export const calculateDynamicFee = (
+  opcodeOrPrecompiled: IOpcode,
+  common: Common,
+  inputs: any,
+) => {
+  if (opcodeOrPrecompiled.code.startsWith('0x')) {
+    return calculatePrecompiledDynamicFee(opcodeOrPrecompiled, common, inputs)
+  } else {
+    return calculateOpcodeDynamicFee(opcodeOrPrecompiled, common, inputs)
+  }
+}
+
 /*
  * Calculates dynamic gas fee
  *
@@ -175,7 +187,7 @@ function callCost(common: Common, inputs: any): BN {
  * Fee calculation is based on the ethereumjs-vm functions,
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/opcodes/functions.ts
  */
-export const calculateDynamicFee = (
+export const calculateOpcodeDynamicFee = (
   opcode: IOpcode,
   common: Common,
   inputs: any,
@@ -401,12 +413,12 @@ function multComplexityEIP2565(x: BN): BN {
  * See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/vm/src/evm/precompiles/index.ts
  */
 export const calculatePrecompiledDynamicFee = (
-  contract: IOpcode,
+  precompiled: IOpcode,
   common: Common,
   inputs: any,
 ) => {
   let result = null
-  switch (contract.code) {
+  switch (precompiled.code) {
     case '0x01': {
       result = new BN(common.param('gasPrices', 'ecRecover'))
       break
@@ -479,7 +491,7 @@ export const calculatePrecompiledDynamicFee = (
       break
     }
     default:
-      result = new BN(0)
+      return 'Missing precompiled'
   }
 
   return result.toString()
