@@ -1,3 +1,5 @@
+import { IOpcode } from 'types'
+
 export const compilerSemVer = 'v0.8.10'
 export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
 
@@ -19,4 +21,69 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
     return 'london'
   }
   return forkName
+}
+
+/**
+ * Gets bytecode from mnemonic
+ *
+ * @param code The string code
+ * @param opcodes The IOpcode array of opcodes
+ * @returns The string bytecode
+ */
+export const getBytecodeFromMnemonic = (code: string, opcodes: IOpcode[]) => {
+  let bytecode = ''
+  const lines = code.split('\n')
+
+  for (let i = 0; i < lines.length; ++i) {
+    const line = lines[i]
+      .replace(/\/\/.*/, '')
+      .trim()
+      .toUpperCase()
+
+    if (line.length === 0) {
+      continue
+    }
+
+    if (line.startsWith('PUSH')) {
+      const parts = line.split(/\s+/)
+
+      if (parts.length !== 2) {
+        throw new Error('Expect PUSH instruction followed by a number: ' + line)
+      }
+
+      const code = opcodes.find((opcode: IOpcode) => {
+        return opcode.name === parts[0]
+      })
+
+      if (typeof code === 'undefined') {
+        throw new Error('Unknown mnemonic: ' + parts[0])
+      }
+
+      const number = parseInt(parts[0].substring(4))
+      const digits = number * 2
+
+      if (parts[1].length > digits) {
+        throw new Error(
+          'Number should have at most ' + digits + ' digits: ' + line,
+        )
+      }
+
+      // TODO: Add number checks
+      bytecode += code.code
+      bytecode =
+        bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') +
+        parts[1]
+    } else {
+      const code = opcodes.find((opcode: IOpcode) => {
+        return opcode.name === line
+      })
+      if (typeof code === 'undefined') {
+        throw new Error('Unknown mnemonic: ' + line)
+      }
+
+      bytecode += code.code
+    }
+  }
+
+  return bytecode
 }

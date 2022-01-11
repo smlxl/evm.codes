@@ -12,12 +12,15 @@ import React, {
 import cn from 'classnames'
 import { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
-import { IOpcode } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
-import { getTargetEvmVersion, compilerSemVer } from 'util/compiler'
+import {
+  getTargetEvmVersion,
+  compilerSemVer,
+  getBytecodeFromMnemonic,
+} from 'util/compiler'
 import { codeHighlight, isEmpty, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
@@ -161,61 +164,13 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleRun = useCallback(() => {
     if (codeType === CodeType.Mnemonic) {
-      let bytecode = ''
-
-      const lines = code.split('\n')
-      for (let i = 0; i < lines.length; ++i) {
-        const line = lines[i]
-          .replace(/\/\/.*/, '')
-          .trim()
-          .toUpperCase()
-        if (line.length === 0) {
-          continue
-        }
-
-        if (line.startsWith('PUSH')) {
-          const parts = line.split(/\s+/)
-          if (parts.length != 2) {
-            log('Expect PUSH instruction followed by a number: ' + line, 'warn')
-            return
-          }
-
-          const code = opcodes.find((opcode: IOpcode) => {
-            return opcode.name === parts[0]
-          })
-          if (typeof code === 'undefined') {
-            log('Unknown mnemonic: ' + parts[0], 'warn')
-            return
-          }
-
-          const number = parseInt(parts[0].substring(4))
-          const digits = number * 2
-          if (parts[1].length > digits) {
-            log('Number should have at most ' + digits + ' digits: ' + line)
-            return
-          }
-
-          // TODO number checks
-
-          bytecode += code.code
-          bytecode =
-            bytecode.padEnd(bytecode.length + digits - parts[1].length, '0') +
-            parts[1]
-        } else {
-          const code = opcodes.find((opcode: IOpcode) => {
-            return opcode.name === line
-          })
-          if (typeof code === 'undefined') {
-            log('Unknown mnemonic: ' + line, 'warn')
-            return
-          }
-
-          bytecode += code.code
-        }
+      try {
+        const bytecode = getBytecodeFromMnemonic(code, opcodes)
+        loadInstructions(bytecode)
+        startExecution(bytecode)
+      } catch (error) {
+        log((error as Error).message, 'warn')
       }
-
-      loadInstructions(bytecode)
-      startExecution(bytecode)
     } else if (codeType === CodeType.Bytecode) {
       if (code.length % 2 !== 0) {
         log('There should be at least 2 characters per byte.', 'warn')
