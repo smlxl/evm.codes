@@ -111,8 +111,8 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const readCalldata = () => {
     const data = document.getElementById('calldata')?.value
-    if (data && !/^(0x|0X)([0-9a-fA-F][0-9a-fA-F])+$/.test(data)) {
-      throw new Error('Calldata should be an hexadecimal string with 2 digits per byte: ' + data)
+    if (data && !/^(0x|0X)[0-9a-fA-F]+$/.test(data)) {
+      throw new Error('Calldata should be an hexadecimal string: ' + data)
     }
     return Buffer.from(data.substr(2), 'hex')
   }
