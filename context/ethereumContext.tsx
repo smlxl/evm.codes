@@ -57,10 +57,7 @@ type ContextProps = {
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
-  deployContract: (
-    byteCode: string,
-    value: BN,
-  ) => Promise<TypedTransaction | TxData>
+  deployContract: (byteCode: string) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: BN, calldata: Buffer) => void
   startTransaction: (byteCode: string, tx: TypedTransaction | TxData) => void
@@ -194,11 +191,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    * @returns The deployed contract transaction data.
    */
-  const deployContract = async (byteCode: string, value: BN) => {
+  const deployContract = async (byteCode: string) => {
     const account = await vm.stateManager.getAccount(accountAddress)
 
     const txData = {
-      value: value,
+      value: 0,
       gasLimit,
       gasPrice: 10,
       data: '0x' + byteCode,

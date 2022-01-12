@@ -32,7 +32,7 @@ import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { IConsoleOutput, CodeType, ValueUnit } from './types'
+import { IConsoleOutput, CodeType, ValueCurrency } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -45,7 +45,7 @@ type SCEditorRef = {
 const editorHeight = 350
 const consoleHeight = 350
 
-const unitOptions = Object.keys(ValueUnit).map((value) => ({
+const currencyOptions = Object.keys(ValueCurrency).map((value) => ({
   value: value,
   label: value,
 }))
@@ -78,45 +78,6 @@ const Editor = ({ readOnly = false }: Props) => {
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
 
-  const readCallvalue = () => {
-    const textValue = document.getElementById('callvalue')?.value || 0
-    if (!/^[0-9]+$/.test(textValue)) {
-      throw new Error('Callvalue should be a positive integer: ' + textValue)
-    }
-
-    // TODO how to get the select current value?
-    console.log(
-      document.getElementById('callvalueUnit')?.querySelector('input'),
-    )
-
-    const value = new BN(textValue)
-    switch (document.getElementById('callvalueUnit')?.innerText) {
-      case 'Wei':
-        // Nothing to do
-        break
-      case 'Gwei':
-        value.imul(new BN('1000000000'))
-        break
-      case 'Finney':
-        value.imul(new BN('1000000000000000'))
-        break
-      case 'Ether':
-        value.imul(new BN('1000000000000000000'))
-        break
-    }
-
-    console.log(value.toString())
-    return value
-  }
-
-  const readCalldata = () => {
-    const data = document.getElementById('calldata')?.value
-    if (data && !/^(0x|0X)[0-9a-fA-F]+$/.test(data)) {
-      throw new Error('Calldata should be an hexadecimal string: ' + data)
-    }
-    return Buffer.from(data.substr(2), 'hex')
-  }
-
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, error } = event.data
 
@@ -126,16 +87,11 @@ const Editor = ({ readOnly = false }: Props) => {
       return
     }
 
-    try {
-      deployContract(byteCode, readCallvalue()).then((tx) => {
-        loadInstructions(byteCode)
-        setIsCompiling(false)
-        startTransaction(byteCode, tx)
-      })
-    } catch (error) {
-      log((error as Error).message, 'warn')
+    deployContract(byteCode).then((tx) => {
+      loadInstructions(byteCode)
       setIsCompiling(false)
-    }
+      startTransaction(byteCode, tx)
+    })
   }
 
   const log = useCallback(
@@ -215,11 +171,15 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const handleRun = useCallback(() => {
+    // console.log(document.getElementById('calldata').value)
+    // log(document.getElementById('calldata').value)
+    // log('bla', 'warn')
+
     if (codeType === CodeType.Mnemonic) {
       try {
         const bytecode = getBytecodeFromMnemonic(code, opcodes)
         loadInstructions(bytecode)
-        startExecution(bytecode, readCallvalue(), readCalldata())
+        startExecution(bytecode, new BN(0), Buffer.from(''))
       } catch (error) {
         log((error as Error).message, 'warn')
       }
@@ -233,11 +193,7 @@ const Editor = ({ readOnly = false }: Props) => {
         return
       }
       loadInstructions(code)
-      try {
-        startExecution(code, readCallvalue(), readCalldata())
-      } catch (error) {
-        log((error as Error).message, 'warn')
-      }
+      startExecution(code, new BN(0), Buffer.from(''))
     } else {
       if (document.getElementById('calldata').value !== '') {
         setOutput([
@@ -342,17 +298,15 @@ const Editor = ({ readOnly = false }: Props) => {
             />
 
             <Input
-              id="callvalue"
-              type="number"
-              step="1"
+              id="value"
               placeholder={`Value to send`}
               className="bg-gray-100 dark:bg-black-500"
             />
 
             <Select
-              id="callvalueUnit"
-              options={unitOptions}
-              value={unitOptions}
+              id="valueCurrency"
+              options={currencyOptions}
+              value={currencyOptions}
               classNamePrefix="select"
               menuPlacement="auto"
             />
