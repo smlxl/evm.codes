@@ -62,7 +62,7 @@ type ContextProps = {
     value: BN,
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
-  startExecution: (byteCode: string, value: BN, calldata: Buffer) => void
+  startExecution: (byteCode: string, value: BN, data: Buffer) => void
   startTransaction: (byteCode: string, tx: TypedTransaction | TxData) => void
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
@@ -249,10 +249,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   /**
    * Starts EVM execution of the instructions.
    * @param byteCode The contract bytecode.
-   * @param value The callvalue
-   * @param calldata The calldata
+   * @param value The callvalue.
+   * @param data The calldata.
    */
-  const startExecution = (byteCode: string, value: BN, calldata: Buffer) => {
+  const startExecution = (byteCode: string, value: BN, data: Buffer) => {
     // always start paused
     isExecutionPaused.current = true
     setIsExecuting(true)
@@ -260,8 +260,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm.runCode({
       code: Buffer.from(byteCode, 'hex'),
-      value: value,
-      data: calldata,
+      value,
+      data,
       gasLimit,
       block: _getBlock(),
     })

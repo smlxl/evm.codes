@@ -21,7 +21,7 @@ const codeLangOptions = Object.keys(CodeType).map((lang) => ({
 const EditorHeader = ({ codeType, onCodeTypeChange }: Props) => {
   const { selectedFork } = useContext(EthereumContext)
 
-  const codeTypeOption = useMemo(
+  const codeTypeValue = useMemo(
     () => ({
       value: codeType,
       label: codeType,
@@ -40,7 +40,7 @@ const EditorHeader = ({ codeType, onCodeTypeChange }: Props) => {
         <Select
           onChange={onCodeTypeChange}
           options={codeLangOptions}
-          value={codeTypeOption}
+          value={codeTypeValue}
           isSearchable={false}
           classNamePrefix="select"
           menuPlacement="auto"

@@ -22,7 +22,7 @@ import {
   compilerSemVer,
   getBytecodeFromMnemonic,
 } from 'util/compiler'
-import { codeHighlight, isEmpty, isHex } from 'util/string'
+import { codeHighlight, isEmpty, isFullHex, isHex } from 'util/string'
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
@@ -44,9 +44,10 @@ type SCEditorRef = {
 
 const editorHeight = 350
 const consoleHeight = 350
+const instructionsListHeight = editorHeight + 52 // RunBar
 
 const unitOptions = Object.keys(ValueUnit).map((value) => ({
-  value: value,
+  value,
   label: value,
 }))
 
@@ -77,45 +78,9 @@ const Editor = ({ readOnly = false }: Props) => {
   const solcWorkerRef = useRef<null | Worker>(null)
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
-
-  const readCallvalue = () => {
-    const textValue = document.getElementById('callvalue')?.value || 0
-    if (!/^[0-9]+$/.test(textValue)) {
-      throw new Error('Callvalue should be a positive integer: ' + textValue)
-    }
-
-    // TODO how to get the select current value?
-    console.log(
-      document.getElementById('callvalueUnit')?.querySelector('input'),
-    )
-
-    const value = new BN(textValue)
-    switch (document.getElementById('callvalueUnit')?.innerText) {
-      case 'Wei':
-        // Nothing to do
-        break
-      case 'Gwei':
-        value.imul(new BN('1000000000'))
-        break
-      case 'Finney':
-        value.imul(new BN('1000000000000000'))
-        break
-      case 'Ether':
-        value.imul(new BN('1000000000000000000'))
-        break
-    }
-
-    console.log(value.toString())
-    return value
-  }
-
-  const readCalldata = () => {
-    const data = document.getElementById('calldata')?.value
-    if (data && !/^(0x|0X)([0-9a-fA-F][0-9a-fA-F])+$/.test(data)) {
-      throw new Error('Calldata should be an hexadecimal string with 2 digits per byte: ' + data)
-    }
-    return Buffer.from(data.substr(2), 'hex')
-  }
+  const [callData, setCallData] = useState('')
+  const [callValue, setCallValue] = useState('')
+  const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, error } = event.data
@@ -127,7 +92,7 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     try {
-      deployContract(byteCode, readCallvalue()).then((tx) => {
+      deployContract(byteCode, new BN(callValue)).then((tx) => {
         loadInstructions(byteCode)
         setIsCompiling(false)
         startTransaction(byteCode, tx)
@@ -214,68 +179,8 @@ const Editor = ({ readOnly = false }: Props) => {
       .join('\n')
   }
 
-  const handleRun = useCallback(() => {
-    if (codeType === CodeType.Mnemonic) {
-      try {
-        const bytecode = getBytecodeFromMnemonic(code, opcodes)
-        loadInstructions(bytecode)
-        startExecution(bytecode, readCallvalue(), readCalldata())
-      } catch (error) {
-        log((error as Error).message, 'warn')
-      }
-    } else if (codeType === CodeType.Bytecode) {
-      if (code.length % 2 !== 0) {
-        log('There should be at least 2 characters per byte.', 'warn')
-        return
-      }
-      if (!isHex(code)) {
-        log('Only hexadecimal characters are allowed.', 'warn')
-        return
-      }
-      loadInstructions(code)
-      try {
-        startExecution(code, readCallvalue(), readCalldata())
-      } catch (error) {
-        log((error as Error).message, 'warn')
-      }
-    } else {
-      if (document.getElementById('calldata').value !== '') {
-        setOutput([
-          ...output,
-          {
-            type: 'warn',
-            message:
-              'Calldata value is ignored when compiling with ' + codeType,
-          },
-          { type: 'info', message: 'Starting compilation...' },
-        ])
-      } else {
-        log('Starting compilation...')
-      }
-
-      setIsCompiling(true)
-
-      if (solcWorkerRef?.current) {
-        solcWorkerRef.current.postMessage({
-          language: codeType,
-          evmVersion: getTargetEvmVersion(selectedFork?.name),
-          source: code,
-        })
-      }
-    }
-  }, [
-    code,
-    codeType,
-    opcodes,
-    output,
-    selectedFork,
-    loadInstructions,
-    log,
-    startExecution,
-  ])
-
   const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
-    const value = option.value
+    const { value } = option
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
 
@@ -292,79 +197,168 @@ const Editor = ({ readOnly = false }: Props) => {
     }
   }
 
+  const handleRun = useCallback(() => {
+    if (!isEmpty(callValue) && !/^[0-9]+$/.test(callValue)) {
+      log('Callvalue should be a positive integer')
+      return
+    }
+
+    if (!isEmpty(callData) && !isFullHex(callData)) {
+      log('Calldata should be a hexadecimal string with 2 digits per byte')
+      return
+    }
+
+    const _callData = Buffer.from(callData.substr(2), 'hex')
+    const _callValue = new BN(callValue)
+
+    if (unit === ValueUnit.Gwei) {
+      _callValue.imul(new BN('1000000000'))
+    } else if (unit === ValueUnit.Finney) {
+      _callValue.imul(new BN('1000000000000000'))
+    } else if (unit === ValueUnit.Ether) {
+      _callValue.imul(new BN('1000000000000000000'))
+    }
+
+    try {
+      if (codeType === CodeType.Mnemonic) {
+        const bytecode = getBytecodeFromMnemonic(code, opcodes)
+        loadInstructions(bytecode)
+        startExecution(bytecode, _callValue, _callData)
+      } else if (codeType === CodeType.Bytecode) {
+        if (code.length % 2 !== 0) {
+          log('There should be at least 2 characters per byte', 'warn')
+          return
+        }
+        if (!isHex(code)) {
+          log('Only hexadecimal characters are allowed', 'warn')
+          return
+        }
+        loadInstructions(code)
+        startExecution(code, _callValue, _callData)
+      } else {
+        if (!isEmpty(callData)) {
+          log(
+            'Calldata value is ignored when compiling with ' + codeType,
+            'warn',
+          )
+        }
+
+        setIsCompiling(true)
+        log('Starting compilation...')
+
+        if (solcWorkerRef?.current) {
+          solcWorkerRef.current.postMessage({
+            language: codeType,
+            evmVersion: getTargetEvmVersion(selectedFork?.name),
+            source: code,
+          })
+        }
+      }
+    } catch (error) {
+      log((error as Error).message, 'warn')
+    }
+  }, [
+    code,
+    codeType,
+    opcodes,
+    selectedFork,
+    callData,
+    callValue,
+    unit,
+    loadInstructions,
+    log,
+    startExecution,
+  ])
+
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
   }, [compiling, code])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
   const isMnemonic = useMemo(() => codeType === CodeType.Mnemonic, [codeType])
+  const unitValue = useMemo(
+    () => ({
+      value: unit,
+      label: unit,
+    }),
+    [unit],
+  )
 
   return (
     <div className="bg-gray-100 dark:bg-black-700 rounded-lg">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/2">
-          <div className="border-b border-gray-200 dark:border-black-500 flex items-center px-6 h-14 md:border-r">
+          <div className="border-b border-gray-200 dark:border-black-500 flex items-center pl-6 pr-2 h-14 md:border-r">
             <Header
               onCodeTypeChange={handleCodeTypeChange}
               codeType={codeType}
             />
           </div>
 
-          <div
-            className="relative pane pane-light overflow-auto md:border-r bg-gray-50 dark:bg-black-600 border-gray-200 dark:border-black-500"
-            style={{ height: editorHeight }}
-          >
-            <SCEditor
-              // @ts-ignore: SCEditor is not TS-friendly
-              ref={editorRef}
-              value={code}
-              readOnly={readOnly}
-              onValueChange={handleCodeChange}
-              highlight={
-                isBytecode
-                  ? highlightBytecode
-                  : isMnemonic
-                  ? highlightMnemonic
-                  : highlightCode
-              }
-              tabSize={4}
-              className={cn('code-editor', {
-                'with-numbers': !isBytecode,
-              })}
-            />
-          </div>
-
-          <div className="flex items-center gap-1 justify-end w-full xl:w-auto">
-            <Input
-              id="calldata"
-              placeholder={`Calldata (hex string)`}
-              className="bg-gray-100 dark:bg-black-500"
-            />
-
-            <Input
-              id="callvalue"
-              type="number"
-              step="1"
-              placeholder={`Value to send`}
-              className="bg-gray-100 dark:bg-black-500"
-            />
-
-            <Select
-              id="callvalueUnit"
-              options={unitOptions}
-              value={unitOptions}
-              classNamePrefix="select"
-              menuPlacement="auto"
-            />
-
-            <Button
-              onClick={handleRun}
-              disabled={isRunDisabled}
-              size="sm"
-              className="ml-3"
+          <div>
+            <div
+              className="relative pane pane-light overflow-auto md:border-r bg-gray-50 dark:bg-black-600 border-gray-200 dark:border-black-500"
+              style={{ height: editorHeight }}
             >
-              Run
-            </Button>
+              <SCEditor
+                // @ts-ignore: SCEditor is not TS-friendly
+                ref={editorRef}
+                value={code}
+                readOnly={readOnly}
+                onValueChange={handleCodeChange}
+                highlight={
+                  isBytecode
+                    ? highlightBytecode
+                    : isMnemonic
+                    ? highlightMnemonic
+                    : highlightCode
+                }
+                tabSize={4}
+                className={cn('code-editor', {
+                  'with-numbers': !isBytecode,
+                })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between px-4 py-2 md:border-r border-gray-200 dark:border-black-500">
+              <div className="flex flex-row gap-x-4">
+                <Input
+                  placeholder="Calldata in HEX"
+                  className="bg-white dark:bg-black-500"
+                  value={callData}
+                  onChange={(e) => setCallData(e.target.value)}
+                />
+
+                <Input
+                  type="number"
+                  step="1"
+                  placeholder="Value to send"
+                  className="bg-white dark:bg-black-500"
+                  value={callValue}
+                  onChange={(e) => setCallValue(e.target.value)}
+                />
+
+                <Select
+                  onChange={(option: OnChangeValue<any, any>) =>
+                    setUnit(option.value)
+                  }
+                  options={unitOptions}
+                  value={unitValue}
+                  isSearchable={false}
+                  classNamePrefix="select"
+                  menuPlacement="auto"
+                />
+              </div>
+
+              <Button
+                onClick={handleRun}
+                disabled={isRunDisabled}
+                size="sm"
+                className="ml-3"
+              >
+                Run
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -374,9 +368,9 @@ const Editor = ({ readOnly = false }: Props) => {
           </div>
 
           <div
-            className="pane pane-light overflow-auto bg-gray-50 dark:bg-black-600"
-            style={{ height: editorHeight }}
+            className="pane pane-light overflow-auto bg-gray-50 dark:bg-black-600 h-full"
             ref={instructionsRef}
+            style={{ height: instructionsListHeight }}
           >
             <InstructionList containerRef={instructionsRef} />
           </div>
