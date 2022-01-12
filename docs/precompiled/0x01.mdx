@@ -21,8 +21,8 @@ More information about ECDSA can be found [here](https://en.wikipedia.org/wiki/E
 |-----------:|-----:|------------:|
 | [0; 31] (32 bytes) | publicAddress | The recovered 20-byte address right aligned to 32 bytes |
 
- If an address cannot be recovered, or not enough gas was given, then there is no return data.
-
+If an address cannot be recovered, or not enough gas was given, then there is no return data. Please note, that the return is the address that issued the signature but it won't verify the signature.
+ 
 ## Example
 
 | Input | Output |
