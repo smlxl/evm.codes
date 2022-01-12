@@ -59,8 +59,7 @@ type ContextProps = {
   onForkChange: (forkName: string) => void
   deployContract: (byteCode: string) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
-  startExecution: (byteCode: string, value: BN, calldata: Buffer) => void
-  startTransaction: (byteCode: string, tx: TypedTransaction | TxData) => void
+  startExecution: (byteCode: string, tx?: TypedTransaction | TxData) => void
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
   removeBreakpoint: (instructionId: number) => void
@@ -100,7 +99,6 @@ export const EthereumContext = createContext<ContextProps>({
     }),
   loadInstructions: () => undefined,
   startExecution: () => undefined,
-  startTransaction: () => undefined,
   continueExecution: () => undefined,
   addBreakpoint: () => undefined,
   removeBreakpoint: () => undefined,
@@ -246,57 +244,41 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   /**
    * Starts EVM execution of the instructions.
    * @param byteCode The contract bytecode.
-   * @param value The callvalue
-   * @param calldata The calldata
+   * @param tx The optional transaction data to run from.
    */
-  const startExecution = (byteCode: string, value: BN, calldata: Buffer) => {
+  const startExecution = (byteCode: string, tx?: TypedTransaction | TxData) => {
     // always start paused
     isExecutionPaused.current = true
     setIsExecuting(true)
     setVmError(undefined)
 
-    vm.runCode({
-      code: Buffer.from(byteCode, 'hex'),
-      value: value,
-      data: calldata,
-      gasLimit,
-      block: _getBlock(),
-    })
-      .then(({ runState, gasUsed, returnValue, exceptionError }) =>
-        _loadRunState({
-          gasUsed,
-          runState,
-          returnValue,
-          exceptionError,
-        }),
-      )
-      .finally(() => setIsExecuting(false))
-  }
-
-  /**
-   * Starts EVM execution of the instructions.
-   * @param byteCode The contract bytecode.
-   * @param tx The transaction data to run from.
-   */
-  const startTransaction = (
-    byteCode: string,
-    tx: TypedTransaction | TxData,
-  ) => {
-    // always start paused
-    isExecutionPaused.current = true
-    setIsExecuting(true)
-    setVmError(undefined)
-
-    // starting execution via deployed contract's transaction
-    vm.runTx({ tx: tx as TypedTransaction, block: _getBlock() })
-      .then(({ execResult, gasUsed, createdAddress }) =>
-        _loadRunState({
-          gasUsed,
-          runState: execResult.runState,
-          contractAddress: createdAddress,
-        }),
-      )
-      .finally(() => setIsExecuting(false))
+    if (tx) {
+      // starting execution via deployed contract's transaction
+      vm.runTx({ tx: tx as TypedTransaction, block: _getBlock() })
+        .then(({ execResult, gasUsed, createdAddress }) =>
+          _loadRunState({
+            gasUsed,
+            runState: execResult.runState,
+            contractAddress: createdAddress,
+          }),
+        )
+        .finally(() => setIsExecuting(false))
+    } else {
+      vm.runCode({
+        code: Buffer.from(byteCode, 'hex'),
+        gasLimit,
+        block: _getBlock(),
+      })
+        .then(({ runState, gasUsed, returnValue, exceptionError }) =>
+          _loadRunState({
+            gasUsed,
+            runState,
+            returnValue,
+            exceptionError,
+          }),
+        )
+        .finally(() => setIsExecuting(false))
+    }
   }
 
   /**
@@ -671,7 +653,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         deployContract,
         loadInstructions,
         startExecution,
-        startTransaction,
         continueExecution,
         addBreakpoint,
         removeBreakpoint,
