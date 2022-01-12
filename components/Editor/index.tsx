@@ -236,13 +236,6 @@ const Editor = ({ readOnly = false }: Props) => {
         loadInstructions(code)
         startExecution(code, _callValue, _callData)
       } else {
-        if (!isEmpty(callData)) {
-          log(
-            'Calldata value is ignored when compiling with ' + codeType,
-            'warn',
-          )
-        }
-
         setIsCompiling(true)
         log('Starting compilation...')
 
@@ -276,6 +269,11 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
   const isMnemonic = useMemo(() => codeType === CodeType.Mnemonic, [codeType])
+  const isCallDataActive = useMemo(
+    () => codeType === CodeType.Mnemonic || codeType === CodeType.Bytecode,
+    [codeType],
+  )
+
   const unitValue = useMemo(
     () => ({
       value: unit,
@@ -322,12 +320,14 @@ const Editor = ({ readOnly = false }: Props) => {
 
             <div className="flex items-center justify-between px-4 py-2 md:border-r border-gray-200 dark:border-black-500">
               <div className="flex flex-row gap-x-4">
-                <Input
-                  placeholder="Calldata in HEX"
-                  className="bg-white dark:bg-black-500"
-                  value={callData}
-                  onChange={(e) => setCallData(e.target.value)}
-                />
+                {isCallDataActive && (
+                  <Input
+                    placeholder="Calldata in HEX"
+                    className="bg-white dark:bg-black-500"
+                    value={callData}
+                    onChange={(e) => setCallData(e.target.value)}
+                  />
+                )}
 
                 <Input
                   type="number"
