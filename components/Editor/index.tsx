@@ -89,15 +89,11 @@ const Editor = ({ readOnly = false }: Props) => {
     router.push(
       {
         query: {
-          p: encode(
-            JSON.stringify({
-              callValue: 'callValue' in object ? object.callValue : callValue,
-              unit: 'unit' in object ? object.unit : unit,
-              callData: 'callData' in object ? object.callData : callData,
-              codeType: 'codeType' in object ? object.codeType : codeType,
-              code: 'code' in object ? object.code : code,
-            }),
-          ),
+          callValue: 'callValue' in object ? object.callValue : callValue,
+          unit: 'unit' in object ? object.unit : unit,
+          callData: 'callData' in object ? object.callData : callData,
+          codeType: 'codeType' in object ? object.codeType : codeType,
+          code: encode(JSON.stringify('code' in object ? object.code : code)),
         },
       },
       undefined,
@@ -141,23 +137,20 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   useEffect(() => {
-    const query =
-      router.query.p && typeof router.query.p === 'string'
-        ? JSON.parse(decode(router.query.p))
-        : {}
+    const query = router.query
 
     if ('callValue' in query && 'unit' in query) {
-      setCallValue(query.callValue)
-      setUnit(query.unit)
+      setCallValue(query.callValue as string)
+      setUnit(query.unit as string)
     }
 
     if ('callData' in query) {
-      setCallData(query.callData)
+      setCallData(query.callData as string)
     }
 
     if ('codeType' in query && 'code' in query) {
-      setCodeType(query.codeType)
-      setCode(query.code)
+      setCodeType(query.codeType as string)
+      setCode(JSON.parse('{"a":' + decode(query.code as string) + '}').a)
     } else {
       const initialCodeType: CodeType =
         getSetting(Setting.EditorCodeType) || CodeType.Yul
