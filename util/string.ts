@@ -2,6 +2,7 @@ import hljs from 'highlight.js'
 import hljsDefineSolidity from 'highlightjs-solidity'
 
 const reHex = /^[0-9a-fA-F]+$/
+const reFullHex = /^(0x|0X)([0-9a-fA-F][0-9a-fA-F])+$/
 
 // Add Solidity to Highlight
 hljsDefineSolidity(hljs)
@@ -29,6 +30,13 @@ export const toHex = (text: string | number) => {
  */
 export const isHex = (text: string) => {
   return reHex.test(text)
+}
+
+/**
+ * Checks whether text is in full hex format, starting with 0x
+ */
+export const isFullHex = (text: string) => {
+  return reFullHex.test(text)
 }
 
 /**
