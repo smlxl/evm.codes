@@ -95,7 +95,7 @@ const Editor = ({ readOnly = false }: Props) => {
       log(warning, 'warn')
     }
 
-    log('Compilation succesful')
+    log('Compilation successful')
 
     try {
       deployContract(byteCode, new BN(callValue)).then((tx) => {
