@@ -20,6 +20,7 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
+import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
   compilerSemVer,
@@ -307,12 +308,10 @@ const Editor = ({ readOnly = false }: Props) => {
       unit,
       callData,
       codeType,
-      code: encode(JSON.stringify(code)),
+      code: encodeURIComponent(encode(JSON.stringify(code))),
     }
 
-    const { protocol, hostname } = window.location
-
-    copy(`${protocol}://${hostname}/playground?${objToQueryString(params)}`)
+    copy(`${getAbsoluteURL('/playground?')}${objToQueryString(params)}`)
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 3000)
   }
