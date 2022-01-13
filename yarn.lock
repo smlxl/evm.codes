@@ -517,6 +517,11 @@
   resolved "https://package-cluster.production.groovehq.com/@humanwhocodes%2fobject-schema/-/object-schema-1.2.0.tgz"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
+"@kunigi/string-compression@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@kunigi/string-compression/-/string-compression-1.0.2.tgz#aed3d6d29ba170d51079562328ced905d6a7d6da"
+  integrity sha512-rB2OpMgWOe9J7KQhEmLFniA2lwJm9v3hoGSWuMihitKcoOiY/dLn5GoXOXbeQV+pui6IuVSuKoa8jbYoQhhewA==
+
 "@mdx-js/loader@^1.6.22":
   version "1.6.22"
   resolved "https://package-cluster.production.groovehq.com/@mdx-js%2floader/-/loader-1.6.22.tgz#d9e8fe7f8185ff13c9c8639c048b123e30d322c4"

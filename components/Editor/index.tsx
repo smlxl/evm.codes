@@ -9,8 +9,10 @@ import React, {
   RefObject,
 } from 'react'
 
+import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import { BN } from 'ethereumjs-util'
+import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 
@@ -53,6 +55,7 @@ const unitOptions = Object.keys(ValueUnit).map((value) => ({
 
 const Editor = ({ readOnly = false }: Props) => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
+  const router = useRouter()
 
   const {
     deployContract,
@@ -81,6 +84,26 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callData, setCallData] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
+
+  const updateUrl = (object: any) => {
+    router.push(
+      {
+        query: {
+          p: encode(
+            JSON.stringify({
+              callValue: 'callValue' in object ? object.callValue : callValue,
+              unit: 'unit' in object ? object.unit : unit,
+              callData: 'callData' in object ? object.callData : callData,
+              codeType: 'codeType' in object ? object.codeType : codeType,
+              code: 'code' in object ? object.code : code,
+            }),
+          ),
+        },
+      },
+      undefined,
+      { shallow: true },
+    )
+  }
 
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, warning, error } = event.data
@@ -118,13 +141,29 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   useEffect(() => {
-    const initialCodeType: CodeType =
-      getSetting(Setting.EditorCodeType) || CodeType.Yul
+    const query = router.query.p ? JSON.parse(decode(router.query.p)) : {}
 
-    setCodeType(initialCodeType)
-    setCode(examples[initialCodeType][0])
+    if ('callValue' in query && 'unit' in query) {
+      setCallValue(query.callValue)
+      setUnit(query.unit)
+    }
+
+    if ('callData' in query) {
+      setCallData(query.callData)
+    }
+
+    if ('codeType' in query && 'code' in query) {
+      setCodeType(query.codeType)
+      setCode(query.code)
+    } else {
+      const initialCodeType: CodeType =
+        getSetting(Setting.EditorCodeType) || CodeType.Yul
+
+      setCodeType(initialCodeType)
+      setCode(examples[initialCodeType][0])
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsLoaded])
+  }, [settingsLoaded && router.isReady])
 
   useEffect(() => {
     solcWorkerRef.current = new Worker(
@@ -158,6 +197,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const handleCodeChange = (value: string) => {
     setCode(value)
     setCodeModified(true)
+    updateUrl({ code: value })
   }
 
   const highlightCode = (value: string) => {
@@ -192,7 +232,11 @@ const Editor = ({ readOnly = false }: Props) => {
     setSetting(Setting.EditorCodeType, value)
 
     if (!codeModified && codeType) {
-      setCode(examples[value as CodeType][0])
+      const example = examples[value as CodeType][0]
+      updateUrl({ codeType: value, code: example })
+      setCode(example)
+    } else {
+      updateUrl({ codeType: value })
     }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
@@ -335,7 +379,10 @@ const Editor = ({ readOnly = false }: Props) => {
                     placeholder="Calldata in HEX"
                     className="bg-white dark:bg-black-500"
                     value={callData}
-                    onChange={(e) => setCallData(e.target.value)}
+                    onChange={(e) => {
+                      setCallData(e.target.value)
+                      updateUrl({ callData: e.target.value })
+                    }}
                   />
                 )}
 
@@ -345,13 +392,17 @@ const Editor = ({ readOnly = false }: Props) => {
                   placeholder="Value to send"
                   className="bg-white dark:bg-black-500"
                   value={callValue}
-                  onChange={(e) => setCallValue(e.target.value)}
+                  onChange={(e) => {
+                    setCallValue(e.target.value)
+                    updateUrl({ callValue: e.target.value })
+                  }}
                 />
 
                 <Select
-                  onChange={(option: OnChangeValue<any, any>) =>
+                  onChange={(option: OnChangeValue<any, any>) => {
                     setUnit(option.value)
-                  }
+                    updateUrl({ unit: option.value })
+                  }}
                   options={unitOptions}
                   value={unitValue}
                   isSearchable={false}
