@@ -11,6 +11,7 @@ import React, {
 
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
+import copy from 'copy-to-clipboard'
 import { BN } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
@@ -24,11 +25,17 @@ import {
   compilerSemVer,
   getBytecodeFromMnemonic,
 } from 'util/compiler'
-import { codeHighlight, isEmpty, isFullHex, isHex } from 'util/string'
+import {
+  codeHighlight,
+  isEmpty,
+  isFullHex,
+  isHex,
+  objToQueryString,
+} from 'util/string'
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
-import { Button, Input } from 'components/ui'
+import { Button, Input, Icon } from 'components/ui'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
@@ -84,22 +91,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callData, setCallData] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
-
-  const updateUrl = (object: any) => {
-    router.push(
-      {
-        query: {
-          callValue: 'callValue' in object ? object.callValue : callValue,
-          unit: 'unit' in object ? object.unit : unit,
-          callData: 'callData' in object ? object.callData : callData,
-          codeType: 'codeType' in object ? object.codeType : codeType,
-          code: encode(JSON.stringify('code' in object ? object.code : code)),
-        },
-      },
-      undefined,
-      { shallow: true },
-    )
-  }
+  const [isCopied, setIsCopied] = useState(false)
 
   const handleWorkerMessage = (event: MessageEvent) => {
     const { code: byteCode, warning, error } = event.data
@@ -193,7 +185,6 @@ const Editor = ({ readOnly = false }: Props) => {
   const handleCodeChange = (value: string) => {
     setCode(value)
     setCodeModified(true)
-    updateUrl({ code: value })
   }
 
   const highlightCode = (value: string) => {
@@ -229,10 +220,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
     if (!codeModified && codeType) {
       const example = examples[value as CodeType][0]
-      updateUrl({ codeType: value, code: example })
       setCode(example)
-    } else {
-      updateUrl({ codeType: value })
     }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
@@ -313,6 +301,22 @@ const Editor = ({ readOnly = false }: Props) => {
     startExecution,
   ])
 
+  const handleCopyPermalink = () => {
+    const params = {
+      callValue,
+      unit,
+      callData,
+      codeType,
+      code: encode(JSON.stringify(code)),
+    }
+
+    const { protocol, hostname } = window.location
+
+    copy(`${protocol}://${hostname}/playground?${objToQueryString(params)}`)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 3000)
+  }
+
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
   }, [compiling, code])
@@ -368,8 +372,8 @@ const Editor = ({ readOnly = false }: Props) => {
               />
             </div>
 
-            <div className="flex items-center justify-between px-4 py-2 md:border-r border-gray-200 dark:border-black-500">
-              <div className="flex flex-row gap-x-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
+              <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
                 {isCallDataActive && (
                   <Input
                     placeholder="Calldata in HEX"
@@ -377,7 +381,6 @@ const Editor = ({ readOnly = false }: Props) => {
                     value={callData}
                     onChange={(e) => {
                       setCallData(e.target.value)
-                      updateUrl({ callData: e.target.value })
                     }}
                   />
                 )}
@@ -390,14 +393,12 @@ const Editor = ({ readOnly = false }: Props) => {
                   value={callValue}
                   onChange={(e) => {
                     setCallValue(e.target.value)
-                    updateUrl({ callValue: e.target.value })
                   }}
                 />
 
                 <Select
                   onChange={(option: OnChangeValue<any, any>) => {
                     setUnit(option.value)
-                    updateUrl({ unit: option.value })
                   }}
                   options={unitOptions}
                   value={unitValue}
@@ -405,13 +406,25 @@ const Editor = ({ readOnly = false }: Props) => {
                   classNamePrefix="select"
                   menuPlacement="auto"
                 />
+
+                <Button
+                  onClick={handleCopyPermalink}
+                  transparent
+                  padded={false}
+                  size="sm"
+                >
+                  <Icon name="links-line" className="text-indigo-500 mr-2" />
+                  <span className="text-gray-600 dark:text-gray-400 text-sm font-normal hover:text-indigo-500">
+                    {!isCopied ? 'Share permalink' : 'Copied to clipboard'}
+                  </span>
+                </Button>
               </div>
 
               <Button
                 onClick={handleRun}
                 disabled={isRunDisabled}
                 size="sm"
-                className="ml-3"
+                contentClassName="justify-center"
               >
                 Run
               </Button>

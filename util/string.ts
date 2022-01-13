@@ -70,3 +70,13 @@ export const fromBuffer = (buf: Buffer) => {
 export const toKeyIndex = (prefix: string, index: number) => {
   return [prefix, index].join('-')
 }
+
+/**
+ * Creates a query string from an object.
+ */
+export const objToQueryString = (params: any) => {
+  return Object.keys(params)
+    .map((key) => (!isEmpty(params[key]) ? key + '=' + params[key] : null))
+    .filter((param) => param !== null)
+    .join('&')
+}
