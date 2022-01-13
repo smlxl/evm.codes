@@ -3,6 +3,7 @@ import { ReactElement, ReactNode } from 'react'
 import { KBarProvider } from 'kbar'
 import useActions from 'lib/useActions'
 import type { NextPage } from 'next'
+import PlausibleProvider from 'next-plausible'
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 
@@ -30,16 +31,18 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <ThemeProvider attribute="class">
-      <SettingsProvider>
-        <EthereumProvider>
-          <KBarProvider actions={actions}>
-            {getLayout(<Component {...pageProps} />)}
-            <KBar />
-          </KBarProvider>
-        </EthereumProvider>
-      </SettingsProvider>
-    </ThemeProvider>
+    <PlausibleProvider domain="evm.codes">
+      <ThemeProvider attribute="class">
+        <SettingsProvider>
+          <EthereumProvider>
+            <KBarProvider actions={actions}>
+              {getLayout(<Component {...pageProps} />)}
+              <KBar />
+            </KBarProvider>
+          </EthereumProvider>
+        </SettingsProvider>
+      </ThemeProvider>
+    </PlausibleProvider>
   )
 }
 

@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 
-module.exports = {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { withPlausibleProxy } = require('next-plausible')
+
+module.exports = withPlausibleProxy()({
   reactStrictMode: true,
   webpack5: true,
   serverRuntimeConfig: {
@@ -16,4 +19,4 @@ module.exports = {
 
     return config
   },
-}
+})
