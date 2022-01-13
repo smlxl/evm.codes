@@ -83,13 +83,19 @@ const Editor = ({ readOnly = false }: Props) => {
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
   const handleWorkerMessage = (event: MessageEvent) => {
-    const { code: byteCode, error } = event.data
+    const { code: byteCode, warning, error } = event.data
 
     if (error) {
       log(error, 'error')
       setIsCompiling(false)
       return
     }
+
+    if (warning) {
+      log(warning, 'warn')
+    }
+
+    log('Compilation succesful')
 
     try {
       deployContract(byteCode, new BN(callValue)).then((tx) => {
@@ -98,14 +104,15 @@ const Editor = ({ readOnly = false }: Props) => {
         startTransaction(byteCode, tx)
       })
     } catch (error) {
-      log((error as Error).message, 'warn')
+      log((error as Error).message, 'error')
       setIsCompiling(false)
     }
   }
 
   const log = useCallback(
     (line: string, type = 'info') => {
-      setOutput([...output, { type, message: line }])
+      output.push({ type, message: line })
+      setOutput(output)
     },
     [output, setOutput],
   )
@@ -199,12 +206,15 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleRun = useCallback(() => {
     if (!isEmpty(callValue) && !/^[0-9]+$/.test(callValue)) {
-      log('Callvalue should be a positive integer')
+      log('Callvalue should be a positive integer', 'error')
       return
     }
 
     if (!isEmpty(callData) && !isFullHex(callData)) {
-      log('Calldata should be a hexadecimal string with 2 digits per byte')
+      log(
+        'Calldata should be a hexadecimal string with 2 digits per byte',
+        'error',
+      )
       return
     }
 
@@ -226,11 +236,11 @@ const Editor = ({ readOnly = false }: Props) => {
         startExecution(bytecode, _callValue, _callData)
       } else if (codeType === CodeType.Bytecode) {
         if (code.length % 2 !== 0) {
-          log('There should be at least 2 characters per byte', 'warn')
+          log('There should be at least 2 characters per byte', 'error')
           return
         }
         if (!isHex(code)) {
-          log('Only hexadecimal characters are allowed', 'warn')
+          log('Only hexadecimal characters are allowed', 'error')
           return
         }
         loadInstructions(code)
@@ -248,7 +258,7 @@ const Editor = ({ readOnly = false }: Props) => {
         }
       }
     } catch (error) {
-      log((error as Error).message, 'warn')
+      log((error as Error).message, 'error')
     }
   }, [
     code,
