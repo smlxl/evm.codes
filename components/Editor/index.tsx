@@ -141,7 +141,10 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   useEffect(() => {
-    const query = router.query.p ? JSON.parse(decode(router.query.p)) : {}
+    const query =
+      router.query.p && typeof router.query.p === 'string'
+        ? JSON.parse(decode(router.query.p))
+        : {}
 
     if ('callValue' in query && 'unit' in query) {
       setCallValue(query.callValue)
