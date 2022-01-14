@@ -248,8 +248,7 @@ const Editor = ({ readOnly = false }: Props) => {
     setSetting(Setting.EditorCodeType, value)
 
     if (!codeModified && codeType) {
-      const example = examples[value as CodeType][0]
-      setCode(example)
+      setCode(examples[value as CodeType][0])
     }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
@@ -266,6 +265,7 @@ const Editor = ({ readOnly = false }: Props) => {
       log('Callvalue should be a positive integer', 'error')
       return
     }
+
     if (!isEmpty(callData) && !isFullHex(callData)) {
       log(
         'Calldata should be a hexadecimal string with 2 digits per byte',
@@ -309,12 +309,12 @@ const Editor = ({ readOnly = false }: Props) => {
       log((error as Error).message, 'error')
     }
   }, [
-    callValue,
     code,
     codeType,
     opcodes,
     selectedFork,
     callData,
+    callValue,
     loadInstructions,
     log,
     startExecution,
@@ -396,9 +396,7 @@ const Editor = ({ readOnly = false }: Props) => {
                     placeholder="Calldata in HEX"
                     className="bg-white dark:bg-black-500"
                     value={callData}
-                    onChange={(e) => {
-                      setCallData(e.target.value)
-                    }}
+                    onChange={(e) => setCallData(e.target.value)}
                   />
                 )}
 
@@ -408,15 +406,13 @@ const Editor = ({ readOnly = false }: Props) => {
                   placeholder="Value to send"
                   className="bg-white dark:bg-black-500"
                   value={callValue}
-                  onChange={(e) => {
-                    setCallValue(e.target.value)
-                  }}
+                  onChange={(e) => setCallValue(e.target.value)}
                 />
 
                 <Select
-                  onChange={(option: OnChangeValue<any, any>) => {
+                  onChange={(option: OnChangeValue<any, any>) =>
                     setUnit(option.value)
-                  }}
+                  }
                   options={unitOptions}
                   value={unitValue}
                   isSearchable={false}
