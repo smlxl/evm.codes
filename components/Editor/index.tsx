@@ -92,41 +92,69 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callData, setCallData] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
-  const [isCopied, setIsCopied] = useState(false)
-
-  const handleWorkerMessage = (event: MessageEvent) => {
-    const { code: byteCode, warning, error } = event.data
-
-    if (error) {
-      log(error, 'error')
-      setIsCompiling(false)
-      return
-    }
-
-    if (warning) {
-      log(warning, 'warn')
-    }
-
-    log('Compilation successful')
-
-    try {
-      deployContract(byteCode, new BN(callValue)).then((tx) => {
-        loadInstructions(byteCode)
-        setIsCompiling(false)
-        startTransaction(byteCode, tx)
-      })
-    } catch (error) {
-      log((error as Error).message, 'error')
-      setIsCompiling(false)
-    }
-  }
 
   const log = useCallback(
     (line: string, type = 'info') => {
-      output.push({ type, message: line })
-      setOutput(output)
+      // See https://blog.logrocket.com/a-guide-to-usestate-in-react-ecb9952e406c/
+      setOutput((previous) => {
+        const cloned = previous.map((x) => ({ ...x }))
+        cloned.push({ type, message: line })
+        return cloned
+      })
     },
-    [output, setOutput],
+    [setOutput],
+  )
+
+  const getCallValue = useCallback(() => {
+    const _callValue = new BN(callValue)
+
+    if (unit === ValueUnit.Gwei) {
+      _callValue.imul(new BN('1000000000'))
+    } else if (unit === ValueUnit.Finney) {
+      _callValue.imul(new BN('1000000000000000'))
+    } else if (unit === ValueUnit.Ether) {
+      _callValue.imul(new BN('1000000000000000000'))
+    }
+
+    return _callValue
+  }, [callValue, unit])
+
+  const handleWorkerMessage = useCallback(
+    (event: MessageEvent) => {
+      const { code: byteCode, warning, error } = event.data
+
+      if (error) {
+        log(error, 'error')
+        setIsCompiling(false)
+        return
+      }
+
+      if (warning) {
+        log(warning, 'warn')
+      }
+
+      log('Compilation successful')
+
+      try {
+        const _callValue = getCallValue()
+        deployContract(byteCode, _callValue).then((tx) => {
+          loadInstructions(byteCode)
+          setIsCompiling(false)
+          startTransaction(byteCode, tx)
+        })
+      } catch (error) {
+        log((error as Error).message, 'error')
+        setIsCompiling(false)
+      }
+    },
+    [
+      log,
+      setIsCompiling,
+      deployContract,
+      loadInstructions,
+      startTransaction,
+      getCallValue,
+    ],
   )
 
   useEffect(() => {
@@ -238,7 +266,6 @@ const Editor = ({ readOnly = false }: Props) => {
       log('Callvalue should be a positive integer', 'error')
       return
     }
-
     if (!isEmpty(callData) && !isFullHex(callData)) {
       log(
         'Calldata should be a hexadecimal string with 2 digits per byte',
@@ -247,18 +274,10 @@ const Editor = ({ readOnly = false }: Props) => {
       return
     }
 
-    const _callData = Buffer.from(callData.substr(2), 'hex')
-    const _callValue = new BN(callValue)
-
-    if (unit === ValueUnit.Gwei) {
-      _callValue.imul(new BN('1000000000'))
-    } else if (unit === ValueUnit.Finney) {
-      _callValue.imul(new BN('1000000000000000'))
-    } else if (unit === ValueUnit.Ether) {
-      _callValue.imul(new BN('1000000000000000000'))
-    }
-
     try {
+      const _callData = Buffer.from(callData.substr(2), 'hex')
+      const _callValue = getCallValue()
+
       if (codeType === CodeType.Mnemonic) {
         const bytecode = getBytecodeFromMnemonic(code, opcodes)
         loadInstructions(bytecode)
@@ -290,19 +309,19 @@ const Editor = ({ readOnly = false }: Props) => {
       log((error as Error).message, 'error')
     }
   }, [
+    callValue,
     code,
     codeType,
     opcodes,
     selectedFork,
     callData,
-    callValue,
-    unit,
     loadInstructions,
     log,
     startExecution,
+    getCallValue,
   ])
 
-  const handleCopyPermalink = () => {
+  const handleCopyPermalink = useCallback(() => {
     const params = {
       callValue,
       unit,
@@ -312,9 +331,8 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     copy(`${getAbsoluteURL('/playground?')}${objToQueryString(params)}`)
-    setIsCopied(true)
-    setTimeout(() => setIsCopied(false), 3000)
-  }
+    log('Link to current code, calldata and value copied to clipboard')
+  }, [callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
@@ -410,12 +428,8 @@ const Editor = ({ readOnly = false }: Props) => {
                   onClick={handleCopyPermalink}
                   transparent
                   padded={false}
-                  size="sm"
                 >
                   <Icon name="links-line" className="text-indigo-500 mr-2" />
-                  <span className="text-gray-600 dark:text-gray-400 text-sm font-normal hover:text-indigo-500">
-                    {!isCopied ? 'Share permalink' : 'Copied to clipboard'}
-                  </span>
                 </Button>
               </div>
 
