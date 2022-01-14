@@ -39,6 +39,7 @@ const privateKey = Buffer.from(
 )
 const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
+const contractAddress = Address.generate(accountAddress, new BN(1))
 const gasLimit = new BN(0xffffffffffff)
 
 type ContextProps = {
@@ -57,13 +58,14 @@ type ContextProps = {
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
-  deployContract: (
+  transactionData: (
     byteCode: string,
     value: BN,
+    to?: Address,
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: BN, data: Buffer) => void
-  startTransaction: (byteCode: string, tx: TypedTransaction | TxData) => void
+  startTransaction: (tx: TypedTransaction | TxData) => void
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
   removeBreakpoint: (instructionId: number) => void
@@ -97,7 +99,7 @@ export const EthereumContext = createContext<ContextProps>({
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
-  deployContract: () =>
+  transactionData: () =>
     new Promise((resolve) => {
       resolve({})
     }),
@@ -194,14 +196,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    * @returns The deployed contract transaction data.
    */
-  const deployContract = async (byteCode: string, value: BN) => {
+  const transactionData = async (data: string, value: BN, to?: Address) => {
     const account = await vm.stateManager.getAccount(accountAddress)
 
     const txData = {
+      to,
       value: value,
       gasLimit,
       gasPrice: 10,
-      data: '0x' + byteCode,
+      data: '0x' + data,
       nonce: account.nonce,
     }
 
@@ -252,28 +255,14 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param value The callvalue.
    * @param data The calldata.
    */
-  const startExecution = (byteCode: string, value: BN, data: Buffer) => {
-    // always start paused
-    isExecutionPaused.current = true
-    setIsExecuting(true)
-    setVmError(undefined)
-
-    vm.runCode({
-      code: Buffer.from(byteCode, 'hex'),
-      value,
-      data,
-      gasLimit,
-      block: _getBlock(),
-    })
-      .then(({ runState, gasUsed, returnValue, exceptionError }) =>
-        _loadRunState({
-          gasUsed,
-          runState,
-          returnValue,
-          exceptionError,
-        }),
-      )
-      .finally(() => setIsExecuting(false))
+  const startExecution = async (byteCode: string, value: BN, data: Buffer) => {
+    vm.stateManager.putContractCode(
+      contractAddress,
+      Buffer.from(byteCode, 'hex'),
+    )
+    startTransaction(
+      await transactionData(data.toString('hex'), value, contractAddress),
+    )
   }
 
   /**
@@ -281,10 +270,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    * @param tx The transaction data to run from.
    */
-  const startTransaction = (
-    byteCode: string,
-    tx: TypedTransaction | TxData,
-  ) => {
+  const startTransaction = (tx: TypedTransaction | TxData) => {
     // always start paused
     isExecutionPaused.current = true
     setIsExecuting(true)
@@ -296,7 +282,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         _loadRunState({
           gasUsed,
           runState: execResult.runState,
-          contractAddress: createdAddress,
+          newContractAddress: createdAddress,
+          returnValue: execResult.returnValue,
+          exceptionError: execResult.exceptionError,
         }),
       )
       .finally(() => setIsExecuting(false))
@@ -495,25 +483,33 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _setupAccount = () => {
     // Add a fake account
     const accountData = {
-      nonce: 0,
+      nonce: 2,
       balance: new BN(10).pow(new BN(accountBalance)),
+    }
+    const contractData = {
+      nonce: 0,
+      balance: 0,
     }
     vm.stateManager.putAccount(
       accountAddress,
       Account.fromAccountData(accountData),
+    )
+    vm.stateManager.putAccount(
+      contractAddress,
+      Account.fromAccountData(contractData),
     )
   }
 
   const _loadRunState = ({
     gasUsed,
     runState,
-    contractAddress,
+    newContractAddress,
     returnValue,
     exceptionError,
   }: {
     gasUsed: BN
     runState?: RunState
-    contractAddress?: Address
+    newContractAddress?: Address
     returnValue?: Buffer
     exceptionError?: VmError
   }) => {
@@ -533,7 +529,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       })
     }
 
-    if (contractAddress) {
+    if (newContractAddress) {
       setDeployedContractAddress(contractAddress.toString())
     }
   }
@@ -671,7 +667,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
         onChainChange,
         onForkChange,
-        deployContract,
+        transactionData,
         loadInstructions,
         startExecution,
         startTransaction,
