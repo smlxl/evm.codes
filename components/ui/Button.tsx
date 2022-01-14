@@ -8,6 +8,7 @@ type Props = {
   href?: string
   external?: boolean
   className?: string
+  contentClassName?: string
   transparent?: boolean
   outline?: boolean
   padded?: boolean
@@ -19,6 +20,7 @@ type Props = {
 export const Button: React.FC<Props> = ({
   children,
   className,
+  contentClassName,
   href,
   external,
   disabled,
@@ -56,7 +58,9 @@ export const Button: React.FC<Props> = ({
       data-for={tooltipIdPrefixed}
       {...rest}
     >
-      <div className="flex items-center">{children}</div>
+      <div className={cn('flex items-center', contentClassName)}>
+        {children}
+      </div>
       {tooltip && tooltipId && (
         <ReactTooltip
           className="tooltip"

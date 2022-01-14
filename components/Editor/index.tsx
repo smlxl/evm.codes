@@ -9,24 +9,34 @@ import React, {
   RefObject,
 } from 'react'
 
+import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
+import copy from 'copy-to-clipboard'
 import { BN } from 'ethereumjs-util'
+import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
+import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
   compilerSemVer,
   getBytecodeFromMnemonic,
 } from 'util/compiler'
-import { codeHighlight, isEmpty, isFullHex, isHex } from 'util/string'
+import {
+  codeHighlight,
+  isEmpty,
+  isFullHex,
+  isHex,
+  objToQueryString,
+} from 'util/string'
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
-import { Button, Input } from 'components/ui'
+import { Button, Input, Icon } from 'components/ui'
 
 import Console from './Console'
 import ExecutionState from './ExecutionState'
@@ -53,6 +63,7 @@ const unitOptions = Object.keys(ValueUnit).map((value) => ({
 
 const Editor = ({ readOnly = false }: Props) => {
   const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
+  const router = useRouter()
 
   const {
     deployContract,
@@ -82,49 +93,94 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
-  const handleWorkerMessage = (event: MessageEvent) => {
-    const { code: byteCode, warning, error } = event.data
-
-    if (error) {
-      log(error, 'error')
-      setIsCompiling(false)
-      return
-    }
-
-    if (warning) {
-      log(warning, 'warn')
-    }
-
-    log('Compilation successful')
-
-    try {
-      deployContract(byteCode, new BN(callValue)).then((tx) => {
-        loadInstructions(byteCode)
-        setIsCompiling(false)
-        startTransaction(byteCode, tx)
-      })
-    } catch (error) {
-      log((error as Error).message, 'error')
-      setIsCompiling(false)
-    }
-  }
-
   const log = useCallback(
     (line: string, type = 'info') => {
-      output.push({ type, message: line })
-      setOutput(output)
+      // See https://blog.logrocket.com/a-guide-to-usestate-in-react-ecb9952e406c/
+      setOutput((previous) => {
+        const cloned = previous.map((x) => ({ ...x }))
+        cloned.push({ type, message: line })
+        return cloned
+      })
     },
-    [output, setOutput],
+    [setOutput],
+  )
+
+  const getCallValue = useCallback(() => {
+    const _callValue = new BN(callValue)
+
+    if (unit === ValueUnit.Gwei) {
+      _callValue.imul(new BN('1000000000'))
+    } else if (unit === ValueUnit.Finney) {
+      _callValue.imul(new BN('1000000000000000'))
+    } else if (unit === ValueUnit.Ether) {
+      _callValue.imul(new BN('1000000000000000000'))
+    }
+
+    return _callValue
+  }, [callValue, unit])
+
+  const handleWorkerMessage = useCallback(
+    (event: MessageEvent) => {
+      const { code: byteCode, warning, error } = event.data
+
+      if (error) {
+        log(error, 'error')
+        setIsCompiling(false)
+        return
+      }
+
+      if (warning) {
+        log(warning, 'warn')
+      }
+
+      log('Compilation successful')
+
+      try {
+        const _callValue = getCallValue()
+        deployContract(byteCode, _callValue).then((tx) => {
+          loadInstructions(byteCode)
+          setIsCompiling(false)
+          startTransaction(byteCode, tx)
+        })
+      } catch (error) {
+        log((error as Error).message, 'error')
+        setIsCompiling(false)
+      }
+    },
+    [
+      log,
+      setIsCompiling,
+      deployContract,
+      loadInstructions,
+      startTransaction,
+      getCallValue,
+    ],
   )
 
   useEffect(() => {
-    const initialCodeType: CodeType =
-      getSetting(Setting.EditorCodeType) || CodeType.Yul
+    const query = router.query
 
-    setCodeType(initialCodeType)
-    setCode(examples[initialCodeType][0])
+    if ('callValue' in query && 'unit' in query) {
+      setCallValue(query.callValue as string)
+      setUnit(query.unit as string)
+    }
+
+    if ('callData' in query) {
+      setCallData(query.callData as string)
+    }
+
+    if ('codeType' in query && 'code' in query) {
+      setCodeType(query.codeType as string)
+      setCode(JSON.parse('{"a":' + decode(query.code as string) + '}').a)
+    } else {
+      const initialCodeType: CodeType =
+        getSetting(Setting.EditorCodeType) || CodeType.Yul
+
+      setCodeType(initialCodeType)
+      setCode(examples[initialCodeType][0])
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsLoaded])
+  }, [settingsLoaded && router.isReady])
 
   useEffect(() => {
     solcWorkerRef.current = new Worker(
@@ -218,18 +274,10 @@ const Editor = ({ readOnly = false }: Props) => {
       return
     }
 
-    const _callData = Buffer.from(callData.substr(2), 'hex')
-    const _callValue = new BN(callValue)
-
-    if (unit === ValueUnit.Gwei) {
-      _callValue.imul(new BN('1000000000'))
-    } else if (unit === ValueUnit.Finney) {
-      _callValue.imul(new BN('1000000000000000'))
-    } else if (unit === ValueUnit.Ether) {
-      _callValue.imul(new BN('1000000000000000000'))
-    }
-
     try {
+      const _callData = Buffer.from(callData.substr(2), 'hex')
+      const _callValue = getCallValue()
+
       if (codeType === CodeType.Mnemonic) {
         const bytecode = getBytecodeFromMnemonic(code, opcodes)
         loadInstructions(bytecode)
@@ -267,11 +315,24 @@ const Editor = ({ readOnly = false }: Props) => {
     selectedFork,
     callData,
     callValue,
-    unit,
     loadInstructions,
     log,
     startExecution,
+    getCallValue,
   ])
+
+  const handleCopyPermalink = useCallback(() => {
+    const params = {
+      callValue,
+      unit,
+      callData,
+      codeType,
+      code: encodeURIComponent(encode(JSON.stringify(code))),
+    }
+
+    copy(`${getAbsoluteURL('/playground?')}${objToQueryString(params)}`)
+    log('Link to current code, calldata and value copied to clipboard')
+  }, [callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
@@ -328,8 +389,8 @@ const Editor = ({ readOnly = false }: Props) => {
               />
             </div>
 
-            <div className="flex items-center justify-between px-4 py-2 md:border-r border-gray-200 dark:border-black-500">
-              <div className="flex flex-row gap-x-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
+              <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
                 {isCallDataActive && (
                   <Input
                     placeholder="Calldata in HEX"
@@ -358,13 +419,26 @@ const Editor = ({ readOnly = false }: Props) => {
                   classNamePrefix="select"
                   menuPlacement="auto"
                 />
+
+                <Button
+                  onClick={handleCopyPermalink}
+                  transparent
+                  padded={false}
+                >
+                  <span
+                    className="inline-block mr-4 select-all"
+                    data-tip="Share permalink"
+                  >
+                    <Icon name="links-line" className="text-indigo-500 mr-2" />
+                  </span>
+                </Button>
               </div>
 
               <Button
                 onClick={handleRun}
                 disabled={isRunDisabled}
                 size="sm"
-                className="ml-3"
+                contentClassName="justify-center"
               >
                 Run
               </Button>
