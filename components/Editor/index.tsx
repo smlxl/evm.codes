@@ -425,7 +425,12 @@ const Editor = ({ readOnly = false }: Props) => {
                   transparent
                   padded={false}
                 >
-                  <Icon name="links-line" className="text-indigo-500 mr-2" />
+                  <span
+                    className="inline-block mr-4 select-all"
+                    data-tip="Share permalink"
+                  >
+                    <Icon name="links-line" className="text-indigo-500 mr-2" />
+                  </span>
                 </Button>
               </div>
 
