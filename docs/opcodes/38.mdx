@@ -5,6 +5,10 @@ group: Environmental Information
 
 *Index 1 is top of the stack. See [PUSH](/#60).*
 
+## Notes
+
+Each instruction occupies one byte. In the case of a [PUSH](/#60) instruction, the bytes that need to be pushed are encoded after that, it thus increases the codesize accordingly.
+
 ## Stack output
 
 0. `size`: byte size of the [code](/about).
@@ -13,7 +17,9 @@ group: Environmental Information
 
 | * | Input | Output |
 |--:|------:|-------:|
-| `1` | | `47` |
+| `1` | | `32` |
+
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='%2F%2F%20Add%20som~instructions%20to%20increas~th~cod~sizeyPUSH29%200yPOPyyCODESIZE'~e%20y%5Cn%01y~_).
 
 ## Error cases
 

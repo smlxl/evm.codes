@@ -32,32 +32,4 @@ fork: Byzantium
 | `9` | |
 | `10` | |
 
-Reproduce in playground:
-
-    // First place the parameters in memory
-    PUSH1 1 // Bsize
-    PUSH1 0
-    MSTORE
-    PUSH1 1 // Esize
-    PUSH1 0x20
-    MSTORE
-    PUSH1 1 // Msize
-    PUSH1 0x40
-    MSTORE
-    PUSH32 0x08090A0000000000000000000000000000000000000000000000000000000000 // B, E and M
-    PUSH1 0x60
-    MSTORE
-
-    // Do the call
-    PUSH1 1 // retSize
-    PUSH1 0x9F // retOffset
-    PUSH1 0x63 // argsSize
-    PUSH1 0 // argsOffset
-    PUSH1 5 // address
-    PUSH4 0xFFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 0x80
-    MLOAD
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='jFirsNplacebparameters%20in%20memoryWBsZ_WEsZX2_WMsZX4_Y32G08090A7777JwB%2C%20E%20and%20M~X6_qqjDobcallWretSZX9FwretVX63QSZ0QV5waddressY4GFFFFFFFFwgasqSTATICCALLqqjPutbresulNalonKonbstackqPOP~X80qMLOAD'~Y1%20w%20jvJJJ0q%5Cnj%2F%2F%20b%20thK_0qMSTOREZize~YqPUSHX0xW~1wVOffset~QwargsNt%20Ke%20J00G%20X7vv%017GJKNQVWXYZ_bjqvw~_).

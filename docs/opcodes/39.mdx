@@ -19,7 +19,7 @@ For out of bound bytes, 0s will be copied.
 
 | Code |
 |-----:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0x7DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
 
 | * | Input 1 | * | * | Input 2 |
 |--:|--------:|--:|--:|--------:|
@@ -33,11 +33,13 @@ For out of bound bytes, 0s will be copied.
 
 | Memory after input 1 |
 |---------------------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0x7DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
 
 | Memory after input 1 then 2 |
 |----------------------------:|
-| `0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0x7F00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
+
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='qPutwbeginning%20ofwcodXtowexpected%20valueZ30VxWWWWWZ32VyyqRemovewvalues%20fromwstackTTj1~32~0_j2~8~31_'~Z1%20zFFFFFFy%5Cnw%20thXq%2F%2F%20jyyqExamplX_~0yCODECOPYZyPUSHXe%20WzzV%200TyPOP%01TVWXZ_jqwyz~_).
 
 ## Error cases
 

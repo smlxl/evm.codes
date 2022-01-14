@@ -22,7 +22,7 @@ More information about ECDSA can be found [here](https://en.wikipedia.org/wiki/E
 | [0; 31] (32 bytes) | publicAddress | The recovered 20-byte address right aligned to 32 bytes |
 
 If an address cannot be recovered, or not enough gas was given, then there is no return data. Please note, that the return is the address that issued the signature but it won't verify the signature.
- 
+
 ## Example
 
 | Input | Output |
@@ -32,32 +32,4 @@ If an address cannot be recovered, or not enough gas was given, then there is no
 | `0x9242685bf161793cc25603c231bc2f568eb630ea16aa137d2664ac8038825608` | |
 | `0x4f8ae3bd7535248d0bd448298cc2e2071e56992d0774dc340c368ae950852ada` | |
 
-Reproduce in playground:
-
-    // First place the parameters in memory
-    PUSH32 0x456e9aea5e197a1f1af7a3e85a3212fa4049a3ba34c2289b4c860fc0b0c64ef3 // hash
-    PUSH1 0
-    MSTORE
-    PUSH1 28 // v
-    PUSH1 0x20
-    MSTORE
-    PUSH32 0x9242685bf161793cc25603c231bc2f568eb630ea16aa137d2664ac8038825608 // r
-    PUSH1 0x40
-    MSTORE
-    PUSH32 0x4f8ae3bd7535248d0bd448298cc2e2071e56992d0774dc340c368ae950852ada // s
-    PUSH1 0x60
-    MSTORE
-
-    // Do the call
-    PUSH1 32 // retSize
-    PUSH1 0x80 // retOffset
-    PUSH1 0x80 // argsSize
-    PUSH1 0 // argsOffset
-    PUSH1 1 // address
-    PUSH4 0xFFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 0x80
-    MLOAD
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='jFirsNplace_parameters%20in%20memoryZ456e9aea5e197a1f1af7a3e85a3212fa4049a3ba34c2289b4c860fc0b0c64ef3whash~Y~28wvX2YZ9242685bf161793cc25603c231bc2f568eb630ea16aa137d2664ac8038825608wrX4YZ4f8ae3bd7535248d0bd448298cc2e2071e56992d0774dc340c368ae950852adawsX6YqqjDo_call~32JSizeX80JOffsetX8VSize~VOffset~1waddressW4QFFFFFFFFwgasqSTATICCALLqqjPut_resulNalonKon_stackqPOPX80qMLOAD'~W1%20w%20jq%5Cnj%2F%2F%20_%20thKZW32QY0qMSTOREX~0xWqPUSHV0wargsQ%200xNt%20Ke%20Jwret%01JKNQVWXYZ_jqw~_).
