@@ -21,7 +21,10 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
 
   const filterByOptions = useMemo(
     () => [
-      { label: !isPrecompiled ? 'Opcode' : 'Address', value: 'code' },
+      {
+        label: !isPrecompiled ? 'Opcode' : 'Address',
+        value: 'opcodeOrAddress',
+      },
       { label: 'Name', value: 'name' },
       { label: 'Description', value: 'description' },
     ],
