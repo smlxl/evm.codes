@@ -264,7 +264,7 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     try {
-      const _callData = Buffer.from(callData.substr(2), 'hex')
+      const _callData = callData.substr(2)
       const _callValue = getCallValue()
 
       if (codeType === CodeType.Mnemonic) {

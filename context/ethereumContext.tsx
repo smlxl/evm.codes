@@ -64,7 +64,7 @@ type ContextProps = {
     to?: Address,
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
-  startExecution: (byteCode: string, value: BN, data: Buffer) => void
+  startExecution: (byteCode: string, value: BN, data: string) => void
   startTransaction: (tx: TypedTransaction | TxData) => void
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
@@ -255,14 +255,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param value The callvalue.
    * @param data The calldata.
    */
-  const startExecution = async (byteCode: string, value: BN, data: Buffer) => {
+  const startExecution = async (byteCode: string, value: BN, data: string) => {
     vm.stateManager.putContractCode(
       contractAddress,
       Buffer.from(byteCode, 'hex'),
     )
-    startTransaction(
-      await transactionData(data.toString('hex'), value, contractAddress),
-    )
+    startTransaction(await transactionData(data, value, contractAddress))
   }
 
   /**
@@ -526,8 +524,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     if (exceptionError) {
       setVmError(exceptionError.error)
-    }
-    else if (newContractAddress) {
+    } else if (newContractAddress) {
       setDeployedContractAddress(contractAddress.toString())
     }
   }
