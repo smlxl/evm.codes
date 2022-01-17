@@ -525,7 +525,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (exceptionError) {
       setVmError(exceptionError.error)
     } else if (newContractAddress) {
-      setDeployedContractAddress(contractAddress.toString())
+      setDeployedContractAddress(newContractAddress.toString())
     }
   }
 
