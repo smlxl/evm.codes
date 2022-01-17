@@ -7,7 +7,7 @@ group: Environmental Information
 
 ## Notes
 
-For out of bound bytes, 0s will be copied. A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL](/#F4) or [STATICCALL](/#FA).
+A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL](/#F4) or [STATICCALL](/#FA).
 
 ## Stack input
 
@@ -23,9 +23,9 @@ For out of bound bytes, 0s will be copied. A sub context can be created with [CA
 
 | * | Input 1 | * | * | Input 2 |
 |--:|--------:|--:|--:|--------:|
-| `1` | `0` | * | `1` | `0` |
+| `1` | `0` | * | `1` | `32` |
 | `2` | `0` | * | `2` | `31` |
-| `3` | `32` | * | `3` | `8` |
+| `3` | `32` | * | `3` | `1` |
 
 | Memory before |
 |--------------:|
@@ -37,10 +37,15 @@ For out of bound bytes, 0s will be copied. A sub context can be created with [CA
 
 | Memory after input 1 then 2 |
 |----------------------------:|
-| `0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+[Reproduce in playground][1]
+
+[1]: /playground?unit=Wei&codeType=Mnemonic&code='jCKVthat%20cK(wich%20return-32%20*Z7F7ggggggggggFJ_Z*6Q527*F6Q526020.!_Zq06020526029.00~64_Breatef(withfVcod)above~77JJzCREATE%20jPutsfnew%20(addres-onfstackBallfdeployed%20XJJJJzDUP584%200xg*zSTATICCALLBlearfstackzPOPzPOPBlearfmemoryJJ_J!_J~64_zG1!JJWG2~1~31!W'~81%20z%5CnqQQQj%2F%2F%20g***f%20th)_zMSTOREZ832%200xXcontractWzRETURNDATACOPYzVconstructor%20Q000Kreate-a%20J~0GzjExampl)BzzjC8zPUSH.6QF3qqqq-s%20*FF)e%20(X%20!~32%01!()*-.8BGJKQVWXZ_fgjqz~_
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
+- Reading offset equal of higher than [RETURNDATASIZE](#3D).

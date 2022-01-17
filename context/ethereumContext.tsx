@@ -513,11 +513,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     returnValue?: Buffer
     exceptionError?: VmError
   }) => {
-    if (exceptionError) {
-      setVmError(exceptionError.error)
-      return
-    }
-
     if (runState) {
       const { programCounter: pc, stack, memory } = runState
       _setExecutionState({
@@ -529,7 +524,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       })
     }
 
-    if (newContractAddress) {
+    if (exceptionError) {
+      setVmError(exceptionError.error)
+    }
+    else if (newContractAddress) {
       setDeployedContractAddress(contractAddress.toString())
     }
   }

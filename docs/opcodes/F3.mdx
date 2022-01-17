@@ -14,6 +14,23 @@ Exits the current [context](/about) successfully.
 0. `offset`: byte offset in the [memory](/about) in bytes, to copy what will be the [return data](/about) of this [context](/about).
 1. `size`: byte size to copy (size of the [return data](/about)).
 
+## Example
+
+| `1` | Memory |
+|--:|------:|
+| `1` | `0xFF01` |
+
+| * | Input |
+|--:|-----:|
+| `1` | `0` |
+| `1` | `2` |
+
+| `1` | Calling context return data |
+|--:|---------------------------:|
+| `1` | `0xFF01` |
+
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='wSet%20the%20statev32%200xFF01uuuuuz0yMSTOREyywExamplez2z0yRETURN'~000000zv1%20y%5Cnw%2F%2F%20vyPUSHu~~%01uvwyz~_).
+
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
