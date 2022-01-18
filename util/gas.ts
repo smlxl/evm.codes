@@ -264,12 +264,8 @@ export const calculateOpcodeDynamicFee = (
     case '55': {
       result = sstoreCost(common, inputs)
 
-      if (common.gteHardfork('berlin')) {
-        if (inputs.cold === '1') {
-          result.iaddn(common.param('gasPrices', 'coldsload'))
-        } else {
-          result.iaddn(common.param('gasPrices', 'warmstorageread'))
-        }
+      if (common.gteHardfork('berlin') && inputs.cold === '1') {
+        result.iaddn(common.param('gasPrices', 'coldsload'))
       }
       break
     }
