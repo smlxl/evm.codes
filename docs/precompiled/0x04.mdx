@@ -26,23 +26,4 @@ The identity function is typically used to copy a chunk of memory.
 |------:|-------:|
 | `0xFF` | `0xFF` |
 
-Reproduce in playground:
-
-    // First place the parameters in memory
-    PUSH1 0xFF // data
-    PUSH1 0
-    MSTORE
-
-    // Do the call
-    PUSH1 1 // retSize
-    PUSH1 0x3F // retOffset
-    PUSH1 1 // argsSize
-    PUSH1 0x1F // argsOffset
-    PUSH1 4 // address
-    PUSH4 0xFFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 0x20
-    MLOAD
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='wFirsWplaceqparameters%20in%20memorybFFjdata~0vMSTOREvvwDoqcall~1QX3FQ_1YX1FY_4jaddressZ4%200xFFFFFFFFjgasvSTATICCALLvvwPutqresulWalonVonqstackvPOPb20vMLOAD'~Z1j%2F%2F%20v%5Cnq%20thVj%20wb~0x_Offset~ZvPUSHYjargsXSizebWt%20Ve%20Qjret%01QVWXYZ_bjqvw~_).

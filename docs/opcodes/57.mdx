@@ -16,6 +16,10 @@ The **JUMPI** instruction may alter the program counter, thus breaking the linea
 0. `counter`: byte offset in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
 1. `b`: the program counter will be altered with the new value only if this value is different from 0. Otherwise, the program counter is simply incremented and the next instruction will be executed.
 
+## Example
+
+[See in playground](/playground?unit=Wei&codeType=Mnemonic&code='qFirstk%20noYjump%2C%20secondkw0%20XRY0w10z2~h4~W_z5w12z7~h9~Z0gINVALIDK11gZ2w_z13'~%20%7Bprevious%20instruction%20occupiR%202%20bytR%7DgzXseYwgWq%2F%2F%20k%20example%20doRhQI%20%20Kg%5Cn_1%20ZQDESTz1Yt%20X%20qOffWPUSH_ResQJUMPK%20z%01KQRWXYZ_ghkqwz~_).
+
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:

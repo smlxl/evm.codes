@@ -31,31 +31,4 @@ If the input is not valid, or if not enough gas was given, then there is no retu
 | `2` | `0x15ed738c0e0a7c92e7845f96b2ae9c0a68a6a449e3538fc7ff3ebf7a5a18a2c4` |
 | `2` | |
 
-Reproduce in playground:
-
-    // First place the parameters in memory
-    PUSH1 1 // x1
-    PUSH1 0
-    MSTORE
-    PUSH1 2 // y1
-    PUSH1 0x20
-    MSTORE
-    PUSH1 2 // s
-    PUSH1 0x40
-    MSTORE
-
-    // Do the call
-    PUSH1 0x40 // retSize
-    PUSH1 0x60 // retOffset
-    PUSH1 0x60 // argsSize
-    PUSH1 0 // argsOffset
-    PUSH1 7 // address
-    PUSH4 0xFFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 0x80
-    MLOAD
-    PUSH1 0x60
-    MLOAD
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='wFirsVplacejparameters%20in%20memory~1qx1~Ny1_2Ns_4bvvwDojcall_4WSize_6WOffset_6YSize~YOffset~7qaddressX4%200xFFFFFFFFqgasvSTATICCALLvvwPutjresulValonQonjstackvPOP_8Z_6Z'~X1q%2F%2F%20v%5Cnq%20wj%20thQb0vMSTORE_~0xZ0vMLOADY0qargsXvPUSHW0qretVt%20Qe%20Nb~2q%01NQVWXYZ_bjqvw~_).

@@ -39,6 +39,8 @@ For out of bound bytes, 0s will be copied.
 |----------------------------:|
 | `0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
+[Reproduce in playground](/playground?unit=Wei&callData=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF&codeType=Mnemonic&code='z1~32~0ywwz2~8~31y'~wPUSH1%20z%2F%2F%20Example%20y~0wCALLDATACOPYw%5Cn%01wyz~_).
+
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:

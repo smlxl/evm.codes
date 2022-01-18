@@ -66,7 +66,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const router = useRouter()
 
   const {
-    deployContract,
+    transactionData,
     loadInstructions,
     startExecution,
     startTransaction,
@@ -137,10 +137,10 @@ const Editor = ({ readOnly = false }: Props) => {
 
       try {
         const _callValue = getCallValue()
-        deployContract(byteCode, _callValue).then((tx) => {
+        transactionData(byteCode, _callValue).then((tx) => {
           loadInstructions(byteCode)
           setIsCompiling(false)
-          startTransaction(byteCode, tx)
+          startTransaction(tx)
         })
       } catch (error) {
         log((error as Error).message, 'error')
@@ -150,7 +150,7 @@ const Editor = ({ readOnly = false }: Props) => {
     [
       log,
       setIsCompiling,
-      deployContract,
+      transactionData,
       loadInstructions,
       startTransaction,
       getCallValue,
@@ -231,17 +231,6 @@ const Editor = ({ readOnly = false }: Props) => {
     return value
   }
 
-  const highlightMnemonic = (value: string) => {
-    if (!codeType) {
-      return value
-    }
-
-    return value
-      .split('\n')
-      .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
-      .join('\n')
-  }
-
   const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
     const { value } = option
     setCodeType(value)
@@ -275,7 +264,7 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     try {
-      const _callData = Buffer.from(callData.substr(2), 'hex')
+      const _callData = callData.substr(2)
       const _callValue = getCallValue()
 
       if (codeType === CodeType.Mnemonic) {
@@ -339,7 +328,6 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [compiling, code])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
-  const isMnemonic = useMemo(() => codeType === CodeType.Mnemonic, [codeType])
   const isCallDataActive = useMemo(
     () => codeType === CodeType.Mnemonic || codeType === CodeType.Bytecode,
     [codeType],
@@ -375,13 +363,7 @@ const Editor = ({ readOnly = false }: Props) => {
                 value={code}
                 readOnly={readOnly}
                 onValueChange={handleCodeChange}
-                highlight={
-                  isBytecode
-                    ? highlightBytecode
-                    : isMnemonic
-                    ? highlightMnemonic
-                    : highlightCode
-                }
+                highlight={isBytecode ? highlightBytecode : highlightCode}
                 tabSize={4}
                 className={cn('code-editor', {
                   'with-numbers': !isBytecode,

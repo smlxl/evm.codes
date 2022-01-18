@@ -15,6 +15,10 @@ The **JUMP** instruction alters the program counter, thus breaking the linear pa
 
 0. `counter`: byte offset in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
 
+## Example
+
+[See in playground](/playground?unit=Wei&codeType=Mnemonic&code='wWZjump%20overqinvalid%20and%20jusXgoYoqpushk4x0_%20%20%20x2%20%7Bprevious%20instruction%20occupies%202%20bytes%7DzINVALIDx3_DEST~4k1x5'~%20wOffseXz%5Cnx%20~w%2F%2F%20qYhZkzPUSH1%20_zJUMPZe%20Y%20tXt%20%01XYZ_kqwxz~_).
+
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:

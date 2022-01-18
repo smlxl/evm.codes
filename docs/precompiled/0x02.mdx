@@ -22,25 +22,4 @@ fork: Frontier
 |------:|-------:|
 | `0xFF` | TODO code is failing |
 
-Reproduce in playground:
-
-TODO code is failing
-
-    // First place the parameters in memory
-    PUSH1 0xFF // data
-    PUSH1 0
-    MSTORE
-
-    // Do the call
-    PUSH1 0x20 // retSize
-    PUSH1 0x20 // retOffset
-    PUSH1 1 // argsSize
-    PUSH1 0x1F // argsOffset
-    PUSH1 2 // address
-    PUSH4 0xFFFFFFFF // gas
-    STATICCALL
-
-    // Put the result alone on the stack
-    POP
-    PUSH1 0x20
-    MLOAD
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='wFirsWplaceqparameters%20in%20memorybFFjdata~0vMSTOREvvwDoqcallZSizeZ_1XSizeb1FX_2jaddressY4%200xFFFFFFFFjgasvSTATICCALLvvwPutqresulWalonVonqstackvPOPb20vMLOAD'~Y1j%2F%2F%20v%5Cnq%20thVj%20wb~0x_Offset~Zb20jretYvPUSHXjargsWt%20Ve%20%01VWXYZ_bjqvw~_).
