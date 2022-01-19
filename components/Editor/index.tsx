@@ -20,7 +20,6 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
-import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
   compilerSemVer,
