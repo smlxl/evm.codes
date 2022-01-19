@@ -318,7 +318,6 @@ const Editor = ({ readOnly = false }: Props) => {
       code: encodeURIComponent(encode(JSON.stringify(code))),
     }
 
-    console.log(process.env)
     copy(
       `${process.env.NEXT_PUBLIC_VERCEL_URL}/playground?${objToQueryString(
         params,
