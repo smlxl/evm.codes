@@ -320,7 +320,11 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     console.log(process.env)
-    copy(`${process.env.NEXT_PUBLIC_VERCEL_URL}/playground?${objToQueryString(params)}`)
+    copy(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/playground?${objToQueryString(
+        params,
+      )}`,
+    )
     log('Link to current code, calldata and value copied to clipboard')
   }, [callValue, unit, callData, codeType, code, log])
 
