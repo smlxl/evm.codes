@@ -319,7 +319,8 @@ const Editor = ({ readOnly = false }: Props) => {
       code: encodeURIComponent(encode(JSON.stringify(code))),
     }
 
-    copy(`${getAbsoluteURL('/playground?')}${objToQueryString(params)}`)
+    console.log(process.env)
+    copy(`${process.env.NEXT_PUBLIC_VERCEL_URL}/playground?${objToQueryString(params)}`)
     log('Link to current code, calldata and value copied to clipboard')
   }, [callValue, unit, callData, codeType, code, log])
 
