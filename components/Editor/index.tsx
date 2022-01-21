@@ -20,6 +20,7 @@ import SCEditor from 'react-simple-code-editor'
 import { EthereumContext } from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
+import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
   compilerSemVer,
@@ -318,11 +319,7 @@ const Editor = ({ readOnly = false }: Props) => {
       code: encodeURIComponent(encode(JSON.stringify(code))),
     }
 
-    copy(
-      `${process.env.NEXT_PUBLIC_VERCEL_URL}/playground?${objToQueryString(
-        params,
-      )}`,
-    )
+    copy(`${getAbsoluteURL('/playground')}?${objToQueryString(params)}`)
     log('Link to current code, calldata and value copied to clipboard')
   }, [callValue, unit, callData, codeType, code, log])
 
