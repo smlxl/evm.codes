@@ -25,7 +25,7 @@ const AboutPage = () => {
         ) is a stack-based computer. It means that all instructions take their
         parameters from the stack, and write their results on the stack. Each
         instruction thus has stack inputs, the parameters that it needs (if
-        any), and stack outputs, the return values (if any). All instructions
+        any), stack outputs, and the return values (if any). All instructions
         are encoded on 1 byte, with the exception of the PUSH instructions, 
         which allows to put an arbitrary value on the stack and encode the value 
         directly after the instruction. The list of instructions available, 
