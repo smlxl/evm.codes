@@ -28,12 +28,12 @@ const AboutPage = () => {
         any), stack outputs, and the return values (if any). All instructions
         are encoded on 1 byte, with the exception of the PUSH instructions,
         which allows to put an arbitrary value on the stack and encode the value
-        directly after the instruction. The list of instructions available,
-        with their opcodes, is shown in the <Link title="reference" />.
+        directly after the instruction. The list of instructions available, with
+        their opcodes, is shown in the <Link title="reference" />.
       </p>
       <p className="pb-8">
-        An instruction is assigned a value between 0 and 255 (or FF
-        in hexadecimal), called the opcode, and a mnemonic, which is a text
+        An instruction is assigned a value between 0 and 255 (or FF in
+        hexadecimal), called the opcode, and a mnemonic, which is a text
         representation that helps us human read the instruction. A smart
         contract is a set of instructions. When the EVM executes a smart
         contract, it reads and executes each instruction one by one. If an
