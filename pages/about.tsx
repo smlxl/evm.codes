@@ -24,22 +24,21 @@ const AboutPage = () => {
         </a>
         ) is a stack-based computer. It means that all instructions take their
         parameters from the stack, and write their results on the stack. Each
-        instruction thus has a stack input, the parameters that it needs (if
-        any), and a stack output, the return values (if any). All instructions
-        are encoded on 1 byte, with the exception of the{' '}
-        <Link to="#60" title="PUSH1" /> instruction, which allows to put an
+        instruction thus has stack inputs, the parameters that it needs (if
+        any), and stack outputs, the return values (if any). All instructions
+        are encoded on 1 byte, with the exception of the PUSH instructions, which allows to put an
         arbitrary value on the stack and encode the value directly after the
         instruction. The list of instructions available, with their opcodes, is
         shown in the <Link title="reference" />.
       </p>
       <p className="pb-8">
-        An instruction is assigned an arbitrary value between 0 and 255 (or FF
+        An instruction is assigned a value between 0 and 255 (or FF
         in hexadecimal), called the opcode, and a mnemonic, which is a text
         representation that helps us human read the instruction. A smart
         contract is a set of instructions. When the EVM executes a smart
         contract, it reads and executes each instruction one by one. If an
         instruction cannot be executed (for example because there are not enough
-        values on the stack), the smart contract fails.
+        values on the stack), the execution reverts.
       </p>
 
       <H2 className="mb-4">Execution environment</H2>
