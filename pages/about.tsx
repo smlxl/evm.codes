@@ -13,7 +13,7 @@ const AboutPage = () => {
 
       <H2 className="mb-4">Introduction</H2>
       <p className="pb-6">
-        The ethereum virtual machine (or{' '}
+        The Ethereum Virtual Machine (or{' '}
         <a
           href="https://ethereum.org/en/developers/docs/evm/"
           target="_blank"
@@ -26,9 +26,9 @@ const AboutPage = () => {
         parameters from the stack, and write their results on the stack. Each
         instruction thus has stack inputs, the parameters that it needs (if
         any), stack outputs, and the return values (if any). All instructions
-        are encoded on 1 byte, with the exception of the PUSH instructions, 
-        which allows to put an arbitrary value on the stack and encode the value 
-        directly after the instruction. The list of instructions available, 
+        are encoded on 1 byte, with the exception of the PUSH instructions,
+        which allows to put an arbitrary value on the stack and encode the value
+        directly after the instruction. The list of instructions available,
         with their opcodes, is shown in the <Link title="reference" />.
       </p>
       <p className="pb-8">
