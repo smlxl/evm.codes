@@ -15,6 +15,10 @@ module.exports = withPlausibleProxy()({
       stream: false,
       crypto: false,
       path: false,
+      process: false,
+      assert: false,
+      events: false,
+      util: false,
     }
 
     return config
