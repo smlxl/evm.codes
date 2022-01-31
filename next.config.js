@@ -15,10 +15,9 @@ module.exports = withPlausibleProxy()({
       stream: false,
       crypto: false,
       path: false,
-      process: false,
-      assert: false,
-      events: false,
-      util: false,
+      process: require.resolve('process/browser'),
+      assert: require.resolve('assert/'),
+      events: require.resolve('events/'),
     }
 
     return config
