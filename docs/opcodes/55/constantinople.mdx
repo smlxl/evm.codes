@@ -24,15 +24,16 @@
         if current_value == original_value
             if original_value != 0 and value == 0
                 gas_refunds += {gasPrices|netSstoreClearRefund}
-        else if original_value != 0
-            if current_value == 0
-                gas_refunds -= {gasPrices|netSstoreClearRefund}
-            else if value == 0
-                gas_refunds += {gasPrices|netSstoreClearRefund}
-        else if value == original_value
-            if original_value == 0
-                gas_refunds += {gasPrices|netSstoreResetClearRefund}
-            else
-                gas_refunds += {gasPrices|netSstoreResetRefund}
+        else
+            if original_value != 0
+                if current_value == 0
+                    gas_refunds -= {gasPrices|netSstoreClearRefund}
+                else if value == 0
+                    gas_refunds += {gasPrices|netSstoreClearRefund}
+            if value == original_value
+                if original_value == 0
+                    gas_refunds += {gasPrices|netSstoreResetClearRefund}
+                else
+                    gas_refunds += {gasPrices|netSstoreResetRefund}
 
 See [gas refunds](/about).

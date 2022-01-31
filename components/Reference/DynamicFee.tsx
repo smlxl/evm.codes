@@ -5,7 +5,7 @@ import { IReferenceItem } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { calculateDynamicFee } from 'util/gas'
+import { calculateDynamicFee, calculateDynamicRefund } from 'util/gas'
 
 import { Input, Radio, Icon } from 'components/ui'
 import { H2 } from 'components/ui/Doc'
@@ -27,12 +27,20 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
 
   const { common } = useContext(EthereumContext)
   const [inputs, setInputs] = useState<InputValue | undefined>()
-  const [result, setResult] = useState('0')
+  const [gas_cost, setGasCost] = useState('0')
+  const [gas_refund, setGasRefund] = useState('0')
+  const [can_refund, setCanRefund] = useState(false)
 
   const handleCompute = debounce((inputs) => {
     if (common) {
       try {
-        setResult(calculateDynamicFee(referenceItem, common, inputs))
+        setGasCost(calculateDynamicFee(referenceItem, common, inputs))
+
+        const refund = calculateDynamicRefund(referenceItem, common, inputs)
+        if (refund != null) {
+          setCanRefund(true)
+          setGasRefund(refund)
+        }
       } catch (error) {
         console.error(error)
       }
@@ -113,8 +121,15 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
 
         <div className="flex items-center pt-2">
           <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
-          Static gas + dynamic gas = {result}
+          Static gas + dynamic gas = {gas_cost}
         </div>
+
+        {can_refund && (
+          <div className="flex items-center pt-2">
+            <Icon name="reply-fill" className="text-indigo-500 mr-2" />
+            Gas refund = {gas_refund}
+          </div>
+        )}
       </div>
     </div>
   )

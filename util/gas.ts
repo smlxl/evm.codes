@@ -85,7 +85,11 @@ function sstoreCost(common: Common, inputs: any): BN {
     }
   } else if (common.gteHardfork('istanbul')) {
     if (inputs.newValue === inputs.currentValue) {
-      return new BN(common.param('gasPrices', 'sstoreNoopGasEIP2200'))
+      if (common.gteHardfork('berlin') && inputs.cold !== '1') {
+        return new BN(common.param('gasPrices', 'warmstorageread'))
+      } else {
+        return new BN(common.param('gasPrices', 'sstoreNoopGasEIP2200'))
+      }
     } else if (inputs.currentValue === inputs.originalValue) {
       if (inputs.originalValue === '0') {
         return new BN(common.param('gasPrices', 'sstoreInitGasEIP2200'))
@@ -172,6 +176,115 @@ export const calculateDynamicFee = (
   } else {
     return calculateOpcodeDynamicFee(opcodeOrPrecompiled, common, inputs)
   }
+}
+
+export const calculateDynamicRefund = (
+  opcode: IReferenceItem,
+  common: Common,
+  inputs: any,
+) => {
+  let result = null
+  switch (opcode.opcodeOrAddress) {
+    case '55': {
+      if (common.hardfork() === 'constantinople') {
+        if (inputs.newValue === inputs.currentValue) {
+          result = new BN(0)
+        } else if (inputs.currentValue === inputs.originalValue) {
+          if (inputs.originalValue !== '0' && inputs.newValue === '0') {
+            result = new BN(common.param('gasPrices', 'netSstoreClearRefund'))
+          } else {
+            result = new BN(0)
+          }
+        } else {
+          result = new BN(0)
+          if (inputs.originalValue !== '0') {
+            if (inputs.currentValue === '0') {
+              result.isubn(common.param('gasPrices', 'netSstoreClearRefund'))
+            } else if (inputs.newValue === '0') {
+              result.iaddn(common.param('gasPrices', 'netSstoreClearRefund'))
+            }
+          }
+          if (inputs.newValue === inputs.originalValue) {
+            if (inputs.originalValue === '0') {
+              result.iaddn(
+                common.param('gasPrices', 'netSstoreResetClearRefund'),
+              )
+            } else {
+              result.iaddn(common.param('gasPrices', 'netSstoreResetRefund'))
+            }
+          }
+        }
+      } else if (common.gteHardfork('istanbul')) {
+        if (inputs.newValue === inputs.currentValue) {
+          result = new BN(0)
+        } else if (inputs.currentValue === inputs.originalValue) {
+          if (inputs.originalValue !== '0' && inputs.newValue === '0') {
+            result = new BN(
+              common.param('gasPrices', 'sstoreClearRefundEIP2200'),
+            )
+          } else {
+            result = new BN(0)
+          }
+        } else {
+          result = new BN(0)
+          if (inputs.originalValue !== '0') {
+            if (inputs.currentValue === '0') {
+              result.isubn(
+                common.param('gasPrices', 'sstoreClearRefundEIP2200'),
+              )
+            } else if (inputs.newValue === '0') {
+              result.iaddn(
+                common.param('gasPrices', 'sstoreClearRefundEIP2200'),
+              )
+            }
+          }
+          if (inputs.newValue === inputs.originalValue) {
+            if (inputs.originalValue === '0') {
+              if (common.gteHardfork('berlin') && inputs.cold !== '1') {
+                result
+                  .iaddn(common.param('gasPrices', 'sstoreInitGasEIP2200'))
+                  .isubn(common.param('gasPrices', 'warmstorageread'))
+              } else {
+                result.iaddn(
+                  common.param('gasPrices', 'sstoreInitRefundEIP2200'),
+                )
+              }
+            } else {
+              if (common.gteHardfork('berlin') && inputs.cold !== '1') {
+                result
+                  .iaddn(common.param('gasPrices', 'sstoreReset'))
+                  .isubn(common.param('gasPrices', 'coldsload'))
+                  .isubn(common.param('gasPrices', 'warmstorageread'))
+              } else {
+                result.iaddn(
+                  common.param('gasPrices', 'sstoreCleanRefundEIP2200'),
+                )
+              }
+            }
+          }
+        }
+      } else {
+        if (inputs.newValue === '0' && inputs.currentValue !== '0') {
+          result = new BN(common.param('gasPrices', 'sstoreRefund'))
+        } else {
+          result = new BN(0)
+        }
+      }
+      break
+    }
+    case 'ff': {
+      if (common.gteHardfork('berlin')) {
+        return null
+      }
+      else {
+        result = new BN(common.param('gasPrices', 'selfdestructRefund'))
+      }
+      break;
+    }
+    default:
+      return null
+  }
+  return result.toString()
 }
 
 /*

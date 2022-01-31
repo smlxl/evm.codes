@@ -2055,6 +2055,7 @@
     "output": "",
     "description": "Halt execution and register account for later deletion",
     "dynamicFee": {
+      "homestead": {},
       "tangerineWhistle": {
         "inputs": {
           "empty": {
