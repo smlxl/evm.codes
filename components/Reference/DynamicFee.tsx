@@ -27,9 +27,9 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
 
   const { common } = useContext(EthereumContext)
   const [inputs, setInputs] = useState<InputValue | undefined>()
-  const [gas_cost, setGasCost] = useState('0')
-  const [gas_refund, setGasRefund] = useState('0')
-  const [can_refund, setCanRefund] = useState(false)
+  const [gasCost, setGasCost] = useState('0')
+  const [gasRefund, setGasRefund] = useState('0')
+  const [canRefund, setCanRefund] = useState(false)
 
   const handleCompute = debounce((inputs) => {
     if (common) {
@@ -121,13 +121,13 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
 
         <div className="flex items-center pt-2">
           <Icon name="gas-station-fill" className="text-indigo-500 mr-2" />
-          Static gas + dynamic gas = {gas_cost}
+          Static gas + dynamic gas = {gasCost}
         </div>
 
-        {can_refund && (
+        {canRefund && (
           <div className="flex items-center pt-2">
             <Icon name="reply-fill" className="text-indigo-500 mr-2" />
-            Gas refund = {gas_refund}
+            Gas refund = {gasRefund}
           </div>
         )}
       </div>
