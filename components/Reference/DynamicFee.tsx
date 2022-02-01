@@ -40,6 +40,8 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
         if (refund != null) {
           setCanRefund(true)
           setGasRefund(refund)
+        } else {
+          setCanRefund(false)
         }
       } catch (error) {
         console.error(error)
