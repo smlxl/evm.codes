@@ -9,6 +9,7 @@ import {
 
 import cn from 'classnames'
 import useWindowSize from 'lib/useWindowResize'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
@@ -76,11 +77,11 @@ const ReferenceTable = ({
   useEffect(() => {
     if (reference && rowRefs?.current) {
       const idx = reference.findIndex((referenceItem) => {
-        const re = new RegExp(`/#${referenceItem.opcodeOrAddress}`, 'gi')
+        const re = new RegExp(`#${referenceItem.opcodeOrAddress}`, 'gi')
         return router.asPath.match(re)
       })
 
-      if (idx) {
+      if (idx !== -1) {
         setFocusedOpcode(idx)
         setTimeout(() => {
           if (rowRefs.current[idx]) {
@@ -215,6 +216,23 @@ const ReferenceTable = ({
                       }}
                     >
                       <div className="flex items-center flex-wrap">
+                        {cell.column.id === 'opcodeOrAddress' && (
+                          <Link
+                            href={
+                              isPrecompiled
+                                ? `/precompiled#${opcodeOrAddress}`
+                                : `/#${opcodeOrAddress}`
+                            }
+                            passHref
+                          >
+                            <a className="underline font-mono">
+                              <Icon
+                                name="links-line"
+                                className="text-indigo-500 mr-2"
+                              />
+                            </a>
+                          </Link>
+                        )}
                         {cell.render('Cell')}
                         {cell.column.id === 'minimumFee' &&
                           !!dynamicFeeForkName && (
