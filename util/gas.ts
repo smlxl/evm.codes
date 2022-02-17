@@ -273,7 +273,7 @@ export const calculateDynamicRefund = (
       break
     }
     case 'ff': {
-      if (common.gteHardfork('berlin')) {
+      if (common.gteHardfork('london')) {
         return null
       } else {
         result = new BN(common.param('gasPrices', 'selfdestructRefund'))

@@ -263,8 +263,8 @@ const AboutPage = () => {
         transaction, meaning that a transaction always need enough gas to run as
         if there was no refunds. The amount of gas that can be refunded is also
         limited, to half of the total transaction cost before the hardfork{' '}
-        <b>Berlin</b>, otherwise to a fifth. Starting from the hardfork{' '}
-        <b>Berlin</b> also, only <Link to="#55" title="SSTORE" /> may trigger
+        <b>London</b>, otherwise to a fifth. Starting from the hardfork{' '}
+        <b>London</b> also, only <Link to="#55" title="SSTORE" /> may trigger
         refunds. Before that, <Link to="#FF" title="SELFDESTRUCT" /> could also
         trigger refunds.
       </p>
