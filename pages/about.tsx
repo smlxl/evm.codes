@@ -266,7 +266,7 @@ const AboutPage = () => {
         <b>London</b>, otherwise to a fifth. Starting from the hardfork{' '}
         <b>London</b> also, only <Link to="#55" title="SSTORE" /> may trigger
         refunds. Before that, <Link to="#FF" title="SELFDESTRUCT" /> could also
-        trigger refunds.
+        trigger refunds. \
         <em>
           Acknowledgment to{' '}
           <a
