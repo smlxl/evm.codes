@@ -269,6 +269,54 @@ const AboutPage = () => {
         trigger refunds.
       </p>
 
+      <H2 className="mb-4">Other EVM Related Resources</H2>
+      <p className="pb-8">
+        <a
+          href="https://takenobu-hs.github.io/downloads/ethereum_evm_illustrated.pdf"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          Ethereum EVM Illustrated (2018)
+        </a>
+        ,{' '}
+        <a
+          href="https://ethereum.org/en/history/"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          The History and Forks of Ethereum
+        </a>
+        ,{' '}
+        <a
+          href="https://www.youtube.com/watch?v=RxL_1AfV7N4&t=1s"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          EVM: From Solidity to bytecode, memory and storage
+        </a>
+        ,{' '}
+        <a
+          href="https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          EVM Deep Dives by noxx
+        </a>
+        ,{' '}
+        <a
+          href="https://github.com/ethereumbook/ethereumbook/blob/develop/13evm.asciidoc"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          The EVM Chapter in the Mastering Ethereum book
+        </a>
+      </p>
+
       <em>
         Acknowledgment to{' '}
         <a
