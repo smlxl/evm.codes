@@ -267,20 +267,19 @@ const AboutPage = () => {
         <b>London</b> also, only <Link to="#55" title="SSTORE" /> may trigger
         refunds. Before that, <Link to="#FF" title="SELFDESTRUCT" /> could also
         trigger refunds.
+        <em>
+          Acknowledgment to{' '}
+          <a
+            href="https://github.com/wolflo/evm-opcodes"
+            target="_blank"
+            rel="noreferrer"
+            className="underline"
+          >
+            wolflo
+          </a>{' '}
+          for the cost descriptions.
+        </em>
       </p>
-
-      <em>
-        Acknowledgment to{' '}
-        <a
-          href="https://github.com/wolflo/evm-opcodes"
-          target="_blank"
-          rel="noreferrer"
-          className="underline"
-        >
-          wolflo
-        </a>{' '}
-        for the cost descriptions.
-      </em>
 
       <H2 className="mb-4">Other EVM Related Resources</H2>
       <p className="pb-8">
