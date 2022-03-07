@@ -309,6 +309,24 @@ const AboutPage = () => {
         >
           EVM: From Solidity to bytecode, memory and storage
         </a>
+        ,{' '}
+        <a
+          href="https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          EVM Deep Dives by noxx
+        </a>
+        ,{' '}
+        <a
+          href="https://github.com/ethereumbook/ethereumbook/blob/develop/13evm.asciidoc"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          The EVM Chapter in the Mastering Ethereum book
+        </a>
       </p>
     </Container>
   )

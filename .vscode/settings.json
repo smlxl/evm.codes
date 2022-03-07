@@ -1,0 +1,8 @@
+{
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.workingDirectories": [
+    "/Users/dor/Dev/evm.codes/",
+    "/Users/dor/Dev/"
+  ]
+}
