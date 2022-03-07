@@ -281,6 +281,35 @@ const AboutPage = () => {
         </a>{' '}
         for the cost descriptions.
       </em>
+      <H2 className="mb-4">Other EVM Related Resources</H2>
+      <p className="pb-8">
+        <a
+          href="https://takenobu-hs.github.io/downloads/ethereum_evm_illustrated.pdf"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          Ethereum EVM Illustrated (2018)
+        </a>
+        ,{' '}
+        <a
+          href="https://ethereum.org/en/history/"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          The History and Forks of Ethereum
+        </a>
+        ,{' '}
+        <a
+          href="https://www.youtube.com/watch?v=RxL_1AfV7N4&t=1s"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          EVM: From Solidity to bytecode, memory and storage
+        </a>
+      </p>
     </Container>
   )
 }
