@@ -269,21 +269,6 @@ const AboutPage = () => {
         trigger refunds.
       </p>
 
-      <p>
-        <em>
-          Acknowledgment to{' '}
-          <a
-            href="https://github.com/wolflo/evm-opcodes"
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            wolflo
-          </a>{' '}
-          for the cost descriptions.
-        </em>
-      </p>
-
       <H2 className="mb-4">Other EVM Related Resources</H2>
       <p className="pb-8">
         <a
@@ -331,6 +316,19 @@ const AboutPage = () => {
           The EVM Chapter in the Mastering Ethereum book
         </a>
       </p>
+
+      <em>
+        Acknowledgment to{' '}
+        <a
+          href="https://github.com/wolflo/evm-opcodes"
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          wolflo
+        </a>{' '}
+        for the cost descriptions.
+      </em>
     </Container>
   )
 }
