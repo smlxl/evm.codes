@@ -269,18 +269,20 @@ const AboutPage = () => {
         trigger refunds.
       </p>
 
-      <em>
-        Acknowledgment to{' '}
-        <a
-          href="https://github.com/wolflo/evm-opcodes"
-          target="_blank"
-          rel="noreferrer"
-          className="underline"
-        >
-          wolflo
-        </a>{' '}
-        for the cost descriptions.
-      </em>
+      <p>
+        <em>
+          Acknowledgment to{' '}
+          <a
+            href="https://github.com/wolflo/evm-opcodes"
+            target="_blank"
+            rel="noreferrer"
+            className="underline"
+          >
+            wolflo
+          </a>{' '}
+          for the cost descriptions.
+        </em>
+      </p>
 
       <H2 className="mb-4">Other EVM Related Resources</H2>
       <p className="pb-8">
