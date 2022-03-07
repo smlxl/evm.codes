@@ -281,6 +281,7 @@ const AboutPage = () => {
         </a>{' '}
         for the cost descriptions.
       </em>
+
       <H2 className="mb-4">Other EVM Related Resources</H2>
       <p className="pb-8">
         <a
