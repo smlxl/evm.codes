@@ -126,7 +126,7 @@
   },
   "17": {
     "input": "a | b",
-    "output": "a | b",
+    "output": "a \\| b",
     "description": "Bitwise OR operation"
   },
   "18": {
