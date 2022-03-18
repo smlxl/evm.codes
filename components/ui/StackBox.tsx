@@ -19,7 +19,7 @@ export const StackBox: React.FC<Props> = ({
     return null
   }
 
-  const parts = value.split('|')
+  const parts = value.split(/[^\\]\|/)
 
   return (
     <>
@@ -33,7 +33,7 @@ export const StackBox: React.FC<Props> = ({
           )}
           style={{ minHeight: 26 }}
         >
-          {p}
+          {p.replaceAll('\\|', '|')}
         </div>
       ))}
     </>
