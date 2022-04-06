@@ -5,6 +5,7 @@ type Props = {
   value: string
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
   isChecked: boolean
+  isDisabled?: boolean
 }
 
 export const Radio: React.FC<Props> = ({
@@ -12,6 +13,7 @@ export const Radio: React.FC<Props> = ({
   value,
   onChange,
   isChecked,
+  isDisabled,
 }) => {
   return (
     <label className="mr-3 text-sm">
@@ -19,6 +21,7 @@ export const Radio: React.FC<Props> = ({
         type="radio"
         value={value}
         checked={isChecked}
+        disabled={isDisabled || false}
         onChange={onChange}
         className="mr-2"
       />
