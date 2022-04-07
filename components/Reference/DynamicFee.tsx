@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
-import Common from '@ethereumjs/common'
 
+import Common from '@ethereumjs/common'
 import debounce from 'lodash.debounce'
 import { IReferenceItem } from 'types'
 
@@ -38,13 +38,17 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
       try {
         setDisabled(calculateDisabledInputs(referenceItem, common, inputs))
         const updatedInputs = { ...inputs }
-        for (let key in disabled.values()) {
+        for (const key in disabled.values()) {
           updatedInputs[key] = '0'
         }
 
         setGasCost(calculateDynamicFee(referenceItem, common, updatedInputs))
 
-        const refund = calculateDynamicRefund(referenceItem, common, updatedInputs)
+        const refund = calculateDynamicRefund(
+          referenceItem,
+          common,
+          updatedInputs,
+        )
         if (refund != null) {
           setCanRefund(true)
           setGasRefund(refund)
