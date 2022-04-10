@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 
+import Common from '@ethereumjs/common'
 import debounce from 'lodash.debounce'
 import { IReferenceItem } from 'types'
 
@@ -27,6 +28,7 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
 
   const { common } = useContext(EthereumContext)
   const [inputs, setInputs] = useState<InputValue | undefined>()
+  const [disabled, setDisabled] = useState<Set<string>>(new Set())
   const [gasCost, setGasCost] = useState('0')
   const [gasRefund, setGasRefund] = useState('0')
   const [canRefund, setCanRefund] = useState(false)
@@ -34,9 +36,19 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
   const handleCompute = debounce((inputs) => {
     if (common) {
       try {
-        setGasCost(calculateDynamicFee(referenceItem, common, inputs))
+        setDisabled(calculateDisabledInputs(referenceItem, common, inputs))
+        const updatedInputs = { ...inputs }
+        for (const key in disabled.values()) {
+          updatedInputs[key] = '0'
+        }
 
-        const refund = calculateDynamicRefund(referenceItem, common, inputs)
+        setGasCost(calculateDynamicFee(referenceItem, common, updatedInputs))
+
+        const refund = calculateDynamicRefund(
+          referenceItem,
+          common,
+          updatedInputs,
+        )
         if (refund != null) {
           setCanRefund(true)
           setGasRefund(refund)
@@ -48,6 +60,20 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
       }
     }
   }, debounceTimeout)
+
+  const calculateDisabledInputs = (
+    opcode: IReferenceItem,
+    common: Common,
+    inputs: any,
+  ) => {
+    if (opcode.opcodeOrAddress === '55' && common.gteHardfork('berlin')) {
+      if (inputs.currentValue !== inputs.originalValue) {
+        return new Set(['cold'])
+      }
+    }
+
+    return new Set([])
+  }
 
   // Initialize inputs with default keys & values
   useEffect(() => {
@@ -106,13 +132,15 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
                   <Radio
                     text="Yes"
                     value={'1'}
-                    isChecked={inputs[key] === '1'}
+                    isChecked={inputs[key] === '1' && !disabled.has(key)}
+                    isDisabled={disabled.has(key)}
                     onChange={() => handleChange(key, '1')}
                   />
                   <Radio
                     text="No"
                     value={'0'}
-                    isChecked={inputs[key] === '0'}
+                    isChecked={inputs[key] === '0' || disabled.has(key)}
+                    isDisabled={disabled.has(key)}
                     onChange={() => handleChange(key, '0')}
                   />
                 </div>
