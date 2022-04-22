@@ -442,9 +442,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _loadPrecompiled = () => {
     const precompiled: IReferenceItem[] = []
 
-    getActivePrecompiles(common).forEach((address: Address) => {
+    for (const address of getActivePrecompiles(common).keys()) {
       const meta = PrecompiledMeta as IReferenceItemMetaList
-      const addressString = '0x' + address.buf.toString('hex', 19)
+      const addressString = '0x' + address.slice(-2)
       const contract = {
         ...meta[addressString],
         ...{
@@ -458,7 +458,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         calculatePrecompiledDynamicFee(contract, common, {}),
       )
       precompiled.push(contract)
-    })
+    }
 
     setPrecompiled(precompiled)
   }
