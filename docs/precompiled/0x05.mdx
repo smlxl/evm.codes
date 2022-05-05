@@ -7,7 +7,7 @@ fork: Byzantium
 | Byte range | Name | Description |
 |-----------:|-----:|------------:|
 | `[0; 31]` (32 bytes) | Bsize | Byte size of B |
-| `[31; 63]` (32 bytes) | Esize | Byte size of E |
+| `[32; 63]` (32 bytes) | Esize | Byte size of E |
 | `[64; 95]` (32 bytes) | Msize | Byte size of M |
 | `[96; 96 + Bsize[` | B | Base as unsigned integer |
 | `[96 + Bsize; 96 + Bsize + Esize[` | E | Exponent as unsigned integer, if zero, then `B ** E` will be one |

@@ -11,7 +11,7 @@ The point at infinity is encoded with both field `x` and `y` at `0`.
 | Byte range | Name | Description |
 |-----------:|-----:|------------:|
 | `[0; 31]` (32 bytes) | x1 | X coordinate of the first point on the elliptic curve 'alt_bn128'|
-| `[31; 63]` (32 bytes) | y1 | Y coordinate of the first point on the elliptic curve 'alt_bn128' |
+| `[32; 63]` (32 bytes) | y1 | Y coordinate of the first point on the elliptic curve 'alt_bn128' |
 | `[64; 95]` (32 bytes) | s | Scalar to use for the multiplication |
 
 ## Output
@@ -19,7 +19,7 @@ The point at infinity is encoded with both field `x` and `y` at `0`.
 | Byte range | Name | Description |
 |-----------:|-----:|------------:|
 | `[0; 31]` (32 bytes) | x | X coordinate of the result point on the elliptic curve 'alt_bn128' |
-| `[31; 63]` (32 bytes) | y | Y coordinate of the result point on the elliptic curve 'alt_bn128' |
+| `[32; 63]` (32 bytes) | y | Y coordinate of the result point on the elliptic curve 'alt_bn128' |
 
 If the input is not valid, or if not enough gas was given, then there is no return data.
 
