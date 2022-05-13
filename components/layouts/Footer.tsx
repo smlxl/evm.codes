@@ -12,11 +12,11 @@ const Footer = () => {
               Brought to you by{' '}
               <a
                 className="underline font-medium"
-                href="https://comitylabs.com"
+                href="https://smlxl.io"
                 target="_blank"
                 rel="noreferrer"
               >
-                Comity Labs
+                smlXL, Inc.
               </a>
               .
             </span>
