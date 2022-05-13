@@ -16,7 +16,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                smlXL, Inc.
+                smlXL, Inc
               </a>
               .
             </span>
