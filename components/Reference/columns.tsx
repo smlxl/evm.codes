@@ -13,7 +13,7 @@ const columns = (isPrecompiled: boolean) => [
     accessor: 'opcodeOrAddress',
     Cell: ({ value }: { value: string }) => { 
       if (isPrecompiled) return value;
-      else return "0x" + value;
+      else return "0x" + value.toUpperCase();
     },
     className: undefined,
     filter,
