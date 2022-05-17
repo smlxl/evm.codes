@@ -11,7 +11,7 @@ const columns = (isPrecompiled: boolean) => [
   {
     Header: !isPrecompiled ? 'Opcode' : 'Address',
     accessor: 'opcodeOrAddress',
-    className: !isPrecompiled ? 'uppercase' : undefined,
+    className: undefined,
     filter,
     width: 48,
   },
