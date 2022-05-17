@@ -11,6 +11,10 @@ const columns = (isPrecompiled: boolean) => [
   {
     Header: !isPrecompiled ? 'Opcode' : 'Address',
     accessor: 'opcodeOrAddress',
+    Cell: ({ value }: { value: string }) => { 
+      if (isPrecompiled) return value;
+      else return "0x" + value;
+    },
     className: undefined,
     filter,
     width: 48,
