@@ -11,9 +11,12 @@ const columns = (isPrecompiled: boolean) => [
   {
     Header: !isPrecompiled ? 'Opcode' : 'Address',
     accessor: 'opcodeOrAddress',
-    Cell: ({ value }: { value: string }) => { 
-      if (isPrecompiled) return value;
-      else return "0x" + value.toUpperCase();
+    Cell: ({ value }: { value: string }) => {
+      if (isPrecompiled) {
+        return value
+      } else {
+        return '0x' + value.toUpperCase()
+      }
     },
     className: undefined,
     filter,
