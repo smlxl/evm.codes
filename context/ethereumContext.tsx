@@ -423,7 +423,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       const opcode = {
         ...meta[toHex(op.code)],
         ...{
-          opcodeOrAddress: toHex(op.code).toUpperCase(),
+          opcodeOrAddress: toHex(op.code),
           staticFee: op.fee,
           minimumFee: 0,
           name: op.fullName,
