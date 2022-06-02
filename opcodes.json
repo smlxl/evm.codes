@@ -1887,7 +1887,7 @@
   "f5": {
     "input": "value | offset | size | salt",
     "output": "address",
-    "description": "Create a new account with associated code",
+    "description": "Create a new account with associated code at a predictable address",
     "dynamicFee": {
       "homestead": {
         "inputs": {
