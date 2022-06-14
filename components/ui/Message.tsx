@@ -12,13 +12,13 @@ type Props = {
 export const Message: React.FC<Props> = ({ type, text }) => {
   const bgColor = useMemo(() => {
     if (type === 'success') {
-      return 'bg-green-400'
+      return 'bg-green-400/85'
     }
     if (type === 'warning') {
-      return 'bg-yellow-400'
+      return 'bg-yellow-400/85'
     }
     if (type === 'error') {
-      return 'bg-red-400'
+      return 'bg-red-400/85'
     }
   }, [type])
 
@@ -29,7 +29,7 @@ export const Message: React.FC<Props> = ({ type, text }) => {
   return (
     <div
       className={cn(
-        'flex items-center rounded text-white text-xs px-3 py-2 bg-opacity-85',
+        'flex items-center rounded text-white text-xs px-3 py-2',
         bgColor,
       )}
     >

@@ -55,11 +55,11 @@ html {
 
 .pane.pane-light::-webkit-scrollbar-thumb,
 .select__menu-list::-webkit-scrollbar-thumb {
-  @apply bg-opacity-50 bg-gray-200 hover:bg-gray-300 dark:bg-black-500 dark:hover:bg-black-400 hover:bg-opacity-75;
+  @apply bg-gray-200/50 hover:bg-gray-300/75 dark:bg-black-500/50 dark:hover:bg-black-400/75;
 }
 
 .pane.pane-dark::-webkit-scrollbar-thumb {
-  @apply bg-opacity-50 bg-gray-700 hover:bg-gray-600 dark:bg-black-600 dark:hover:bg-black-500 hover:bg-opacity-75;
+  @apply bg-gray-700/50 hover:bg-gray-600/75 dark:bg-black-600/50 dark:hover:bg-black-500/75;
 }
 
 .pane::-webkit-scrollbar-track,
