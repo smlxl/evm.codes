@@ -45,7 +45,7 @@ export const Input: React.FC<Props> = ({
       <input
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className="w-full outline-none bg-transparent text-sm"
+        className="w-full outline-none bg-transparent dark:placeholder-black-400 text-sm"
         {...rest}
       />
       {searchable && (
