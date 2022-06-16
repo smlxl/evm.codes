@@ -66,7 +66,16 @@ const SolidityMethodSelector: FC<Props> = ({
         }
       })
     })
-  }, [selectedMethod, deployedContractAddress, methodBytecode])
+  }, [
+    selectedMethod,
+    deployedContractAddress,
+    methodBytecode,
+    callValue,
+    loadInstructions,
+    methodArgs,
+    startTransaction,
+    transactionData,
+  ])
 
   const argsPlaceHolder = React.useMemo(() => {
     if (!selectedMethod) {

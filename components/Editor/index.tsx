@@ -201,6 +201,8 @@ const Editor = ({ readOnly = false }: Props) => {
       startTransaction,
       getCallValue,
       getArgs,
+      constructor,
+      callArgs,
     ],
   )
 
