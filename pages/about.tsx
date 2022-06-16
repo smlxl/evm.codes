@@ -8,7 +8,7 @@ import { Pre } from 'components/ui/Doc'
 // since frontier, but we have to keep an eye on new fork to keep this up to date
 const AboutPage = () => {
   return (
-    <Container className="text-sm leading-6">
+    <Container className="text-sm leading-6 max-w-4xl">
       <H1>About the EVM</H1>
 
       <H2 className="mb-4">Introduction</H2>

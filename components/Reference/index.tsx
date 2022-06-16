@@ -129,7 +129,7 @@ const ReferenceTable = ({
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
-              className="sticky bg-gray-50 dark:bg-black-700 border-b border-gray-200 dark:border-black-500 uppercase text-xs text-left text-gray-500"
+              className="sticky bg-gray-50 dark:bg-black-700 border-b border-gray-200 dark:border-black-500 uppercase text-xs tracking-wide text-left text-gray-500 dark:text-gray-400"
               style={{
                 top: 54,
               }}
