@@ -12,6 +12,7 @@ import React, {
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
+import abi from 'ethereumjs-abi'
 import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
@@ -91,10 +92,12 @@ const Editor = ({ readOnly = false }: Props) => {
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
   const [callData, setCallData] = useState('')
+  const [callArgs, setCallArgs] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
   const [abiArray, setAbiArray] = useState<Array<MethodAbi>>([])
+  const [constructor, setConstructor] = useState<MethodAbi | undefined>()
   const [methodBytecode, setMethodBytecode] = useState<string | null>(null)
 
   const log = useCallback(
@@ -123,6 +126,24 @@ const Editor = ({ readOnly = false }: Props) => {
     return _callValue
   }, [callValue, unit])
 
+  const getArgs = useCallback(
+    (currentConstructor: MethodAbi | undefined) => {
+      if (
+        currentConstructor &&
+        currentConstructor.inputs.length > 0 &&
+        callArgs
+      ) {
+        const argsBuffer = abi.solidityPack(
+          currentConstructor.inputs.map((mi) => mi.type),
+          callArgs.split(','),
+        )
+        return bufferToHex(argsBuffer).substr(2)
+      }
+      return ''
+    },
+    [callArgs],
+  )
+
   const handleWorkerMessage = useCallback(
     (event: MessageEvent) => {
       const { code: byteCode, warning, error, abi: a } = event.data
@@ -139,11 +160,27 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
-      setAbiArray(a)
+      let currentConstructor = constructor
+
+      if (a) {
+        const abiMethods = a.map((method: MethodAbi) => ({
+          ...method,
+          inputTypes: method.inputs.map((mi) => mi.type).join(','),
+        }))
+
+        setAbiArray(abiMethods)
+        currentConstructor = abiMethods.find(
+          (method: MethodAbi) => method.type === 'constructor',
+        )
+        setConstructor(currentConstructor)
+      }
 
       try {
         const _callValue = getCallValue()
-        transactionData(byteCode, _callValue).then((tx) => {
+        const args = getArgs(currentConstructor)
+        log(`deploy contract with args: ${args} and value: ${_callValue}`)
+
+        transactionData(byteCode + args, _callValue).then((tx) => {
           loadInstructions(byteCode)
           setIsCompiling(false)
           startTransaction(tx).then((bytecodeBuffer) => {
@@ -157,11 +194,13 @@ const Editor = ({ readOnly = false }: Props) => {
     },
     [
       log,
+      callArgs,
       setIsCompiling,
       transactionData,
       loadInstructions,
       startTransaction,
       getCallValue,
+      getArgs,
     ],
   )
 
@@ -206,6 +245,13 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [])
 
   useEffect(() => {
+    if (solcWorkerRef && solcWorkerRef.current) {
+      // @ts-ignore change the worker message, when value and args changed.
+      solcWorkerRef.current?.onmessage = handleWorkerMessage
+    }
+  }, [solcWorkerRef, handleWorkerMessage])
+
+  useEffect(() => {
     if (deployedContractAddress) {
       log(`Contract deployed at address: ${deployedContractAddress}`)
     }
@@ -243,6 +289,8 @@ const Editor = ({ readOnly = false }: Props) => {
     const { value } = option
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
+    setAbiArray([])
+    setConstructor(undefined)
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
@@ -340,6 +388,15 @@ const Editor = ({ readOnly = false }: Props) => {
     () => codeType === CodeType.Mnemonic || codeType === CodeType.Bytecode,
     [codeType],
   )
+  const isConstructorContainsArgs = useMemo(
+    () => constructor && constructor.inputs.length > 0,
+    [constructor],
+  )
+
+  const isNotConstructorOrPayable = useMemo(
+    () => !constructor || constructor.stateMutability === 'payable',
+    [constructor],
+  )
 
   const unitValue = useMemo(
     () => ({
@@ -390,25 +447,38 @@ const Editor = ({ readOnly = false }: Props) => {
                   />
                 )}
 
-                <Input
-                  type="number"
-                  step="1"
-                  placeholder="Value to send"
-                  className="bg-white dark:bg-black-500"
-                  value={callValue}
-                  onChange={(e) => setCallValue(e.target.value)}
-                />
+                {isConstructorContainsArgs && (
+                  <Input
+                    placeholder={constructor?.inputTypes}
+                    className="bg-white dark:bg-black-500"
+                    value={callArgs}
+                    onChange={(e) => setCallArgs(e.target.value)}
+                  />
+                )}
 
-                <Select
-                  onChange={(option: OnChangeValue<any, any>) =>
-                    setUnit(option.value)
-                  }
-                  options={unitOptions}
-                  value={unitValue}
-                  isSearchable={false}
-                  classNamePrefix="select"
-                  menuPlacement="auto"
-                />
+                {isNotConstructorOrPayable && (
+                  <Input
+                    type="number"
+                    step="1"
+                    placeholder="Value to send"
+                    className="bg-white dark:bg-black-500"
+                    value={callValue}
+                    onChange={(e) => setCallValue(e.target.value)}
+                  />
+                )}
+
+                {isNotConstructorOrPayable && (
+                  <Select
+                    onChange={(option: OnChangeValue<any, any>) =>
+                      setUnit(option.value)
+                    }
+                    options={unitOptions}
+                    value={unitValue}
+                    isSearchable={false}
+                    classNamePrefix="select"
+                    menuPlacement="auto"
+                  />
+                )}
 
                 <Button
                   onClick={handleCopyPermalink}

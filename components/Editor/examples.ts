@@ -67,6 +67,10 @@ pragma solidity ^0.8.3;
 
 contract Counter {
     uint public count;
+    
+    constructor(uint c) payable {
+        count = c;
+    }
 
     // Function to get the current count
     function get() public view returns (uint) {

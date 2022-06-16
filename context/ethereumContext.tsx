@@ -565,7 +565,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     const gasUsed = gasLimit.sub(gasLeft)
-    console.log('current opcode: ', opcode)
 
     _setExecutionState({ pc, gasUsed, stack, memory, currentGas: opcode.fee })
 
