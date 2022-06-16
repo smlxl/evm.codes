@@ -12,7 +12,7 @@ import React, {
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN } from 'ethereumjs-util'
+import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -42,7 +42,8 @@ import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { IConsoleOutput, CodeType, ValueUnit } from './types'
+import SolidityMethodSelector from './SolidityMethodSelector'
+import { IConsoleOutput, CodeType, ValueUnit, MethodAbi } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -93,6 +94,9 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
+  const [abiArray, setAbiArray] = useState<Array<MethodAbi>>([])
+  const [methodBytecode, setMethodBytecode] = useState<string | null>(null)
+
   const log = useCallback(
     (line: string, type = 'info') => {
       // See https://blog.logrocket.com/a-guide-to-usestate-in-react-ecb9952e406c/
@@ -121,7 +125,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleWorkerMessage = useCallback(
     (event: MessageEvent) => {
-      const { code: byteCode, warning, error } = event.data
+      const { code: byteCode, warning, error, abi: a } = event.data
 
       if (error) {
         log(error, 'error')
@@ -135,12 +139,16 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
+      setAbiArray(a)
+
       try {
         const _callValue = getCallValue()
         transactionData(byteCode, _callValue).then((tx) => {
           loadInstructions(byteCode)
           setIsCompiling(false)
-          startTransaction(tx)
+          startTransaction(tx).then((bytecodeBuffer) => {
+            setMethodBytecode(bufferToHex(bytecodeBuffer))
+          })
         })
       } catch (error) {
         log((error as Error).message, 'error')
@@ -425,6 +433,13 @@ const Editor = ({ readOnly = false }: Props) => {
                 Run
               </Button>
             </div>
+            {codeType === CodeType.Solidity && (
+              <SolidityMethodSelector
+                methodBytecode={methodBytecode}
+                log={log}
+                abiArray={abiArray}
+              />
+            )}
           </div>
         </div>
 

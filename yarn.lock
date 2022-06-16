@@ -651,10 +651,24 @@
   resolved "https://package-cluster.production.groovehq.com/@types%2fabstract-leveldown/-/abstract-leveldown-5.0.2.tgz#ee81917fe38f770e29eec8139b6f16ee4a8b0a5f"
   integrity sha512-+jA1XXF3jsz+Z7FcuiNqgK53hTa/luglT2TyTpKPqoYbxVY+mCPF22Rm+q3KPBrMHJwNXFrTViHszBOfU4vftQ==
 
+"@types/bn.js@^4.11.3":
+  version "4.11.6"
+  resolved "https://registry.npmmirror.com/@types/bn.js/-/bn.js-4.11.6.tgz#c306c70d9358aaea33cd4eda092a742b9505967c"
+  integrity sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bn.js@^5.1.0":
   version "5.1.0"
   resolved "https://package-cluster.production.groovehq.com/@types%2fbn.js/-/bn.js-5.1.0.tgz#32c5d271503a12653c62cf4d2b45e6eab8cebc68"
   integrity sha512-QSSVYj7pYFN49kW77o2s9xTCwZ8F2xLbjLLSEVh8D2F4JUhZtPAGOFLTD+ffqksBx/u4cE/KImFjyhqCjn/LIA==
+  dependencies:
+    "@types/node" "*"
+
+"@types/ethereumjs-abi@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.npmmirror.com/@types/ethereumjs-abi/-/ethereumjs-abi-0.6.3.tgz#eb5ed09fd86b9e2b1c0eb75d1e9bc29c50715c86"
+  integrity sha512-DnHvqPkrJS5w4yZexTa5bdPNb8IyKPYciou0+zZCIg5fpzvGtyptTvshy0uZKzti2/k/markwjlxWRBWt7Mjuw==
   dependencies:
     "@types/node" "*"
 
@@ -1187,7 +1201,7 @@ blakejs@^1.1.0:
   resolved "https://package-cluster.production.groovehq.com/blakejs/-/blakejs-1.1.1.tgz#bf313053978b2cd4c444a48795710be05c785702"
   integrity sha512-bLG6PHOCZJKNshTjGRBvET0vTciwQE6zFKOKKXPDJfwFBd4Ac0yBfPZqcGvGJap50l7ktvlpFqc2jGVaUgbJgg==
 
-bn.js@^4.0.0, bn.js@^4.11.9:
+bn.js@^4.0.0, bn.js@^4.11.0, bn.js@^4.11.8, bn.js@^4.11.9:
   version "4.12.0"
   resolved "https://package-cluster.production.groovehq.com/bn.js/-/bn.js-4.12.0.tgz"
   integrity sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==
@@ -2395,6 +2409,27 @@ ethereum-cryptography@^0.1.3:
     secp256k1 "^4.0.1"
     setimmediate "^1.0.5"
 
+ethereumjs-abi@^0.6.8:
+  version "0.6.8"
+  resolved "https://registry.npmmirror.com/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz#71bc152db099f70e62f108b7cdfca1b362c6fcae"
+  integrity sha512-Tx0r/iXI6r+lRsdvkFDlut0N08jWMnKRZ6Gkq+Nmw75lZe4e6o3EkSnkaBP5NF6+m5PTGAr9JP43N3LyeoglsA==
+  dependencies:
+    bn.js "^4.11.8"
+    ethereumjs-util "^6.0.0"
+
+ethereumjs-util@^6.0.0:
+  version "6.2.1"
+  resolved "https://registry.npmmirror.com/ethereumjs-util/-/ethereumjs-util-6.2.1.tgz#fcb4e4dd5ceacb9d2305426ab1a5cd93e3163b69"
+  integrity sha512-W2Ktez4L01Vexijrm5EB6w7dg4n/TgpoYU4avuT5T3Vmnw/eCRtiBrJfQYS/DCSvDIOLn2k57GcHdeBcgVxAqw==
+  dependencies:
+    "@types/bn.js" "^4.11.3"
+    bn.js "^4.11.0"
+    create-hash "^1.1.2"
+    elliptic "^6.5.2"
+    ethereum-cryptography "^0.1.3"
+    ethjs-util "0.1.6"
+    rlp "^2.2.3"
+
 ethereumjs-util@^7.1.1, ethereumjs-util@^7.1.2:
   version "7.1.3"
   resolved "https://package-cluster.production.groovehq.com/ethereumjs-util/-/ethereumjs-util-7.1.3.tgz#b55d7b64dde3e3e45749e4c41288238edec32d23"
@@ -2416,6 +2451,14 @@ ethereumjs-util@^7.1.4:
     create-hash "^1.1.2"
     ethereum-cryptography "^0.1.3"
     rlp "^2.2.4"
+
+ethjs-util@0.1.6:
+  version "0.1.6"
+  resolved "https://registry.npmmirror.com/ethjs-util/-/ethjs-util-0.1.6.tgz#f308b62f185f9fe6237132fb2a9818866a5cd536"
+  integrity sha512-CUnVOQq7gSpDHZVVrQW8ExxUETWrnrvXYvYz55wOU8Uj4VCgw56XC2B/fVqQN+f7gmrnRHSLVnFAwsCuNwji8w==
+  dependencies:
+    is-hex-prefixed "1.0.0"
+    strip-hex-prefix "1.0.0"
 
 event-emitter@~0.3.5:
   version "0.3.5"
@@ -3132,6 +3175,11 @@ is-glob@^4.0.0, is-glob@^4.0.1, is-glob@^4.0.3, is-glob@~4.0.1:
   integrity sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==
   dependencies:
     is-extglob "^2.1.1"
+
+is-hex-prefixed@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/is-hex-prefixed/-/is-hex-prefixed-1.0.0.tgz#7d8d37e6ad77e5d127148913c573e082d777f554"
+  integrity sha512-WvtOiug1VFrE9v1Cydwm+FnXd3+w9GaeVUss5W4v/SLy3UW00vP+6iNF2SdnfiBoLy4bTqVdkftNGTUeOFVsbA==
 
 is-hexadecimal@^1.0.0:
   version "1.0.4"
@@ -4513,7 +4561,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rlp@^2.2.4:
+rlp@^2.2.3, rlp@^2.2.4:
   version "2.2.7"
   resolved "https://package-cluster.production.groovehq.com/rlp/-/rlp-2.2.7.tgz#33f31c4afac81124ac4b283e2bd4d9720b30beaf"
   integrity sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ==
@@ -4827,6 +4875,13 @@ strip-bom@^3.0.0:
   version "3.0.0"
   resolved "https://package-cluster.production.groovehq.com/strip-bom/-/strip-bom-3.0.0.tgz"
   integrity sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=
+
+strip-hex-prefix@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/strip-hex-prefix/-/strip-hex-prefix-1.0.0.tgz#0c5f155fef1151373377de9dbb588da05500e36f"
+  integrity sha512-q8d4ue7JGEiVcypji1bALTos+0pWtyGlivAWyPuTkHzuTCJqrK9sWxYQZUq6Nq3cuyv3bm734IhHvHtGGURU6A==
+  dependencies:
+    is-hex-prefixed "1.0.0"
 
 strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
   version "3.1.1"

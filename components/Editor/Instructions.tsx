@@ -51,9 +51,10 @@ const EditorInstructions = ({ containerRef }: TableProps) => {
   return (
     <table className="w-full font-mono text-tiny" ref={tableRef}>
       <tbody>
-        {instructions.map(({ id, name, value, hasBreakpoint }) => {
+        {instructions.map(({ id, name, value, hasBreakpoint }, i) => {
           return (
             <InstructionRow
+              opId={id}
               key={id}
               instructionId={id}
               ref={itemsRef.current[id]}

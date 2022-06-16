@@ -20,3 +20,8 @@ export interface IConsoleOutput {
 export type ExampleCode = {
   [codeType in CodeType]: string[]
 }
+
+export interface MethodAbi {
+  name: string
+  inputs: string[]
+}

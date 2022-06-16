@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer'
+
 import React, { createContext, useEffect, useState, useRef } from 'react'
 
 import { Block } from '@ethereumjs/block'
@@ -65,7 +67,7 @@ type ContextProps = {
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: BN, data: string) => void
-  startTransaction: (tx: TypedTransaction | TxData) => void
+  startTransaction: (tx: TypedTransaction | TxData) => Promise<Buffer>
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
   removeBreakpoint: (instructionId: number) => void
@@ -105,7 +107,7 @@ export const EthereumContext = createContext<ContextProps>({
     }),
   loadInstructions: () => undefined,
   startExecution: () => undefined,
-  startTransaction: () => undefined,
+  startTransaction: () => Promise.reject(),
   continueExecution: () => undefined,
   addBreakpoint: () => undefined,
   removeBreakpoint: () => undefined,
@@ -275,16 +277,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setVmError(undefined)
 
     // starting execution via deployed contract's transaction
-    vm.runTx({ tx: tx as TypedTransaction, block: _getBlock() })
-      .then(({ execResult, gasUsed, createdAddress }) =>
+    return vm
+      .runTx({ tx: tx as TypedTransaction, block: _getBlock() })
+      .then(({ execResult, gasUsed, createdAddress }) => {
         _loadRunState({
           gasUsed,
           runState: execResult.runState,
           newContractAddress: createdAddress,
           returnValue: execResult.returnValue,
           exceptionError: execResult.exceptionError,
-        }),
-      )
+        })
+        return execResult.returnValue
+      })
       .finally(() => setIsExecuting(false))
   }
 
@@ -561,6 +565,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     const gasUsed = gasLimit.sub(gasLeft)
+    console.log('current opcode: ', opcode)
 
     _setExecutionState({ pc, gasUsed, stack, memory, currentGas: opcode.fee })
 
