@@ -86,7 +86,7 @@ const DocRow = ({
         <>
           <table className="table-auto mb-6 bg-indigo-100 dark:bg-black-500 rounded font-medium">
             <thead>
-              <tr className="text-gray-500 uppercase text-xs">
+              <tr className="text-gray-500 uppercase text-xs tracking-wide">
                 <td className="pt-3 px-4">Since</td>
                 {itemDoc.meta.group && <td className="pt-3 px-4">Group</td>}
               </tr>

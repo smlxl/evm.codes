@@ -44,7 +44,7 @@ const EditorInstructionRow = forwardRef(
           'relative border-b border-gray-200 dark:border-black-500',
           {
             'text-gray-900 dark:text-gray-200': isActive,
-            'text-gray-400 dark:text-gray-700': !isActive,
+            'text-gray-400 dark:text-gray-600': !isActive,
           },
         )}
         ref={ref}

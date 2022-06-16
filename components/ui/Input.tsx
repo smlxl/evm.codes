@@ -45,13 +45,18 @@ export const Input: React.FC<Props> = ({
       <input
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className="w-full outline-none bg-transparent dark:placeholder-black-400 text-sm"
+        className="w-full outline-none bg-transparent text-sm"
         {...rest}
       />
       {searchable && (
         <Icon
           name="search-line"
-          className="ml-2 text-gray-300 dark:text-black-400"
+          className={cn(
+            'ml-2',
+            isFocused
+              ? 'text-gray-400 dark:text-gray-300'
+              : 'text-gray-300 dark:text-gray-400',
+          )}
         />
       )}
     </div>
