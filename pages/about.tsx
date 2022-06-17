@@ -21,19 +21,22 @@ const AboutPage = () => {
   }) => {
     return (
       <>
-        <Link href={`/about#${anchorKey}`}>
-          <a className="flex justify-start items-center mb-4 font-mono">
-            <Icon name="links-line" className="text-indigo-500 mr-2" />
-            {header}
-          </a>
-        </Link>
+        <div className="font-mono mb-4 flex justify-start relative items-center">
+          <Link href={`/about#${anchorKey}`}>
+            <a className="absolute -left-6">
+              <Icon name="links-line" className="text-indigo-500" />
+            </a>
+          </Link>
+
+          {header}
+        </div>
         <div id={anchorKey}>{children}</div>
       </>
     )
   }
 
   return (
-    <Container className="text-sm leading-6">
+    <Container className="text-sm leading-6 max-w-4xl">
       <H1>About the EVM</H1>
 
       <SectionWrapper header={<H2>Introduction</H2>} anchorKey="introduction">
