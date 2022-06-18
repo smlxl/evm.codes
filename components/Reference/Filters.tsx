@@ -45,7 +45,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
 
   return (
     <div className="flex items-center md:justify-end">
-      <span className="hidden md:inline-block text-sm text-gray-400 dark:text-black-400 mr-3">
+      <span className="hidden md:inline-block text-sm text-gray-400 mr-3">
         Search by
       </span>
 

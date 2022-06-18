@@ -1,12 +1,9 @@
 module.exports = {
   darkMode: 'class', // or 'media' or 'class'
-  purge: {
-    enabled: true,
-    content: [
-      './pages/**/*.{js,ts,jsx,tsx}',
-      './components/**/*.{js,ts,jsx,tsx}',
-    ],
-  },
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     fontFamily: {
       serif: ['Inter', 'sans-serif'],
@@ -29,12 +26,6 @@ module.exports = {
           400: '#2F2F2F',
         },
       },
-    },
-  },
-  variants: {
-    extend: {
-      backgroundColor: ['dark'],
-      textColor: ['dark'],
     },
   },
   plugins: [],

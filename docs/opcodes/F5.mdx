@@ -7,18 +7,34 @@ group: System operations
 
 ## Notes
 
-Equivalent to [CREATE](/#F0), except the salt allows the new contract to be deployed at a deterministic address.
+Equivalent to [CREATE](/#F0), except the salt allows the new contract to be deployed at a consistent, deterministic address.
+
+Should deployment succeed, the account's [code](/about) is set to the [return data](/about) resulting from executing the initialisation code.
+
+The destination address is calculated as follows:
+
+    initialisation_code = memory[offset:offset+size]
+    address = keccak256(0xff + sender_address + salt + keccak256(initialisation_code))[12:]
+
+Deployment can fail due to:
+- A contract already exists at the destination address.
+- Insufficient value to transfer.
+- Sub [context](/about) [reverted](/#FD).
+- Insufficient gas to execute the initialisation code.
+- Call depth limit reached.
+
+Note that these failures only affect the return value and do not cause the calling context to revert (unlike the error cases below).
 
 ## Stack input
 
 0. `value`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
-1. `offset`: byte offset in the [memory](/about) in bytes, the instructions of the new account.
-2. `size`: byte size to copy (size of the instructions).
+1. `offset`: byte offset in the [memory](/about) in bytes, the initialisation code of the new account.
+2. `size`: byte size to copy (size of the initialisation code).
 3. `salt`: 32-byte value used to create the new account at a deterministic address.
 
 ## Stack output
 
-0. `address`: the address of the deployed contract.
+0. `address`: the address of the deployed contract, 0 if the deployment failed.
 
 ## Examples
 

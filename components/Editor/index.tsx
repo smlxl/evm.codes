@@ -533,7 +533,7 @@ const Editor = ({ readOnly = false }: Props) => {
       <div className="flex flex-col md:flex-row-reverse">
         <div className="w-full md:w-1/2">
           <div
-            className="pane pane-dark overflow-auto border-t border-black-900 border-opacity-25 bg-gray-800 dark:bg-black-700 text-white px-4 py-3"
+            className="pane pane-dark overflow-auto border-t border-black-900/25 bg-gray-800 dark:bg-black-700 text-white px-4 py-3"
             style={{ height: consoleHeight }}
           >
             <ExecutionState />
@@ -541,7 +541,7 @@ const Editor = ({ readOnly = false }: Props) => {
         </div>
         <div className="w-full md:w-1/2">
           <div
-            className="pane pane-dark overflow-auto bg-gray-800 dark:bg-black-700 text-white border-t border-black-900 border-opacity-25 md:border-r"
+            className="pane pane-dark overflow-auto bg-gray-800 dark:bg-black-700 text-white border-t border-black-900/25 md:border-r"
             style={{ height: consoleHeight }}
           >
             <Console output={output} />
@@ -549,7 +549,7 @@ const Editor = ({ readOnly = false }: Props) => {
         </div>
       </div>
 
-      <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900 border-opacity-25 text-gray-400 dark:text-gray-600 text-xs">
+      <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
         Solidity Compiler {compilerSemVer}
       </div>
     </div>

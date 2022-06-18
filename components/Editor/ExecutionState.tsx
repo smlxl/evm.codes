@@ -23,7 +23,7 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
 
   return (
     <>
-      <dt className="mb-1 text-gray-500 dark:text-gray-700 font-medium uppercase">
+      <dt className="mb-1 text-gray-500 dark:text-gray-400 font-medium uppercase">
         {label}
       </dt>
       <dd className="font-mono mb-2">
@@ -34,7 +34,7 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
             showEmpty
             value={value ? value.toString() : ''}
             className={cn(
-              'break-all text-tiny border-gray-600 dark:border-gray-700 text-gray-300 dark:text-gray-400',
+              'break-all text-tiny border-gray-600 dark:border-gray-700 text-gray-300',
             )}
           />
         ))}
@@ -53,7 +53,7 @@ const ExecutionState = () => {
         <ExecutionStateRow label="Memory" value={memory} />
         <ExecutionStateRow label="Stack" value={stack} />
 
-        <dt className="mb-1 text-gray-500 dark:text-gray-700 font-medium uppercase">
+        <dt className="mb-1 text-gray-500 dark:text-gray-400 font-medium uppercase">
           Storage
         </dt>
         <dd className="mb-2">
