@@ -2,6 +2,8 @@ import { useState, forwardRef, ForwardedRef, useCallback } from 'react'
 
 import cn from 'classnames'
 
+import { toHex } from '../../util/string'
+
 type RowProps = {
   instructionId: number
   isActive: boolean
@@ -49,7 +51,8 @@ const EditorInstructionRow = forwardRef(
         )}
         ref={ref}
       >
-        <td className="py-1 pl-6 pr-6">
+        <td className="py-1 pl-6 pr-3">[{toHex(instructionId)}]</td>
+        <td className="py-1 pl-3 pr-6">
           {(isBreakpointVisible || hasBreakpoint) && (
             <button
               onClick={toggleBreakpoint}
