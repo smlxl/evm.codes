@@ -12,7 +12,6 @@ import React, {
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import abi from 'ethereumjs-abi'
 import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
@@ -43,7 +42,7 @@ import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import SolidityMethodSelector from './SolidityMethodSelector'
+import SolidityAdvanceModeTab from './SolidityAdvanceModeTab'
 import { IConsoleOutput, CodeType, ValueUnit, MethodAbi } from './types'
 
 type Props = {
@@ -57,6 +56,7 @@ type SCEditorRef = {
 const editorHeight = 350
 const consoleHeight = 350
 const instructionsListHeight = editorHeight + 52 // RunBar
+const instructionsListWithExpandHeight = editorHeight + 156 // Advance Mode bar
 
 const unitOptions = Object.keys(ValueUnit).map((value) => ({
   value,
@@ -76,6 +76,7 @@ const Editor = ({ readOnly = false }: Props) => {
     vmError,
     selectedFork,
     opcodes,
+    resetExecution,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -92,13 +93,14 @@ const Editor = ({ readOnly = false }: Props) => {
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
   const [callData, setCallData] = useState('')
-  const [callArgs, setCallArgs] = useState('')
+  const [byteCode, setByteCode] = useState('')
+  const [methodByteCode, setMethodByteCode] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
   const [abiArray, setAbiArray] = useState<Array<MethodAbi>>([])
-  const [constructor, setConstructor] = useState<MethodAbi | undefined>()
-  const [methodBytecode, setMethodBytecode] = useState<string | null>(null)
+
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const log = useCallback(
     (line: string, type = 'info') => {
@@ -126,27 +128,35 @@ const Editor = ({ readOnly = false }: Props) => {
     return _callValue
   }, [callValue, unit])
 
-  const getArgs = useCallback(
-    (currentConstructor: MethodAbi | undefined) => {
-      if (
-        currentConstructor &&
-        currentConstructor.inputs.length > 0 &&
-        callArgs
-      ) {
-        const argsBuffer = abi.solidityPack(
-          currentConstructor.inputs.map((mi) => mi.type),
-          callArgs.split(','),
-        )
-        return bufferToHex(argsBuffer).substr(2)
-      }
-      return ''
+  const deployByteCode = useCallback(
+    (args = '', callValue) => {
+      return transactionData(byteCode + args, callValue).then((tx) => {
+        loadInstructions(byteCode)
+        startTransaction(tx).then((result) => {
+          if (!result.error) {
+            setMethodByteCode(bufferToHex(result.returnValue))
+          } else {
+            log(result.error.error, `error`)
+          }
+        })
+        return tx
+      })
     },
-    [callArgs],
+    [
+      byteCode,
+      transactionData,
+      loadInstructions,
+      startTransaction,
+      setMethodByteCode,
+    ],
   )
 
   const handleWorkerMessage = useCallback(
     (event: MessageEvent) => {
       const { code: byteCode, warning, error, abi: a } = event.data
+      resetExecution()
+      setAbiArray([])
+      setMethodByteCode('')
 
       if (error) {
         log(error, 'error')
@@ -160,7 +170,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
-      let currentConstructor = constructor
+      let currentConstructor = undefined
 
       if (a) {
         const abiMethods = a.map((method: MethodAbi) => ({
@@ -172,38 +182,29 @@ const Editor = ({ readOnly = false }: Props) => {
         currentConstructor = abiMethods.find(
           (method: MethodAbi) => method.type === 'constructor',
         )
-        setConstructor(currentConstructor)
       }
 
       try {
-        const _callValue = getCallValue()
-        const args = getArgs(currentConstructor)
-        log(`deploy contract with args: ${args} and value: ${_callValue}`)
-
-        transactionData(byteCode + args, _callValue).then((tx) => {
-          loadInstructions(byteCode)
+        if (currentConstructor && currentConstructor.inputs?.length > 0) {
+          setByteCode(byteCode)
           setIsCompiling(false)
-          startTransaction(tx).then((bytecodeBuffer) => {
-            setMethodBytecode(bufferToHex(bytecodeBuffer))
-          })
+          log(
+            'The constructor of the contract need arguments. ' +
+              'Please switch to advance mode to put arguments',
+            'error',
+          )
+          return
+        }
+        const _callValue = getCallValue()
+        deployByteCode('', _callValue).then(() => {
+          setIsCompiling(false)
         })
       } catch (error) {
         log((error as Error).message, 'error')
         setIsCompiling(false)
       }
     },
-    [
-      log,
-      callArgs,
-      setIsCompiling,
-      transactionData,
-      loadInstructions,
-      startTransaction,
-      getCallValue,
-      getArgs,
-      constructor,
-      callArgs,
-    ],
+    [log, getCallValue, deployByteCode, resetExecution],
   )
 
   useEffect(() => {
@@ -292,7 +293,6 @@ const Editor = ({ readOnly = false }: Props) => {
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
     setAbiArray([])
-    setConstructor(undefined)
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
@@ -342,6 +342,7 @@ const Editor = ({ readOnly = false }: Props) => {
         startExecution(code, _callValue, _callData)
       } else {
         setIsCompiling(true)
+        setAbiArray([])
         log('Starting compilation...')
 
         if (solcWorkerRef?.current) {
@@ -390,16 +391,10 @@ const Editor = ({ readOnly = false }: Props) => {
     () => codeType === CodeType.Mnemonic || codeType === CodeType.Bytecode,
     [codeType],
   )
-  const isConstructorContainsArgs = useMemo(
-    () => constructor && constructor.inputs.length > 0,
-    [constructor],
-  )
 
-  const isNotConstructorOrPayable = useMemo(
-    () => !constructor || constructor.stateMutability === 'payable',
-    [constructor],
-  )
-
+  const showAdvanceMode = useMemo(() => {
+    return codeType === CodeType.Solidity && isExpanded
+  }, [codeType, isExpanded])
   const unitValue = useMemo(
     () => ({
       value: unit,
@@ -438,27 +433,18 @@ const Editor = ({ readOnly = false }: Props) => {
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
-              <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
-                {isCallDataActive && (
-                  <Input
-                    placeholder="Calldata in HEX"
-                    className="bg-white dark:bg-black-500"
-                    value={callData}
-                    onChange={(e) => setCallData(e.target.value)}
-                  />
-                )}
+            {!showAdvanceMode && (
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
+                <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
+                  {isCallDataActive && (
+                    <Input
+                      placeholder="Calldata in HEX"
+                      className="bg-white dark:bg-black-500"
+                      value={callData}
+                      onChange={(e) => setCallData(e.target.value)}
+                    />
+                  )}
 
-                {isConstructorContainsArgs && (
-                  <Input
-                    placeholder={constructor?.inputTypes}
-                    className="bg-white dark:bg-black-500"
-                    value={callArgs}
-                    onChange={(e) => setCallArgs(e.target.value)}
-                  />
-                )}
-
-                {isNotConstructorOrPayable && (
                   <Input
                     type="number"
                     step="1"
@@ -467,9 +453,7 @@ const Editor = ({ readOnly = false }: Props) => {
                     value={callValue}
                     onChange={(e) => setCallValue(e.target.value)}
                   />
-                )}
 
-                {isNotConstructorOrPayable && (
                   <Select
                     onChange={(option: OnChangeValue<any, any>) =>
                       setUnit(option.value)
@@ -480,38 +464,61 @@ const Editor = ({ readOnly = false }: Props) => {
                     classNamePrefix="select"
                     menuPlacement="auto"
                   />
-                )}
 
-                <Button
-                  onClick={handleCopyPermalink}
-                  transparent
-                  padded={false}
-                >
-                  <span
-                    className="inline-block mr-4 select-all"
-                    data-tip="Share permalink"
+                  <Button
+                    onClick={handleCopyPermalink}
+                    transparent
+                    padded={false}
                   >
-                    <Icon name="links-line" className="text-indigo-500 mr-2" />
-                  </span>
-                </Button>
-              </div>
+                    <span
+                      className="inline-block mr-4 select-all"
+                      data-tip="Share permalink"
+                    >
+                      <Icon
+                        name="links-line"
+                        className="text-indigo-500 mr-1"
+                      />
+                    </span>
+                  </Button>
+                </div>
 
-              <Button
-                onClick={handleRun}
-                disabled={isRunDisabled}
-                size="sm"
-                contentClassName="justify-center"
-              >
-                Run
-              </Button>
-            </div>
-            {codeType === CodeType.Solidity && (
-              <SolidityMethodSelector
-                methodBytecode={methodBytecode}
-                log={log}
-                abiArray={abiArray}
-              />
+                <div>
+                  {codeType === CodeType.Solidity && (
+                    <Button
+                      disabled={
+                        !byteCode || byteCode === '' || abiArray.length == 0
+                      }
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      tooltip={'Please run your contract first.'}
+                      transparent
+                      padded={false}
+                    >
+                      <span className="inline-block mr-4 text-indigo-500">
+                        Advance Mode
+                      </span>
+                    </Button>
+                  )}
+
+                  <Button
+                    onClick={handleRun}
+                    disabled={isRunDisabled}
+                    size="sm"
+                    contentClassName="justify-center"
+                  >
+                    Run
+                  </Button>
+                </div>
+              </div>
             )}
+
+            <SolidityAdvanceModeTab
+              log={log}
+              abiArray={abiArray}
+              setShowSimpleMode={() => setIsExpanded(false)}
+              show={showAdvanceMode}
+              methodByteCode={methodByteCode}
+              deployByteCode={deployByteCode}
+            />
           </div>
         </div>
 
@@ -523,7 +530,11 @@ const Editor = ({ readOnly = false }: Props) => {
           <div
             className="pane pane-light overflow-auto bg-gray-50 dark:bg-black-600 h-full"
             ref={instructionsRef}
-            style={{ height: instructionsListHeight }}
+            style={{
+              height: isExpanded
+                ? instructionsListWithExpandHeight
+                : instructionsListHeight,
+            }}
           >
             <InstructionList containerRef={instructionsRef} />
           </div>

@@ -138,3 +138,7 @@ html {
 .select__option--is-focused {
   @apply bg-gray-50 dark:bg-black-600 !important;
 }
+
+.select__option--is-disabled {
+  @apply text-gray-300 hover:text-gray-300 dark:text-gray-600 dark:hover:text-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-black-500 !important;
+}
