@@ -54,7 +54,6 @@ const EditorInstructions = ({ containerRef }: TableProps) => {
         {instructions.map(({ id, name, value, hasBreakpoint }) => {
           return (
             <InstructionRow
-              opId={id}
               key={id}
               instructionId={id}
               ref={itemsRef.current[id]}
