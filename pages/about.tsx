@@ -5,36 +5,37 @@ import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3, Icon, RelativeLink } from 'components/ui'
 import { Pre } from 'components/ui/Doc'
 
+
+type SectionWrapperProps = {
+  header: React.ReactNode
+  anchorKey: string
+  children: React.ReactNode
+}
+
+const SectionWrapper: React.FC<SectionWrapperProps> = ({
+  header,
+  anchorKey,
+  children,
+}) => {
+  return (
+    <>
+      <div id={anchorKey} className="font-mono mb-4 justify-start relative items-center scroll-mt-14">
+        <Link href={`/about#${anchorKey}`}>
+          <a className="absolute -left-6">
+            <Icon name="links-line" className="text-indigo-500" />
+          </a>
+        </Link>
+
+        {header}
+      </div>
+      <div>{children}</div>
+    </>
+  )
+}
+
 // NOTE: It seems the memory expansion computation and constants did not change
 // since frontier, but we have to keep an eye on new fork to keep this up to date
 const AboutPage = () => {
-  type SectionWrapperProps = {
-    header: React.ReactNode
-    anchorKey: string
-    children: React.ReactNode
-  }
-
-  const SectionWrapper: React.FC<SectionWrapperProps> = ({
-    header,
-    anchorKey,
-    children,
-  }) => {
-    return (
-      <>
-        <div className="font-mono mb-4 flex justify-start relative items-center">
-          <Link href={`/about#${anchorKey}`}>
-            <a className="absolute -left-6">
-              <Icon name="links-line" className="text-indigo-500" />
-            </a>
-          </Link>
-
-          {header}
-        </div>
-        <div id={anchorKey}>{children}</div>
-      </>
-    )
-  }
-
   return (
     <Container className="text-sm leading-6 max-w-4xl">
       <H1>About the EVM</H1>
