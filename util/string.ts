@@ -10,6 +10,9 @@ const reFullHex = /^(0x|0X)([0-9a-fA-F][0-9a-fA-F])+$/
 hljsDefineSolidity(hljs)
 hljs.registerLanguage('mnemonic', hljsDefineMnemonic)
 
+// Add Huff to Highlight
+hljs.registerLanguage('huff', hljsDefineMnemonic)
+
 /**
  * Checks whether text is empty.
  */

@@ -93,6 +93,12 @@ PUSH1 32
 PUSH1 0
 RETURN`,
   ],
+  Huff: [
+    `#define macro MAIN() = takes (0) returns (0) {
+    0x5361772d6d6f6e2026204e6174616c6965 0x00 mstore // Store a value in memory.
+    0x11 0x0f return // Return 17 bytes starting from memory pointer 15.
+}`,
+  ],
 }
 
 export default examples

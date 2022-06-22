@@ -3,6 +3,7 @@ export enum CodeType {
   Solidity = 'Solidity',
   Bytecode = 'Bytecode',
   Mnemonic = 'Mnemonic',
+  Huff = 'Huff',
 }
 
 export enum ValueUnit {
