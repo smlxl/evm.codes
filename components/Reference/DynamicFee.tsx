@@ -123,7 +123,7 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
                   name={key}
                   value={inputs[key]}
                   onChange={(e) => handleChange(key, e.target.value)}
-                  className="bg-white bg-opacity-75 dark:bg-black-400 mb-4 text-sm font-mono"
+                  className="bg-white/75 dark:bg-black-400/75 mb-4 text-sm font-mono"
                 />
               )}
 

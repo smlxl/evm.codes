@@ -29,7 +29,7 @@ const Nav = () => {
             className={cn(
               'py-2 md:py-0 px-2 flex justify-between items-start md:items-center flex-col md:flex-row w-full md:w-auto fixed md:static shadow-md md:shadow-none transition-all',
               {
-                'left-0 bg-white dark:bg-black-800 md:bg-transparent bg-opacity-85 md:bg-opacity-100':
+                'left-0 bg-white dark:bg-black-800 md:bg-transparent dark:md:bg-transparent':
                   isMenuVisible,
                 '-left-full': !isMenuVisible,
               },
