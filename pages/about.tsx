@@ -5,7 +5,6 @@ import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3, Icon, RelativeLink } from 'components/ui'
 import { Pre } from 'components/ui/Doc'
 
-
 type SectionWrapperProps = {
   header: React.ReactNode
   anchorKey: string
