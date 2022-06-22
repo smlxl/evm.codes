@@ -14,6 +14,7 @@ import { bufferToHex } from '@ethereumjs/util'
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
+import compileHuff from 'huffc'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -398,6 +399,14 @@ const Editor = ({ readOnly = false }: Props) => {
         }
         loadInstructions(cleanBytecode)
         startExecution(cleanBytecode, _callValue, _callData)
+      } else if (codeType === CodeType.Huff) {
+        const { runtimeBytecode: bytecode } = compileHuff({
+          filePath: '',
+          generateAbi: true,
+          content: code,
+        })
+        loadInstructions(bytecode)
+        startExecution(bytecode, _callValue, _callData)
       } else {
         setIsCompiling(true)
         log('Starting compilation...')

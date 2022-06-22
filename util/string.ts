@@ -12,6 +12,9 @@ hljsDefineSolidity(hljs)
 hljs.registerLanguage('mnemonic', hljsDefineMnemonic)
 hljs.registerLanguage('bytecode', hljsDefineBytecode)
 
+// Add Huff to Highlight
+hljs.registerLanguage('huff', hljsDefineMnemonic)
+
 /**
  * Checks whether text is empty.
  */
