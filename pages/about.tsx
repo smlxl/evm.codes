@@ -18,7 +18,10 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 }) => {
   return (
     <>
-      <div id={anchorKey} className="font-mono mb-4 justify-start relative items-center scroll-mt-14">
+      <div
+        id={anchorKey}
+        className="font-mono mb-4 justify-start relative items-center scroll-mt-14"
+      >
         <Link href={`/about#${anchorKey}`}>
           <a className="absolute -left-6">
             <Icon name="links-line" className="text-indigo-500" />
