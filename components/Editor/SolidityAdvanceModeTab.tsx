@@ -23,7 +23,8 @@ interface Props {
   log: (line: string, type?: string) => void
   methodByteCode: string | null
   setShowSimpleMode: () => void
-  deployByteCode: (args: string, callValue: BN) => void
+  byteCode: string
+  deployByteCode: (byteCode: string, args: string, callValue: BN) => void
 }
 
 interface MethodAbiOption extends MethodAbi {
@@ -44,6 +45,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   setShowSimpleMode,
   show,
   deployByteCode,
+  byteCode,
 }) => {
   const {
     transactionData,
@@ -94,7 +96,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
           ).substring(2)
         : ''
     const callValue = getCallValue()
-    deployByteCode(args, callValue)
+    deployByteCode(byteCode, args, callValue)
   }, [selectedMethod, methodArgs, callValue, deployByteCode])
 
   const handleRunAbi = useCallback(() => {

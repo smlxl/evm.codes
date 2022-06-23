@@ -129,9 +129,9 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
-    (args = '', callValue) => {
-      return transactionData(byteCode + args, callValue).then((tx) => {
-        loadInstructions(byteCode)
+    (bc, args = '', callValue) => {
+      return transactionData(bc + args, callValue).then((tx) => {
+        loadInstructions(bc)
         startTransaction(tx).then((result) => {
           if (!result.error) {
             setMethodByteCode(bufferToHex(result.returnValue))
@@ -142,13 +142,7 @@ const Editor = ({ readOnly = false }: Props) => {
         return tx
       })
     },
-    [
-      byteCode,
-      transactionData,
-      loadInstructions,
-      startTransaction,
-      setMethodByteCode,
-    ],
+    [transactionData, loadInstructions, startTransaction, setMethodByteCode],
   )
 
   const handleWorkerMessage = useCallback(
@@ -196,7 +190,7 @@ const Editor = ({ readOnly = false }: Props) => {
           return
         }
         const _callValue = getCallValue()
-        deployByteCode('', _callValue).then(() => {
+        deployByteCode(byteCode, '', _callValue).then(() => {
           setIsCompiling(false)
         })
       } catch (error) {
@@ -517,6 +511,7 @@ const Editor = ({ readOnly = false }: Props) => {
               setShowSimpleMode={() => setIsExpanded(false)}
               show={showAdvanceMode}
               methodByteCode={methodByteCode}
+              byteCode={byteCode}
               deployByteCode={deployByteCode}
             />
           </div>
