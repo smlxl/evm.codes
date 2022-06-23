@@ -12,7 +12,7 @@ import React, {
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN, bufferToHex } from 'ethereumjs-util'
+import { BN } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -43,7 +43,7 @@ import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
 import SolidityAdvanceModeTab from './SolidityAdvanceModeTab'
-import { IConsoleOutput, CodeType, ValueUnit, MethodAbi } from './types'
+import { IConsoleOutput, CodeType, ValueUnit, Contract } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -93,12 +93,10 @@ const Editor = ({ readOnly = false }: Props) => {
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
   const [callData, setCallData] = useState('')
-  const [byteCode, setByteCode] = useState('')
-  const [methodByteCode, setMethodByteCode] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
-  const [abiArray, setAbiArray] = useState<Array<MethodAbi>>([])
+  const [contracts, setContracts] = useState<Array<Contract>>([])
 
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -130,27 +128,44 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const deployByteCode = useCallback(
     (bc, args = '', callValue) => {
-      return transactionData(bc + args, callValue).then((tx) => {
-        loadInstructions(bc)
-        startTransaction(tx).then((result) => {
-          if (!result.error) {
-            setMethodByteCode(bufferToHex(result.returnValue))
-          } else {
-            log(result.error.error, `error`)
-          }
+      try {
+        if (!callValue) {
+          callValue = getCallValue()
+        }
+        return transactionData(bc + args, callValue).then((tx) => {
+          loadInstructions(bc)
+          setIsCompiling(false)
+          return startTransaction(tx).then((result) => {
+            if (result.error) {
+              log(result.error.error, `error`)
+            }
+            return result
+          })
         })
-        return tx
-      })
+      } catch (error) {
+        log((error as Error).message, 'error')
+        setIsCompiling(false)
+      }
     },
-    [transactionData, loadInstructions, startTransaction, setMethodByteCode],
+    [transactionData, loadInstructions, startTransaction],
+  )
+
+  const handleWorkerMessageForYul = useCallback(
+    (contracts) => {
+      if (contracts.length > 1) {
+        log('The source should contain only one contract', 'error')
+        return
+      }
+      deployByteCode(contracts[0].code, '', undefined)
+    },
+    [deployByteCode, log],
   )
 
   const handleWorkerMessage = useCallback(
     (event: MessageEvent) => {
-      const { code: byteCode, warning, error, abi: a } = event.data
+      const { warning, error, contracts } = event.data
       resetExecution()
-      setAbiArray([])
-      setMethodByteCode('')
+      setContracts([])
 
       if (error) {
         log(error, 'error')
@@ -164,41 +179,22 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
-      let currentConstructor = undefined
+      // if code type is yul, we just need to deploy the bytecode of the first contract.
+      if (codeType === CodeType.Yul) {
+        handleWorkerMessageForYul(contracts)
+        return
+      }
 
-      if (a) {
-        const abiMethods = a.map((method: MethodAbi) => ({
-          ...method,
-          inputTypes: method.inputs.map((mi) => mi.type).join(','),
-        }))
-
-        setAbiArray(abiMethods)
-        currentConstructor = abiMethods.find(
-          (method: MethodAbi) => method.type === 'constructor',
+      if (contracts.length > 1) {
+        setIsCompiling(false)
+        log(
+          'The source should contain only one contract, Please select one to deploy.',
+          'error',
         )
       }
-
-      try {
-        if (currentConstructor && currentConstructor.inputs?.length > 0) {
-          setByteCode(byteCode)
-          setIsCompiling(false)
-          log(
-            'The constructor of the contract need arguments. ' +
-              'Please switch to advance mode to put arguments',
-            'error',
-          )
-          return
-        }
-        const _callValue = getCallValue()
-        deployByteCode(byteCode, '', _callValue).then(() => {
-          setIsCompiling(false)
-        })
-      } catch (error) {
-        log((error as Error).message, 'error')
-        setIsCompiling(false)
-      }
+      setContracts(contracts)
     },
-    [log, getCallValue, deployByteCode, resetExecution],
+    [resetExecution, log, codeType, handleWorkerMessageForYul],
   )
 
   useEffect(() => {
@@ -286,7 +282,7 @@ const Editor = ({ readOnly = false }: Props) => {
     const { value } = option
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
-    setAbiArray([])
+    setContracts([])
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
@@ -336,7 +332,6 @@ const Editor = ({ readOnly = false }: Props) => {
         startExecution(code, _callValue, _callData)
       } else {
         setIsCompiling(true)
-        setAbiArray([])
         log('Starting compilation...')
 
         if (solcWorkerRef?.current) {
@@ -378,7 +373,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
-  }, [compiling, code])
+  }, [compiling, code, codeType])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
   const isCallDataActive = useMemo(
@@ -479,9 +474,7 @@ const Editor = ({ readOnly = false }: Props) => {
                 <div>
                   {codeType === CodeType.Solidity && (
                     <Button
-                      disabled={
-                        !byteCode || byteCode === '' || abiArray.length == 0
-                      }
+                      disabled={contracts.length <= 0}
                       onClick={() => setIsExpanded(!isExpanded)}
                       tooltip={'Please run your contract first.'}
                       transparent
@@ -507,12 +500,15 @@ const Editor = ({ readOnly = false }: Props) => {
 
             <SolidityAdvanceModeTab
               log={log}
-              abiArray={abiArray}
+              contracts={contracts}
               setShowSimpleMode={() => setIsExpanded(false)}
               show={showAdvanceMode}
-              methodByteCode={methodByteCode}
-              byteCode={byteCode}
               deployByteCode={deployByteCode}
+              callValue={callValue}
+              setCallValue={setCallValue}
+              setUnit={setUnit}
+              unitValue={unit}
+              getCallValue={getCallValue}
             />
           </div>
         </div>

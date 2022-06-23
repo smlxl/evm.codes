@@ -67,9 +67,11 @@ type ContextProps = {
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: BN, data: string) => void
-  startTransaction: (
-    tx: TypedTransaction | TxData,
-  ) => Promise<{ error?: VmError; returnValue: Buffer }>
+  startTransaction: (tx: TypedTransaction | TxData) => Promise<{
+    error?: VmError
+    returnValue: Buffer
+    createdAddress: Address | undefined
+  }>
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
   removeBreakpoint: (instructionId: number) => void
@@ -292,6 +294,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         return {
           error: execResult.exceptionError,
           returnValue: execResult.returnValue,
+          createdAddress: createdAddress,
         }
       })
       .finally(() => setIsExecuting(false))

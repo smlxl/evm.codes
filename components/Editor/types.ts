@@ -27,6 +27,12 @@ export interface MethodAbiInput {
   type: string
 }
 
+export interface Contract {
+  code: string
+  name: string
+  abi: Array<MethodAbi>
+}
+
 export interface MethodAbi {
   name: string
   inputs: MethodAbiInput[]

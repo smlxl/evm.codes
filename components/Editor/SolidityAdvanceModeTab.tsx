@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 
+import { VmError } from '@ethereumjs/vm/dist/exceptions'
 import abi from 'ethereumjs-abi'
 import { Address, BN, bufferToHex } from 'ethereumjs-util'
 import Select, { OnChangeValue } from 'react-select'
@@ -15,16 +16,29 @@ import Select, { OnChangeValue } from 'react-select'
 import { EthereumContext } from '../../context/ethereumContext'
 import { Button, Input } from '../ui'
 
-import { MethodAbi, ValueUnit } from './types'
+import { Contract, MethodAbi, ValueUnit } from './types'
 
 interface Props {
   show: boolean
-  abiArray: Array<MethodAbi>
   log: (line: string, type?: string) => void
-  methodByteCode: string | null
   setShowSimpleMode: () => void
-  byteCode: string
-  deployByteCode: (byteCode: string, args: string, callValue: BN) => void
+  deployByteCode: (
+    byteCode: string,
+    args: string,
+    callValue: BN | undefined,
+  ) =>
+    | Promise<{
+        error?: VmError | undefined
+        returnValue: Buffer
+        createdAddress: Address | undefined
+      }>
+    | undefined
+  contracts: Array<Contract>
+  callValue: string | undefined
+  setCallValue: (v: string) => void
+  unitValue: string | undefined
+  setUnit: (v: string) => void
+  getCallValue: () => BN
 }
 
 interface MethodAbiOption extends MethodAbi {
@@ -39,65 +53,81 @@ const unitOptions = Object.keys(ValueUnit).map((value) => ({
 }))
 
 const SolidityAdvanceModeTab: FC<Props> = ({
-  abiArray,
   log,
-  methodByteCode,
   setShowSimpleMode,
   show,
   deployByteCode,
-  byteCode,
+  contracts,
+  callValue,
+  unitValue,
+  setCallValue,
+  setUnit,
+  getCallValue,
 }) => {
-  const {
-    transactionData,
-    loadInstructions,
-    startTransaction,
-    deployedContractAddress,
-  } = useContext(EthereumContext)
+  const { transactionData, loadInstructions, startTransaction } =
+    useContext(EthereumContext)
   const container = useRef<any>()
 
+  const [selectedContract, setSelectedContract] = useState<
+    Contract | undefined
+  >()
   const [selectedMethod, setSelectedMethod] = useState<
     MethodAbiOption | undefined
   >()
 
+  const [contractsAddress, setContractsAddress] = useState<
+    Record<string, Address | undefined>
+  >({})
+
+  const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
   const [methodArgs, setMethodArgs] = useState<Array<string>>([])
-  const [callValue, setCallValue] = useState<string>('')
-  const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
-  const getCallValue = useCallback(() => {
-    const _callValue = new BN(callValue)
-
-    if (unit === ValueUnit.Gwei) {
-      _callValue.imul(new BN('1000000000'))
-    } else if (unit === ValueUnit.Finney) {
-      _callValue.imul(new BN('1000000000000000'))
-    } else if (unit === ValueUnit.Ether) {
-      _callValue.imul(new BN('1000000000000000000'))
-    }
-
-    return _callValue
-  }, [callValue, unit])
+  const abiArray = useMemo(() => {
+    return (selectedContract?.abi || []).map((method) => ({
+      ...method,
+      inputTypes: method.inputs?.map((i) => i.type).join(',') || '',
+    }))
+  }, [selectedContract])
 
   const isConstructor = useMemo(
     () => selectedMethod?.type === 'constructor',
     [selectedMethod],
   )
 
+  const deployedContractAddress = useMemo(() => {
+    return contractsAddress[selectedContract?.name || '']
+  }, [selectedContract, contractsAddress])
+
   const handleDeployApi = useCallback(() => {
-    if (!selectedMethod) {
+    if (!selectedContract || !selectedMethod) {
       return
     }
-    const args =
-      selectedMethod.inputs && selectedMethod.inputs.length > 0
-        ? bufferToHex(
-            abi.rawEncode(
-              selectedMethod.inputs.map((mi) => mi.type),
-              methodArgs,
-            ),
-          ).substring(2)
-        : ''
-    const callValue = getCallValue()
-    deployByteCode(byteCode, args, callValue)
-  }, [selectedMethod, methodArgs, callValue, deployByteCode])
+    let args = ''
+    if (selectedMethod.inputs && selectedMethod.inputs.length > 0) {
+      const abiBuffer = abi.rawEncode(
+        selectedMethod.inputs.map((mi) => mi.type),
+        methodArgs,
+      )
+      args = bufferToHex(abiBuffer).substring(2)
+    }
+    const contractName = selectedContract.name
+    deployByteCode(selectedContract.code, args, undefined)?.then((result) => {
+      if (!result.error) {
+        setContractsAddress({
+          ...contractsAddress,
+          [contractName]: result.createdAddress,
+        })
+        setMethodByteCode(bufferToHex(result.returnValue))
+      }
+    })
+  }, [
+    selectedContract,
+    selectedMethod,
+    deployByteCode,
+    methodArgs,
+    contractsAddress,
+    setContractsAddress,
+  ])
 
   const handleRunAbi = useCallback(() => {
     if (!selectedMethod || !deployedContractAddress) {
@@ -117,7 +147,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     transactionData(
       bufferToHex(byteCodeBuffer).substring(2),
       getCallValue(),
-      Address.fromString(deployedContractAddress),
+      deployedContractAddress,
     ).then((txData) => {
       startTransaction(txData).then((result) => {
         if (
@@ -139,14 +169,15 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       })
     })
   }, [
-    selectedMethod,
     deployedContractAddress,
-    methodByteCode,
-    callValue,
+    selectedMethod,
     loadInstructions,
+    methodByteCode,
+    log,
     methodArgs,
-    startTransaction,
     transactionData,
+    getCallValue,
+    startTransaction,
   ])
 
   const methodOptions = useMemo(() => {
@@ -161,13 +192,41 @@ const SolidityAdvanceModeTab: FC<Props> = ({
         value: name,
         isDisabled:
           am.type === 'function' &&
-          (!deployedContractAddress ||
+          (!contractsAddress[selectedContract?.name || ''] ||
             !methodByteCode ||
             methodByteCode.trim() === ''),
       }
     })
-  }, [abiArray, methodByteCode, deployedContractAddress])
+  }, [abiArray, methodByteCode, contractsAddress, selectedContract])
 
+  // auto select first contract.
+  useEffect(() => {
+    setContractsAddress({})
+    if (!contracts || contracts.length !== 1) {
+      setSelectedContract(undefined)
+      return
+    }
+    setSelectedContract(contracts[0])
+
+    // if current not show, need to deploy the first contract.
+    const constructorArgs =
+      contracts[0]?.abi?.find((am) => am.type === 'constructor')?.inputs || []
+
+    // if constructor has more args, then log error.
+    if (constructorArgs.length > 0) {
+      log(
+        'The constructor of the contract need arguments. ' +
+          'Please switch to advance mode to put arguments',
+        'error',
+      )
+      return
+    }
+
+    // if constructor has no argument, then deploy it.
+    deployByteCode(contracts[0].code, '', undefined)
+  }, [contracts, deployByteCode, log, setSelectedContract])
+
+  // select constructor when contract had been changed.
   useEffect(() => {
     if (methodOptions) {
       setSelectedMethod(
@@ -176,11 +235,12 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     }
   }, [methodOptions, setSelectedMethod])
 
+  // clear args and call value when select method had been changed.
   useEffect(() => {
     const inputs = selectedMethod?.inputs || []
     setMethodArgs(inputs.map(() => ''))
     setCallValue('')
-  }, [methodOptions, selectedMethod])
+  }, [methodOptions, selectedMethod, setCallValue])
 
   return (
     <div
@@ -190,6 +250,19 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     >
       <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
         <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
+          <Select
+            options={contracts}
+            onChange={(v: OnChangeValue<any, any>) => {
+              setSelectedContract(v)
+            }}
+            menuPortalTarget={container.current?.parentElement}
+            value={selectedContract}
+            isSearchable={false}
+            placeholder="Select Contract"
+            classNamePrefix="select"
+            menuPlacement="auto"
+            getOptionLabel={(c) => c.name}
+          />
           <Select
             options={methodOptions}
             onChange={(v: OnChangeValue<any, any>) => {
@@ -238,7 +311,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
               setUnit(option.value)
             }
             options={unitOptions}
-            value={{ label: unit, value: unit }}
+            value={{ label: unitValue, value: unitValue }}
             isSearchable={false}
             classNamePrefix="select"
             menuPlacement="auto"
