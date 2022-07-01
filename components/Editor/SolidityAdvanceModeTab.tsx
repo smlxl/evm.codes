@@ -317,7 +317,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       <div className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2">
         <div className={'font-normal text-sm'}>Argument: </div>
         <Input
-          placeholder="Use , split more arguments"
+          placeholder="Use the , to split more arguments."
           className="bg-white dark:bg-black-500"
           value={methodArgs}
           onChange={(e) => {

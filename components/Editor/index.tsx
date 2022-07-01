@@ -285,6 +285,8 @@ const Editor = ({ readOnly = false }: Props) => {
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
     setContracts([])
+    setMethodByteCode(undefined)
+    setIsExpanded(false)
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
