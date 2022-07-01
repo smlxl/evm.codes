@@ -39,5 +39,5 @@ export interface MethodAbi {
   outputs: MethodAbiInput[]
   inputTypes: string
   stateMutability: 'nonpayable' | 'view' | 'payable'
-  type: 'constructor' | 'function' | 'complie'
+  type: 'constructor' | 'function' | 'compiler'
 }

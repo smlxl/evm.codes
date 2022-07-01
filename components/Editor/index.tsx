@@ -506,7 +506,7 @@ const Editor = ({ readOnly = false }: Props) => {
               selectedContract={
                 contracts && contracts.length > 0 ? contracts[0] : undefined
               }
-              handleComplie={handleRun}
+              handleCompile={handleRun}
               setShowSimpleMode={() => setIsExpanded(false)}
               show={showAdvanceMode}
               deployByteCode={deployByteCode}

@@ -22,7 +22,7 @@ interface Props {
   show: boolean
   log: (line: string, type?: string) => void
   setShowSimpleMode: () => void
-  handleComplie: () => void
+  handleCompile: () => void
   deployByteCode: (
     byteCode: string,
     args: string,
@@ -53,10 +53,10 @@ const FIXED_ABIS: Array<MethodAbiOption> = [
   {
     inputs: [],
     inputTypes: '',
-    name: 'Complie',
-    label: 'Complie',
-    value: 'Complie',
-    type: 'complie',
+    name: 'Compile',
+    label: 'Compile',
+    value: 'Compile',
+    type: 'compiler',
     outputs: [],
     stateMutability: 'payable',
   },
@@ -78,7 +78,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   setCallValue,
   setUnit,
   getCallValue,
-  handleComplie,
+  handleCompile,
   methodByteCode,
 }) => {
   const {
@@ -185,8 +185,8 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   ])
 
   const clickButtonText = useMemo(() => {
-    if (selectedMethod?.type === 'complie') {
-      return `Complie`
+    if (selectedMethod?.type === 'compiler') {
+      return `Compiler`
     }
     if (selectedMethod?.type === 'constructor') {
       return `Deploy`
@@ -196,14 +196,14 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   }, [selectedMethod])
 
   const handleRunClick = useCallback(() => {
-    if (selectedMethod?.type === 'complie') {
-      handleComplie()
+    if (selectedMethod?.type === 'compiler') {
+      handleCompile()
     } else if (selectedMethod?.type === 'constructor') {
       handleDeployApi()
     } else {
       handleRunAbi()
     }
-  }, [selectedMethod, handleDeployApi, handleRunAbi, handleComplie])
+  }, [selectedMethod, handleDeployApi, handleRunAbi, handleCompile])
 
   const methodOptions = useMemo(() => {
     const result = [...FIXED_ABIS]
@@ -233,14 +233,14 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     const constructor = methodOptions.find(
       (abiMethod) => abiMethod.type === 'constructor',
     )
-    const complie = methodOptions.find(
-      (abiMethod) => abiMethod.type === 'complie',
+    const compiler = methodOptions.find(
+      (abiMethod) => abiMethod.type === 'compiler',
     )
 
     if (constructor) {
       setSelectedMethod(constructor)
     } else {
-      setSelectedMethod(complie)
+      setSelectedMethod(compiler)
     }
   }, [methodOptions, setSelectedMethod])
 
