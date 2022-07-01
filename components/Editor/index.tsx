@@ -12,7 +12,7 @@ import React, {
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN } from 'ethereumjs-util'
+import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -97,8 +97,8 @@ const Editor = ({ readOnly = false }: Props) => {
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
   const [contracts, setContracts] = useState<Array<Contract>>([])
-
   const [isExpanded, setIsExpanded] = useState(false)
+  const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
 
   const log = useCallback(
     (line: string, type = 'info') => {
@@ -136,8 +136,12 @@ const Editor = ({ readOnly = false }: Props) => {
           loadInstructions(bc)
           setIsCompiling(false)
           return startTransaction(tx).then((result) => {
-            if (result.error) {
-              log(result.error.error, `error`)
+            if (
+              codeType === CodeType.Solidity &&
+              !result.error &&
+              result.returnValue
+            ) {
+              setMethodByteCode(bufferToHex(result.returnValue))
             }
             return result
           })
@@ -147,18 +151,14 @@ const Editor = ({ readOnly = false }: Props) => {
         setIsCompiling(false)
       }
     },
-    [transactionData, loadInstructions, startTransaction],
-  )
-
-  const handleWorkerMessageForYul = useCallback(
-    (contracts) => {
-      if (contracts.length > 1) {
-        log('The source should contain only one contract', 'error')
-        return
-      }
-      deployByteCode(contracts[0].code, '', undefined)
-    },
-    [deployByteCode, log],
+    [
+      transactionData,
+      getCallValue,
+      loadInstructions,
+      startTransaction,
+      codeType,
+      log,
+    ],
   )
 
   const handleWorkerMessage = useCallback(
@@ -179,22 +179,24 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
-      // if code type is yul, we just need to deploy the bytecode of the first contract.
-      if (codeType === CodeType.Yul) {
-        handleWorkerMessageForYul(contracts)
-        return
-      }
-
       if (contracts.length > 1) {
         setIsCompiling(false)
         log(
           'The source should contain only one contract, Please select one to deploy.',
           'error',
         )
+        return
       }
-      setContracts(contracts)
+
+      if (codeType === CodeType.Solidity) {
+        setContracts(contracts)
+      }
+
+      if (!isExpanded) {
+        deployByteCode(contracts[0].code, '', undefined)
+      }
     },
-    [resetExecution, log, codeType, handleWorkerMessageForYul],
+    [resetExecution, log, codeType, isExpanded, deployByteCode],
   )
 
   useEffect(() => {
@@ -373,7 +375,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
-  }, [compiling, code, codeType])
+  }, [compiling, code])
 
   const isBytecode = useMemo(() => codeType === CodeType.Bytecode, [codeType])
   const isCallDataActive = useMemo(
@@ -474,7 +476,6 @@ const Editor = ({ readOnly = false }: Props) => {
                 <div>
                   {codeType === CodeType.Solidity && (
                     <Button
-                      disabled={contracts.length <= 0}
                       onClick={() => setIsExpanded(!isExpanded)}
                       tooltip={'Please run your contract first.'}
                       transparent
@@ -500,7 +501,10 @@ const Editor = ({ readOnly = false }: Props) => {
 
             <SolidityAdvanceModeTab
               log={log}
-              contracts={contracts}
+              selectedContract={
+                contracts && contracts.length > 0 ? contracts[0] : undefined
+              }
+              handleComplie={handleRun}
               setShowSimpleMode={() => setIsExpanded(false)}
               show={showAdvanceMode}
               deployByteCode={deployByteCode}
@@ -509,6 +513,7 @@ const Editor = ({ readOnly = false }: Props) => {
               setUnit={setUnit}
               unitValue={unit}
               getCallValue={getCallValue}
+              methodByteCode={methodByteCode}
             />
           </div>
         </div>

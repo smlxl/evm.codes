@@ -22,6 +22,7 @@ interface Props {
   show: boolean
   log: (line: string, type?: string) => void
   setShowSimpleMode: () => void
+  handleComplie: () => void
   deployByteCode: (
     byteCode: string,
     args: string,
@@ -33,12 +34,13 @@ interface Props {
         createdAddress: Address | undefined
       }>
     | undefined
-  contracts: Array<Contract>
+  selectedContract: Contract | undefined
   callValue: string | undefined
   setCallValue: (v: string) => void
   unitValue: string | undefined
   setUnit: (v: string) => void
   getCallValue: () => BN
+  methodByteCode: string | undefined
 }
 
 interface MethodAbiOption extends MethodAbi {
@@ -46,6 +48,19 @@ interface MethodAbiOption extends MethodAbi {
   value: string
   isDisabled?: boolean
 }
+
+const FIXED_ABIS: Array<MethodAbiOption> = [
+  {
+    inputs: [],
+    inputTypes: '',
+    name: 'Complie',
+    label: 'Complie',
+    value: 'Complie',
+    type: 'complie',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+]
 
 const unitOptions = Object.keys(ValueUnit).map((value) => ({
   value,
@@ -57,30 +72,35 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   setShowSimpleMode,
   show,
   deployByteCode,
-  contracts,
+  selectedContract,
   callValue,
   unitValue,
   setCallValue,
   setUnit,
   getCallValue,
+  handleComplie,
+  methodByteCode,
 }) => {
-  const { transactionData, loadInstructions, startTransaction } =
-    useContext(EthereumContext)
+  const {
+    transactionData,
+    loadInstructions,
+    startTransaction,
+    deployedContractAddress,
+  } = useContext(EthereumContext)
   const container = useRef<any>()
 
-  const [selectedContract, setSelectedContract] = useState<
-    Contract | undefined
-  >()
   const [selectedMethod, setSelectedMethod] = useState<
     MethodAbiOption | undefined
   >()
 
-  const [contractsAddress, setContractsAddress] = useState<
-    Record<string, Address | undefined>
-  >({})
+  const [methodArgs, setMethodArgs] = useState<string>('')
 
-  const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
-  const [methodArgs, setMethodArgs] = useState<Array<string>>([])
+  const methodArgsArray = useMemo(() => {
+    if (!methodArgs) {
+      return []
+    }
+    return methodArgs.split(',').filter((s) => s.length > 0)
+  }, [methodArgs])
 
   const abiArray = useMemo(() => {
     return (selectedContract?.abi || []).map((method) => ({
@@ -89,65 +109,49 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     }))
   }, [selectedContract])
 
-  const isConstructor = useMemo(
-    () => selectedMethod?.type === 'constructor',
-    [selectedMethod],
-  )
-
-  const deployedContractAddress = useMemo(() => {
-    return contractsAddress[selectedContract?.name || '']
-  }, [selectedContract, contractsAddress])
-
   const handleDeployApi = useCallback(() => {
     if (!selectedContract || !selectedMethod) {
       return
     }
     let args = ''
     if (selectedMethod.inputs && selectedMethod.inputs.length > 0) {
+      if (methodArgsArray.length <= 0) {
+        log('Please input args', 'error')
+        return
+      }
       const abiBuffer = abi.rawEncode(
         selectedMethod.inputs.map((mi) => mi.type),
-        methodArgs,
+        methodArgsArray,
       )
       args = bufferToHex(abiBuffer).substring(2)
     }
-    const contractName = selectedContract.name
-    deployByteCode(selectedContract.code, args, undefined)?.then((result) => {
-      if (!result.error) {
-        setContractsAddress({
-          ...contractsAddress,
-          [contractName]: result.createdAddress,
-        })
-        setMethodByteCode(bufferToHex(result.returnValue))
-      }
-    })
-  }, [
-    selectedContract,
-    selectedMethod,
-    deployByteCode,
-    methodArgs,
-    contractsAddress,
-    setContractsAddress,
-  ])
+    deployByteCode(selectedContract.code, args, undefined)
+  }, [selectedContract, selectedMethod, deployByteCode, methodArgsArray, log])
 
   const handleRunAbi = useCallback(() => {
-    if (!selectedMethod || !deployedContractAddress) {
+    if (!deployedContractAddress || !methodByteCode) {
+      log('Please deploy first', 'error')
+      return
+    }
+    if (!selectedMethod) {
+      log('Please select a method', 'error')
       return
     }
     loadInstructions((methodByteCode as string).substring(2))
     const methodRawSignature =
       selectedMethod.name + '(' + selectedMethod.inputTypes + ')'
 
-    log(`run method ${methodRawSignature} with ${methodArgs}`)
+    log(`run method ${methodRawSignature} with ${methodArgsArray}`)
 
     const byteCodeBuffer =
-      methodArgs.length > 0
-        ? abi.simpleEncode(methodRawSignature, ...methodArgs)
+      methodArgsArray.length > 0
+        ? abi.simpleEncode(methodRawSignature, ...methodArgsArray)
         : abi.simpleEncode(methodRawSignature)
 
     transactionData(
       bufferToHex(byteCodeBuffer).substring(2),
       getCallValue(),
-      deployedContractAddress,
+      Address.fromString(deployedContractAddress),
     ).then((txData) => {
       startTransaction(txData).then((result) => {
         if (
@@ -169,78 +173,82 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       })
     })
   }, [
-    deployedContractAddress,
     selectedMethod,
+    deployedContractAddress,
     loadInstructions,
     methodByteCode,
     log,
-    methodArgs,
+    methodArgsArray,
     transactionData,
     getCallValue,
     startTransaction,
   ])
 
+  const clickButtonText = useMemo(() => {
+    if (selectedMethod?.type === 'complie') {
+      return `Complie`
+    }
+    if (selectedMethod?.type === 'constructor') {
+      return `Deploy`
+    } else {
+      return `Run Method`
+    }
+  }, [selectedMethod])
+
+  const handleRunClick = useCallback(() => {
+    if (selectedMethod?.type === 'complie') {
+      handleComplie()
+    } else if (selectedMethod?.type === 'constructor') {
+      handleDeployApi()
+    } else {
+      handleRunAbi()
+    }
+  }, [selectedMethod, handleDeployApi, handleRunAbi, handleComplie])
+
   const methodOptions = useMemo(() => {
+    const result = [...FIXED_ABIS]
     if (!abiArray) {
-      return []
+      return result
     }
-    return abiArray.map((am) => {
-      const name = am.type === 'constructor' ? 'constructor' : am.name
-      return {
-        ...am,
-        label: name + '(' + am.inputTypes + ')',
-        value: name,
-        isDisabled:
-          am.type === 'function' &&
-          (!contractsAddress[selectedContract?.name || ''] ||
-            !methodByteCode ||
-            methodByteCode.trim() === ''),
-      }
-    })
-  }, [abiArray, methodByteCode, contractsAddress, selectedContract])
-
-  // auto select first contract.
-  useEffect(() => {
-    setContractsAddress({})
-    if (!contracts || contracts.length !== 1) {
-      setSelectedContract(undefined)
-      return
-    }
-    setSelectedContract(contracts[0])
-
-    // if current not show, need to deploy the first contract.
-    const constructorArgs =
-      contracts[0]?.abi?.find((am) => am.type === 'constructor')?.inputs || []
-
-    // if constructor has more args, then log error.
-    if (constructorArgs.length > 0) {
-      log(
-        'The constructor of the contract need arguments. ' +
-          'Please switch to advance mode to put arguments',
-        'error',
-      )
-      return
-    }
-
-    // if constructor has no argument, then deploy it.
-    deployByteCode(contracts[0].code, '', undefined)
-  }, [contracts, deployByteCode, log, setSelectedContract])
+    return [
+      ...result,
+      ...abiArray.map((am) => {
+        const name = am.type === 'constructor' ? 'constructor' : am.name
+        return {
+          ...am,
+          label: name + '(' + am.inputTypes + ')',
+          value: name,
+          isDisabled:
+            am.type === 'function' &&
+            (!deployedContractAddress ||
+              !methodByteCode ||
+              methodByteCode.trim() === ''),
+        }
+      }),
+    ]
+  }, [abiArray, methodByteCode, deployedContractAddress])
 
   // select constructor when contract had been changed.
   useEffect(() => {
-    if (methodOptions) {
-      setSelectedMethod(
-        methodOptions.find((abiMethod) => abiMethod.type === 'constructor'),
-      )
+    const constructor = methodOptions.find(
+      (abiMethod) => abiMethod.type === 'constructor',
+    )
+    const complie = methodOptions.find(
+      (abiMethod) => abiMethod.type === 'complie',
+    )
+
+    if (constructor) {
+      setSelectedMethod(constructor)
+    } else {
+      setSelectedMethod(complie)
     }
   }, [methodOptions, setSelectedMethod])
 
   // clear args and call value when select method had been changed.
   useEffect(() => {
-    const inputs = selectedMethod?.inputs || []
-    setMethodArgs(inputs.map(() => ''))
+    setMethodArgs('')
     setCallValue('')
-  }, [methodOptions, selectedMethod, setCallValue])
+  }, [selectedMethod, setCallValue])
 
   return (
     <div
@@ -250,19 +258,6 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     >
       <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
         <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
-          <Select
-            options={contracts}
-            onChange={(v: OnChangeValue<any, any>) => {
-              setSelectedContract(v)
-            }}
-            menuPortalTarget={container.current?.parentElement}
-            value={selectedContract}
-            isSearchable={false}
-            placeholder="Select Contract"
-            classNamePrefix="select"
-            menuPlacement="auto"
-            getOptionLabel={(c) => c.name}
-          />
           <Select
             options={methodOptions}
             onChange={(v: OnChangeValue<any, any>) => {
@@ -284,9 +279,9 @@ const SolidityAdvanceModeTab: FC<Props> = ({
           <Button
             size="sm"
             contentClassName="justify-center"
-            onClick={isConstructor ? handleDeployApi : handleRunAbi}
+            onClick={handleRunClick}
           >
-            {isConstructor ? 'Deploy' : 'Run Contract Method'}
+            {clickButtonText}
           </Button>
         </div>
       </div>
@@ -319,36 +314,17 @@ const SolidityAdvanceModeTab: FC<Props> = ({
           />
         </div>
       </div>
-      {!selectedMethod ||
-        !selectedMethod?.inputs ||
-        (selectedMethod.inputs.length === 0 && (
-          <div className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2">
-            <div className={'font-normal text-sm'}>Argument: </div>
-            <Input
-              disabled
-              placeholder="Don't need Argument"
-              className="bg-white dark:bg-black-500"
-            />
-          </div>
-        ))}
-      {selectedMethod?.inputs.map((mi, i) => (
-        <div
-          key={mi.name}
-          className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2"
-        >
-          <div className="font-normal text-sm">{mi.name}:</div>
-          <Input
-            placeholder={mi.type}
-            value={methodArgs[i] ?? ''}
-            onChange={(e) => {
-              const newArgs = [...methodArgs]
-              newArgs[i] = e.target.value
-              setMethodArgs(newArgs)
-            }}
-            className="bg-white dark:bg-black-500"
-          />
-        </div>
-      ))}
+      <div className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2">
+        <div className={'font-normal text-sm'}>Argument: </div>
+        <Input
+          placeholder="Use , split more arguments"
+          className="bg-white dark:bg-black-500"
+          value={methodArgs}
+          onChange={(e) => {
+            setMethodArgs(e.target.value)
+          }}
+        />
+      </div>
     </div>
   )
 }
