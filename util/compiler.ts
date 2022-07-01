@@ -1,15 +1,16 @@
 import { BN } from 'ethereumjs-util'
 import { IReferenceItem } from 'types'
 
-export const compilerSemVer = 'v0.8.10'
-export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
+// Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
+export const compilerSemVer = 'v0.8.15'
+export const compilerVersion = `soljson-${compilerSemVer}+commit.e14f2714`
 
 /**
  * Gets target EVM version from a hardfork name
  *
  * @param forkName The String harffork name
  * @returns The String matching target EVM version
- * @see https://docs.soliditylang.org/en/v0.8.10/using-the-compiler.html#target-options
+ * @see https://docs.soliditylang.org/en/v0.8.15/using-the-compiler.html#target-options
  */
 export const getTargetEvmVersion = (forkName: string | undefined) => {
   if (forkName === 'dao') {
@@ -19,6 +20,9 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
     return 'berlin'
   }
   if (forkName === 'arrowGlacier') {
+    return 'london'
+  }
+  if (forkName === 'grayGlacier') {
     return 'london'
   }
   return forkName
