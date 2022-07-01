@@ -1,5 +1,5 @@
 import { BN } from 'ethereumjs-util'
-import { IReferenceItem } from 'types'
+import { IInstruction, IReferenceItem } from 'types'
 
 export const compilerSemVer = 'v0.8.10'
 export const compilerVersion = `soljson-${compilerSemVer}+commit.fc410830`
@@ -102,4 +102,45 @@ export const getBytecodeFromMnemonic = (
   }
 
   return bytecode
+}
+
+/**
+ * Gets mnemonic from instructions
+ * @param instructions The IInstruction array of current instructions
+ * @param opcodes The IReferenceItem array of opcodes
+ * @returns the mnemonic code
+ */
+export const getMnemonicFromBytecode = (
+  instructions: IInstruction[],
+  opcodes: IReferenceItem[],
+): string => {
+  if (instructions.length === 0) {
+    return ''
+  }
+
+  const opcodeMap: Record<string, string> = {}
+  opcodes.forEach((c) => {
+    opcodeMap[c.name as string] = c.opcodeOrAddress
+  })
+
+  return instructions
+    .map((i) => `${opcodeMap[i.name]}${i.value || ''}`)
+    .join('')
+}
+
+/**
+ * Get the editable bytecode lines from the instructions
+ * @param instructions The IInstruction array of current instructions
+ * @returns the editable bytecode lines
+ */
+export const getBytecodeLinesFromInstructions = (
+  instructions: IInstruction[],
+): string => {
+  if (instructions.length === 0) {
+    return ''
+  }
+
+  return instructions
+    .map((i) => `${i.name}${i.value ? ' 0x' + i.value : ''}`)
+    .join('\n')
 }
