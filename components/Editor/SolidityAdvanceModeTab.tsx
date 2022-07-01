@@ -186,7 +186,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
 
   const clickButtonText = useMemo(() => {
     if (selectedMethod?.type === 'compiler') {
-      return `Compiler`
+      return `Compile`
     }
     if (selectedMethod?.type === 'constructor') {
       return `Deploy`
