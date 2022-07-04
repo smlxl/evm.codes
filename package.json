@@ -12,10 +12,10 @@
     "typecheck": "tsc --pretty"
   },
   "dependencies": {
-    "@ethereumjs/block": "^3.6.2",
-    "@ethereumjs/common": "^2.6.4",
-    "@ethereumjs/tx": "^3.5.1",
-    "@ethereumjs/vm": "^5.9.0",
+    "@ethereumjs/block": "^3.6.3",
+    "@ethereumjs/common": "^2.6.5",
+    "@ethereumjs/tx": "^3.5.2",
+    "@ethereumjs/vm": "^5.9.3",
     "@kunigi/string-compression": "1.0.2",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
@@ -24,7 +24,7 @@
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "ethereumjs-abi": "^0.6.8",
-    "ethereumjs-util": "^7.1.4",
+    "ethereumjs-util": "^7.1.5",
     "events": "^3.3.0",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.3.1",
