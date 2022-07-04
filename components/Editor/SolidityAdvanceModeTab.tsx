@@ -201,7 +201,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
         } else if (!result.error) {
           log(`run method complete.`)
         } else {
-          log(`run method failed, ${result.error}`)
+          log(`run method failed, ${result.error.error}`)
         }
       })
     })
