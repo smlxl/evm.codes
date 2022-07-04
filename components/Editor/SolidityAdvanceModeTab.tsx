@@ -133,6 +133,38 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     }))
   }, [selectedContract])
 
+  const getMethodData = useCallback(() => {
+    if (!selectedMethod) {
+      return ''
+    }
+
+    const methodRawSignature =
+      selectedMethod.name + '(' + selectedMethod.inputTypes + ')'
+
+    try {
+      const byteCodeBuffer =
+        methodArgsArray.length > 0 && selectedMethod.inputs?.length > 0
+          ? abi.simpleEncode(methodRawSignature, ...methodArgsArray)
+          : abi.simpleEncode(methodRawSignature)
+
+      if (methodArgs.length > 0 && selectedMethod.inputs?.length > 0) {
+        log(`run method ${methodRawSignature} with ${methodArgsArray}.`)
+      } else if (methodArgs.length > 0) {
+        log(
+          `run method ${methodRawSignature}. Arguments will be ignored.`,
+          'warn',
+        )
+      } else {
+        log(`run method ${methodRawSignature}.`)
+      }
+
+      return bufferToHex(byteCodeBuffer).substring(2)
+    } catch (error) {
+      log("Can't encode method, please check your arguments.", 'error')
+      return ''
+    }
+  }, [log, methodArgs.length, methodArgsArray, selectedMethod])
+
   const handleDeployApi = useCallback(() => {
     if (!selectedContract || !selectedMethod) {
       return
@@ -162,27 +194,14 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       return
     }
     loadInstructions((methodByteCode as string).substring(2))
-    const methodRawSignature =
-      selectedMethod.name + '(' + selectedMethod.inputTypes + ')'
 
-    if (methodArgs.length > 0 && selectedMethod.inputs?.length > 0) {
-      log(`run method ${methodRawSignature} with ${methodArgsArray}.`)
-    } else if (methodArgs.length > 0) {
-      log(
-        `run method ${methodRawSignature}. Arguments will be ignored.`,
-        'warn',
-      )
-    } else {
-      log(`run method ${methodRawSignature}.`)
+    const data = getMethodData()
+    if (isEmpty(data)) {
+      return
     }
 
-    const byteCodeBuffer =
-      methodArgsArray.length > 0 && selectedMethod.inputs?.length > 0
-        ? abi.simpleEncode(methodRawSignature, ...methodArgsArray)
-        : abi.simpleEncode(methodRawSignature)
-
     transactionData(
-      bufferToHex(byteCodeBuffer).substring(2),
+      data,
       getCallValue(),
       Address.fromString(deployedContractAddress),
     ).then((txData) => {
@@ -210,8 +229,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     methodByteCode,
     selectedMethod,
     loadInstructions,
-    methodArgs.length,
-    methodArgsArray,
+    getMethodData,
     transactionData,
     getCallValue,
     log,
