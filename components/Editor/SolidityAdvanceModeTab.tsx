@@ -13,8 +13,10 @@ import abi from 'ethereumjs-abi'
 import { Address, BN, bufferToHex } from 'ethereumjs-util'
 import Select, { OnChangeValue } from 'react-select'
 
+import { isEmpty } from 'util/string'
+
 import { EthereumContext } from '../../context/ethereumContext'
-import { Button, Input } from '../ui'
+import { Button, Icon, Input } from '../ui'
 
 import { Contract, MethodAbi, ValueUnit } from './types'
 
@@ -41,6 +43,7 @@ interface Props {
   setUnit: (v: string) => void
   getCallValue: () => BN
   methodByteCode: string | undefined
+  handleCopyPermalink: () => void
 }
 
 interface MethodAbiOption extends MethodAbi {
@@ -54,13 +57,33 @@ const FIXED_ABIS: Array<MethodAbiOption> = [
     inputs: [],
     inputTypes: '',
     name: 'Compile',
-    label: 'Compile',
-    value: 'Compile',
+    label: 'compile',
+    value: 'compile',
     type: 'compiler',
     outputs: [],
     stateMutability: 'payable',
   },
 ]
+
+const DEFAULT_CONSTRUCTOR: MethodAbiOption = {
+  inputs: [],
+  inputTypes: '',
+  name: 'Constructor',
+  label: 'constructor',
+  value: 'constructor',
+  type: 'constructor',
+  outputs: [],
+  stateMutability: 'nonpayable',
+}
+
+const METHOD_SELECT_STYLES = {
+  singleValue: (provider: any) => {
+    return { ...provider, textTransform: 'none' }
+  },
+  option: (provider: any) => {
+    return { ...provider, textTransform: 'none' }
+  },
+}
 
 const unitOptions = Object.keys(ValueUnit).map((value) => ({
   value,
@@ -80,6 +103,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
   getCallValue,
   handleCompile,
   methodByteCode,
+  handleCopyPermalink,
 }) => {
   const {
     transactionData,
@@ -141,10 +165,19 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     const methodRawSignature =
       selectedMethod.name + '(' + selectedMethod.inputTypes + ')'
 
-    log(`run method ${methodRawSignature} with ${methodArgsArray}`)
+    if (methodArgs.length > 0 && selectedMethod.inputs?.length > 0) {
+      log(`run method ${methodRawSignature} with ${methodArgsArray}.`)
+    } else if (methodArgs.length > 0) {
+      log(
+        `run method ${methodRawSignature}. Arguments will be ignored.`,
+        'warn',
+      )
+    } else {
+      log(`run method ${methodRawSignature}.`)
+    }
 
     const byteCodeBuffer =
-      methodArgsArray.length > 0
+      methodArgsArray.length > 0 && selectedMethod.inputs?.length > 0
         ? abi.simpleEncode(methodRawSignature, ...methodArgsArray)
         : abi.simpleEncode(methodRawSignature)
 
@@ -173,14 +206,15 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       })
     })
   }, [
-    selectedMethod,
     deployedContractAddress,
-    loadInstructions,
     methodByteCode,
-    log,
+    selectedMethod,
+    loadInstructions,
+    methodArgs.length,
     methodArgsArray,
     transactionData,
     getCallValue,
+    log,
     startTransaction,
   ])
 
@@ -210,23 +244,33 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     if (!abiArray) {
       return result
     }
-    return [
-      ...result,
-      ...abiArray.map((am) => {
-        const name = am.type === 'constructor' ? 'constructor' : am.name
-        return {
-          ...am,
-          label: name + '(' + am.inputTypes + ')',
-          value: name,
-          isDisabled:
-            am.type === 'function' &&
-            (!deployedContractAddress ||
-              !methodByteCode ||
-              methodByteCode.trim() === ''),
-        }
-      }),
-    ]
-  }, [abiArray, methodByteCode, deployedContractAddress])
+
+    const methodAbis = abiArray.map((am) => ({
+      ...am,
+      label: am.name + '(' + am.inputTypes + ')',
+      value: am.name,
+    }))
+    let constructor = methodAbis.find((abi) => abi.type === 'constructor')
+    const isDisabled =
+      isEmpty(deployedContractAddress as string) ||
+      isEmpty(methodByteCode as string)
+
+    const functionAbis = methodAbis
+      .filter((abi) => abi.type !== 'constructor')
+      .map((am) => {
+        return { ...am, isDisabled: isDisabled }
+      })
+
+    if (selectedContract && !constructor) {
+      constructor = { ...DEFAULT_CONSTRUCTOR }
+    }
+
+    if (constructor) {
+      result.push(constructor)
+    }
+
+    return [...result, ...functionAbis]
+  }, [abiArray, selectedContract, deployedContractAddress, methodByteCode])
 
   // select constructor when contract had been changed.
   useEffect(() => {
@@ -246,8 +290,15 @@ const SolidityAdvanceModeTab: FC<Props> = ({
 
   // clear args and call value when select method had been changed.
   useEffect(() => {
-    setMethodArgs('')
-    setCallValue('')
+    if (!selectedMethod) {
+      return
+    }
+    if (selectedMethod.stateMutability === 'nonpayable') {
+      setMethodArgs('')
+    }
+    if (!selectedMethod.inputs || selectedMethod.inputs?.length <= 0) {
+      setCallValue('')
+    }
   }, [selectedMethod, setCallValue])
 
   return (
@@ -263,6 +314,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
             onChange={(v: OnChangeValue<any, any>) => {
               setSelectedMethod(v)
             }}
+            styles={METHOD_SELECT_STYLES}
             menuPortalTarget={container.current?.parentElement}
             value={selectedMethod}
             isSearchable={false}
@@ -270,11 +322,21 @@ const SolidityAdvanceModeTab: FC<Props> = ({
             classNamePrefix="select"
             menuPlacement="auto"
           />
+          <Button onClick={handleCopyPermalink} transparent padded={false}>
+            <span
+              className="inline-block mr-4 select-all"
+              data-tip="Share permalink"
+            >
+              <Icon name="links-line" className="text-indigo-500 mr-1" />
+            </span>
+          </Button>
         </div>
 
         <div>
           <Button transparent padded={false} onClick={setShowSimpleMode}>
-            <span className="inline-block mr-4 text-blue-500">Simple Mode</span>
+            <span className="inline-block mr-4 text-indigo-500">
+              Simple Mode
+            </span>
           </Button>
           <Button
             size="sm"
@@ -287,18 +349,13 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       </div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
         <div className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
-          <div className="font-normal text-sm">Value:</div>
+          <div className="font-normal text-sm w-16">Value:</div>
           <Input
             type="number"
-            disabled={selectedMethod?.stateMutability !== 'payable'}
             value={callValue}
             onChange={(e) => setCallValue(e.target.value)}
-            placeholder={
-              selectedMethod?.stateMutability !== 'payable'
-                ? 'Non payable method.'
-                : 'Value To Send'
-            }
-            className="bg-white dark:bg-black-500"
+            placeholder={'Value To Send'}
+            className="bg-white dark:bg-black-500 w-52"
           />
           <Select
             isDisabled={selectedMethod?.stateMutability !== 'payable'}
@@ -314,11 +371,14 @@ const SolidityAdvanceModeTab: FC<Props> = ({
           />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2">
-        <div className={'font-normal text-sm'}>Argument: </div>
+      <div
+        title="Use ',' to separate arguments"
+        className="flex flex-col md:flex-row md:items-center md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0 px-4 py-2 min-w-min"
+      >
+        <div className={'font-normal text-sm w-16'}>Argument: </div>
         <Input
-          placeholder="Use the , to split more arguments."
-          className="bg-white dark:bg-black-500"
+          placeholder="Use ',' to separate arguments"
+          className="bg-white dark:bg-black-500 w-52"
           value={methodArgs}
           onChange={(e) => {
             setMethodArgs(e.target.value)

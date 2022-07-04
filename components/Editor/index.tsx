@@ -96,7 +96,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
 
-  const [contracts, setContracts] = useState<Array<Contract>>([])
+  const [contract, setContract] = useState<Contract | undefined>(undefined)
   const [isExpanded, setIsExpanded] = useState(false)
   const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
 
@@ -165,7 +165,7 @@ const Editor = ({ readOnly = false }: Props) => {
     (event: MessageEvent) => {
       const { warning, error, contracts } = event.data
       resetExecution()
-      setContracts([])
+      setContract(undefined)
 
       if (error) {
         log(error, 'error')
@@ -189,11 +189,13 @@ const Editor = ({ readOnly = false }: Props) => {
       }
 
       if (codeType === CodeType.Solidity) {
-        setContracts(contracts)
+        setContract(contracts[0])
       }
 
       if (!isExpanded) {
         deployByteCode(contracts[0].code, '', undefined)
+      } else {
+        setIsCompiling(false)
       }
     },
     [resetExecution, log, codeType, isExpanded, deployByteCode],
@@ -284,7 +286,7 @@ const Editor = ({ readOnly = false }: Props) => {
     const { value } = option
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
-    setContracts([])
+    setContract(undefined)
     setMethodByteCode(undefined)
     setIsExpanded(false)
 
@@ -503,9 +505,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
             <SolidityAdvanceModeTab
               log={log}
-              selectedContract={
-                contracts && contracts.length > 0 ? contracts[0] : undefined
-              }
+              selectedContract={contract}
               handleCompile={handleRun}
               setShowSimpleMode={() => setIsExpanded(false)}
               show={showAdvanceMode}
@@ -516,6 +516,7 @@ const Editor = ({ readOnly = false }: Props) => {
               unitValue={unit}
               getCallValue={getCallValue}
               methodByteCode={methodByteCode}
+              handleCopyPermalink={handleCopyPermalink}
             />
           </div>
         </div>
