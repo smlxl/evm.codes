@@ -7,6 +7,7 @@ import React, {
   useCallback,
   MutableRefObject,
   RefObject,
+  Fragment,
 } from 'react'
 
 import { encode, decode } from '@kunigi/string-compression'
@@ -428,80 +429,84 @@ const Editor = ({ readOnly = false }: Props) => {
               />
             </div>
 
-            {!showAdvanceMode && (
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
-                <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
-                  {isCallDataActive && (
-                    <Input
-                      placeholder="Calldata in HEX"
-                      className="bg-white dark:bg-black-500"
-                      value={callData}
-                      onChange={(e) => setCallData(e.target.value)}
-                    />
-                  )}
-
-                  <Input
-                    type="number"
-                    step="1"
-                    placeholder="Value to send"
-                    className="bg-white dark:bg-black-500"
-                    value={callValue}
-                    onChange={(e) => setCallValue(e.target.value)}
-                  />
-
-                  <Select
-                    onChange={(option: OnChangeValue<any, any>) =>
-                      setUnit(option.value)
-                    }
-                    options={unitOptions}
-                    value={unitValue}
-                    isSearchable={false}
-                    classNamePrefix="select"
-                    menuPlacement="auto"
-                  />
-
-                  <Button
-                    onClick={handleCopyPermalink}
-                    transparent
-                    padded={false}
-                  >
-                    <span
-                      className="inline-block mr-4 select-all"
-                      data-tip="Share permalink"
-                    >
-                      <Icon
-                        name="links-line"
-                        className="text-indigo-500 mr-1"
+            <Fragment>
+              {!showAdvanceMode && (
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
+                  <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
+                    {isCallDataActive && (
+                      <Input
+                        placeholder="Calldata in HEX"
+                        className="bg-white dark:bg-black-500"
+                        value={callData}
+                        onChange={(e) => setCallData(e.target.value)}
                       />
-                    </span>
-                  </Button>
-                </div>
+                    )}
 
-                <div>
-                  {codeType === CodeType.Solidity && (
+                    <Input
+                      type="number"
+                      step="1"
+                      placeholder="Value to send"
+                      className="bg-white dark:bg-black-500"
+                      value={callValue}
+                      onChange={(e) => setCallValue(e.target.value)}
+                    />
+
+                    <Select
+                      onChange={(option: OnChangeValue<any, any>) =>
+                        setUnit(option.value)
+                      }
+                      options={unitOptions}
+                      value={unitValue}
+                      isSearchable={false}
+                      classNamePrefix="select"
+                      menuPlacement="auto"
+                    />
+
                     <Button
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      tooltip={'Please run your contract first.'}
+                      onClick={handleCopyPermalink}
                       transparent
                       padded={false}
                     >
-                      <span className="inline-block mr-4 text-indigo-500">
-                        Advance Mode
+                      <span
+                        className="inline-block mr-4 select-all"
+                        data-tip="Share permalink"
+                      >
+                        <Icon
+                          name="links-line"
+                          className="text-indigo-500 mr-1"
+                        />
                       </span>
                     </Button>
-                  )}
+                  </div>
 
-                  <Button
-                    onClick={handleRun}
-                    disabled={isRunDisabled}
-                    size="sm"
-                    contentClassName="justify-center"
-                  >
-                    Run
-                  </Button>
+                  <div>
+                    <Fragment>
+                      {codeType === CodeType.Solidity && (
+                        <Button
+                          onClick={() => setIsExpanded(!isExpanded)}
+                          tooltip={'Please run your contract first.'}
+                          transparent
+                          padded={false}
+                        >
+                          <span className="inline-block mr-4 text-indigo-500">
+                            Advance Mode
+                          </span>
+                        </Button>
+                      )}
+                    </Fragment>
+
+                    <Button
+                      onClick={handleRun}
+                      disabled={isRunDisabled}
+                      size="sm"
+                      contentClassName="justify-center"
+                    >
+                      Run
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </Fragment>
 
             <SolidityAdvanceModeTab
               log={log}
