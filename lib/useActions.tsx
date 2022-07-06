@@ -58,6 +58,16 @@ const useActions = () => {
       perform: () => window.open(GITHUB_REPO_URL, '_blank'),
       icon: <Icon name="github-fill" />,
     },
+    {
+      id: 'stop',
+      name: 'Stop',
+      shortcut: ['sto'],
+      keywords: 'stop opcodes',
+      section: 'Navigation',
+      perform: () => router.push('/#00'),
+      subtitle: 'Opcodes reference',
+      icon: <Icon name="home-2-line" />,
+    },
   ]
 }
 
