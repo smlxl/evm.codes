@@ -128,25 +128,24 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
-    (bc, args = '', callValue) => {
+    async (bc, args = '', callValue) => {
       try {
         if (!callValue) {
           callValue = getCallValue()
         }
-        return transactionData(bc + args, callValue).then((tx) => {
-          loadInstructions(bc)
-          setIsCompiling(false)
-          return startTransaction(tx).then((result) => {
-            if (
-              codeType === CodeType.Solidity &&
-              !result.error &&
-              result.returnValue
-            ) {
-              setMethodByteCode(bufferToHex(result.returnValue))
-            }
-            return result
-          })
-        })
+        const transaction = await transactionData(bc + args, callValue)
+        loadInstructions(bc)
+        setIsCompiling(false)
+
+        const result = await startTransaction(transaction)
+        if (
+          codeType === CodeType.Solidity &&
+          !result.error &&
+          result.returnValue
+        ) {
+          setMethodByteCode(bufferToHex(result.returnValue))
+        }
+        return result
       } catch (error) {
         log((error as Error).message, 'error')
         setIsCompiling(false)

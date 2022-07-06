@@ -29,13 +29,14 @@ interface Props {
     byteCode: string,
     args: string,
     callValue: BN | undefined,
-  ) =>
-    | Promise<{
+  ) => Promise<
+    | {
         error?: VmError | undefined
         returnValue: Buffer
         createdAddress: Address | undefined
-      }>
+      }
     | undefined
+  >
   selectedContract: Contract | undefined
   callValue: string | undefined
   setCallValue: (v: string) => void
@@ -184,7 +185,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
     deployByteCode(selectedContract.code, args, undefined)
   }, [selectedContract, selectedMethod, deployByteCode, methodArgsArray, log])
 
-  const handleRunAbi = useCallback(() => {
+  const handleRunAbi = useCallback(async () => {
     if (!deployedContractAddress || !methodByteCode) {
       log('Please deploy first', 'error')
       return
@@ -200,30 +201,33 @@ const SolidityAdvanceModeTab: FC<Props> = ({
       return
     }
 
-    transactionData(
-      data,
-      getCallValue(),
-      Address.fromString(deployedContractAddress),
-    ).then((txData) => {
-      startTransaction(txData).then((result) => {
-        if (
-          !result.error &&
-          selectedMethod.outputs &&
-          selectedMethod.outputs.length > 0
-        ) {
-          log(
-            `run method complete, the response is ${abi.rawDecode(
-              selectedMethod.outputs.map((mi) => mi.type),
-              result.returnValue,
-            )}`,
-          )
-        } else if (!result.error) {
-          log(`run method complete.`)
-        } else {
-          log(`run method failed, ${result.error.error}`)
-        }
-      })
-    })
+    try {
+      const transaction = await transactionData(
+        data,
+        getCallValue(),
+        Address.fromString(deployedContractAddress),
+      )
+
+      const result = await startTransaction(transaction)
+      if (
+        !result.error &&
+        selectedMethod.outputs &&
+        selectedMethod.outputs.length > 0
+      ) {
+        log(
+          `run method complete, the response is ${abi.rawDecode(
+            selectedMethod.outputs.map((mi) => mi.type),
+            result.returnValue,
+          )}`,
+        )
+      } else if (!result.error) {
+        log(`run method complete.`)
+      } else {
+        log(`run method failed, ${result.error.error}`)
+      }
+    } catch (error) {
+      log(`run method failed, ${error}`)
+    }
   }, [
     deployedContractAddress,
     methodByteCode,
