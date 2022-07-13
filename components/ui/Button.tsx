@@ -40,7 +40,7 @@ export const Button: React.FC<Props> = ({
       className={cn(
         'rounded outline-none inline-block',
         {
-          'bg-indigo-500 hover:bg-indigo-600 text-white':
+          'bg-indigo-500 hover:bg-indigo-600 text-white active:opacity-50':
             !transparent && !outline,
           'cursor-not-allowed opacity-50': disabled,
           'px-4': padded,
