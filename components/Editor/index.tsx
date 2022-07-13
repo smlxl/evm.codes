@@ -195,7 +195,7 @@ const Editor = ({ readOnly = false }: Props) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [handleWorkerMessage])
 
   useEffect(() => {
     if (deployedContractAddress) {
