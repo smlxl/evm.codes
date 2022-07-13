@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-} from 'react'
+import React, { createContext, useEffect, useState, useRef } from 'react'
 
 import { Block } from '@ethereumjs/block'
 import Common, { Chain } from '@ethereumjs/common'
@@ -71,7 +65,11 @@ type ContextProps = {
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: BN, data: string) => void
-  startTransaction: (tx: TypedTransaction | TxData) => void
+  startTransaction: (tx: TypedTransaction | TxData) => Promise<{
+    error?: VmError
+    returnValue: Buffer
+    createdAddress: Address | undefined
+  }>
   continueExecution: () => void
   addBreakpoint: (instructionId: number) => void
   removeBreakpoint: (instructionId: number) => void
@@ -111,7 +109,7 @@ export const EthereumContext = createContext<ContextProps>({
     }),
   loadInstructions: () => undefined,
   startExecution: () => undefined,
-  startTransaction: () => undefined,
+  startTransaction: () => Promise.reject(),
   continueExecution: () => undefined,
   addBreakpoint: () => undefined,
   removeBreakpoint: () => undefined,
@@ -281,16 +279,22 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setVmError(undefined)
 
     // starting execution via deployed contract's transaction
-    vm.runTx({ tx: tx as TypedTransaction, block: _getBlock() })
-      .then(({ execResult, gasUsed, createdAddress }) =>
+    return vm
+      .runTx({ tx: tx as TypedTransaction, block: _getBlock() })
+      .then(({ execResult, gasUsed, createdAddress }) => {
         _loadRunState({
           gasUsed,
           runState: execResult.runState,
           newContractAddress: createdAddress,
           returnValue: execResult.returnValue,
           exceptionError: execResult.exceptionError,
-        }),
-      )
+        })
+        return {
+          error: execResult.exceptionError,
+          returnValue: execResult.returnValue,
+          createdAddress: createdAddress,
+        }
+      })
       .finally(() => setIsExecuting(false))
   }
 
