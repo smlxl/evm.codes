@@ -1,8 +1,10 @@
 import { KBarPortal, KBarPositioner, KBarAnimator, KBarSearch } from 'kbar'
+import useOpcodesActions from 'lib/useOpcodesActions'
 
 import Results from './Results'
 
 const KBar = () => {
+  useOpcodesActions()
   return (
     <KBarPortal>
       <KBarPositioner className="inset-0">

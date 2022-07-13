@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useState, useRef } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from 'react'
 
 import { Block } from '@ethereumjs/block'
 import Common, { Chain } from '@ethereumjs/common'
