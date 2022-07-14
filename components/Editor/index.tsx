@@ -7,12 +7,13 @@ import React, {
   useCallback,
   MutableRefObject,
   RefObject,
+  Fragment,
 } from 'react'
 
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN } from 'ethereumjs-util'
+import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -44,7 +45,8 @@ import Console from './Console'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { IConsoleOutput, CodeType, ValueUnit } from './types'
+import SolidityAdvanceModeTab from './SolidityAdvanceModeTab'
+import { IConsoleOutput, CodeType, ValueUnit, Contract } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -57,6 +59,7 @@ type SCEditorRef = {
 const editorHeight = 350
 const consoleHeight = 350
 const instructionsListHeight = editorHeight + 52 // RunBar
+const instructionsListWithExpandHeight = editorHeight + 156 // Advance Mode bar
 
 const unitOptions = Object.keys(ValueUnit).map((value) => ({
   value,
@@ -77,6 +80,7 @@ const Editor = ({ readOnly = false }: Props) => {
     selectedFork,
     opcodes,
     instructions,
+    resetExecution,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -95,6 +99,10 @@ const Editor = ({ readOnly = false }: Props) => {
   const [callData, setCallData] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
+
+  const [contract, setContract] = useState<Contract | undefined>(undefined)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
 
   const log = useCallback(
     (line: string, type = 'info') => {
@@ -122,9 +130,45 @@ const Editor = ({ readOnly = false }: Props) => {
     return _callValue
   }, [callValue, unit])
 
+  const deployByteCode = useCallback(
+    async (bc, args = '', callValue) => {
+      try {
+        if (!callValue) {
+          callValue = getCallValue()
+        }
+        const transaction = await transactionData(bc + args, callValue)
+        loadInstructions(bc)
+        setIsCompiling(false)
+
+        const result = await startTransaction(transaction)
+        if (
+          codeType === CodeType.Solidity &&
+          !result.error &&
+          result.returnValue
+        ) {
+          setMethodByteCode(bufferToHex(result.returnValue))
+        }
+        return result
+      } catch (error) {
+        log((error as Error).message, 'error')
+        setIsCompiling(false)
+      }
+    },
+    [
+      transactionData,
+      getCallValue,
+      loadInstructions,
+      startTransaction,
+      codeType,
+      log,
+    ],
+  )
+
   const handleWorkerMessage = useCallback(
     (event: MessageEvent) => {
-      const { code: byteCode, warning, error } = event.data
+      const { warning, error, contracts } = event.data
+      resetExecution()
+      setContract(undefined)
 
       if (error) {
         log(error, 'error')
@@ -138,26 +182,26 @@ const Editor = ({ readOnly = false }: Props) => {
 
       log('Compilation successful')
 
-      try {
-        const _callValue = getCallValue()
-        transactionData(byteCode, _callValue).then((tx) => {
-          loadInstructions(byteCode)
-          setIsCompiling(false)
-          startTransaction(tx)
-        })
-      } catch (error) {
-        log((error as Error).message, 'error')
+      if (contracts.length > 1) {
+        setIsCompiling(false)
+        log(
+          'The source should contain only one contract, Please select one to deploy.',
+          'error',
+        )
+        return
+      }
+
+      if (codeType === CodeType.Solidity) {
+        setContract(contracts[0])
+      }
+
+      if (!isExpanded) {
+        deployByteCode(contracts[0].code, '', undefined)
+      } else {
         setIsCompiling(false)
       }
     },
-    [
-      log,
-      setIsCompiling,
-      transactionData,
-      loadInstructions,
-      startTransaction,
-      getCallValue,
-    ],
+    [resetExecution, log, codeType, isExpanded, deployByteCode],
   )
 
   useEffect(() => {
@@ -201,6 +245,13 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [])
 
   useEffect(() => {
+    if (solcWorkerRef && solcWorkerRef.current) {
+      // @ts-ignore change the worker message, when value and args changed.
+      solcWorkerRef.current?.onmessage = handleWorkerMessage
+    }
+  }, [solcWorkerRef, handleWorkerMessage])
+
+  useEffect(() => {
     if (deployedContractAddress) {
       log(`Contract deployed at address: ${deployedContractAddress}`)
     }
@@ -239,6 +290,9 @@ const Editor = ({ readOnly = false }: Props) => {
     const lastCodeType = codeType
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
+    setContract(undefined)
+    setMethodByteCode(undefined)
+    setIsExpanded(false)
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
@@ -357,6 +411,9 @@ const Editor = ({ readOnly = false }: Props) => {
     [codeType],
   )
 
+  const showAdvanceMode = useMemo(() => {
+    return codeType === CodeType.Solidity && isExpanded
+  }, [codeType, isExpanded])
   const unitValue = useMemo(
     () => ({
       value: unit,
@@ -395,60 +452,100 @@ const Editor = ({ readOnly = false }: Props) => {
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
-              <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
-                {isCallDataActive && (
-                  <Input
-                    placeholder="Calldata in HEX"
-                    className="bg-white dark:bg-black-500"
-                    value={callData}
-                    onChange={(e) => setCallData(e.target.value)}
-                  />
-                )}
+            <Fragment>
+              {!showAdvanceMode && (
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
+                  <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
+                    {isCallDataActive && (
+                      <Input
+                        placeholder="Calldata in HEX"
+                        className="bg-white dark:bg-black-500"
+                        value={callData}
+                        onChange={(e) => setCallData(e.target.value)}
+                      />
+                    )}
 
-                <Input
-                  type="number"
-                  step="1"
-                  placeholder="Value to send"
-                  className="bg-white dark:bg-black-500"
-                  value={callValue}
-                  onChange={(e) => setCallValue(e.target.value)}
-                />
+                    <Input
+                      type="number"
+                      step="1"
+                      placeholder="Value to send"
+                      className="bg-white dark:bg-black-500"
+                      value={callValue}
+                      onChange={(e) => setCallValue(e.target.value)}
+                    />
 
-                <Select
-                  onChange={(option: OnChangeValue<any, any>) =>
-                    setUnit(option.value)
-                  }
-                  options={unitOptions}
-                  value={unitValue}
-                  isSearchable={false}
-                  classNamePrefix="select"
-                  menuPlacement="auto"
-                />
+                    <Select
+                      onChange={(option: OnChangeValue<any, any>) =>
+                        setUnit(option.value)
+                      }
+                      options={unitOptions}
+                      value={unitValue}
+                      isSearchable={false}
+                      classNamePrefix="select"
+                      menuPlacement="auto"
+                    />
 
-                <Button
-                  onClick={handleCopyPermalink}
-                  transparent
-                  padded={false}
-                >
-                  <span
-                    className="inline-block mr-4 select-all"
-                    data-tip="Share permalink"
-                  >
-                    <Icon name="links-line" className="text-indigo-500 mr-2" />
-                  </span>
-                </Button>
-              </div>
+                    <Button
+                      onClick={handleCopyPermalink}
+                      transparent
+                      padded={false}
+                    >
+                      <span
+                        className="inline-block mr-4 select-all"
+                        data-tip="Share permalink"
+                      >
+                        <Icon
+                          name="links-line"
+                          className="text-indigo-500 mr-1"
+                        />
+                      </span>
+                    </Button>
+                  </div>
 
-              <Button
-                onClick={handleRun}
-                disabled={isRunDisabled}
-                size="sm"
-                contentClassName="justify-center"
-              >
-                Run
-              </Button>
-            </div>
+                  <div>
+                    <Fragment>
+                      {codeType === CodeType.Solidity && (
+                        <Button
+                          onClick={() => setIsExpanded(!isExpanded)}
+                          tooltip={'Please run your contract first.'}
+                          transparent
+                          padded={false}
+                        >
+                          <span className="inline-block mr-4 text-indigo-500">
+                            Advance Mode
+                          </span>
+                        </Button>
+                      )}
+                    </Fragment>
+
+                    <Button
+                      onClick={handleRun}
+                      disabled={isRunDisabled}
+                      size="sm"
+                      contentClassName="justify-center"
+                    >
+                      Run
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Fragment>
+
+            <SolidityAdvanceModeTab
+              log={log}
+              selectedContract={contract}
+              handleCompile={handleRun}
+              setShowSimpleMode={() => setIsExpanded(false)}
+              show={showAdvanceMode}
+              deployByteCode={deployByteCode}
+              callValue={callValue}
+              setCallValue={setCallValue}
+              setUnit={setUnit}
+              unitValue={unit}
+              getCallValue={getCallValue}
+              methodByteCode={methodByteCode}
+              handleCopyPermalink={handleCopyPermalink}
+            />
           </div>
         </div>
 
@@ -460,7 +557,11 @@ const Editor = ({ readOnly = false }: Props) => {
           <div
             className="pane pane-light overflow-auto bg-gray-50 dark:bg-black-600 h-full"
             ref={instructionsRef}
-            style={{ height: instructionsListHeight }}
+            style={{
+              height: isExpanded
+                ? instructionsListWithExpandHeight
+                : instructionsListHeight,
+            }}
           >
             <InstructionList containerRef={instructionsRef} />
           </div>
