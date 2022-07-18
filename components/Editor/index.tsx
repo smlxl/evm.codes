@@ -287,7 +287,6 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
     const { value } = option
-    const lastCodeType = codeType
     setCodeType(value)
     setSetting(Setting.EditorCodeType, value)
     setContract(undefined)
@@ -296,21 +295,15 @@ const Editor = ({ readOnly = false }: Props) => {
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
-    }
-
-    if (
+    } else if (
       value &&
-      lastCodeType === CodeType.Bytecode &&
       value === CodeType.Mnemonic &&
       instructions?.length > 0
     ) {
       const code = getBytecodeLinesFromInstructions(instructions)
       setCode(code)
-    }
-
-    if (
+    } else if (
       value &&
-      lastCodeType === CodeType.Mnemonic &&
       value === CodeType.Bytecode &&
       instructions?.length > 0
     ) {
