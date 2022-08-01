@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
 
 import HomeLayout from 'components/layouts/Home'
@@ -18,6 +19,14 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 }) => {
   return (
     <>
+      <Head>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="EVM Codes - About the EVM" />
+        <meta
+          property="og:description"
+          content="Demystifying what makes the Ethereum Virtual Machine work."
+        />
+      </Head>
       <div
         id={anchorKey}
         className="font-mono mb-4 justify-start relative items-center scroll-mt-14"
