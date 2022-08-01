@@ -7,6 +7,7 @@ import matter from 'gray-matter'
 import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
+import Head from 'next/head'
 import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -30,6 +31,14 @@ const PrecompiledPage = ({
 
   return (
     <>
+      <Head>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="EVM Codes - Precompiled Contracts" />
+        <meta
+          property="og:description"
+          content="EVM Codes offers a reference of precompiled contracts - complex client-side functions bundled with the Ethereum Virtual Machine for efficiency."
+        />
+      </Head>
       <Container className="text-sm leading-6">
         <H1>Precompiled Contracts</H1>
 

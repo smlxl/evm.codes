@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Head from 'next/head'
 
 import Editor from 'components/Editor'
 import HomeLayout from 'components/layouts/Home'
@@ -6,9 +7,20 @@ import { Container } from 'components/ui'
 
 const PlaygroundPage = () => {
   return (
-    <Container>
-      <Editor />
-    </Container>
+    <>
+      <Head>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="EVM Codes - Playground" />
+        <meta
+          property="og:description"
+          content="EVM Codes’ Playground is an interactive tool for learning how to use opcodes, the stack behind smart contracts."
+        />
+      </Head>
+
+      <Container>
+        <Editor />
+      </Container>
+    </>
   )
 }
 
