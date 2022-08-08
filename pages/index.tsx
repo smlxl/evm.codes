@@ -34,7 +34,7 @@ const HomePage = ({
         <meta property="og:type" content="website" />
         <meta property="og:title" content="EVM Codes - Opcodes" />
         <meta
-          property="og:description"
+          name="description"
           content="An Ethereum Virtual Machine Opcodes interactive dictionary"
         />
       </Head>

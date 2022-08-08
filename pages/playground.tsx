@@ -10,9 +10,9 @@ const PlaygroundPage = () => {
     <>
       <Head>
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="EVM Codes - Playground" />
+        <meta property="title" content="EVM Codes - Playground" />
         <meta
-          property="og:description"
+          name="description"
           content="EVM Codes’ Playground is an interactive tool for learning how to use opcodes, the stack behind smart contracts."
         />
       </Head>
