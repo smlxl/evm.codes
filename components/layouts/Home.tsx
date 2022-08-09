@@ -11,14 +11,14 @@ const HomeLayout: NextPage = ({ children }) => {
     <>
       <Head>
         <title>
-          EVM Codes - An Ethereum Virtual Machine Opcodes interactive dictionary
+          EVM Codes - An Ethereum Virtual Machine Opcodes Interactive Reference
         </title>
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="EVM Codes" />
         <meta
           property="og:description"
-          content="An Ethereum Virtual Machine Opcodes interactive dictionary"
+          content="An Ethereum Virtual Machine Opcodes Interactive Reference"
         />
         <meta property="og:image" content={`${getAbsoluteURL('/og.png')}`} />
         <meta property="og:url" content={getAbsoluteURL()} />

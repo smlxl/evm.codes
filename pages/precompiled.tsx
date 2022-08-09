@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { useContext } from 'react'
+import React, { useContext } from 'react'
 
 import matter from 'gray-matter'
 import type { NextPage } from 'next'
@@ -31,14 +31,16 @@ const PrecompiledPage = ({
 
   return (
     <>
-      <Head>
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="EVM Codes - Precompiled Contracts" />
-        <meta
-          property="og:description"
-          content="EVM Codes offers a reference of precompiled contracts - complex client-side functions bundled with the Ethereum Virtual Machine for efficiency."
-        />
-      </Head>
+      <React.Fragment>
+        <Head>
+          <title> EVM Codes - Precompiled Contracts </title>
+          <h1>
+            EVM Codes offers a reference of precompiled contracts - complex
+            client-side functions bundled with the Ethereum Virtual Machine for
+            efficiency.
+          </h1>
+        </Head>
+      </React.Fragment>
       <Container className="text-sm leading-6">
         <H1>Precompiled Contracts</H1>
 
