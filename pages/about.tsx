@@ -26,9 +26,9 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
         <Head>
           <title> EVM Codes - About the EVM </title>
           <h1>
-            Understanding the Ethereum Virtual Machine (or EVM) is understanding
-            the relationship between opcode instructions, gas costs, and the
-            execution environment.
+            How does the EVM work? We explain the relationship between opcode
+            instructions, gas costs, storage and the execution environment for
+            your understanding.
           </h1>
         </Head>
       </React.Fragment>
