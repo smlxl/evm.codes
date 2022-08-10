@@ -1,3 +1,5 @@
+import React from 'react'
+
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -19,14 +21,17 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 }) => {
   return (
     <>
-      <Head>
-        <meta property="og:type" content="website" />
-        <meta property="title" content="EVM Codes - About the EVM" />
-        <meta
-          name="description"
-          content="Demystifying what makes the Ethereum Virtual Machine work."
-        />
-      </Head>
+      <html lang="en"></html>
+      <React.Fragment>
+        <Head>
+          <title> EVM Codes - About the EVM </title>
+          <h1>
+            How does the EVM work? We explain the relationship between opcode
+            instructions, gas costs, storage and the execution environment for
+            your understanding.
+          </h1>
+        </Head>
+      </React.Fragment>
       <div
         id={anchorKey}
         className="font-mono mb-4 justify-start relative items-center scroll-mt-14"
