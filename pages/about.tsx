@@ -21,6 +21,7 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 }) => {
   return (
     <>
+      <html lang="en"></html>
       <React.Fragment>
         <Head>
           <title> EVM Codes - About the EVM </title>
