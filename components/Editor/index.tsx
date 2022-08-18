@@ -26,6 +26,8 @@ import {
   getTargetEvmVersion,
   compilerSemVer,
   getBytecodeFromMnemonic,
+  getMnemonicFromBytecode,
+  getBytecodeLinesFromInstructions,
 } from 'util/compiler'
 import {
   codeHighlight,
@@ -77,6 +79,7 @@ const Editor = ({ readOnly = false }: Props) => {
     vmError,
     selectedFork,
     opcodes,
+    instructions,
     resetExecution,
   } = useContext(EthereumContext)
 
@@ -292,6 +295,20 @@ const Editor = ({ readOnly = false }: Props) => {
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
+    } else if (
+      value &&
+      value === CodeType.Mnemonic &&
+      instructions?.length > 0
+    ) {
+      const code = getBytecodeLinesFromInstructions(instructions)
+      setCode(code)
+    } else if (
+      value &&
+      value === CodeType.Bytecode &&
+      instructions?.length > 0
+    ) {
+      const code = getMnemonicFromBytecode(instructions, opcodes)
+      setCode(code)
     }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
