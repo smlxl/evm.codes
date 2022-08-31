@@ -35,11 +35,12 @@ const PrecompiledPage = ({
       <React.Fragment>
         <Head>
           <title> EVM Codes - Precompiled Contracts </title>
-          <h1>
-            EVM Codes offers a reference of precompiled contracts - complex
-            client-side functions bundled with the Ethereum Virtual Machine for
-            efficiency.
-          </h1>
+          <meta
+            name="description"
+            content="EVM Codes offers a reference of precompiled contracts - complex
+          client-side functions bundled with the Ethereum Virtual Machine for
+          efficiency."
+          />
         </Head>
       </React.Fragment>
       <Container className="text-sm leading-6">
