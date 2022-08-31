@@ -25,12 +25,13 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
       <React.Fragment>
         <Head>
           <title> EVM Codes - About the EVM </title>
-          <h1>
-            How does the EVM work? We explain the relationship between opcode
-            instructions, gas costs, storage and the execution environment for
-            your understanding.
-          </h1>
         </Head>
+        <meta
+          property="og:description"
+          content="How does the EVM work? We explain the relationship between opcode
+          instructions, gas costs, storage and the execution environment for
+          your understanding."
+        />
       </React.Fragment>
       <div
         id={anchorKey}
