@@ -8,7 +8,7 @@
 
 This is the source code that runs [evm.codes](https://evm.codes) web application. Below you will find the docs on how to contribute to the project and get it up and running locally for further development.
 
-evm.codes is brought to you by [Comity Labs](https://www.comitylabs.com), powered by open-source projects such as [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), [SolcJS](https://github.com/ethereum/solc-js) and [many others](package.json).
+evm.codes is brought to you by [smlXL](https://www.smlxl.io), powered by open-source projects such as [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), [SolcJS](https://github.com/ethereum/solc-js) and [many others](package.json).
 
 ## ⚙️ Installation
 
