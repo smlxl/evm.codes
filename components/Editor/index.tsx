@@ -24,7 +24,9 @@ import { SettingsContext, Setting } from 'context/settingsContext'
 import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
-  compilerSemVer,
+  supportedSolidityCompilerVersions,
+  defaultSolidityCompilerVersion,
+  getSolidityCompilerSemVer,
   getBytecodeFromMnemonic,
   getMnemonicFromBytecode,
   getBytecodeLinesFromInstructions,
@@ -87,18 +89,16 @@ const Editor = ({ readOnly = false }: Props) => {
   const [compiling, setIsCompiling] = useState(false)
   const [codeType, setCodeType] = useState<string | undefined>()
   const [codeModified, setCodeModified] = useState(false)
-  const [output, setOutput] = useState<IConsoleOutput[]>([
-    {
-      type: 'info',
-      message: `Loading Solidity compiler ${compilerSemVer}...`,
-    },
-  ])
+  const [output, setOutput] = useState<IConsoleOutput[]>([])
   const solcWorkerRef = useRef<null | Worker>(null)
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
   const [callData, setCallData] = useState('')
   const [callValue, setCallValue] = useState('')
   const [unit, setUnit] = useState(ValueUnit.Wei as string)
+  const [solidityCompilerVersion, setSolidityCompilerVersion] = useState(
+    defaultSolidityCompilerVersion,
+  )
 
   const [contract, setContract] = useState<Contract | undefined>(undefined)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -230,12 +230,6 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [settingsLoaded && router.isReady])
 
   useEffect(() => {
-    solcWorkerRef.current = new Worker(
-      new URL('../../lib/solcWorker.js', import.meta.url),
-    )
-    solcWorkerRef.current.onmessage = handleWorkerMessage
-    log('Solidity compiler loaded')
-
     return () => {
       if (solcWorkerRef?.current) {
         solcWorkerRef.current.terminate()
@@ -243,6 +237,29 @@ const Editor = ({ readOnly = false }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    log(
+      `Loading Solidity compiler ${getSolidityCompilerSemVer(
+        solidityCompilerVersion,
+      )}...`,
+    )
+
+    if (solcWorkerRef?.current) {
+      solcWorkerRef.current.terminate()
+    }
+
+    solcWorkerRef.current = new Worker(
+      new URL('../../lib/solcWorker.js', import.meta.url),
+    )
+    solcWorkerRef.current.onmessage = handleWorkerMessage
+    solcWorkerRef.current.postMessage({
+      type: 'loadVersion',
+      compilerVersion: solidityCompilerVersion,
+    })
+    log('Solidity compiler loaded')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solidityCompilerVersion])
 
   useEffect(() => {
     if (solcWorkerRef && solcWorkerRef.current) {
@@ -359,6 +376,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
         if (solcWorkerRef?.current) {
           solcWorkerRef.current.postMessage({
+            type: 'compile',
             language: codeType,
             evmVersion: getTargetEvmVersion(selectedFork?.name),
             source: code,
@@ -478,6 +496,29 @@ const Editor = ({ readOnly = false }: Props) => {
                       menuPlacement="auto"
                     />
 
+                    {codeType === CodeType.Solidity && (
+                      <Select
+                        onChange={(v: OnChangeValue<any, any>) => {
+                          setSolidityCompilerVersion(v.value)
+                        }}
+                        options={supportedSolidityCompilerVersions.map(
+                          (version) => ({
+                            label: getSolidityCompilerSemVer(version),
+                            value: version,
+                          }),
+                        )}
+                        value={{
+                          label: getSolidityCompilerSemVer(
+                            solidityCompilerVersion,
+                          ),
+                          value: solidityCompilerVersion,
+                        }}
+                        isSearchable={false}
+                        classNamePrefix="select"
+                        menuPlacement="auto"
+                      />
+                    )}
+
                     <Button
                       onClick={handleCopyPermalink}
                       transparent
@@ -581,7 +622,7 @@ const Editor = ({ readOnly = false }: Props) => {
       </div>
 
       <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
-        Solidity Compiler {compilerSemVer}
+        Solidity Compiler {getSolidityCompilerSemVer(solidityCompilerVersion)}
       </div>
     </div>
   )

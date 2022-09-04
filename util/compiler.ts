@@ -1,9 +1,25 @@
 import { BN } from 'ethereumjs-util'
 import { IInstruction, IReferenceItem } from 'types'
 
-// Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
-export const compilerSemVer = 'v0.8.15'
-export const compilerVersion = `soljson-${compilerSemVer}+commit.e14f2714`
+// All versions here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
+export const supportedSolidityCompilerVersions = [
+  'soljson-v0.8.16+commit.07a7930e',
+  'soljson-v0.8.15+commit.e14f2714',
+  'soljson-v0.8.14+commit.80d49f37',
+]
+
+export const defaultSolidityCompilerVersion = 'soljson-v0.8.15+commit.e14f2714'
+
+export const getSolidityCompilerSemVer = (version: string) => {
+  const regex = /\-(.*?)\+/
+  const matched = regex.exec(version)
+
+  if (!matched) {
+    throw new Error('Not a valid solidity compiler version')
+  }
+
+  return matched[1]
+}
 
 /**
  * Gets target EVM version from a hardfork name
