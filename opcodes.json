@@ -494,6 +494,11 @@
     "output": "difficulty",
     "description": "Get the block’s difficulty"
   },
+  "44_merge": {
+    "input": "",
+    "output": "prevRandao",
+    "description": "Get the previous block’s RANDAO mix"
+  },
   "45": {
     "input": "",
     "output": "gasLimit",

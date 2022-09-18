@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 
-import Common from '@ethereumjs/common'
+import { Common } from '@ethereumjs/common'
 import debounce from 'lodash.debounce'
 import { IReferenceItem } from 'types'
 

@@ -9,7 +9,19 @@ module.exports = withPlausibleProxy()({
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
-  webpack: (config) => {
+  webpack: (config, options) => {
+    const { dir, defaultLoaders } = options
+
+    config.resolve.extensions.push('.ts', '.tsx')
+    config.module.rules.push({
+      test: /\.+(ts|tsx)$/,
+      include: [dir],
+      use: [
+        defaultLoaders.babel,
+        { loader: 'ts-loader', options: { transpileOnly: true } }
+      ]
+    })
+
     config.resolve.fallback = {
       fs: false,
       stream: false,
