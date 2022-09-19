@@ -651,6 +651,10 @@ export const findMatchingForkName = (
       if (fork.block) {
         res[fork.name] = fork.block
       }
+      // Hardcode "merge" block transition block's height as it's determined by TTD and not block height
+      if (fork.name === "merge") {
+        res[fork.name] = 15537394
+      }
       return res
     },
     {},
@@ -658,10 +662,11 @@ export const findMatchingForkName = (
 
   // filter all forks with block number below or equal to the selected,
   // sort in descending order and pick the first found
+  // Hardcode "merge" block transition block's height as it's determined by TTD and not block height
   let foundFork: string = forkNames
     .filter(
       (forkName) =>
-        knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
+        knownForksWithBlocks[forkName] <= (selectedFork?.block || selectedFork?.ttd ? 15537394 : 0 || 0),
     )
     .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
 
