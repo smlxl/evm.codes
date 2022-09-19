@@ -187,9 +187,9 @@ const ReferenceTable = ({
               selectedFork,
             )
 
-            // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
-            // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
-            const isAfterMerge = selectedFork?.name === "merge"
+            // @ts-ignore: TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
+            // @ts-ignore: Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
+            const isAfterMerge = selectedFork?.name === 'merge'
 
             return (
               <Fragment key={row.getRowProps().key}>
@@ -262,7 +262,13 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        itemDoc={isAfterMerge ? ( opcodeOrAddress == "44" ? itemDocs["44_merge"] : itemDocs[opcodeOrAddress]) : itemDocs[opcodeOrAddress]}
+                        itemDoc={
+                          isAfterMerge
+                            ? opcodeOrAddress == '44'
+                              ? itemDocs['44_merge']
+                              : itemDocs[opcodeOrAddress]
+                            : itemDocs[opcodeOrAddress]
+                        }
                         referenceItem={reference[rowId]}
                         gasDocs={gasDocs[opcodeOrAddress]}
                         dynamicFeeForkName={dynamicFeeForkName}
