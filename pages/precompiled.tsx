@@ -8,6 +8,7 @@ import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -17,7 +18,6 @@ import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import { H1, H2, Container, RelativeLink as Link } from 'components/ui'
-import { useRouter } from 'next/router'
 
 const { serverRuntimeConfig } = getConfig()
 
@@ -32,17 +32,18 @@ const PrecompiledPage = ({
   const { precompiled, onForkChange } = useContext(EthereumContext)
   const { setSetting } = useContext(SettingsContext)
 
-    // Change selectedFork according to query param
-    const router = useRouter()
+  // Change selectedFork according to query param
+  const router = useRouter()
 
-    useEffect(() => {
-      const query = router.query
-  
-      if ('fork' in query) {
-        onForkChange(query.fork as string)
-        setSetting(Setting.VmFork, query.fork as string)
-      }
-    }, [router.isReady])
+  useEffect(() => {
+    const query = router.query
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady])
 
   return (
     <>
