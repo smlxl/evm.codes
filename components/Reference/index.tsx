@@ -16,6 +16,7 @@ import ReactTooltip from 'react-tooltip'
 import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { findMatchingForkName } from 'util/gas'
 
@@ -42,7 +43,8 @@ const ReferenceTable = ({
   isPrecompiled?: boolean
 }) => {
   const router = useRouter()
-  const { forks, selectedFork } = useContext(EthereumContext)
+  const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
+  const { setSetting } = useContext(SettingsContext)
   const data = useMemo(() => reference, [reference])
   const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -91,6 +93,16 @@ const ReferenceTable = ({
       }
     }
   }, [reference, router.asPath])
+
+  // Change selectedFork according to query param
+  useEffect(() => {
+    const query = router.query
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
+    }
+  }, [router.isReady])
 
   const renderExpandButton = () => {
     return (

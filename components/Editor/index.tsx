@@ -81,6 +81,7 @@ const Editor = ({ readOnly = false }: Props) => {
     opcodes,
     instructions,
     resetExecution,
+    onForkChange,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -225,6 +226,11 @@ const Editor = ({ readOnly = false }: Props) => {
 
       setCodeType(initialCodeType)
       setCode(examples[initialCodeType][0])
+    }
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded && router.isReady])
