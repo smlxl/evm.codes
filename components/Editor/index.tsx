@@ -399,7 +399,7 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     copy(`${getAbsoluteURL('/playground')}?${objToQueryString(params)}`)
-    log('Link to current code, calldata and value copied to clipboard')
+    log('Link to current fork, code, calldata and value copied to clipboard')
   }, [selectedFork, callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
