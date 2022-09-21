@@ -388,7 +388,9 @@ const Editor = ({ readOnly = false }: Props) => {
   ])
 
   const handleCopyPermalink = useCallback(() => {
+    const fork = selectedFork?.name
     const params = {
+      fork,
       callValue,
       unit,
       callData,
@@ -398,7 +400,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
     copy(`${getAbsoluteURL('/playground')}?${objToQueryString(params)}`)
     log('Link to current code, calldata and value copied to clipboard')
-  }, [callValue, unit, callData, codeType, code, log])
+  }, [selectedFork, callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)
