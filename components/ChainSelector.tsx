@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
-import { useRouter } from 'next/router'
 import { useRegisterActions, Action } from 'kbar'
+import { useRouter } from 'next/router'
 import Select, { OnChangeValue, components } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
@@ -51,6 +51,7 @@ const ChainSelector = () => {
       router.query.fork = option.value
       router.push(router)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onForkChange, setSetting],
   )
 
