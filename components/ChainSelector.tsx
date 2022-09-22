@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
+import { useRouter } from 'next/router'
 import { useRegisterActions, Action } from 'kbar'
 import Select, { OnChangeValue, components } from 'react-select'
 
@@ -29,6 +30,7 @@ const ChainSelector = () => {
 
   const [forkValue, setForkValue] = useState()
   const [actions, setActions] = useState<Action[]>([])
+  const router = useRouter()
 
   const forkOptions = useMemo(
     () => forks.map((fork) => ({ value: fork.name, label: fork.name })),
@@ -45,6 +47,9 @@ const ChainSelector = () => {
       setForkValue(option)
       onForkChange(option.value)
       setSetting(Setting.VmFork, option.value)
+
+      router.query.fork = option.value
+      router.push(router)
     },
     [onForkChange, setSetting],
   )

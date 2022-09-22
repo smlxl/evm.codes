@@ -233,8 +233,8 @@ const ReferenceTable = ({
                           <Link
                             href={
                               isPrecompiled
-                                ? `/precompiled#${opcodeOrAddress}`
-                                : `/#${opcodeOrAddress}`
+                                ? `/precompiled#${opcodeOrAddress}?fork=${selectedFork?.name}`
+                                : `/#${opcodeOrAddress}?fork=${selectedFork?.name}`
                             }
                             passHref
                           >
