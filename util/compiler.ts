@@ -2,8 +2,8 @@ import { BN } from 'ethereumjs-util'
 import { IInstruction, IReferenceItem } from 'types'
 
 // Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
-export const compilerSemVer = 'v0.8.15'
-export const compilerVersion = `soljson-${compilerSemVer}+commit.e14f2714`
+export const compilerSemVer = 'v0.8.17'
+export const compilerVersion = `soljson-${compilerSemVer}+commit.8df45f5f`
 
 /**
  * Gets target EVM version from a hardfork name
