@@ -81,6 +81,7 @@ const Editor = ({ readOnly = false }: Props) => {
     opcodes,
     instructions,
     resetExecution,
+    onForkChange,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -225,6 +226,11 @@ const Editor = ({ readOnly = false }: Props) => {
 
       setCodeType(initialCodeType)
       setCode(examples[initialCodeType][0])
+    }
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded && router.isReady])
@@ -382,7 +388,9 @@ const Editor = ({ readOnly = false }: Props) => {
   ])
 
   const handleCopyPermalink = useCallback(() => {
+    const fork = selectedFork?.name
     const params = {
+      fork,
       callValue,
       unit,
       callData,
@@ -391,8 +399,8 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     copy(`${getAbsoluteURL('/playground')}?${objToQueryString(params)}`)
-    log('Link to current code, calldata and value copied to clipboard')
-  }, [callValue, unit, callData, codeType, code, log])
+    log('Link to current fork, code, calldata and value copied to clipboard')
+  }, [selectedFork, callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)

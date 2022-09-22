@@ -1,16 +1,18 @@
 import fs from 'fs'
 import path from 'path'
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import matter from 'gray-matter'
 import type { NextPage } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
@@ -27,7 +29,21 @@ const PrecompiledPage = ({
   precompiledDocs: IItemDocs
   gasDocs: IGasDocs
 }) => {
-  const { precompiled } = useContext(EthereumContext)
+  const { precompiled, onForkChange } = useContext(EthereumContext)
+  const { setSetting } = useContext(SettingsContext)
+
+  // Change selectedFork according to query param
+  const router = useRouter()
+
+  useEffect(() => {
+    const query = router.query
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady])
 
   return (
     <>
