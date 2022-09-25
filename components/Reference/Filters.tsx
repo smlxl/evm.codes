@@ -51,7 +51,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
 
     if ('name' in query) {
       // Change the filter type to Name
-      handleSearchFilterChange({label: 'Name', value: 'name'})
+      handleSearchFilterChange({ label: 'Name', value: 'name' })
       setSearchKeyword(query.name as string)
       handleKeywordChange(query.name as string)
       router.push(router)
