@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 import debounce from 'lodash.debounce'
+import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 
 import { Input } from 'components/ui'
@@ -13,6 +14,7 @@ type Props = {
 }
 
 const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
+  const router = useRouter()
   const [searchKeyword, setSearchKeyword] = useState('')
   const [searchFilter, setSearchFilter] = useState({
     value: 'name',
@@ -42,6 +44,20 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     setSearchKeyword('')
     setSearchFilter(option)
   }
+
+  // Change filter and search opcode according to query param
+  useEffect(() => {
+    const query = router.query
+
+    if ('name' in query) {
+      // Change the filter type to Name
+      handleSearchFilterChange({ label: 'Name', value: 'name' })
+      setSearchKeyword(query.name as string)
+      handleKeywordChange(query.name as string)
+      router.push(router)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady])
 
   return (
     <div className="flex items-center md:justify-end">
