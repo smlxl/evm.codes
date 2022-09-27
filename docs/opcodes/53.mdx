@@ -3,36 +3,37 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
-0. `offset`: offset in the [memory](/about) in bytes.
-1. `value`: 1-byte value to write in the [memory](/about) (the least significant byte of the 32-byte stack value).
+0. `offset`: offset in the [memory](/about#memory) in bytes.
+1. `value`: 1-byte value to write in the [memory](/about#memory) (the least significant byte of the 32-byte stack value).
 
 ## Examples
 
-| * | Input 1 | * | * | Input 2 |
-|--:|--------:|--:|--:|--------:|
-| `1` | `0` | * | `1` | `1` |
-| `2` | `0xFFFF` | * | `2` | `0xFF` |
+|  \* |  Input 1 |  \* |  \* | Input 2 |
+| --: | -------: | --: | --: | ------: |
+| `1` |      `0` |  \* | `1` |     `1` |
+| `2` | `0xFFFF` |  \* | `2` |  `0xFF` |
 
 | Memory before |
-|--------------:|
-| `0` |
+| ------------: |
+|           `0` |
 
 | Memory after input 1 |
-|---------------------:|
-| `0xFF` |
+| -------------------: |
+|               `0xFF` |
 
 | Memory after input 1 then 2 |
-|----------------------------:|
-| `0xFFFF` |
+| --------------------------: |
+|                    `0xFFFF` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='z1v2%200xFFFFy0w~z2y0xFFy1w'~%5Cnz%2F%2F%20Example%20yv1%20w~MSTORE8~v~PUSH%01vwyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

@@ -3,21 +3,22 @@ fork: Frontier
 group: System operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
-Creates a new contract. Enters a new sub [context](/about) of the calculated destination address and executes the provided initialisation code, then resumes the current context.
+Creates a new contract. Enters a new sub [context](/about#executionenv) of the calculated destination address and executes the provided initialisation code, then resumes the current context.
 
-Should deployment succeed, the new account's [code](/about) is set to the [return data](/about) resulting from executing the initialisation code.
+Should deployment succeed, the new account's [code](/about#code) is set to the [return data](/about#returndata) resulting from executing the initialisation code.
 
 The destination address is calculated as the rightmost 20 bytes (160 bits) of the Keccak-256 hash of the rlp encoding of the sender address followed by its nonce. That is:
 
     address = keccak256(rlp([sender_address,sender_nonce]))[12:]
 
 Deployment can fail due to:
+
 - Insufficient value to send.
-- Sub [context](/about) [reverted](/#FD).
+- Sub [context](/about#executionenv) [reverted](/#FD).
 - Insufficient gas to execute the initialisation code.
 - Call depth limit reached.
 
@@ -26,7 +27,7 @@ Note that these failures only affect the return value and do not cause the calli
 ## Stack input
 
 0. `value`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
-1. `offset`: byte offset in the [memory](/about) in bytes, the initialisation code for the new account.
+1. `offset`: byte offset in the [memory](/about#memory) in bytes, the initialisation code for the new account.
 2. `size`: byte size to copy (size of the initialisation code).
 
 ## Stack output
@@ -40,6 +41,7 @@ Note that these failures only affect the return value and do not cause the calli
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

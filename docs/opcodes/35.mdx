@@ -3,34 +3,35 @@ fork: Frontier
 group: Environmental Information
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
-0. `i`: byte offset in the [calldata](/about).
+0. `i`: byte offset in the [calldata](/about#calldata).
 
 ## Stack output
 
-0. `data[i]`: 32-byte value starting from the given offset of the [calldata](/about). All bytes after the end of the [calldata](/about) are set to 0.
+0. `data[i]`: 32-byte value starting from the given offset of the [calldata](/about#calldata). All bytes after the end of the [calldata](/about#calldata) are set to 0.
 
 ## Examples
 
-| Calldata |
-|---------|
+| Calldata                                                             |
+| -------------------------------------------------------------------- |
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+|  \* | Input |                                                               Output |
+| --: | ----: | -------------------------------------------------------------------: |
+| `1` |   `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `31` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+|  \* | Input |                                                               Output |
+| --: | ----: | -------------------------------------------------------------------: |
+| `1` |  `31` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
 
 [Reproduce in playground](/playground?unit=Wei&callData=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF&codeType=Mnemonic&code='~1w0yzz~2w31y'~%2F%2F%20Example%20z%5CnyzCALLDATALOADwzPUSH1%20%01wyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
