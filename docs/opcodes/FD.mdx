@@ -3,39 +3,40 @@ fork: Byzantium
 group: System operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
 Stop the current context execution, revert the state changes (see [STATICCALL](/#FA) for a list of state changing opcodes) and return the unused gas to the caller.
 It also reverts the gas refund to its value before the current context.
 If the execution is stopped with REVERT, the value 0 is put on the stack of the calling context, which continues to execute normally.
-The [return data](/about) of the calling context is set as the given chunk of memory of this context.
+The [return data](/about#returndata) of the calling context is set as the given chunk of memory of this context.
 
 ## Stack input
 
-0. `offset`: byte offset in the [memory](/about) in bytes. The return data of the calling context.
-1. `size`: byte size to copy (size of the [return data](/about)).
+0. `offset`: byte offset in the [memory](/about#memory) in bytes. The return data of the calling context.
+1. `size`: byte size to copy (size of the [return data](/about#returndata)).
 
 ## Example
 
-| `1` | Memory |
-|--:|------:|
+| `1` |   Memory |
+| --: | -------: |
 | `1` | `0xFF01` |
 
-| * | Input |
-|--:|-----:|
-| `1` | `0` |
-| `1` | `2` |
+|  \* | Input |
+| --: | ----: |
+| `1` |   `0` |
+| `1` |   `2` |
 
 | `1` | Calling context return data |
-|--:|---------------------------:|
-| `1` | `0xFF01` |
+| --: | --------------------------: |
+| `1` |                    `0xFF01` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='wSet%20the%20statev32%200xFF01uuuuuz0yMSTOREyywExamplez2z0yREVERT'~000000zv1%20y%5Cnw%2F%2F%20vyPUSHu~~%01uvwyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

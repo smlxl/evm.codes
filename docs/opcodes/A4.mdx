@@ -3,7 +3,7 @@ fork: Frontier
 group: Logging Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -11,7 +11,7 @@ This instruction has no effect on the EVM state. See [here](https://ethereum.org
 
 ## Stack input
 
-0. `offset`: byte offset in the [memory](/about) in bytes.
+0. `offset`: byte offset in the [memory](/about#memory) in bytes.
 1. `size`: byte size to copy.
 2. `topic1`: 32-byte value.
 3. `topic2`: 32-byte value.
@@ -21,6 +21,7 @@ This instruction has no effect on the EVM state. See [here](https://ethereum.org
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).
