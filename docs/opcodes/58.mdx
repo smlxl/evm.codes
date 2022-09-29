@@ -3,11 +3,11 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
-The program counter (PC) is a byte offset in the deployed [code](/about#code). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
+The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
 
 ## Stack output
 
@@ -20,6 +20,5 @@ The program counter (PC) is a byte offset in the deployed [code](/about#code). I
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Stack overflow.

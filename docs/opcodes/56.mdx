@@ -3,17 +3,17 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
-The program counter (PC) is a byte offset in the deployed [code](/about#code). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
+The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
 
-The **JUMP** instruction alters the program counter, thus breaking the linear path of the execution to another point in the deployed [code](/about#code). It is used to implement functionalities like functions.
+The **JUMP** instruction alters the program counter, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like functions.
 
 ## Stack input
 
-0. `counter`: byte offset in the deployed [code](/about#code) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
+0. `counter`: byte offset in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.
 
 ## Example
 
@@ -22,7 +22,6 @@ The **JUMP** instruction alters the program counter, thus breaking the linear pa
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.
 - `Counter` offset is not a [JUMPDEST](/#5B). The error is generated even if the JUMP would not have been done.
