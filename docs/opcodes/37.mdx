@@ -3,7 +3,7 @@ fork: Frontier
 group: Environmental Information
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
@@ -11,32 +11,32 @@ For out of bound bytes, 0s will be copied.
 
 ## Stack input
 
-0. `destOffset`: byte offset in the [memory](/about#memory) where the result will be copied.
-1. `offset`: byte offset in the [calldata](/about#calldata) to copy.
+0. `destOffset`: byte offset in the [memory](/about) where the result will be copied.
+1. `offset`: byte offset in the [calldata](/about) to copy.
 2. `size`: byte size to copy.
 
 ## Examples
 
-|                                                             Calldata |
-| -------------------------------------------------------------------: |
+| Calldata |
+|---------:|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-|  \* | Input 1 |  \* |  \* | Input 2 |
-| --: | ------: | --: | --: | ------: |
-| `1` |     `0` |  \* | `1` |     `0` |
-| `2` |     `0` |  \* | `2` |    `31` |
-| `3` |    `32` |  \* | `3` |     `8` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `0` |
+| `2` | `0` | * | `2` | `31` |
+| `3` | `32` | * | `3` | `8` |
 
 | Memory before |
-| ------------: |
-|           `0` |
+|-------------:|
+| `0` |
 
-|                                                 Memory after input 1 |
-| -------------------------------------------------------------------: |
+| Memory after input 1 |
+|---------------------:|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-|                                          Memory after input 1 then 2 |
-| -------------------------------------------------------------------: |
+| Memory after input 1 then 2 |
+|----------------------------:|
 | `0xFF00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 [Reproduce in playground](/playground?unit=Wei&callData=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF&codeType=Mnemonic&code='z1~32~0ywwz2~8~31y'~wPUSH1%20z%2F%2F%20Example%20y~0wCALLDATACOPYw%5Cn%01wyz~_).
@@ -44,6 +44,5 @@ For out of bound bytes, 0s will be copied.
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

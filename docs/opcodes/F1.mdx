@@ -3,29 +3,29 @@ fork: Frontier
 group: System operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
-Creates a new sub [context](/about#executionenv) and execute the [code](/about#code) of the given account, then resumes the current one. Note that an account with no code will return success as true.
+Creates a new sub [context](/about) and execute the [code](/about) of the given account, then resumes the current one. Note that an account with no code will return success as true.
 
-If the size of the [return data](/about#returndata) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork).
+If the size of the [return data](/about) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork).
 
 From the Tangerine Whistle fork, `gas` is capped at all but one 64th (`remaining_gas / 64`) of the remaining gas of the current context. If a call tries to send more, the `gas` is changed to match the maximum allowed.
 
 ## Stack input
 
-0. `gas`: amount of gas to send to the sub [context](/about#executionenv) to execute. The gas that is not used by the sub context is returned to this one.
-1. `address`: the account which [context](/about#executionenv) to execute.
+0. `gas`: amount of gas to send to the sub [context](/about) to execute. The gas that is not used by the sub context is returned to this one.
+1. `address`: the account which [context](/about) to execute.
 2. `value`: [value](/#34) in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the account.
-3. `argsOffset`: byte offset in the [memory](/about#memory) in bytes, the [calldata](/about#calldata) of the sub [context](/about#executionenv).
-4. `argsSize`: byte size to copy (size of the [calldata](/about#calldata)).
-5. `retOffset`: byte offset in the [memory](/about#memory) in bytes, where to store the [return data](/about#returndata) of the sub [context](/about#executionenv).
-6. `retSize`: byte size to copy (size of the [return data](/about#returndata)).
+3. `argsOffset`: byte offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+4. `argsSize`: byte size to copy (size of the [calldata](/about)).
+5. `retOffset`: byte offset in the [memory](/about) in bytes, where to store the [return data](/about) of the sub [context](/about).
+6. `retSize`: byte size to copy (size of the [return data](/about)).
 
 ## Stack output
 
-0. `success`: return 0 if the sub [context](/about#executionenv) [reverted](/#FD), 1 otherwise.
+0. `success`: return 0 if the sub [context](/about) [reverted](/#FD), 1 otherwise.
 
 ## Examples
 
@@ -34,7 +34,6 @@ From the Tangerine Whistle fork, `gas` is capped at all but one 64th (`remaining
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) and the [value](/#34) (stack index 2) is not 0 (since Byzantium fork).
