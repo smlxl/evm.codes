@@ -9,7 +9,8 @@
     "dev": "next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
-    "typecheck": "tsc --pretty"
+    "typecheck": "tsc --pretty",
+    "prebuild": "./prebuild.sh"
   },
   "dependencies": {
     "@ethereumjs/block": "^4.0.0",
