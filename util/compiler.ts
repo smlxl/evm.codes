@@ -16,7 +16,10 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
   if (forkName === 'dao') {
     return 'homestead'
   }
-  if (forkName && ['muirGlacier','arrowGlacier','grayGlacier','merge'].includes(forkName)) {
+  if (forkName === 'muirGlacier') {
+    return 'berlin'
+  }
+  if (forkName && ['arrowGlacier','grayGlacier','merge'].includes(forkName)) {
     return 'london'
   }
   return forkName
