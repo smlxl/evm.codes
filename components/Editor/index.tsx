@@ -128,7 +128,7 @@ const Editor = ({ readOnly = false }: Props) => {
       cv = _callValue * BigInt('1000000000000000000')
     }
 
-    return BigInt(cv)
+    return cv
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
