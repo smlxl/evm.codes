@@ -607,7 +607,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       {
         header: {
           baseFeePerGas: 10,
-          gasLimit: BigInt.asUintN(32, BigInt(0xffffffffffff)),
+          gasLimit,
           gasUsed: 60,
         },
       },
