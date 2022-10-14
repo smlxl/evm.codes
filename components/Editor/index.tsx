@@ -118,7 +118,7 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const getCallValue = useCallback(() => {
     const _callValue = BigInt(callValue)
-    let cv = BigInt.asIntN(32, BigInt(0))
+    let cv = 0n
 
     if (unit === ValueUnit.Gwei) {
       cv = BigInt.asIntN(32, _callValue * BigInt('1000000000'))
