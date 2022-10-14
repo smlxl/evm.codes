@@ -626,7 +626,7 @@ export const parseGasPrices = (common: Common, contents: string) => {
     }
 
     if (namespace === 'gasPrices') {
-      const gasPrice = Number(common.param('gasPrices', key))
+      const gasPrice = common.param('gasPrices', key)
       return gasPrice.toString()
     }
     return str
