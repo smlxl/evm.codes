@@ -125,7 +125,7 @@ const Editor = ({ readOnly = false }: Props) => {
     } else if (unit === ValueUnit.Finney) {
       cv = _callValue * BigInt('1000000000000000')
     } else if (unit === ValueUnit.Ether) {
-      cv = BigInt.asIntN(32, _callValue * BigInt('1000000000000000000'))
+      cv = _callValue * BigInt('1000000000000000000')
     }
 
     return BigInt(cv)
