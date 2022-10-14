@@ -43,7 +43,7 @@ const privateKey = Buffer.from(
 )
 const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
-const contractAddress = Address.generate(accountAddress, BigInt(1))
+const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = BigInt.asUintN(32, BigInt(0xffffffffffff))
 
 type ContextProps = {
