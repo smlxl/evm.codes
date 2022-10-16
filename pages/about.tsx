@@ -155,9 +155,9 @@ const AboutPage = () => {
         </p>
       </SectionWrapper>
 
-      <SectionWrapper header={<H3>The call data</H3>} anchorKey="calldata">
+      <SectionWrapper header={<H3>The calldata</H3>} anchorKey="calldata">
         <p className="pb-8">
-          The call data region is the data that is sent with a transaction. In
+          The calldata region is the data that is sent with a transaction. In
           the case of contract creation, it would be the constructor code. This
           region is immutable and can be read with the instructions{' '}
           <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
