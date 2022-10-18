@@ -1,3 +1,4 @@
+import { Hardfork } from '@ethereumjs/common/dist/types.js'
 import hljs from 'highlight.js/lib/core'
 import hljsDefineSolidity from 'highlightjs-solidity'
 
@@ -82,4 +83,8 @@ export const objToQueryString = (params: any) => {
     .map((key) => (!isEmpty(params[key]) ? key + '=' + params[key] : null))
     .filter((param) => param !== null)
     .join('&')
+}
+
+export const relativeLinkCreator = (section: string, selectedFork: Hardfork | undefined) => {
+  return `#${section}?fork=${selectedFork?.name}`;
 }
