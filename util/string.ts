@@ -85,6 +85,9 @@ export const objToQueryString = (params: any) => {
     .join('&')
 }
 
-export const relativeLinkCreator = (section: string, selectedFork: Hardfork | undefined) => {
-  return `#${section}?fork=${selectedFork?.name}`;
+export const relativeLinkCreator = (
+  section: string,
+  selectedFork: Hardfork | undefined,
+) => {
+  return `#${section}?fork=${selectedFork?.name}`
 }

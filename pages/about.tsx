@@ -4,12 +4,13 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
+import { EthereumContext } from 'context/ethereumContext'
+
+import { relativeLinkCreator } from 'util/string'
+
 import HomeLayout from 'components/layouts/Home'
 import { Container, H1, H2, H3, Icon, RelativeLink } from 'components/ui'
 import { Pre } from 'components/ui/Doc'
-
-import { EthereumContext } from 'context/ethereumContext'
-import { relativeLinkCreator } from 'util/string'
 
 type SectionWrapperProps = {
   header: React.ReactNode
@@ -56,10 +57,10 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 // NOTE: It seems the memory expansion computation and constants did not change
 // since frontier, but we have to keep an eye on new fork to keep this up to date
 const AboutPage = () => {
-  const { selectedFork } = useContext(EthereumContext);
-  
+  const { selectedFork } = useContext(EthereumContext)
+
   const anchorCreator = (section: string) => {
-    return relativeLinkCreator(section, selectedFork);
+    return relativeLinkCreator(section, selectedFork)
   }
   return (
     <Container className="text-sm leading-6 max-w-4xl">
@@ -114,12 +115,15 @@ const AboutPage = () => {
           persistent and part of an account properties. During smart contract
           execution, these are the bytes that the EVM will read, interpret and
           execute. This is a region that cannot be modified, but can be read
-          with the instructions <RelativeLink to={anchorCreator("38")} title="CODESIZE" /> and{' '}
-          <RelativeLink to={anchorCreator("39")} title="CODECOPY" />. Other contracts code can
-          also be read with <RelativeLink to={anchorCreator("3B")} title="EXTCODESIZE" /> and{' '}
-          <RelativeLink to={anchorCreator("3B")} title="EXTCODECOPY" />. The program counter
-          (PC) encodes which instruction should be read next by the EVM in this
-          region. An externally owned account (or EOA) has an empty code region.
+          with the instructions{' '}
+          <RelativeLink to={anchorCreator('38')} title="CODESIZE" /> and{' '}
+          <RelativeLink to={anchorCreator('39')} title="CODECOPY" />. Other
+          contracts code can also be read with{' '}
+          <RelativeLink to={anchorCreator('3B')} title="EXTCODESIZE" /> and{' '}
+          <RelativeLink to={anchorCreator('3B')} title="EXTCODECOPY" />. The
+          program counter (PC) encodes which instruction should be read next by
+          the EVM in this region. An externally owned account (or EOA) has an
+          empty code region.
         </p>
       </SectionWrapper>
 
@@ -131,10 +135,10 @@ const AboutPage = () => {
           only the top values are used by the instructions. The stack currently
           has a maximum limit of 1024 values. All instructions interact with the
           stack, but it can be directly manipulated with instructions like{' '}
-          <RelativeLink to={anchorCreator("60")} title="PUSH1" />,{' '}
-          <RelativeLink to={anchorCreator("50")} title="POP" />,{' '}
-          <RelativeLink to={anchorCreator("80")} title="DUP1" />, or{' '}
-          <RelativeLink to={anchorCreator("90")} title="SWAP1" />.
+          <RelativeLink to={anchorCreator('60')} title="PUSH1" />,{' '}
+          <RelativeLink to={anchorCreator('50')} title="POP" />,{' '}
+          <RelativeLink to={anchorCreator('80')} title="DUP1" />, or{' '}
+          <RelativeLink to={anchorCreator('90')} title="SWAP1" />.
         </p>
       </SectionWrapper>
 
@@ -144,11 +148,11 @@ const AboutPage = () => {
           execution, and is accessed with a byte offset. While all the 32-byte
           address space is available and initialized to 0, the size is counted
           with the highest address that was accessed. It is generally read and
-          written with <RelativeLink to={anchorCreator("51")} title="MLOAD" /> and{' '}
-          <RelativeLink to={anchorCreator("52")} title="MSTORE" /> instructions, but is also
-          used by other instructions like{' '}
-          <RelativeLink to={anchorCreator("F0")} title="CREATE" /> or{' '}
-          <RelativeLink to={anchorCreator("F3")} title="EXTCODECOPY" />.
+          written with <RelativeLink to={anchorCreator('51')} title="MLOAD" />{' '}
+          and <RelativeLink to={anchorCreator('52')} title="MSTORE" />{' '}
+          instructions, but is also used by other instructions like{' '}
+          <RelativeLink to={anchorCreator('F0')} title="CREATE" /> or{' '}
+          <RelativeLink to={anchorCreator('F3')} title="EXTCODECOPY" />.
         </p>
       </SectionWrapper>
 
@@ -158,8 +162,8 @@ const AboutPage = () => {
           map of the 32-byte slot to 32-byte value, and each value written is
           kept until it is set to 0 or the contract self-destruction. Reading
           from an unset key also returns 0. It is read and written with the
-          instructions <RelativeLink to={anchorCreator("54")} title="SLOAD" /> and{' '}
-          <RelativeLink to={anchorCreator("55")} title="SSTORE" />.
+          instructions <RelativeLink to={anchorCreator('54')} title="SLOAD" />{' '}
+          and <RelativeLink to={anchorCreator('55')} title="SSTORE" />.
         </p>
       </SectionWrapper>
 
@@ -168,9 +172,9 @@ const AboutPage = () => {
           The calldata region is the data that is sent with a transaction. In
           the case of contract creation, it would be the constructor code. This
           region is immutable and can be read with the instructions{' '}
-          <RelativeLink to={anchorCreator("35")} title="CALLDATALOAD" />,{' '}
-          <RelativeLink to={anchorCreator("36")} title="CALLDATASIZE" />, and{' '}
-          <RelativeLink to={anchorCreator("37")} title="CALLDATACOPY" />.
+          <RelativeLink to={anchorCreator('35')} title="CALLDATALOAD" />,{' '}
+          <RelativeLink to={anchorCreator('36')} title="CALLDATASIZE" />, and{' '}
+          <RelativeLink to={anchorCreator('37')} title="CALLDATACOPY" />.
         </p>
       </SectionWrapper>
 
@@ -178,11 +182,11 @@ const AboutPage = () => {
         <p className="pb-8">
           The return data region is the way a smart contract can return a value
           after a call. It can be set by external contract calls through the{' '}
-          <RelativeLink to={anchorCreator("F3")} title="RETURN" /> and{' '}
-          <RelativeLink to={anchorCreator("FD")} title="REVERT" /> instructions and can be read
-          by the calling contract with{' '}
-          <RelativeLink to={anchorCreator("3D")} title="RETURNDATASIZE" /> and{' '}
-          <RelativeLink to={anchorCreator("3E")} title="RETURNDATACOPY" />.
+          <RelativeLink to={anchorCreator('F3')} title="RETURN" /> and{' '}
+          <RelativeLink to={anchorCreator('FD')} title="REVERT" /> instructions
+          and can be read by the calling contract with{' '}
+          <RelativeLink to={anchorCreator('3D')} title="RETURNDATASIZE" /> and{' '}
+          <RelativeLink to={anchorCreator('3E')} title="RETURNDATACOPY" />.
         </p>
       </SectionWrapper>
 
@@ -286,13 +290,13 @@ const AboutPage = () => {
 
         <p className="pb-8">
           The <code>memory_byte_size</code> can be obtained with{' '}
-          <RelativeLink to={anchorCreator("59")} title="MSIZE" />. We can see that the cost
-          grows quadratically with the size, making higher offsets more costly
-          and discouraging to use too much memory. Any opcode accessing memory
-          may trigger an expansion (including, for example,{' '}
-          <RelativeLink to={anchorCreator("51")} title="MLOAD" />,{' '}
-          <RelativeLink to={anchorCreator("F3")} title="RETURN" /> or{' '}
-          <RelativeLink to={anchorCreator("37")} title="CALLDATACOPY" />
+          <RelativeLink to={anchorCreator('59')} title="MSIZE" />. We can see
+          that the cost grows quadratically with the size, making higher offsets
+          more costly and discouraging to use too much memory. Any opcode
+          accessing memory may trigger an expansion (including, for example,{' '}
+          <RelativeLink to={anchorCreator('51')} title="MLOAD" />,{' '}
+          <RelativeLink to={anchorCreator('F3')} title="RETURN" /> or{' '}
+          <RelativeLink to={anchorCreator('37')} title="CALLDATACOPY" />
           ). Each opcode that can is mentioned in the{' '}
           <RelativeLink title="reference" />. Note also that an opcode with a
           byte size parameter of 0 will not trigger a memory expansion,
@@ -317,24 +321,25 @@ const AboutPage = () => {
               <RelativeLink to="precompiled" title="precompiled contracts" />.
               When an opcode accesses an address that is not present in the set,
               it adds it in it. The relevant opcodes are{' '}
-              <RelativeLink to={anchorCreator("3B")} title="EXTCODESIZE" />,{' '}
-              <RelativeLink to={anchorCreator("3C")} title="EXTCODECOPY" />,{' '}
-              <RelativeLink to={anchorCreator("3F")} title="EXTCODEHASH" />,{' '}
-              <RelativeLink to={anchorCreator("31")} title="BALANCE" />,{' '}
-              <RelativeLink to={anchorCreator("F1")} title="CALL" />,{' '}
-              <RelativeLink to={anchorCreator("F2")} title="CALLCODE" />,{' '}
-              <RelativeLink to={anchorCreator("F4")} title="DELEGATECALL" />,{' '}
-              <RelativeLink to={anchorCreator("FA")} title="STATICCALL" />,{' '}
-              <RelativeLink to={anchorCreator("F0")} title="CREATE" />,{' '}
-              <RelativeLink to={anchorCreator("F5")} title="CREATE2" /> and{' '}
-              <RelativeLink to={anchorCreator("FF")} title="SELFDESTRUCT" />.
+              <RelativeLink to={anchorCreator('3B')} title="EXTCODESIZE" />,{' '}
+              <RelativeLink to={anchorCreator('3C')} title="EXTCODECOPY" />,{' '}
+              <RelativeLink to={anchorCreator('3F')} title="EXTCODEHASH" />,{' '}
+              <RelativeLink to={anchorCreator('31')} title="BALANCE" />,{' '}
+              <RelativeLink to={anchorCreator('F1')} title="CALL" />,{' '}
+              <RelativeLink to={anchorCreator('F2')} title="CALLCODE" />,{' '}
+              <RelativeLink to={anchorCreator('F4')} title="DELEGATECALL" />,{' '}
+              <RelativeLink to={anchorCreator('FA')} title="STATICCALL" />,{' '}
+              <RelativeLink to={anchorCreator('F0')} title="CREATE" />,{' '}
+              <RelativeLink to={anchorCreator('F5')} title="CREATE2" /> and{' '}
+              <RelativeLink to={anchorCreator('FF')} title="SELFDESTRUCT" />.
             </li>
             <li className="ml-6">
               Slots: a set of contract address and their storage slot keys that
               have been accessed. It is initialized to empty. When an opcode
               accesses a slot that is not present in the set, it adds it to it.
-              The relevant opcodes are <RelativeLink to={anchorCreator("54")} title="SLOAD" />{' '}
-              and <RelativeLink to={anchorCreator("55")} title="SSTORE" />
+              The relevant opcodes are{' '}
+              <RelativeLink to={anchorCreator('54')} title="SLOAD" /> and{' '}
+              <RelativeLink to={anchorCreator('55')} title="SSTORE" />
             </li>
           </ul>
           When a context reverts, the sets are also reverted to the state they
@@ -351,9 +356,10 @@ const AboutPage = () => {
           also limited, to half of the total transaction cost before the
           hardfork <b>London</b>, otherwise to a fifth. Starting from the
           hardfork <b>London</b> also, only{' '}
-          <RelativeLink to={anchorCreator("55")} title="SSTORE" /> may trigger refunds. Before
-          that, <RelativeLink to={anchorCreator("FF")} title="SELFDESTRUCT" /> could also
-          trigger refunds.
+          <RelativeLink to={anchorCreator('55')} title="SSTORE" /> may trigger
+          refunds. Before that,{' '}
+          <RelativeLink to={anchorCreator('FF')} title="SELFDESTRUCT" /> could
+          also trigger refunds.
         </p>
       </SectionWrapper>
 
