@@ -21,6 +21,7 @@ import {
   mergeHardforkName,
   prevrandaoDocName,
 } from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { findMatchingForkName } from 'util/gas'
 
