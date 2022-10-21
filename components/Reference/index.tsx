@@ -5,6 +5,7 @@ import {
   Fragment,
   useEffect,
   useState,
+  useCallback,
 } from 'react'
 
 import cn from 'classnames'
@@ -15,7 +16,11 @@ import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
 import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
-import { EthereumContext } from 'context/ethereumContext'
+import {
+  EthereumContext,
+  mergeHardforkName,
+  prevrandaoDocName,
+} from 'context/ethereumContext'
 import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { findMatchingForkName } from 'util/gas'
@@ -73,6 +78,17 @@ const ReferenceTable = ({
   const colSpan = useMemo(
     () => (screenWidth && screenWidth >= 768 ? visibleColumns.length : 3),
     [screenWidth, visibleColumns],
+  )
+
+  const itemDoc = useCallback(
+    (opcodeOrAddress: string) => {
+      // @ts-ignore: TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
+      // @ts-ignore: Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
+      return opcodeOrAddress == '44' && selectedFork?.name === mergeHardforkName
+        ? itemDocs[prevrandaoDocName]
+        : itemDocs[opcodeOrAddress]
+    },
+    [itemDocs, selectedFork?.name],
   )
 
   // Focus and expand anchored reference
@@ -271,7 +287,7 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        itemDoc={itemDocs[opcodeOrAddress]}
+                        itemDoc={itemDoc(opcodeOrAddress)}
                         referenceItem={reference[rowId]}
                         gasDocs={gasDocs[opcodeOrAddress]}
                         dynamicFeeForkName={dynamicFeeForkName}

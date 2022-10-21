@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react'
 
-import { VmError } from '@ethereumjs/vm/dist/exceptions'
+import { EvmError } from '@ethereumjs/evm/src/exceptions'
 import abi from 'ethereumjs-abi'
 import { Address, BN, bufferToHex } from 'ethereumjs-util'
 import Select, { OnChangeValue } from 'react-select'
@@ -31,7 +31,7 @@ interface Props {
     callValue: BN | undefined,
   ) => Promise<
     | {
-        error?: VmError | undefined
+        error?: EvmError | undefined
         returnValue: Buffer
         createdAddress: Address | undefined
       }
@@ -42,7 +42,7 @@ interface Props {
   setCallValue: (v: string) => void
   unitValue: string | undefined
   setUnit: (v: string) => void
-  getCallValue: () => BN
+  getCallValue: () => bigint
   methodByteCode: string | undefined
   handleCopyPermalink: () => void
 }

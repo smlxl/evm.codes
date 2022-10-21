@@ -3,15 +3,15 @@ import { Buffer } from 'buffer'
 import React, { createContext, useEffect, useState, useRef } from 'react'
 
 import { Block } from '@ethereumjs/block'
-import Common, { Chain } from '@ethereumjs/common'
-import { Hardfork } from '@ethereumjs/common/src/types'
+import { Common, Chain } from '@ethereumjs/common'
+import { HardforkConfig } from '@ethereumjs/common/src/types'
 import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
-import VM from '@ethereumjs/vm'
-import { RunState, InterpreterStep } from '@ethereumjs/vm/dist/evm/interpreter'
-import { Opcode } from '@ethereumjs/vm/dist/evm/opcodes'
-import { getActivePrecompiles } from '@ethereumjs/vm/dist/evm/precompiles'
-import { VmError } from '@ethereumjs/vm/dist/exceptions'
-import { BN, Address, Account } from 'ethereumjs-util'
+import { VM } from '@ethereumjs/vm'
+import { RunState, InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
+import { Opcode } from '@ethereumjs/evm/src/opcodes'
+import { getActivePrecompiles } from '@ethereumjs/evm/src/precompiles'
+import { EvmError } from '@ethereumjs/evm/src/exceptions'
+import { Address, Account } from '@ethereumjs/util'
 //
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
@@ -41,15 +41,17 @@ const privateKey = Buffer.from(
 )
 const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
-const contractAddress = Address.generate(accountAddress, new BN(1))
-const gasLimit = new BN(0xffffffffffff)
+const contractAddress = Address.generate(accountAddress, 1n)
+const gasLimit = 0xffffffffffffn
+export const mergeHardforkName = 'merge'
+export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
   common: Common | undefined
   chains: IChain[]
-  forks: Hardfork[]
+  forks: HardforkConfig[]
   selectedChain: IChain | undefined
-  selectedFork: Hardfork | undefined
+  selectedFork: HardforkConfig | undefined
   opcodes: IReferenceItem[]
   precompiled: IReferenceItem[]
   instructions: IInstruction[]
@@ -62,13 +64,13 @@ type ContextProps = {
   onForkChange: (forkName: string) => void
   transactionData: (
     byteCode: string,
-    value: BN,
+    value: bigint,
     to?: Address,
   ) => Promise<TypedTransaction | TxData>
   loadInstructions: (byteCode: string) => void
-  startExecution: (byteCode: string, value: BN, data: string) => void
+  startExecution: (byteCode: string, value: bigint, data: string) => void
   startTransaction: (tx: TypedTransaction | TxData) => Promise<{
-    error?: VmError
+    error?: EvmError
     returnValue: Buffer
     createdAddress: Address | undefined
   }>
@@ -121,9 +123,9 @@ export const EthereumContext = createContext<ContextProps>({
 
 export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [chains, setChains] = useState<IChain[]>([])
-  const [forks, setForks] = useState<Hardfork[]>([])
+  const [forks, setForks] = useState<HardforkConfig[]>([])
   const [selectedChain, setSelectedChain] = useState<IChain>()
-  const [selectedFork, setSelectedFork] = useState<Hardfork>()
+  const [selectedFork, setSelectedFork] = useState<HardforkConfig>()
   const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
   const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
@@ -136,7 +138,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   >()
   const [vmError, setVmError] = useState<string | undefined>()
 
-  const nextStepFunction = useRef<() => void | undefined>()
+  const nextStepFunction = useRef<Function>()
   const isExecutionPaused = useRef(true)
   const breakpointIds = useRef<number[]>([])
 
@@ -157,7 +159,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       chain: Chain.Mainnet,
       hardfork: fork || CURRENT_FORK,
     })
-    vm = new VM({ common })
+
+    vm = await VM.create({ common })
 
     if (!skipChainsLoading) {
       _loadChainAndForks(common)
@@ -168,7 +171,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     _setupStateManager()
     _setupAccount()
 
-    vm.on('step', _stepInto)
+    vm.evm.events!.on(
+      'step',
+      (e: InterpreterStep, contFunc: ((result?: any) => void) | undefined) => {
+        _stepInto(e, contFunc)
+      },
+    )
   }
 
   /**
@@ -202,7 +210,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    * @returns The deployed contract transaction data.
    */
-  const transactionData = async (data: string, value: BN, to?: Address) => {
+  const transactionData = async (data: string, value: bigint, to?: Address) => {
     const account = await vm.stateManager.getAccount(accountAddress)
 
     const txData = {
@@ -222,7 +230,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    */
   const loadInstructions = (byteCode: string) => {
-    const opcodes = vm.getActiveOpcodes()
+    const opcodes = vm.evm.getActiveOpcodes!()
     const instructions: IInstruction[] = []
 
     for (let i = 0; i < byteCode.length; i += 2) {
@@ -261,7 +269,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param value The callvalue.
    * @param data The calldata.
    */
-  const startExecution = async (byteCode: string, value: BN, data: string) => {
+  const startExecution = async (
+    byteCode: string,
+    value: bigint,
+    data: string,
+  ) => {
     vm.stateManager.putContractCode(
       contractAddress,
       Buffer.from(byteCode, 'hex'),
@@ -271,7 +283,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   /**
    * Starts EVM execution of the instructions.
-   * @param byteCode The contract bytecode.
    * @param tx The transaction data to run from.
    */
   const startTransaction = (tx: TypedTransaction | TxData) => {
@@ -283,9 +294,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // starting execution via deployed contract's transaction
     return vm
       .runTx({ tx: tx as TypedTransaction, block: _getBlock() })
-      .then(({ execResult, gasUsed, createdAddress }) => {
+      .then(({ execResult, totalGasSpent, createdAddress }) => {
         _loadRunState({
-          gasUsed,
+          totalGasSpent,
           runState: execResult.runState,
           newContractAddress: createdAddress,
           returnValue: execResult.returnValue,
@@ -391,7 +402,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _loadChainAndForks = (common: Common) => {
     const chainIds: number[] = []
     const chainNames: string[] = []
-    const forks: Hardfork[] = []
+    const forks: HardforkConfig[] = []
 
     // iterate over TS enum to pick key,val
     for (const chain in Chain) {
@@ -413,7 +424,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     common.hardforks().forEach((fork) => {
       // ignore null block forks
-      if (fork.block) {
+      if (fork.block || fork.name === mergeHardforkName) {
         forks.push(fork)
 
         // set initially selected fork
@@ -427,20 +438,37 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setForks(forks)
   }
 
-  const _loadOpcodes = () => {
-    const opcodes: IReferenceItem[] = []
-
-    vm.getActiveOpcodes().forEach((op: Opcode) => {
-      const meta = OpcodesMeta as IReferenceItemMetaList
-      const opcode = {
-        ...meta[toHex(op.code)],
+  const extractDocFromOpcode = (op: Opcode) => {
+    const meta = OpcodesMeta as IReferenceItemMetaList
+    // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
+    // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
+    if (selectedFork?.name === mergeHardforkName && toHex(op.code) == '44') {
+      return {
+        ...meta[prevrandaoDocName],
         ...{
           opcodeOrAddress: toHex(op.code),
           staticFee: op.fee,
           minimumFee: 0,
-          name: op.fullName,
+          name: 'PREVRANDAO',
         },
       }
+    }
+    return {
+      ...meta[toHex(op.code)],
+      ...{
+        opcodeOrAddress: toHex(op.code),
+        staticFee: op.fee,
+        minimumFee: 0,
+        name: op.fullName,
+      },
+    }
+  }
+
+  const _loadOpcodes = () => {
+    const opcodes: IReferenceItem[] = []
+
+    vm.evm.getActiveOpcodes!().forEach((op: Opcode) => {
+      const opcode = extractDocFromOpcode(op)
 
       opcode.minimumFee = parseInt(
         calculateOpcodeDynamicFee(opcode, common, {}),
@@ -478,18 +506,35 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setPrecompiled(precompiled)
   }
 
+  function traceMethodCalls(obj: any) {
+    const handler = {
+      get(target: any, propKey: any, receiver: any) {
+        const origMethod = target[propKey]
+        return (...args: any[]) => {
+          const result = origMethod.apply(target, args)
+          if (propKey == 'clearContractStorage') {
+            _clearContractStorage(args[0])
+          }
+          if (propKey == 'putContractStorage') {
+            _putContractStorage(args[0], args[1], args[2])
+          }
+          return result
+        }
+      },
+    }
+    return new Proxy(obj, handler)
+  }
+
+  // In this function we create a proxy EEI object that will intercept
+  // putContractStorage and clearContractStorage and route them to our
+  // implementations at _putContractStorage and _clearContractStorage
+  // respectively AFTER applying the original methods.
+  // This is necessary in order to handle storage operations easily.
   const _setupStateManager = () => {
-    // Hack the state manager so that we can track the stored variables
-    // @ts-ignore: Store original contract storage to access later
-    vm.stateManager.originalPutContractStorage =
-      vm.stateManager.putContractStorage
+    var proxyStateManager = traceMethodCalls(vm.evm.eei)
+    vm.evm.eei.putContractStorage = proxyStateManager.putContractStorage
+    vm.evm.eei.clearContractStorage = proxyStateManager.clearContractStorage
 
-    // @ts-ignore: Store original contract storage to access later
-    vm.stateManager.originalClearContractStorage =
-      vm.stateManager.clearContractStorage
-
-    vm.stateManager.putContractStorage = _putContractStorage
-    vm.stateManager.clearContractStorage = _clearContractStorage
     storageMemory.clear()
   }
 
@@ -497,7 +542,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // Add a fake account
     const accountData = {
       nonce: 2,
-      balance: new BN(10).pow(new BN(accountBalance)),
+      balance: BigInt(10 ** accountBalance),
     }
     const contractData = {
       nonce: 0,
@@ -514,23 +559,23 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _loadRunState = ({
-    gasUsed,
+    totalGasSpent,
     runState,
     newContractAddress,
     returnValue,
     exceptionError,
   }: {
-    gasUsed: BN
+    totalGasSpent: bigint
     runState?: RunState
     newContractAddress?: Address
     returnValue?: Buffer
-    exceptionError?: VmError
+    exceptionError?: EvmError
   }) => {
     if (runState) {
       const { programCounter: pc, stack, memory } = runState
       _setExecutionState({
         pc,
-        gasUsed,
+        totalGasSpent,
         stack: stack._store,
         memory: memory._store,
         returnValue,
@@ -553,9 +598,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     return Block.fromBlockData(
       {
         header: {
-          baseFeePerGas: new BN(10),
-          gasLimit: new BN(0xffffffffffff),
-          gasUsed: new BN(60),
+          baseFeePerGas: 10,
+          gasLimit,
+          gasUsed: 60,
         },
       },
       { common },
@@ -564,17 +609,23 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   const _stepInto = (
     { depth, pc, gasLeft, opcode, stack, memory }: InterpreterStep,
-    continueFunc: () => void,
+    continueFunc: ((result?: any) => void) | undefined,
   ) => {
     // We skip over the calls
-    if (depth !== 0) {
+    if (depth !== 0 && continueFunc) {
       continueFunc()
       return
     }
 
-    const gasUsed = gasLimit.sub(gasLeft)
+    const totalGasSpent = gasLimit - gasLeft
 
-    _setExecutionState({ pc, gasUsed, stack, memory, currentGas: opcode.fee })
+    _setExecutionState({
+      pc,
+      totalGasSpent,
+      stack,
+      memory,
+      currentGas: opcode.fee,
+    })
 
     nextStepFunction.current = continueFunc
 
@@ -589,17 +640,17 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   const _setExecutionState = ({
     pc,
-    gasUsed,
+    totalGasSpent,
     stack,
     memory,
     currentGas,
     returnValue,
   }: {
     pc: number
-    gasUsed: BN
-    stack: BN[]
+    totalGasSpent: bigint
+    stack: bigint[]
     memory: Buffer
-    currentGas?: BN | number
+    currentGas?: bigint | number
     returnValue?: Buffer
   }) => {
     const storage: IStorage[] = []
@@ -612,8 +663,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     setExecutionState({
       programCounter: pc,
-      stack: stack.map((value) => value.toString('hex')).reverse(),
-      totalGas: gasUsed.toString(),
+      stack: stack.map((value) => value.toString(16)).reverse(),
+      totalGas: totalGasSpent.toString(),
       memory: fromBuffer(memory),
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
@@ -621,6 +672,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     })
   }
 
+  // Update storage slot `key` for contract `address`
+  // to `value` in our storage memory Map
   const _putContractStorage = (
     address: Address,
     key: Buffer,
@@ -646,17 +699,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         storageMemory.set(addressText, new Map([[keyText, valueText]]))
       }
     }
-
-    // @ts-ignore: Reuse original contract storage
-    return vm.stateManager.originalPutContractStorage(address, key, value)
   }
 
+  // Clear all storage slots of contract at `address` in our storage memory Map
   const _clearContractStorage = (address: Address) => {
     const addressText = address.toString()
     storageMemory.delete(addressText)
-
-    // @ts-ignore: Reuse original contract storage
-    return vm.stateManager.originalClearContractStorage(address)
   }
 
   return (

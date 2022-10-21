@@ -10,10 +10,10 @@ import React, {
   Fragment,
 } from 'react'
 
+import { bufferToHex } from '@ethereumjs/util'
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -118,17 +118,18 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   const getCallValue = useCallback(() => {
-    const _callValue = new BN(callValue)
+    const _callValue = BigInt(callValue)
+    let cv = 0n
 
     if (unit === ValueUnit.Gwei) {
-      _callValue.imul(new BN('1000000000'))
+      cv = _callValue * BigInt('1000000000')
     } else if (unit === ValueUnit.Finney) {
-      _callValue.imul(new BN('1000000000000000'))
+      cv = _callValue * BigInt('1000000000000000')
     } else if (unit === ValueUnit.Ether) {
-      _callValue.imul(new BN('1000000000000000000'))
+      cv = _callValue * BigInt('1000000000000000000')
     }
 
-    return _callValue
+    return cv
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
