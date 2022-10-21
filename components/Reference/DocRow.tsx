@@ -110,7 +110,7 @@ const DocRow = ({
               <MDXRemote {...itemDoc.mdxSource} components={docComponents} />
               {dynamicFeeForkName && dynamicFeeDocMdx && (
                 <MDXRemote
-                  compiledSource={''}
+                  compiledSource=""
                   {...(dynamicFeeDocMdx ? dynamicFeeDocMdx : {})}
                   components={docComponents}
                 />

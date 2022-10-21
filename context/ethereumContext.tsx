@@ -7,7 +7,6 @@ import { Common, Chain } from '@ethereumjs/common'
 import { HardforkConfig } from '@ethereumjs/common/src/types'
 import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
 import { VM } from '@ethereumjs/vm'
-import { EVM } from '@ethereumjs/evm'
 import { RunState, InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
 import { Opcode } from '@ethereumjs/evm/src/opcodes'
 import { getActivePrecompiles } from '@ethereumjs/evm/src/precompiles'
@@ -33,7 +32,6 @@ import {
 import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
-let evm: EVM
 let common: Common
 
 const storageMemory = new Map()
@@ -45,6 +43,8 @@ const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
 const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
+export const mergeHardforkName = 'merge'
+export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
   common: Common | undefined
@@ -162,8 +162,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm = await VM.create({ common })
 
-    evm = await EVM.create({ common, eei: vm.eei })
-
     if (!skipChainsLoading) {
       _loadChainAndForks(common)
     }
@@ -232,7 +230,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    */
   const loadInstructions = (byteCode: string) => {
-    const opcodes = evm.getActiveOpcodes()
+    const opcodes = vm.evm.getActiveOpcodes!()
     const instructions: IInstruction[] = []
 
     for (let i = 0; i < byteCode.length; i += 2) {
@@ -426,7 +424,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     common.hardforks().forEach((fork) => {
       // ignore null block forks
-      if (fork.block || fork.name === 'merge') {
+      if (fork.block || fork.name === mergeHardforkName) {
         forks.push(fork)
 
         // set initially selected fork
@@ -440,43 +438,37 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setForks(forks)
   }
 
+  const extractDocFromOpcode = (op: Opcode) => {
+    const meta = OpcodesMeta as IReferenceItemMetaList
+    // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
+    // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
+    if (selectedFork?.name === mergeHardforkName && toHex(op.code) == '44') {
+      return {
+        ...meta[prevrandaoDocName],
+        ...{
+          opcodeOrAddress: toHex(op.code),
+          staticFee: op.fee,
+          minimumFee: 0,
+          name: 'PREVRANDAO',
+        },
+      }
+    }
+    return {
+      ...meta[toHex(op.code)],
+      ...{
+        opcodeOrAddress: toHex(op.code),
+        staticFee: op.fee,
+        minimumFee: 0,
+        name: op.fullName,
+      },
+    }
+  }
+
   const _loadOpcodes = () => {
     const opcodes: IReferenceItem[] = []
 
-    evm.getActiveOpcodes().forEach((op: Opcode) => {
-      const meta = OpcodesMeta as IReferenceItemMetaList
-      // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
-      // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
-      const opcode =
-        selectedFork?.name === 'merge'
-          ? toHex(op.code) == '44'
-            ? {
-                ...meta['44_merge'],
-                ...{
-                  opcodeOrAddress: toHex(op.code),
-                  staticFee: op.fee,
-                  minimumFee: 0,
-                  name: 'PREVRANDAO',
-                },
-              }
-            : {
-                ...meta[toHex(op.code)],
-                ...{
-                  opcodeOrAddress: toHex(op.code),
-                  staticFee: op.fee,
-                  minimumFee: 0,
-                  name: op.fullName,
-                },
-              }
-          : {
-              ...meta[toHex(op.code)],
-              ...{
-                opcodeOrAddress: toHex(op.code),
-                staticFee: op.fee,
-                minimumFee: 0,
-                name: op.fullName,
-              },
-            }
+    vm.evm.getActiveOpcodes!().forEach((op: Opcode) => {
+      const opcode = extractDocFromOpcode(op)
 
       opcode.minimumFee = parseInt(
         calculateOpcodeDynamicFee(opcode, common, {}),

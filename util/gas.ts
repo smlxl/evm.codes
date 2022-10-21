@@ -94,7 +94,9 @@ function sstoreCost(common: Common, inputs: any): BN {
       if (inputs.originalValue === '0') {
         return new BN(Number(common.param('gasPrices', 'sstoreInitGasEIP2200')))
       } else {
-        return new BN(Number(common.param('gasPrices', 'sstoreCleanGasEIP2200')))
+        return new BN(
+          Number(common.param('gasPrices', 'sstoreCleanGasEIP2200')),
+        )
       }
     } else {
       return new BN(Number(common.param('gasPrices', 'sstoreDirtyGasEIP2200')))
@@ -191,7 +193,9 @@ export const calculateDynamicRefund = (
           result = new BN(0)
         } else if (inputs.currentValue === inputs.originalValue) {
           if (inputs.originalValue !== '0' && inputs.newValue === '0') {
-            result = new BN(Number(common.param('gasPrices', 'netSstoreClearRefund')))
+            result = new BN(
+              Number(common.param('gasPrices', 'netSstoreClearRefund')),
+            )
           } else {
             result = new BN(0)
           }
@@ -199,9 +203,13 @@ export const calculateDynamicRefund = (
           result = new BN(0)
           if (inputs.originalValue !== '0') {
             if (inputs.currentValue === '0') {
-              result.isubn(Number(common.param('gasPrices', 'netSstoreClearRefund')))
+              result.isubn(
+                Number(common.param('gasPrices', 'netSstoreClearRefund')),
+              )
             } else if (inputs.newValue === '0') {
-              result.iaddn(Number(common.param('gasPrices', 'netSstoreClearRefund')))
+              result.iaddn(
+                Number(common.param('gasPrices', 'netSstoreClearRefund')),
+              )
             }
           }
           if (inputs.newValue === inputs.originalValue) {
@@ -210,7 +218,9 @@ export const calculateDynamicRefund = (
                 Number(common.param('gasPrices', 'netSstoreResetClearRefund')),
               )
             } else {
-              result.iaddn(Number(common.param('gasPrices', 'netSstoreResetRefund')))
+              result.iaddn(
+                Number(common.param('gasPrices', 'netSstoreResetRefund')),
+              )
             }
           }
         }
@@ -242,7 +252,9 @@ export const calculateDynamicRefund = (
             if (inputs.originalValue === '0') {
               if (common.gteHardfork('berlin') && inputs.cold !== '1') {
                 result
-                  .iaddn(Number(common.param('gasPrices', 'sstoreInitGasEIP2200')))
+                  .iaddn(
+                    Number(common.param('gasPrices', 'sstoreInitGasEIP2200')),
+                  )
                   .isubn(Number(common.param('gasPrices', 'warmstorageread')))
               } else {
                 result.iaddn(
@@ -396,7 +408,11 @@ export const calculateOpcodeDynamicFee = (
       result = new BN(Number(common.param('gasPrices', 'logTopic')))
         .imul(topicsCount)
         .iadd(expansionCost)
-        .iadd(new BN(inputs.size).muln(Number(common.param('gasPrices', 'logData'))))
+        .iadd(
+          new BN(inputs.size).muln(
+            Number(common.param('gasPrices', 'logData')),
+          ),
+        )
       break
     }
     case 'f0': {
@@ -550,7 +566,9 @@ export const calculatePrecompiledDynamicFee = (
       break
     }
     case '0x05': {
-      const Gquaddivisor = Number(common.param('gasPrices', 'modexpGquaddivisor'))
+      const Gquaddivisor = Number(
+        common.param('gasPrices', 'modexpGquaddivisor'),
+      )
       result = getAdjustedExponentLength(new BN(inputs.exponent))
 
       let maxLen = new BN(inputs.Bsize)
@@ -651,10 +669,6 @@ export const findMatchingForkName = (
       if (fork.block) {
         res[fork.name] = fork.block
       }
-      // Hardcode "merge" block transition block's height as it's determined by TTD and not block height
-      if (fork.name === "merge") {
-        res[fork.name] = 15537394
-      }
       return res
     },
     {},
@@ -662,11 +676,10 @@ export const findMatchingForkName = (
 
   // filter all forks with block number below or equal to the selected,
   // sort in descending order and pick the first found
-  // Hardcode "merge" block transition block's height as it's determined by TTD and not block height
   let foundFork: string = forkNames
     .filter(
       (forkName) =>
-        knownForksWithBlocks[forkName] <= (selectedFork?.block || selectedFork?.ttd ? 15537394 : 0 || 0),
+        knownForksWithBlocks[forkName] <= (selectedFork?.block || 0),
     )
     .sort((a, b) => knownForksWithBlocks[b] - knownForksWithBlocks[a])[0]
 
