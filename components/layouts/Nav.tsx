@@ -8,8 +8,9 @@ import { GITHUB_REPO_URL } from 'util/constants'
 import KBarButton from 'components/KBar/Button'
 import NavLink from 'components/NavLink'
 import ThemeSelector from 'components/ThemeSelector'
-import { Container, Logo, Hamburger } from 'components/ui'
+import { Container, Hamburger, Logo } from 'components/ui'
 
+import ConnectButton from 'components/ConnectButton'
 import ChainSelector from '../ChainSelector'
 
 const Nav = () => {
@@ -50,6 +51,7 @@ const Nav = () => {
           </ul>
 
           <div className="items-center ml-auto flex">
+            <ConnectButton />
             <ChainSelector />
             <ThemeSelector />
           </div>

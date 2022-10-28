@@ -12,9 +12,10 @@ import { SettingsProvider } from 'context/settingsContext'
 
 import KBar from 'components/KBar'
 
+import { AccountProvider } from 'context/accountContext'
 import '../styles/globals.css'
-import '../styles/highlight/atom-one-light.css'
 import '../styles/highlight/atom-one-dark.css'
+import '../styles/highlight/atom-one-light.css'
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -35,10 +36,12 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ThemeProvider attribute="class">
         <SettingsProvider>
           <EthereumProvider>
-            <KBarProvider actions={actions}>
-              {getLayout(<Component {...pageProps} />)}
-              <KBar />
-            </KBarProvider>
+            <AccountProvider>
+              <KBarProvider actions={actions}>
+                {getLayout(<Component {...pageProps} />)}
+                <KBar />
+              </KBarProvider>
+            </AccountProvider>
           </EthereumProvider>
         </SettingsProvider>
       </ThemeProvider>
