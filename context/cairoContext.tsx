@@ -1,5 +1,6 @@
-import { getStarknet } from 'get-starknet'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
+
+import { getStarknet } from 'get-starknet'
 import { Contract, Provider } from 'starknet'
 import { BigNumberish } from 'starknet/dist/utils/number'
 import { uint256ToBN } from 'starknet/dist/utils/uint256'
@@ -27,10 +28,11 @@ const initialExecutionState = {
 }
 
 const KAKAROT_ADDRESS =
-  '0x021af4703d24fd3b9e415452a09347c7b8e1ff5cc838ec7aacfa587c17e7537f'
+  '0x020b957e916832e4c67c3dee55d9e32740215d39cd8eb9ef569f33ea25731043'
 
 export const CairoContext = React.createContext<ContextProps>({
   accountAddress: '',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAccountAddress: () => {},
   executionState: initialExecutionState,
   startExecution: () => undefined,
@@ -43,8 +45,7 @@ export const CairoProvider = ({ children }: PropsWithChildren<{}>) => {
   const [executionState, setExecutionState] = useState<IExecutionState>(
     initialExecutionState,
   )
-  const [contractAddress, setContractAddress] =
-    useState<string>(KAKAROT_ADDRESS)
+  const [contractAddress] = useState<string>(KAKAROT_ADDRESS)
 
   const [contract, setContract] = useState<Contract>()
 
@@ -74,10 +75,12 @@ export const CairoProvider = ({ children }: PropsWithChildren<{}>) => {
   ) => {
     contract?.functions['execute'](hex2bytes(byteCode), hex2bytes(data)).then(
       (response) => {
+        console.log(response)
         setExecutionState({
           stack: response.stack
             .map(uint256ToBN)
-            .map((n: BigNumberish) => n.toString(16)),
+            .map((n: BigNumberish) => n.toString(16))
+            .reverse(),
           storage: [],
           memory: response.memory
             .map((byte: BigNumberish) => byte.toString(16))
