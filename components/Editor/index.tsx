@@ -10,7 +10,6 @@ import React, {
   useState,
 } from 'react'
 
-import { bufferToHex } from '@ethereumjs/util'
 import { decode, encode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
@@ -23,7 +22,6 @@ import { Setting, SettingsContext } from 'context/settingsContext'
 
 import { getAbsoluteURL } from 'util/browser'
 import {
-  compilerSemVer,
   getBytecodeFromMnemonic,
   getBytecodeLinesFromInstructions,
   getMnemonicFromBytecode,
@@ -38,14 +36,14 @@ import {
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
-import { Button, Icon, Input } from 'components/ui'
+import { Button, Input } from 'components/ui'
 
 import { CairoContext } from 'context/cairoContext'
 import CairoExecutionState from './CairoExecutionState'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import { CodeType, Contract, IConsoleOutput, ValueUnit } from './types'
+import { CodeType, Contract, ValueUnit } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -88,12 +86,6 @@ const Editor = ({ readOnly = false }: Props) => {
   const [compiling, setIsCompiling] = useState(false)
   const [codeType, setCodeType] = useState<string | undefined>()
   const [codeModified, setCodeModified] = useState(false)
-  const [output, setOutput] = useState<IConsoleOutput[]>([
-    {
-      type: 'info',
-      message: `Loading Solidity compiler ${compilerSemVer}...`,
-    },
-  ])
   const solcWorkerRef = useRef<null | Worker>(null)
   const instructionsRef = useRef() as MutableRefObject<HTMLDivElement>
   const editorRef = useRef<SCEditorRef>()
@@ -105,17 +97,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [methodByteCode, setMethodByteCode] = useState<string | undefined>()
 
-  const log = useCallback(
-    (line: string, type = 'info') => {
-      // See https://blog.logrocket.com/a-guide-to-usestate-in-react-ecb9952e406c/
-      setOutput((previous) => {
-        const cloned = previous.map((x) => ({ ...x }))
-        cloned.push({ type, message: line })
-        return cloned
-      })
-    },
-    [setOutput],
-  )
+  const log = useCallback((line: string, type = 'info') => {}, [])
 
   const getCallValue = useCallback(() => {
     const _callValue = BigInt(callValue)
@@ -143,13 +125,7 @@ const Editor = ({ readOnly = false }: Props) => {
         setIsCompiling(false)
 
         const result = await startTransaction(transaction)
-        if (
-          codeType === CodeType.Solidity &&
-          !result.error &&
-          result.returnValue
-        ) {
-          setMethodByteCode(bufferToHex(result.returnValue))
-        }
+
         return result
       } catch (error) {
         log((error as Error).message, 'error')
@@ -193,10 +169,6 @@ const Editor = ({ readOnly = false }: Props) => {
         return
       }
 
-      if (codeType === CodeType.Solidity) {
-        setContract(contracts[0])
-      }
-
       if (!isExpanded) {
         deployByteCode(contracts[0].code, '', undefined)
       } else {
@@ -223,7 +195,7 @@ const Editor = ({ readOnly = false }: Props) => {
       setCode(JSON.parse('{"a":' + decode(query.code as string) + '}').a)
     } else {
       const initialCodeType: CodeType =
-        getSetting(Setting.EditorCodeType) || CodeType.Yul
+        getSetting(Setting.EditorCodeType) || CodeType.Mnemonic
 
       setCodeType(initialCodeType)
       setCode(examples[initialCodeType][0])
@@ -235,21 +207,6 @@ const Editor = ({ readOnly = false }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded && router.isReady])
-
-  useEffect(() => {
-    solcWorkerRef.current = new Worker(
-      new URL('../../lib/solcWorker.js', import.meta.url),
-    )
-    solcWorkerRef.current.onmessage = handleWorkerMessage
-    log('Solidity compiler loaded')
-
-    return () => {
-      if (solcWorkerRef?.current) {
-        solcWorkerRef.current.terminate()
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (solcWorkerRef && solcWorkerRef.current) {
@@ -407,9 +364,6 @@ const Editor = ({ readOnly = false }: Props) => {
     [codeType],
   )
 
-  const showAdvanceMode = useMemo(() => {
-    return codeType === CodeType.Solidity && isExpanded
-  }, [codeType, isExpanded])
   const unitValue = useMemo(
     () => ({
       value: unit,
@@ -449,7 +403,7 @@ const Editor = ({ readOnly = false }: Props) => {
             </div>
 
             <Fragment>
-              {!showAdvanceMode && (
+              {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 py-4 md:py-2 md:border-r border-gray-200 dark:border-black-500">
                   <div className="flex flex-col md:flex-row md:gap-x-4 gap-y-2 md:gap-y-0 mb-4 md:mb-0">
                     {isCallDataActive && (
@@ -480,40 +434,9 @@ const Editor = ({ readOnly = false }: Props) => {
                       classNamePrefix="select"
                       menuPlacement="auto"
                     />
-
-                    <Button
-                      onClick={handleCopyPermalink}
-                      transparent
-                      padded={false}
-                    >
-                      <span
-                        className="inline-block mr-4 select-all"
-                        data-tip="Share permalink"
-                      >
-                        <Icon
-                          name="links-line"
-                          className="text-indigo-500 mr-1"
-                        />
-                      </span>
-                    </Button>
                   </div>
 
                   <div>
-                    <Fragment>
-                      {codeType === CodeType.Solidity && (
-                        <Button
-                          onClick={() => setIsExpanded(!isExpanded)}
-                          tooltip={'Please run your contract first.'}
-                          transparent
-                          padded={false}
-                        >
-                          <span className="inline-block mr-4 text-indigo-500">
-                            Advance Mode
-                          </span>
-                        </Button>
-                      )}
-                    </Fragment>
-
                     <Button
                       onClick={handleRun}
                       disabled={isRunDisabled}
@@ -524,7 +447,7 @@ const Editor = ({ readOnly = false }: Props) => {
                     </Button>
                   </div>
                 </div>
-              )}
+              }
             </Fragment>
           </div>
         </div>
