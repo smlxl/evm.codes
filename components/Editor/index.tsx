@@ -1,17 +1,17 @@
 import React, {
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-  useMemo,
-  useCallback,
+  Fragment,
   MutableRefObject,
   RefObject,
-  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react'
 
 import { bufferToHex } from '@ethereumjs/util'
-import { encode, decode } from '@kunigi/string-compression'
+import { decode, encode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import { useRouter } from 'next/router'
@@ -19,15 +19,14 @@ import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
 
 import { EthereumContext } from 'context/ethereumContext'
-import { SettingsContext, Setting } from 'context/settingsContext'
+import { Setting, SettingsContext } from 'context/settingsContext'
 
 import { getAbsoluteURL } from 'util/browser'
 import {
-  getTargetEvmVersion,
   compilerSemVer,
   getBytecodeFromMnemonic,
-  getMnemonicFromBytecode,
   getBytecodeLinesFromInstructions,
+  getMnemonicFromBytecode,
 } from 'util/compiler'
 import {
   codeHighlight,
@@ -39,14 +38,14 @@ import {
 
 import examples from 'components/Editor/examples'
 import InstructionList from 'components/Editor/Instructions'
-import { Button, Input, Icon } from 'components/ui'
+import { Button, Icon, Input } from 'components/ui'
 
-import Console from './Console'
+import { CairoContext } from 'context/cairoContext'
+import CairoExecutionState from './CairoExecutionState'
 import ExecutionState from './ExecutionState'
 import ExecutionStatus from './ExecutionStatus'
 import Header from './Header'
-import SolidityAdvanceModeTab from './SolidityAdvanceModeTab'
-import { IConsoleOutput, CodeType, ValueUnit, Contract } from './types'
+import { CodeType, Contract, IConsoleOutput, ValueUnit } from './types'
 
 type Props = {
   readOnly?: boolean
@@ -83,6 +82,7 @@ const Editor = ({ readOnly = false }: Props) => {
     resetExecution,
     onForkChange,
   } = useContext(EthereumContext)
+  const cairoContext = useContext(CairoContext)
 
   const [code, setCode] = useState('')
   const [compiling, setIsCompiling] = useState(false)
@@ -327,6 +327,11 @@ const Editor = ({ readOnly = false }: Props) => {
     }
   }
 
+  const startExecutions = (byteCode: string, value: bigint, data: string) => {
+    startExecution(byteCode, value, data)
+    cairoContext.startExecution(byteCode, value, data)
+  }
+
   const handleRun = useCallback(() => {
     if (!isEmpty(callValue) && !/^[0-9]+$/.test(callValue)) {
       log('Callvalue should be a positive integer', 'error')
@@ -348,8 +353,8 @@ const Editor = ({ readOnly = false }: Props) => {
       if (codeType === CodeType.Mnemonic) {
         const bytecode = getBytecodeFromMnemonic(code, opcodes)
         loadInstructions(bytecode)
-        startExecution(bytecode, _callValue, _callData)
-      } else if (codeType === CodeType.Bytecode) {
+        startExecutions(bytecode, _callValue, _callData)
+      } else {
         if (code.length % 2 !== 0) {
           log('There should be at least 2 characters per byte', 'error')
           return
@@ -359,18 +364,7 @@ const Editor = ({ readOnly = false }: Props) => {
           return
         }
         loadInstructions(code)
-        startExecution(code, _callValue, _callData)
-      } else {
-        setIsCompiling(true)
-        log('Starting compilation...')
-
-        if (solcWorkerRef?.current) {
-          solcWorkerRef.current.postMessage({
-            language: codeType,
-            evmVersion: getTargetEvmVersion(selectedFork?.name),
-            source: code,
-          })
-        }
+        startExecutions(code, _callValue, _callData)
       }
     } catch (error) {
       log((error as Error).message, 'error')
@@ -532,22 +526,6 @@ const Editor = ({ readOnly = false }: Props) => {
                 </div>
               )}
             </Fragment>
-
-            <SolidityAdvanceModeTab
-              log={log}
-              selectedContract={contract}
-              handleCompile={handleRun}
-              setShowSimpleMode={() => setIsExpanded(false)}
-              show={showAdvanceMode}
-              deployByteCode={deployByteCode}
-              callValue={callValue}
-              setCallValue={setCallValue}
-              setUnit={setUnit}
-              unitValue={unit}
-              getCallValue={getCallValue}
-              methodByteCode={methodByteCode}
-              handleCopyPermalink={handleCopyPermalink}
-            />
           </div>
         </div>
 
@@ -576,21 +554,19 @@ const Editor = ({ readOnly = false }: Props) => {
             className="pane pane-dark overflow-auto border-t border-black-900/25 bg-gray-800 dark:bg-black-700 text-white px-4 py-3"
             style={{ height: consoleHeight }}
           >
-            <ExecutionState />
+            <span>Kakarot (Cairo zkEVM)</span>
+            <CairoExecutionState />
           </div>
         </div>
         <div className="w-full md:w-1/2">
           <div
-            className="pane pane-dark overflow-auto bg-gray-800 dark:bg-black-700 text-white border-t border-black-900/25 md:border-r"
+            className="pane pane-dark overflow-auto border-t border-black-900/25 bg-gray-800 dark:bg-black-700 text-white px-4 py-3"
             style={{ height: consoleHeight }}
           >
-            <Console output={output} />
+            <span>EVM</span>
+            <ExecutionState />
           </div>
         </div>
-      </div>
-
-      <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
-        Solidity Compiler {compilerSemVer}
       </div>
     </div>
   )

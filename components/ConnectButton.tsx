@@ -1,11 +1,11 @@
 import { Button } from 'components/ui'
-import { AccountContext } from 'context/accountContext'
+import { CairoContext } from 'context/cairoContext'
 
 import { disconnect, getStarknet } from 'get-starknet'
 import { useContext } from 'react'
 
 const ConnectButton = () => {
-  const { accountAddress, setAccountAddress } = useContext(AccountContext)
+  const { accountAddress, setAccountAddress } = useContext(CairoContext)
 
   const onClick = async () => {
     if (getStarknet().isConnected) {

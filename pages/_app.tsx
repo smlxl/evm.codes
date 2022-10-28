@@ -12,7 +12,7 @@ import { SettingsProvider } from 'context/settingsContext'
 
 import KBar from 'components/KBar'
 
-import { AccountProvider } from 'context/accountContext'
+import { CairoProvider } from 'context/cairoContext'
 import '../styles/globals.css'
 import '../styles/highlight/atom-one-dark.css'
 import '../styles/highlight/atom-one-light.css'
@@ -36,12 +36,12 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ThemeProvider attribute="class">
         <SettingsProvider>
           <EthereumProvider>
-            <AccountProvider>
+            <CairoProvider>
               <KBarProvider actions={actions}>
                 {getLayout(<Component {...pageProps} />)}
                 <KBar />
               </KBarProvider>
-            </AccountProvider>
+            </CairoProvider>
           </EthereumProvider>
         </SettingsProvider>
       </ThemeProvider>

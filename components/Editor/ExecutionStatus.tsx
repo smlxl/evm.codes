@@ -1,44 +1,19 @@
 import { useContext } from 'react'
 
-import { useRegisterActions } from 'kbar'
 import ReactTooltip from 'react-tooltip'
 
 import { EthereumContext } from 'context/ethereumContext'
 
-import { Button, Icon } from 'components/ui'
+import { Icon } from 'components/ui'
 
 const ExecutionStatus = () => {
-  const { isExecuting, executionState, nextExecution, continueExecution } =
-    useContext(EthereumContext)
-
-  const actions = [
-    {
-      id: 'continue',
-      name: 'Continue',
-      shortcut: ['q'],
-      keywords: 'execution continue',
-      section: 'Execution',
-      perform: continueExecution,
-      subtitle: 'Continue execution',
-    },
-  ]
-
-  useRegisterActions(actions, [nextExecution, continueExecution])
+  const { executionState } = useContext(EthereumContext)
 
   return (
     <div className="flex flex-grow justify-between items-center text-sm">
       <div>
         <span className="inline-block ml-1 mr-2 text-gray-400">
           <Icon name="gas-station-fill" className="text-indigo-500" />
-        </span>
-        <span className="inline-block mr-1 text-gray-500 text-sm select-none">
-          Current:
-        </span>
-        <span
-          className="inline-block mr-4 select-all cursor-help"
-          data-tip="Gas consumed for the current instruction"
-        >
-          {executionState.currentGas || 0}
         </span>
         <span className="inline-block mr-1 text-gray-500 text-sm select-none">
           Total:
@@ -51,19 +26,6 @@ const ExecutionStatus = () => {
         </span>
 
         <ReactTooltip className="tooltip" effect="solid" />
-      </div>
-
-      <div>
-        <Button
-          transparent
-          disabled={!isExecuting}
-          onClick={continueExecution}
-          padded={false}
-          tooltip="Continue execution"
-          tooltipId="continue"
-        >
-          <Icon name="play-circle-line" className="text-indigo-500" />
-        </Button>
       </div>
     </div>
   )
