@@ -13,10 +13,12 @@ type Props = {
   onCodeTypeChange: (option: OnChangeValue<any, any>) => void
 }
 
-const codeLangOptions = Object.keys(CodeType).map((lang) => ({
-  value: lang,
-  label: lang,
-}))
+const codeLangOptions = Object.keys(CodeType)
+  .filter((lang) => lang === 'Bytecode' || lang === 'Mnemonic')
+  .map((lang) => ({
+    value: lang,
+    label: lang,
+  }))
 
 const EditorHeader = ({ codeType, onCodeTypeChange }: Props) => {
   const { selectedFork } = useContext(EthereumContext)

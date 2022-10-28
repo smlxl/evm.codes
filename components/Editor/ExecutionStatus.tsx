@@ -13,15 +13,6 @@ const ExecutionStatus = () => {
 
   const actions = [
     {
-      id: 'step',
-      name: 'Step',
-      shortcut: ['s'],
-      keywords: 'execution next',
-      section: 'Execution',
-      perform: nextExecution,
-      subtitle: 'Run next execution',
-    },
-    {
       id: 'continue',
       name: 'Continue',
       shortcut: ['q'],
@@ -63,18 +54,6 @@ const ExecutionStatus = () => {
       </div>
 
       <div>
-        <Button
-          transparent
-          disabled={!isExecuting}
-          onClick={nextExecution}
-          padded={false}
-          className="mr-4"
-          tooltip="Step into"
-          tooltipId="step"
-        >
-          <Icon name="arrow-go-forward-line" className="text-indigo-500" />
-        </Button>
-
         <Button
           transparent
           disabled={!isExecuting}
