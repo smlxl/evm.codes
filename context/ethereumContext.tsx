@@ -1,27 +1,27 @@
 import { Buffer } from 'buffer'
 
-import React, { createContext, useEffect, useState, useRef } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 
 import { Block } from '@ethereumjs/block'
-import { Common, Chain } from '@ethereumjs/common'
+import { Chain, Common } from '@ethereumjs/common'
 import { HardforkConfig } from '@ethereumjs/common/src/types'
-import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
-import { VM } from '@ethereumjs/vm'
-import { RunState, InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
+import { InterpreterStep, RunState } from '@ethereumjs/evm/dist/interpreter'
+import { EvmError } from '@ethereumjs/evm/src/exceptions'
 import { Opcode } from '@ethereumjs/evm/src/opcodes'
 import { getActivePrecompiles } from '@ethereumjs/evm/src/precompiles'
-import { EvmError } from '@ethereumjs/evm/src/exceptions'
-import { Address, Account } from '@ethereumjs/util'
+import { Transaction, TxData, TypedTransaction } from '@ethereumjs/tx'
+import { Account, Address } from '@ethereumjs/util'
+import { VM } from '@ethereumjs/vm'
 //
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
+  IChain,
+  IExecutionState,
+  IInstruction,
   IReferenceItem,
   IReferenceItemMetaList,
-  IInstruction,
   IStorage,
-  IExecutionState,
-  IChain,
 } from 'types'
 
 import { CURRENT_FORK } from 'util/constants'
@@ -29,7 +29,7 @@ import {
   calculateOpcodeDynamicFee,
   calculatePrecompiledDynamicFee,
 } from 'util/gas'
-import { toHex, fromBuffer } from 'util/string'
+import { fromBuffer, toHex } from 'util/string'
 
 let vm: VM
 let common: Common
@@ -279,6 +279,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       Buffer.from(byteCode, 'hex'),
     )
     startTransaction(await transactionData(data, value, contractAddress))
+    continueExecution()
   }
 
   /**
