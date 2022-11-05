@@ -127,7 +127,7 @@ const Editor = ({ readOnly = false }: Props) => {
       case ValueUnit.Ether:
         return _callValue * BigInt('1000000000000000000')
       default:
-        return _callValue;
+        return _callValue
     }
   }, [callValue, unit])
 
