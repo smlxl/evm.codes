@@ -119,17 +119,16 @@ const Editor = ({ readOnly = false }: Props) => {
 
   const getCallValue = useCallback(() => {
     const _callValue = BigInt(callValue)
-    let cv = 0n
-
-    if (unit === ValueUnit.Gwei) {
-      cv = _callValue * BigInt('1000000000')
-    } else if (unit === ValueUnit.Finney) {
-      cv = _callValue * BigInt('1000000000000000')
-    } else if (unit === ValueUnit.Ether) {
-      cv = _callValue * BigInt('1000000000000000000')
+    switch (unit) {
+      case ValueUnit.Gwei:
+        return _callValue * BigInt('1000000000')
+      case ValueUnit.Finney:
+        return _callValue * BigInt('1000000000000000')
+      case ValueUnit.Ether:
+        return _callValue * BigInt('1000000000000000000')
+      default:
+        return _callValue;
     }
-
-    return cv
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
