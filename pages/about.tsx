@@ -188,7 +188,7 @@ const AboutPage = () => {
         </p>
       </SectionWrapper>
 
-      <SectionWrapper header={<H3>The call data</H3>} anchorKey="calldata">
+      <SectionWrapper header={<H3>The calldata</H3>} anchorKey="calldata">
         <p className="pb-8">
           The calldata region is the data sent to a transaction as part of a
           smart contract transaction. For example, when creating a contract,

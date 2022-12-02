@@ -5,6 +5,7 @@ import {
   Fragment,
   useEffect,
   useState,
+  useCallback,
 } from 'react'
 
 import cn from 'classnames'
@@ -15,7 +16,12 @@ import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
 import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
-import { EthereumContext } from 'context/ethereumContext'
+import {
+  EthereumContext,
+  mergeHardforkName,
+  prevrandaoDocName,
+} from 'context/ethereumContext'
+import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { findMatchingForkName } from 'util/gas'
 
@@ -42,7 +48,8 @@ const ReferenceTable = ({
   isPrecompiled?: boolean
 }) => {
   const router = useRouter()
-  const { forks, selectedFork } = useContext(EthereumContext)
+  const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
+  const { setSetting } = useContext(SettingsContext)
   const data = useMemo(() => reference, [reference])
   const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -73,6 +80,17 @@ const ReferenceTable = ({
     [screenWidth, visibleColumns],
   )
 
+  const itemDoc = useCallback(
+    (opcodeOrAddress: string) => {
+      // @ts-ignore: TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
+      // @ts-ignore: Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
+      return opcodeOrAddress == '44' && selectedFork?.name === mergeHardforkName
+        ? itemDocs[prevrandaoDocName]
+        : itemDocs[opcodeOrAddress]
+    },
+    [itemDocs, selectedFork?.name],
+  )
+
   // Focus and expand anchored reference
   useEffect(() => {
     if (reference && rowRefs?.current) {
@@ -91,6 +109,17 @@ const ReferenceTable = ({
       }
     }
   }, [reference, router.asPath])
+
+  // Change selectedFork according to query param
+  useEffect(() => {
+    const query = router.query
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady])
 
   const renderExpandButton = () => {
     return (
@@ -220,8 +249,8 @@ const ReferenceTable = ({
                           <Link
                             href={
                               isPrecompiled
-                                ? `/precompiled#${opcodeOrAddress}`
-                                : `/#${opcodeOrAddress}`
+                                ? `/precompiled#${opcodeOrAddress}?fork=${selectedFork?.name}`
+                                : `/#${opcodeOrAddress}?fork=${selectedFork?.name}`
                             }
                             passHref
                           >
@@ -258,7 +287,7 @@ const ReferenceTable = ({
                   <tr className="bg-indigo-50 dark:bg-black-600">
                     <td colSpan={colSpan}>
                       <DocRow
-                        itemDoc={itemDocs[opcodeOrAddress]}
+                        itemDoc={itemDoc(opcodeOrAddress)}
                         referenceItem={reference[rowId]}
                         gasDocs={gasDocs[opcodeOrAddress]}
                         dynamicFeeForkName={dynamicFeeForkName}

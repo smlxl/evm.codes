@@ -10,10 +10,10 @@ import React, {
   Fragment,
 } from 'react'
 
+import { bufferToHex } from '@ethereumjs/util'
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { BN, bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -26,6 +26,8 @@ import {
   getTargetEvmVersion,
   compilerSemVer,
   getBytecodeFromMnemonic,
+  getMnemonicFromBytecode,
+  getBytecodeLinesFromInstructions,
 } from 'util/compiler'
 import {
   codeHighlight,
@@ -77,7 +79,9 @@ const Editor = ({ readOnly = false }: Props) => {
     vmError,
     selectedFork,
     opcodes,
+    instructions,
     resetExecution,
+    onForkChange,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -114,17 +118,17 @@ const Editor = ({ readOnly = false }: Props) => {
   )
 
   const getCallValue = useCallback(() => {
-    const _callValue = new BN(callValue)
-
-    if (unit === ValueUnit.Gwei) {
-      _callValue.imul(new BN('1000000000'))
-    } else if (unit === ValueUnit.Finney) {
-      _callValue.imul(new BN('1000000000000000'))
-    } else if (unit === ValueUnit.Ether) {
-      _callValue.imul(new BN('1000000000000000000'))
+    const _callValue = BigInt(callValue)
+    switch (unit) {
+      case ValueUnit.Gwei:
+        return _callValue * BigInt('1000000000')
+      case ValueUnit.Finney:
+        return _callValue * BigInt('1000000000000000')
+      case ValueUnit.Ether:
+        return _callValue * BigInt('1000000000000000000')
+      default:
+        return _callValue
     }
-
-    return _callValue
   }, [callValue, unit])
 
   const deployByteCode = useCallback(
@@ -223,6 +227,11 @@ const Editor = ({ readOnly = false }: Props) => {
       setCodeType(initialCodeType)
       setCode(examples[initialCodeType][0])
     }
+
+    if ('fork' in query) {
+      onForkChange(query.fork as string)
+      setSetting(Setting.VmFork, query.fork as string)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoaded && router.isReady])
 
@@ -292,6 +301,20 @@ const Editor = ({ readOnly = false }: Props) => {
 
     if (!codeModified && codeType) {
       setCode(examples[value as CodeType][0])
+    } else if (
+      value &&
+      value === CodeType.Mnemonic &&
+      instructions?.length > 0
+    ) {
+      const code = getBytecodeLinesFromInstructions(instructions)
+      setCode(code)
+    } else if (
+      value &&
+      value === CodeType.Bytecode &&
+      instructions?.length > 0
+    ) {
+      const code = getMnemonicFromBytecode(instructions, opcodes)
+      setCode(code)
     }
 
     // NOTE: SCEditor does not expose input ref as public /shrug
@@ -365,7 +388,9 @@ const Editor = ({ readOnly = false }: Props) => {
   ])
 
   const handleCopyPermalink = useCallback(() => {
+    const fork = selectedFork?.name
     const params = {
+      fork,
       callValue,
       unit,
       callData,
@@ -374,8 +399,8 @@ const Editor = ({ readOnly = false }: Props) => {
     }
 
     copy(`${getAbsoluteURL('/playground')}?${objToQueryString(params)}`)
-    log('Link to current code, calldata and value copied to clipboard')
-  }, [callValue, unit, callData, codeType, code, log])
+    log('Link to current fork, code, calldata and value copied to clipboard')
+  }, [selectedFork, callValue, unit, callData, codeType, code, log])
 
   const isRunDisabled = useMemo(() => {
     return compiling || isEmpty(code)

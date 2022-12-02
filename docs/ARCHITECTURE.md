@@ -21,7 +21,7 @@ app
 
 ## Ethereum Context
 
-The core of the application is an [context/ethereumContext.tsx](../context/ethereumContext.tsx) powered by [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), which provides an application-wide state to the Ethereum Virtual Machine and its operating mechanics. Additionally, smart contracts compilation is handled by the [SolcJC](https://github.com/ethereum/solc-js) through the [lib/solcWorker.js](../lib/solcWorker.js).
+The core of the application is an [context/ethereumContext.tsx](../context/ethereumContext.tsx) powered by [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), which provides an application-wide state to the Ethereum Virtual Machine and its operating mechanics. Additionally, smart contracts compilation is handled by [SolcJS](https://github.com/ethereum/solc-js) through [lib/solcWorker.js](../lib/solcWorker.js).
 
 ## MDX docs
 

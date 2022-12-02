@@ -1,9 +1,9 @@
 import { BN } from 'ethereumjs-util'
-import { IReferenceItem } from 'types'
+import { IInstruction, IReferenceItem } from 'types'
 
 // Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
-export const compilerSemVer = 'v0.8.15'
-export const compilerVersion = `soljson-${compilerSemVer}+commit.e14f2714`
+export const compilerSemVer = 'v0.8.17'
+export const compilerVersion = `soljson-${compilerSemVer}+commit.8df45f5f`
 
 /**
  * Gets target EVM version from a hardfork name
@@ -19,10 +19,7 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
   if (forkName === 'muirGlacier') {
     return 'berlin'
   }
-  if (forkName === 'arrowGlacier') {
-    return 'london'
-  }
-  if (forkName === 'grayGlacier') {
+  if (forkName && ['arrowGlacier', 'grayGlacier', 'merge'].includes(forkName)) {
     return 'london'
   }
   return forkName
@@ -106,4 +103,45 @@ export const getBytecodeFromMnemonic = (
   }
 
   return bytecode
+}
+
+/**
+ * Gets mnemonic from instructions
+ * @param instructions The IInstruction array of current instructions
+ * @param opcodes The IReferenceItem array of opcodes
+ * @returns the mnemonic code
+ */
+export const getMnemonicFromBytecode = (
+  instructions: IInstruction[],
+  opcodes: IReferenceItem[],
+): string => {
+  if (instructions.length === 0) {
+    return ''
+  }
+
+  const opcodeMap: Record<string, string> = {}
+  opcodes.forEach((c) => {
+    opcodeMap[c.name as string] = c.opcodeOrAddress
+  })
+
+  return instructions
+    .map((i) => `${opcodeMap[i.name]}${i.value || ''}`)
+    .join('')
+}
+
+/**
+ * Get the editable bytecode lines from the instructions
+ * @param instructions The IInstruction array of current instructions
+ * @returns the editable bytecode lines
+ */
+export const getBytecodeLinesFromInstructions = (
+  instructions: IInstruction[],
+): string => {
+  if (instructions.length === 0) {
+    return ''
+  }
+
+  return instructions
+    .map((i) => `${i.name}${i.value ? ' 0x' + i.value : ''}`)
+    .join('\n')
 }

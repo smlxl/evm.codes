@@ -1,0 +1,22 @@
+---
+fork: Merge
+group: Block Information
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Stack output
+
+0. `prevRandao`: previous  block's [RANDAO  mix](https://eips.ethereum.org/EIPS/eip-4399).
+
+## Example
+
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `0xce124dee50136f3f93f19667fb4198c6b94eecbacfa300469e5280012757be94` |
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Stack overflow.
