@@ -207,7 +207,7 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The return data</H3>} anchorKey="returndata">
         <p className="pb-8">
           The return data is the way a smart contract can return a value after a
-          call. It can be set by external contract calls through the{' '}
+          call. It can be set by contract calls through the{' '}
           <RelativeLink to="#F3" title="RETURN" /> and{' '}
           <RelativeLink to="#FD" title="REVERT" /> instructions, and can be read
           by the calling contract with{' '}
