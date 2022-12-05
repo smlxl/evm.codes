@@ -74,7 +74,7 @@ const AboutPage = () => {
           the stack, except for PUSHx, which takes its parameters from the code,
           and write their results to memory, storage, or emits a call log. Each
           instruction has stack inputs, the parameters that they may need, stack
-          outputs, and their return values. The list of these instructions, with
+          outputs, their return values. The list of these instructions, with
           their opcodes, is accessible in our <RelativeLink title="reference" />
           .
         </p>
