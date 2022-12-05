@@ -91,7 +91,7 @@ const AboutPage = () => {
           Transaction reversion can also be triggered with the{' '}
           <RelativeLink to="#FD" title="REVERT" /> opcode, though the{' '}
           <RelativeLink to="#FD" title="REVERT" /> opcode refunds unused gas
-          fees at its call context, while other causes of revert consumes it
+          fees of its call context, while other causes of revert consumes it
           all. In the event of a reverted transaction, any state changes
           dictated by the transaction instructions are returned to their state
           before the transaction.
