@@ -178,8 +178,8 @@ const AboutPage = () => {
         <p className="pb-8">
           Storage is a map of 32-byte slots to 32-byte values. Storage is the
           persistent memory of smart contracts: each value written by the
-          contract is retained past the completion of a call, unless
-          its value is changed to 0, or the callee contract of{' '}
+          contract is retained past the completion of a function call, unless
+          its value is changed to 0, or the{' '}
           <RelativeLink to="#FF" title="SELFDESTRUCT" /> instruction is
           executed. Reading stored bytes from an unwritten key also returns 0.
           Each contract has its own storage, and cannot read or modify storage
@@ -197,7 +197,10 @@ const AboutPage = () => {
           Transaction calldata is immutable, and can be read with instructions{' '}
           <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
-          <RelativeLink to="#37" title="CALLDATACOPY" />.
+          <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
+          executes an Xcall instruction, it also creates an internal
+          transaction. As a result, when executing Xcall, there is a calldata
+          region in the new context.
         </p>
       </SectionWrapper>
 
@@ -246,15 +249,18 @@ const AboutPage = () => {
             </li>
             <br></br>
             <li>
-              <b>Opcode Fixed Execution Cost</b> : The fixed cost of executing
-              opcode if the transaction is sent to a contract, measured in gas.
+              <b>Opcode Fixed Execution Cost</b> : Each opcode has a fixed cost
+              to be paid upon execution. This cost is the same for all
+              executions, though this is subject to change in new hardforks.
             </li>
             <br></br>
             <li>
               {' '}
-              <b>Opcode Dynamic Execution Cost:</b> The factors used to
-              determine the dynamic gas costs vary from fork to fork and opcode
-              to opcode. Use our{' '}
+              <b>Opcode Dynamic Execution Cost:</b> Some instructions conduct
+              more work than others, depending on their parameters. Because of
+              this, on top of fixed costs, some instructions have dynamic costs.
+              These dynamic costs are dependant on several factors (which vary
+              from hardfork to hardfork). See our
               <a
                 href="https://www.evm.codes/"
                 target="_blank"
