@@ -129,7 +129,7 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="counter">
         <p className="pb-8">
           The Program Counter (PC) encodes which instruction, stored in the
-          code, should be read by the EVM sequentially. The program counter is
+          code, should be next read by the EVM. The program counter is
           informed by the previous instruction in sequence, as well as available
           gas, code address, sender, and recipient. While the program counter
           usually increments by 1 byte for each opcode, the{' '}
