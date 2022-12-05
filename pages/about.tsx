@@ -178,7 +178,7 @@ const AboutPage = () => {
         <p className="pb-8">
           Storage is a map of 32-byte slots to 32-byte values. Storage is the
           persistent memory of smart contracts: each value written by the
-          contract is retained past the completion of a function call, unless
+          contract is retained past the completion of a call, unless
           its value is changed to 0, or the callee contract of{' '}
           <RelativeLink to="#FF" title="SELFDESTRUCT" /> instruction is
           executed. Reading stored bytes from an unwritten key also returns 0.
