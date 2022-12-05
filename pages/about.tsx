@@ -70,13 +70,13 @@ const AboutPage = () => {
             EVM
           </a>
           ) is a stack-based computer, responsible for the execution of smart
-          contract instructions. All EVM instructions take their parameters from
-          the stack (except for PUSHx, which takes its parameters from the code),
-          and write their results to memory, storage, or emits a call log. Each
-          instruction has stack inputs, the parameters that they may need, stack
-          outputs, their return values. The list of these instructions, with
-          their opcodes, is accessible in our <RelativeLink title="reference" />
-          .
+          contract instructions. All EVM instructions take their parameter from
+          the stack, except for PUSHx. PUSHx take their parameters from the
+          code, which allows them to write their results to memory or storage,
+          emit a log, or conduct a call. Each instruction has stack inputs, the
+          parameters that they may need, stack outputs, and their return values.
+          The list of these instructions, with their opcodes, is accessible in
+          our <RelativeLink title="reference" />.
         </p>
         <p className="pb-8">
           <H3>What is a smart contract?</H3>A smart contract is a set of
@@ -129,11 +129,11 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="counter">
         <p className="pb-8">
           The Program Counter (PC) encodes which instruction, stored in the
-          code, should be next read by the EVM. The program counter is
+          code, should be read by the EVM sequentially. The program counter is
           informed by the previous instruction in sequence, as well as available
           gas, code address, sender, and recipient. While the program counter
           usually increments by 1 byte for each opcode, the{' '}
-          <RelativeLink to="#60" title="PUSHx" /> instructions are longer than a
+          <RelativeLink to="#60" title="PUSHx" /> instruction is longer than a
           single byte, and causes the PC to skip their parameter. The{' '}
           <RelativeLink to="#56" title="JUMP" /> instruction does not increase
           the PC's value, instead, it modifies the program counter to a position
@@ -356,12 +356,13 @@ const AboutPage = () => {
           contract addresses, and those of touched contract storage slots.
         </p>
         <p className="pb-6">
-          When a contract address is initialized by a transaction, instruction,
-          or used as caller or callee, it is put in the access set. Calling the opcode{' '}
-          <RelativeLink to="#31" title="BALANCE" />, on an address not present
-          in an access set costs more than if the address were already in the
-          set. Other opcodes that can modify the access set include{' '}
-          <RelativeLink to="#3B" title="EXTCODESIZE" />,{' '}
+          When an address is accessed by a transaction, instruction, or used as
+          caller or callee, it is put in the access set. When an opcode accesses
+          an address that is not present in the set, it adds the address to the
+          set. Calling the opcode <RelativeLink to="#31" title="BALANCE" />, on
+          an address not present in an access set costs more than if the address
+          were already in the set. Other opcodes that can modify the access set
+          include <RelativeLink to="#3B" title="EXTCODESIZE" />,{' '}
           <RelativeLink to="#3C" title="EXTCODECOPY" />,{' '}
           <RelativeLink to="#3F" title="EXTCODEHASH" />,{' '}
           <RelativeLink to="#F1" title="CALL" />,{' '}
@@ -370,7 +371,8 @@ const AboutPage = () => {
           <RelativeLink to="#FA" title="STATICCALL" />,{' '}
           <RelativeLink to="#F0" title="CREATE" />,{' '}
           <RelativeLink to="#F5" title="CREATE2" /> and{' '}
-          <RelativeLink to="#FF" title="SELFDESTRUCT" />.
+          <RelativeLink to="#FF" title="SELFDESTRUCT" />. Each opcode has their
+          own cost when modifying the access set.
         </p>
         <p className="pb-6">
           Touch slot lists are a set of storage slot keys accessed by contract
@@ -378,7 +380,8 @@ const AboutPage = () => {
           accesses a slot that is not present in the set, it adds it to it.
           Opcodes that can modify the touched slot list are{' '}
           <RelativeLink to="#54" title="SLOAD" /> and{' '}
-          <RelativeLink to="#55" title="SSTORE" />.
+          <RelativeLink to="#55" title="SSTORE" />. Again, both opcodes have
+          their own cost when modifying the access set.
         </p>
         <p className="pb-6">
           If a context is reverted, sets are reverted to their state before the
