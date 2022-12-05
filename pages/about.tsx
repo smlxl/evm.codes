@@ -71,12 +71,13 @@ const AboutPage = () => {
           </a>
           ) is a stack-based computer, responsible for the execution of smart
           contract instructions. All EVM instructions take their parameter from
-          the stack, except for PUSHx. PUSHx take their parameters from the
-          code, which allows them to write their results to memory or storage,
-          emit a log, or conduct a call. Each instruction has stack inputs, the
-          parameters that they may need, stack outputs, and their return values.
-          The list of these instructions, with their opcodes, is accessible in
-          our <RelativeLink title="reference" />.
+          the stack, except for <RelativeLink to="#60" title="PUSHx" />. PUSHx
+          take their parameters from the code, which allows them to write their
+          results to memory or storage, emit a log, or conduct a call. Each
+          instruction has stack inputs, the parameters that they may need, stack
+          outputs, and their return values. The list of these instructions, with
+          their opcodes, is accessible in our <RelativeLink title="reference" />
+          .
         </p>
         <p className="pb-8">
           <H3>What is a smart contract?</H3>A smart contract is a set of
@@ -131,13 +132,13 @@ const AboutPage = () => {
           The Program Counter (PC) encodes which instruction, stored in the
           code, should be read by the EVM sequentially. The program counter is
           informed by the previous instruction in sequence, as well as available
-          gas, code address, sender, and recipient. While the program counter
-          usually increments by 1 byte for each opcode, the{' '}
-          <RelativeLink to="#60" title="PUSHx" /> instruction is longer than a
-          single byte, and causes the PC to skip their parameter. The{' '}
-          <RelativeLink to="#56" title="JUMP" /> instruction does not increase
-          the PC's value, instead, it modifies the program counter to a position
-          specified by the top of the stack.{' '}
+          gas, code address, sender, and recipient. The program counter usually
+          offsets by the code region by one byte, with some exceptions. For
+          instance, the <RelativeLink to="#60" title="PUSHx" /> instruction is
+          longer than a single byte, and causes the PC to skip their parameter.
+          The <RelativeLink to="#56" title="JUMP" /> instruction does not
+          increase the PC's value, instead, it modifies the program counter to a
+          position specified by the top of the stack.{' '}
           <RelativeLink to="#57" title="JUMPI" /> does this as well, if its
           condition is true (a nonzero code value), otherwise it increments the
           PC like other instructions.
