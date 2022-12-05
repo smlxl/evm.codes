@@ -228,7 +228,7 @@ const AboutPage = () => {
             <br></br>
             <li>
               <b>Current price of one gas unit:</b> Gas, or gwei, is a
-              denomination of Ethereum, used to in fee payment. Gas prices vary
+              denomination of Ethereum, used in fee payment. Gas prices vary
               over time, based on current demand for block space, measured in
               ETH per gas.
             </li>
