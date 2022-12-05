@@ -357,9 +357,7 @@ const AboutPage = () => {
         </p>
         <p className="pb-6">
           When a contract address is initialized by a transaction, instruction,
-          or used as caller or callee, it is put in the access set. When an
-          opcode accesses an address that is not present in the set, it adds the
-          address to the set. Calling the opcode{' '}
+          or used as caller or callee, it is put in the access set. Calling the opcode{' '}
           <RelativeLink to="#31" title="BALANCE" />, on an address not present
           in an access set costs more than if the address were already in the
           set. Other opcodes that can modify the access set include{' '}
