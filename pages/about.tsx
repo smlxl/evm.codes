@@ -133,7 +133,7 @@ const AboutPage = () => {
           informed by the previous instruction in sequence, as well as available
           gas, code address, sender, and recipient. While the program counter
           usually increments by 1 byte for each opcode, the{' '}
-          <RelativeLink to="#60" title="PUSHx" /> instruction is longer than a
+          <RelativeLink to="#60" title="PUSHx" /> instructions are longer than a
           single byte, and causes the PC to skip their parameter. The{' '}
           <RelativeLink to="#56" title="JUMP" /> instruction does not increase
           the PC's value, instead, it modifies the program counter to a position
