@@ -71,7 +71,7 @@ const AboutPage = () => {
           </a>
           ) is a stack-based computer, responsible for the execution of smart
           contract instructions. All EVM instructions take their parameters from
-          the stack, except for PUSHx, which takes its parameters from the code,
+          the stack (except for PUSHx, which takes its parameters from the code),
           and write their results to memory, storage, or emits a call log. Each
           instruction has stack inputs, the parameters that they may need, stack
           outputs, their return values. The list of these instructions, with
