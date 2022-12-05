@@ -126,7 +126,7 @@ const AboutPage = () => {
         </p>
       </SectionWrapper>
 
-      <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="stack">
+      <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="counter">
         <p className="pb-8">
           The Program Counter (PC) encodes which instruction, stored in the
           code, should be read by the EVM sequentially. The program counter is
