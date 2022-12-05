@@ -244,7 +244,7 @@ const AboutPage = () => {
               21000 gas. Creating a contract costs 32000 gas, on top of the
               transaction cost. Calldata costs 4 gas per byte equal to 0, and 16
               gas for the others (64 before the hardfork <b>Istanbul</b>). This
-              cost is paid from the transaction before any opcode or ethereum transfer
+              cost is paid from the transaction before any opcode or Ethereum transfer
               execution.
             </li>
             <br></br>
