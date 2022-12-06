@@ -159,9 +159,9 @@ const AboutPage = () => {
 
       <SectionWrapper header={<H3>The Memory</H3>} anchorKey="memory">
         <p className="pb-8">
-           EVM memory memory is not persistent, and is destroyed at the end of
-          the call context. At the start of a call context, memory is
-          initialized to 0. Reading and Writing from memory is usually done with{' '}
+          EVM memory is not persistent, and is destroyed at the end of the call
+          context. At the start of a call context, memory is initialized to 0.
+          Reading and Writing from memory is usually done with{' '}
           <RelativeLink to="#51" title="MLOAD" /> and{' '}
           <RelativeLink to="#52" title="MSTORE" /> instructions respectively,
           but can also be accessed by other instructions like{' '}
