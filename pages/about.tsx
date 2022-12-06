@@ -130,15 +130,13 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="counter">
         <p className="pb-8">
           The Program Counter (PC) encodes which instruction, stored in the
-          code, should be read by the EVM sequentially. The program counter is
-          informed by the previous instruction in sequence, as well as available
-          gas, code address, sender, and recipient. The program counter usually
-          offsets by the code region by one byte, with some exceptions. For
-          instance, the <RelativeLink to="#60" title="PUSHx" /> instruction is
-          longer than a single byte, and causes the PC to skip their parameter.
-          The <RelativeLink to="#56" title="JUMP" /> instruction does not
-          increase the PC's value, instead, it modifies the program counter to a
-          position specified by the top of the stack.{' '}
+          code, should be read by the EVM sequentially. The program counter
+          usually offsets by the code region by one byte, with some exceptions.
+          For instance, the <RelativeLink to="#60" title="PUSHx" /> instruction
+          are longer than a single byte, and causes the PC to skip their
+          parameter. The <RelativeLink to="#56" title="JUMP" /> instruction does
+          not increase the PC's value, instead, it modifies the program counter
+          to a position specified by the top of the stack.{' '}
           <RelativeLink to="#57" title="JUMPI" /> does this as well, if its
           condition is true (a nonzero code value), otherwise it increments the
           PC like other instructions.
@@ -148,12 +146,13 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The Stack</H3>} anchorKey="stack">
         <p className="pb-8">
           The stack is a list of 32-byte elements used to store smart contract
-          instruction inputs and outputs. The stack is only accessible during
-          smart contract execution. When a new value is put on the stack, it is
-          put on top, and only the top values are used by the instructions. The
-          stack currently has a maximum limit of 1024 values. All instructions
-          interact with the stack, but it can be directly manipulated with
-          instructions like <RelativeLink to="#60" title="PUSH1" />,{' '}
+          instruction inputs and outputs. There is one stack created per call
+          context, and it is destroyed when the call context ends. When a new
+          value is put on the stack, it is put on top, and only the top values
+          are used by the instructions. The stack currently has a maximum limit
+          of 1024 values. All instructions interact with the stack, but it can
+          be directly manipulated with instructions like{' '}
+          <RelativeLink to="#60" title="PUSH1" />,{' '}
           <RelativeLink to="#50" title="POP" />,{' '}
           <RelativeLink to="#80" title="DUP1" />, or{' '}
           <RelativeLink to="#90" title="SWAP1" />.
@@ -199,7 +198,7 @@ const AboutPage = () => {
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
           <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
           executes an Xcall instruction, it also creates an internal
-          transaction. As a result, when executing Xcall, there is a calldata
+          transaction. As a result, when executing xCALL, there is a calldata
           region in the new context.
         </p>
       </SectionWrapper>
@@ -364,12 +363,11 @@ const AboutPage = () => {
         </p>
         <p className="pb-6">
           When an address is accessed by a transaction, instruction, or used as
-          caller or callee, it is put in the access set. When an opcode accesses
-          an address that is not present in the set, it adds the address to the
-          set. Calling the opcode <RelativeLink to="#31" title="BALANCE" />, on
-          an address not present in an access set costs more than if the address
-          were already in the set. Other opcodes that can modify the access set
-          include <RelativeLink to="#3B" title="EXTCODESIZE" />,{' '}
+          caller or callee, it is put in the access set. Calling the opcode{' '}
+          <RelativeLink to="#31" title="BALANCE" />, on an address not present
+          in an access set costs more than if the address were already in the
+          set. Other opcodes that can modify the access set include{' '}
+          <RelativeLink to="#3B" title="EXTCODESIZE" />,{' '}
           <RelativeLink to="#3C" title="EXTCODECOPY" />,{' '}
           <RelativeLink to="#3F" title="EXTCODEHASH" />,{' '}
           <RelativeLink to="#F1" title="CALL" />,{' '}
