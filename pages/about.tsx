@@ -172,6 +172,7 @@ const AboutPage = () => {
             title="memory size calculations"
           />{' '}
           later in this document.
+        </p>
       </SectionWrapper>
 
       <SectionWrapper header={<H3>The Storage</H3>} anchorKey="storage">
