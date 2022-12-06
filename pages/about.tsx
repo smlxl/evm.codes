@@ -72,11 +72,10 @@ const AboutPage = () => {
           ) is a stack-based computer, responsible for the execution of smart
           contract instructions. All EVM instructions take their parameter from
           the stack, except for <RelativeLink to="#60" title="PUSHx" />, which
-          takes their parameters from the code, which allows them to write
-          their. Each instruction has stack inputs, the parameters that they may
-          need, stack outputs, and their return values. The list of these
-          instructions, with their opcodes, is accessible in our{' '}
-          <RelativeLink title="reference" />.
+          takes their parameters from the code. Each instruction has stack
+          inputs, the parameters that they may need, stack outputs, and their
+          return values. The list of these instructions, with their opcodes, is
+          accessible in our <RelativeLink title="reference" />.
         </p>
         <p className="pb-8">
           <H3>What is a smart contract?</H3>A smart contract is a set of
@@ -160,10 +159,9 @@ const AboutPage = () => {
 
       <SectionWrapper header={<H3>The Memory</H3>} anchorKey="memory">
         <p className="pb-8">
-          Unlike EVM code, EVM memory is only accessible during smart contract
-          execution. Memory is not persistent, and ceases at the end of the call
-          context. At the start of a call context, memory is initialized to 0.
-          Reading and Writing from memory is usually done with{' '}
+           EVM memory memory is not persistent, and is destroyed at the end of
+          the call context. At the start of a call context, memory is
+          initialized to 0. Reading and Writing from memory is usually done with{' '}
           <RelativeLink to="#51" title="MLOAD" /> and{' '}
           <RelativeLink to="#52" title="MSTORE" /> instructions respectively,
           but can also be accessed by other instructions like{' '}
@@ -174,20 +172,18 @@ const AboutPage = () => {
             title="memory size calculations"
           />{' '}
           later in this document.
-        </p>
       </SectionWrapper>
 
       <SectionWrapper header={<H3>The Storage</H3>} anchorKey="storage">
         <p className="pb-8">
           Storage is a map of 32-byte slots to 32-byte values. Storage is the
           persistent memory of smart contracts: each value written by the
-          contract is retained past the completion of a function call, unless
-          its value is changed to 0, or the{' '}
-          <RelativeLink to="#FF" title="SELFDESTRUCT" /> instruction is
-          executed. Reading stored bytes from an unwritten key also returns 0.
-          Each contract has its own storage, and cannot read or modify storage
-          from another contract. Storage is read and written with instructions{' '}
-          <RelativeLink to="#54" title="SLOAD" /> and{' '}
+          contract is retained past the completion of a call, unless its value
+          is changed to 0, or the <RelativeLink to="#FF" title="SELFDESTRUCT" />{' '}
+          instruction is executed. Reading stored bytes from an unwritten key
+          also returns 0. Each contract has its own storage, and cannot read or
+          modify storage from another contract. Storage is read and written with
+          instructions <RelativeLink to="#54" title="SLOAD" /> and{' '}
           <RelativeLink to="#55" title="SSTORE" />.
         </p>
       </SectionWrapper>
@@ -196,13 +192,16 @@ const AboutPage = () => {
         <p className="pb-8">
           The calldata region is the data sent to a transaction as part of a
           smart contract transaction. For example, when creating a contract,
-          calldata would be the constructor code of the new contract.
-          Transaction calldata is immutable, and can be read with instructions{' '}
+          calldata would be the constructor code of the new contract. It is
+          important to note that when a contract executes an xCALL instruction,
+          it also creates an internal transaction, with a resulting calldata
+          region in the new context. Transaction calldata is immutable, and can
+          be read with instructions{' '}
           <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
           <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
           executes an Xcall instruction, it also creates an internal
-          transaction. As a result, when executing xCALL, there is a calldata
+          transaction. As a result, when executing Xcall, there is a calldata
           region in the new context.
         </p>
       </SectionWrapper>
@@ -255,8 +254,18 @@ const AboutPage = () => {
             <br></br>
             <li>
               <b>Opcode Fixed Execution Cost</b> : Each opcode has a fixed cost
-              to be paid upon execution. This cost is the same for all
-              executions, though this is subject to change in new hardforks.
+              to be paid upon execution, measured in gas. This cost is the same
+              for all executions, though this is subject to change in new
+              hardforks. See our
+              <a
+                href="https://www.evm.codes/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
+                reference
+              </a>{' '}
+              to learn about the specific costs per opcode and fork.
             </li>
             <br></br>
             <li>
