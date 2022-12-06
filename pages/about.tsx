@@ -75,7 +75,7 @@ const AboutPage = () => {
           take their parameters from the code, which allows them to write their
           results to memory or storage, emit a log, or conduct a call. Each
           instruction has stack inputs, the parameters that they may need, stack
-          outputs, and their return values. The list of these instructions, with
+          outputs, their return values. The list of these instructions, with
           their opcodes, is accessible in our <RelativeLink title="reference" />
           .
         </p>
