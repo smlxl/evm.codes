@@ -238,17 +238,19 @@ const AboutPage = () => {
             <br></br>
             <li>
               <b>Calldata size:</b> Each calldata byte costs gas, the larger the
-              size of the transaction data, the higher the gas fees.
+              size of the transaction data, the higher the gas fees. Calldata
+              costs 4 gas per byte equal to 0, and 16 gas for the others (64
+              before the hardfork Istanbul).
             </li>
             <br></br>
             <li>
               {' '}
               <b>Intrinsic Gas</b>: Each transaction has an intrinsic cost of
               21000 gas. Creating a contract costs 32000 gas, on top of the
-              transaction cost. Calldata costs 4 gas per byte equal to 0, and 16
-              gas for the others (64 before the hardfork <b>Istanbul</b>). This
-              cost is paid from the transaction before any opcode or Ethereum transfer
-              execution.
+              transaction cost. Again: calldata costs 4 gas per byte equal to 0,
+              and 16 gas for the others (64 before the hardfork <b>Istanbul</b>
+              ). This cost is paid from the transaction before any opcode or
+              transfer execution.
             </li>
             <br></br>
             <li>
