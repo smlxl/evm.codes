@@ -71,13 +71,12 @@ const AboutPage = () => {
           </a>
           ) is a stack-based computer, responsible for the execution of smart
           contract instructions. All EVM instructions take their parameter from
-          the stack, except for <RelativeLink to="#60" title="PUSHx" />. PUSHx
-          take their parameters from the code, which allows them to write their
-          results to memory or storage, emit a log, or conduct a call. Each
-          instruction has stack inputs, the parameters that they may need, stack
-          outputs, their return values. The list of these instructions, with
-          their opcodes, is accessible in our <RelativeLink title="reference" />
-          .
+          the stack, except for <RelativeLink to="#60" title="PUSHx" />, which
+          takes their parameters from the code, which allows them to write
+          their. Each instruction has stack inputs, the parameters that they may
+          need, stack outputs, and their return values. The list of these
+          instructions, with their opcodes, is accessible in our{' '}
+          <RelativeLink title="reference" />.
         </p>
         <p className="pb-8">
           <H3>What is a smart contract?</H3>A smart contract is a set of
@@ -169,7 +168,12 @@ const AboutPage = () => {
           <RelativeLink to="#52" title="MSTORE" /> instructions respectively,
           but can also be accessed by other instructions like{' '}
           <RelativeLink to="#F0" title="CREATE" /> or{' '}
-          <RelativeLink to="#F3" title="EXTCODECOPY" />.
+          <RelativeLink to="#F3" title="EXTCODECOPY" />. We discuss{' '}
+          <RelativeLink
+            to="about#memoryexpansion"
+            title="memory size calculations"
+          />{' '}
+          later in this document.
         </p>
       </SectionWrapper>
 
@@ -357,9 +361,15 @@ const AboutPage = () => {
 
       <SectionWrapper header={<H3>Access Sets</H3>} anchorKey="accesssets">
         <p className="pb-6">
-          Access sets are defined per transaction, and not per call. Access sets
-          can be thought of as two independent types of lists: those of touch
-          contract addresses, and those of touched contract storage slots.
+          Access sets are defined per transaction, and not per call. Each
+          transaction may be defined by some combination of its sender,
+          calldata, or callee. Transactions can either be external or internal.
+          External transactions are sent to the Ethereum network. Internal
+          transactions are external transactions that have executed the xCALLx
+          instruction. As such, internal transactions are also known as calls.
+          Access sets can be thought of as two independent types of lists: those
+          of touch contract addresses, and those of touched contract storage
+          slots.
         </p>
         <p className="pb-6">
           When an address is accessed by a transaction, instruction, or used as
