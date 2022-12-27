@@ -85,6 +85,9 @@ const Editor = ({ readOnly = false }: Props) => {
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
+  const [timeOutId, setTimeOutId] = useState<NodeJS.Timeout | undefined>(
+    undefined,
+  )
   const [compiling, setIsCompiling] = useState(false)
   const [codeType, setCodeType] = useState<string | undefined>()
   const [codeModified, setCodeModified] = useState(false)
@@ -271,9 +274,42 @@ const Editor = ({ readOnly = false }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vmError])
 
+  const validateBytecode = (bytecode: string) => {
+    if (bytecode.length % 2 !== 0) {
+      log('There should be at least 2 characters per byte', 'error')
+      return
+    }
+    if (!isHex(bytecode)) {
+      log('Only hexadecimal characters are allowed', 'error')
+      return
+    }
+  }
+
   const handleCodeChange = (value: string) => {
     setCode(value)
     setCodeModified(true)
+
+    try {
+      if (codeType === CodeType.Bytecode) {
+        const concatCode = value
+          .replaceAll(/\/\/.*$/gm, '')
+          .replaceAll(/;.*$/gm, '')
+          .replaceAll(/#.*$/gm, '')
+          .replaceAll(/\s/gm, '')
+        console.log(`|${concatCode}|`)
+
+        if (timeOutId) {
+          clearTimeout(timeOutId)
+          setTimeOutId(undefined)
+        }
+        setTimeOutId(setTimeout(() => validateBytecode(concatCode), 1000))
+
+        loadInstructions(concatCode)
+        // startExecution(value, _callValue, _callData)
+      }
+    } catch (error) {
+      log((error as Error).message, 'error')
+    }
   }
 
   const highlightCode = (value: string) => {
@@ -281,14 +317,13 @@ const Editor = ({ readOnly = false }: Props) => {
       return value
     }
 
+    if (codeType === CodeType.Bytecode) {
+      return codeHighlight(value, codeType).value
+    }
     return codeHighlight(value, codeType)
       .value.split('\n')
       .map((line, i) => `<span class='line-number'>${i + 1}</span>${line}`)
       .join('\n')
-  }
-
-  const highlightBytecode = (value: string) => {
-    return value
   }
 
   const handleCodeTypeChange = (option: OnChangeValue<any, any>) => {
@@ -445,7 +480,7 @@ const Editor = ({ readOnly = false }: Props) => {
                 value={code}
                 readOnly={readOnly}
                 onValueChange={handleCodeChange}
-                highlight={isBytecode ? highlightBytecode : highlightCode}
+                highlight={highlightCode}
                 tabSize={4}
                 className={cn('code-editor', {
                   'with-numbers': !isBytecode,

@@ -1,6 +1,7 @@
 import hljs from 'highlight.js/lib/core'
 import hljsDefineSolidity from 'highlightjs-solidity'
 
+import hljsDefineBytecode from '../bytecode.js'
 import hljsDefineMnemonic from '../mnemonic.js'
 
 const reHex = /^[0-9a-fA-F]+$/
@@ -9,6 +10,7 @@ const reFullHex = /^(0x|0X)([0-9a-fA-F][0-9a-fA-F])+$/
 // Add Solidity to Highlight
 hljsDefineSolidity(hljs)
 hljs.registerLanguage('mnemonic', hljsDefineMnemonic)
+hljs.registerLanguage('bytecode', hljsDefineBytecode)
 
 /**
  * Checks whether text is empty.
