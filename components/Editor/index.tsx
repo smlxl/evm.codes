@@ -285,26 +285,29 @@ const Editor = ({ readOnly = false }: Props) => {
     }
   }
 
+  const stripBytecode = (value: string) => {
+    return value
+      .replaceAll(/\/\/.*$/gm, '')
+      .replaceAll(/;.*$/gm, '')
+      .replaceAll(/#.*$/gm, '')
+      .replaceAll(/\s/gm, '')
+  }
+
   const handleCodeChange = (value: string) => {
     setCode(value)
     setCodeModified(true)
 
     try {
       if (codeType === CodeType.Bytecode) {
-        const concatCode = value
-          .replaceAll(/\/\/.*$/gm, '')
-          .replaceAll(/;.*$/gm, '')
-          .replaceAll(/#.*$/gm, '')
-          .replaceAll(/\s/gm, '')
-        console.log(`|${concatCode}|`)
+        const cleanBytecode = stripBytecode(value)
 
         if (timeOutId) {
           clearTimeout(timeOutId)
           setTimeOutId(undefined)
         }
-        setTimeOutId(setTimeout(() => validateBytecode(concatCode), 1000))
+        setTimeOutId(setTimeout(() => validateBytecode(cleanBytecode), 1000))
 
-        loadInstructions(concatCode)
+        loadInstructions(cleanBytecode)
         // startExecution(value, _callValue, _callData)
       }
     } catch (error) {
@@ -384,16 +387,17 @@ const Editor = ({ readOnly = false }: Props) => {
         loadInstructions(bytecode)
         startExecution(bytecode, _callValue, _callData)
       } else if (codeType === CodeType.Bytecode) {
-        if (code.length % 2 !== 0) {
+        const cleanBytecode = stripBytecode(code)
+        if (cleanBytecode.length % 2 !== 0) {
           log('There should be at least 2 characters per byte', 'error')
           return
         }
-        if (!isHex(code)) {
+        if (!isHex(cleanBytecode)) {
           log('Only hexadecimal characters are allowed', 'error')
           return
         }
-        loadInstructions(code)
-        startExecution(code, _callValue, _callData)
+        loadInstructions(cleanBytecode)
+        startExecution(cleanBytecode, _callValue, _callData)
       } else {
         setIsCompiling(true)
         log('Starting compilation...')
