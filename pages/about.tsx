@@ -201,8 +201,8 @@ const AboutPage = () => {
           <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
           <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
-          executes an Xcall instruction, it also creates an internal
-          transaction. As a result, when executing Xcall, there is a calldata
+          executes an xCALL instruction, it also creates an internal
+          transaction. As a result, when executing xCALL, there is a calldata
           region in the new context.
         </p>
       </SectionWrapper>
