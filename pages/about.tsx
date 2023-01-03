@@ -196,9 +196,8 @@ const AboutPage = () => {
           calldata would be the constructor code of the new contract. It is
           important to note that when a contract executes an xCALL instruction,
           it also creates an internal transaction, with a resulting calldata
-          region in the new context. Calldata is immutable, and can
-          be read with instructions{' '}
-          <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
+          region in the new context. Calldata is immutable, and can be read with
+          instructions <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
           <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
           executes an xCALL instruction, it also creates an internal
@@ -373,11 +372,11 @@ const AboutPage = () => {
 
       <SectionWrapper header={<H3>Access Sets</H3>} anchorKey="accesssets">
         <p className="pb-6">
-          Access sets are defined per transaction, and not per call. Each
-          transaction may be defined by some combination of its sender,
+          Access sets are defined per external transaction, and not per call.
+          Each transaction may be defined by some combination of its sender,
           calldata, or callee. Transactions can either be external or internal.
           External transactions are sent to the Ethereum network. Internal
-          transactions are external transactions that have executed the xCALLx
+          transactions are external transactions that have executed the xCALL
           instruction. As such, internal transactions are also known as calls.
           Access sets can be thought of as two independent types of lists: those
           of touch contract addresses, and those of touched contract storage
