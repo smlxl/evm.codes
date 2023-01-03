@@ -196,7 +196,7 @@ const AboutPage = () => {
           calldata would be the constructor code of the new contract. It is
           important to note that when a contract executes an xCALL instruction,
           it also creates an internal transaction, with a resulting calldata
-          region in the new context. Transaction calldata is immutable, and can
+          region in the new context. Calldata is immutable, and can
           be read with instructions{' '}
           <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
