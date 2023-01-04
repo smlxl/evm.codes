@@ -128,13 +128,14 @@ const AboutPage = () => {
       <SectionWrapper header={<H3>The Program Counter</H3>} anchorKey="counter">
         <p className="pb-8">
           The Program Counter (PC) encodes which instruction, stored in the
-          code, should be read by the EVM sequentially. The program counter
-          usually offsets by the code region by one byte, with some exceptions.
-          For instance, the <RelativeLink to="#60" title="PUSHx" /> instruction
-          are longer than a single byte, and causes the PC to skip their
-          parameter. The <RelativeLink to="#56" title="JUMP" /> instruction does
-          not increase the PC's value, instead, it modifies the program counter
-          to a position specified by the top of the stack.{' '}
+          code, should be read by the EVM sequentially. The program counter is
+          usually incremented by one byte, to point to the following
+          instruction, with some exceptions. For instance, the{' '}
+          <RelativeLink to="#60" title="PUSHx" /> instruction is longer than a
+          single byte, and causes the PC to skip their parameter. The{' '}
+          <RelativeLink to="#56" title="JUMP" /> instruction does not increase
+          the PC's value, instead, it modifies the program counter to a position
+          specified by the top of the stack.{' '}
           <RelativeLink to="#57" title="JUMPI" /> does this as well, if its
           condition is true (a nonzero code value), otherwise it increments the
           PC like other instructions.
