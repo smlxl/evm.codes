@@ -25,7 +25,7 @@ The core of the application is an [context/ethereumContext.tsx](../context/ether
 
 ## MDX docs
 
-The Opcodes reference table relies on the [MDX](https://mdxjs.com/) powered [docs/opcodes](../docs/opcodes), in order to to build dynamic documentation for each opcode. It follows a standard [markdown syntax](https://daringfireball.net/projects/markdown/syntax) with a few customizations, implemented by the [components/Reference/DocRow.tsx](../components/Reference/DocRow.tsx) and [components/ui/Doc.tsx](../components/ui/Doc.tsx) components:
+The Opcodes reference table relies on the [MDX](https://mdxjs.com/) powered [docs/opcodes](../docs/opcodes), in order to build dynamic documentation for each opcode. It follows a standard [markdown syntax](https://daringfireball.net/projects/markdown/syntax) with a few customizations, implemented by the [components/Reference/DocRow.tsx](../components/Reference/DocRow.tsx) and [components/ui/Doc.tsx](../components/ui/Doc.tsx) components:
 
 - Supported page metadata (labels shown in the beginning of the doc) are: `fork`, `group`.
 - Adding `*` in the markdown table header or column, leaves a borderless gap between the columns.
