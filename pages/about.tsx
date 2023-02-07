@@ -257,7 +257,7 @@ const AboutPage = () => {
               <b>Opcode Fixed Execution Cost</b> : Each opcode has a fixed cost
               to be paid upon execution, measured in gas. This cost is the same
               for all executions, though this is subject to change in new
-              hardforks. See our
+              hardforks. See our{' '}
               <a
                 href="https://www.evm.codes/"
                 target="_blank"
