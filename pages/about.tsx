@@ -258,6 +258,7 @@ const AboutPage = () => {
               to be paid upon execution, measured in gas. This cost is the same
               for all executions, though this is subject to change in new
               hardforks. See our
+              {' '}
               <a
                 href="https://www.evm.codes/"
                 target="_blank"
