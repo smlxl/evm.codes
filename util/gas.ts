@@ -578,12 +578,14 @@ export const calculatePrecompiledDynamicFee = (
       }
 
       if (common.gteHardfork('berlin')) {
-        result.imul(multComplexityEIP2565(maxLen)).divn(Gquaddivisor)
+        result.imul(multComplexityEIP2565(maxLen))
+	 result = result.divn(Gquaddivisor)
         if (result.ltn(200)) {
           result = new BN(200)
         }
       } else {
-        result.imul(multComplexity(maxLen)).divn(Gquaddivisor)
+        result.imul(multComplexity(maxLen))
+	 result = result.divn(Gquaddivisor)
       }
       break
     }
