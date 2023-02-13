@@ -357,7 +357,7 @@ const AboutPage = () => {
 
         <p className="pb-8">
           The <code>memory_byte_size</code> can be obtained with opcode{' '}
-          <RelativeLink to="#59" title="MSIZE" />. The cost of memory expansiont
+          <RelativeLink to="#59" title="MSIZE" />. The cost of memory expansion
           triggered by <RelativeLink to="#59" title="MSIZE" /> grows
           quadratically, disincentivizing the overuse of memory by making higher
           offsets more costly. Any opcode that accesses memory may trigger an
