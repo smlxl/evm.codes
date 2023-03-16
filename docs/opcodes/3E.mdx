@@ -48,4 +48,5 @@ A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL]
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- Reading offset equal of higher than [RETURNDATASIZE](#3D).
+- The addition `offset` + `size` overflows.
+- `offset` + `size` is larger than [RETURNDATASIZE](#3D).
