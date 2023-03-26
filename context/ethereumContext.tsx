@@ -252,6 +252,14 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
           value: byteCode.slice(i + 2, i + 2 + count),
         })
         i += count
+      } else if (
+        selectedFork?.name === mergeHardforkName &&
+        opcode.fullName === 'DIFFICULTY'
+      ) {
+        instructions.push({
+          id,
+          name: 'PREVRANDAO',
+        })
       } else {
         instructions.push({
           id,
