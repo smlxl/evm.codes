@@ -39,7 +39,7 @@ const columns = (isPrecompiled: boolean) => [
     className: 'hidden lg:table-cell',
   },
   {
-    Header: !isPrecompiled ? 'Stack Ouput' : 'Output',
+    Header: !isPrecompiled ? 'Stack Output' : 'Output',
     accessor: 'output',
     Cell: ({ value }: { value: string }) => (
       <StackBox
