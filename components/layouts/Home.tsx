@@ -14,11 +14,6 @@ const HomeLayout: NextPage = ({ children }) => {
         <title>
           EVM Codes - An Ethereum Virtual Machine Opcodes Interactive Reference
         </title>
-        <h1>
-          EVM Codes is a free, open-source, interactive reference of Ethereum
-          Virtual Machine Opcodes. Learn how the EVM interprets your code with
-          our interactive playground.
-        </h1>
         <meta property="og:type" content="website" />
         <meta property="og:title" content="EVM Codes" />
         <meta
