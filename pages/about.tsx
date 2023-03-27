@@ -515,6 +515,18 @@ const AboutPage = () => {
             for more writeups about the EVM, and other blockchain concepts.
           </p>
         </em>
+        <em>
+          Check out{' '}
+          <a
+            href="https://blog.smlxl.io/"
+            target="_blank"
+            rel="noreferrer"
+            className="underline"
+          >
+            our blog
+          </a>{' '}
+          for more writeups about the EVM, and other blockchain concepts.
+        </em>
       </SectionWrapper>
     </Container>
   )
