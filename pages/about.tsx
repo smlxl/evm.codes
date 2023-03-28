@@ -194,16 +194,14 @@ const AboutPage = () => {
         <p className="pb-8">
           The calldata region is the data sent to a transaction as part of a
           smart contract transaction. For example, when creating a contract,
-          calldata would be the constructor code of the new contract. It is
-          important to note that when a contract executes an xCALL instruction,
-          it also creates an internal transaction, with a resulting calldata
-          region in the new context. Calldata is immutable, and can be read with
-          instructions <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
+          calldata would be the constructor code of the new contract. Calldata
+          is immutable, and can be read with instructions{' '}
+          <RelativeLink to="#35" title="CALLDATALOAD" />,{' '}
           <RelativeLink to="#36" title="CALLDATASIZE" />, and{' '}
-          <RelativeLink to="#37" title="CALLDATACOPY" />. When a contract
-          executes an xCALL instruction, it also creates an internal
-          transaction. As a result, when executing xCALL, there is a calldata
-          region in the new context.
+          <RelativeLink to="#37" title="CALLDATACOPY" />. It is important to
+          note that when a contract executes an xCALL instruction, it also
+          creates an internal transaction. As a result, when executing xCALL,
+          there is a calldata region in the new context.
         </p>
       </SectionWrapper>
 
