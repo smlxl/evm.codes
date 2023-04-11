@@ -18,8 +18,8 @@ module.exports = withPlausibleProxy()({
       include: [dir],
       use: [
         defaultLoaders.babel,
-        { loader: 'ts-loader', options: { transpileOnly: true } }
-      ]
+        { loader: 'ts-loader', options: { transpileOnly: true } },
+      ],
     })
 
     config.resolve.fallback = {
