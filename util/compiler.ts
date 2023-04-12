@@ -2,8 +2,8 @@ import { BN } from 'ethereumjs-util'
 import { IInstruction, IReferenceItem } from 'types'
 
 // Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
-export const compilerSemVer = 'v0.8.17'
-export const compilerVersion = `soljson-${compilerSemVer}+commit.8df45f5f`
+export const compilerSemVer = 'v0.8.19'
+export const compilerVersion = `soljson-${compilerSemVer}+commit.7dd6d404`
 
 /**
  * Gets target EVM version from a hardfork name
@@ -73,7 +73,7 @@ export const getBytecodeFromMnemonic = (
       continue
     }
 
-    if (line.startsWith('PUSH')) {
+    if (line !== 'PUSH0' && line.startsWith('PUSH')) {
       const parts = line.split(/\s+/)
 
       if (parts.length !== 2) {

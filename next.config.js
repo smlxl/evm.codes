@@ -5,7 +5,6 @@ const { withPlausibleProxy } = require('next-plausible')
 
 module.exports = withPlausibleProxy()({
   reactStrictMode: true,
-  webpack5: true,
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
@@ -18,8 +17,8 @@ module.exports = withPlausibleProxy()({
       include: [dir],
       use: [
         defaultLoaders.babel,
-        { loader: 'ts-loader', options: { transpileOnly: true } }
-      ]
+        { loader: 'ts-loader', options: { transpileOnly: true } },
+      ],
     })
 
     config.resolve.fallback = {

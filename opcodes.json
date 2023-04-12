@@ -761,8 +761,8 @@
   },
   "5f": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "0",
+    "description": "Place value 0 on stack"
   },
   "60": {
     "input": "",
