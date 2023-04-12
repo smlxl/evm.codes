@@ -14,7 +14,7 @@ evm.codes is brought to you by [smlXL](https://www.smlxl.io), powered by open-so
 
 The app requires the following dependencies:
 
-- [NodeJS](https://nodejs.org/) >= 14
+- [NodeJS](https://nodejs.org/) >= 18
 - [Yarn](https://yarnpkg.com/)
 
 ## 👩‍💻 Local Development

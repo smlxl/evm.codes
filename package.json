@@ -81,8 +81,5 @@
     "ts-loader": "^9.3.1",
     "typescript": "^4.4.4",
     "webpack": "^5.74.0"
-  },
-  "resolutions": {
-    "@ethereumjs/util": "8.0.2"
   }
 }

@@ -1575,15 +1575,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethereumjs/rlp@npm:^4.0.0-beta.2":
-  version: 4.0.0
-  resolution: "@ethereumjs/rlp@npm:4.0.0"
-  bin:
-    rlp: bin/rlp
-  checksum: 407dfb8b1e09b4282e6be561e8d74f8939da78f460c08456c7ba2fb273fc42ee16027955a07085abfd7600ffb466c4c4add159885e67abb91bc85db9dd81ffb5
-  languageName: node
-  linkType: hard
-
 "@ethereumjs/rlp@npm:^4.0.1":
   version: 4.0.1
   resolution: "@ethereumjs/rlp@npm:4.0.1"
@@ -1639,14 +1630,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethereumjs/util@npm:8.0.2":
-  version: 8.0.2
-  resolution: "@ethereumjs/util@npm:8.0.2"
+"@ethereumjs/util@npm:^8.0.4, @ethereumjs/util@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "@ethereumjs/util@npm:8.0.5"
   dependencies:
-    "@ethereumjs/rlp": ^4.0.0-beta.2
-    async: ^3.2.4
+    "@chainsafe/ssz": 0.9.4
+    "@ethereumjs/rlp": ^4.0.1
     ethereum-cryptography: ^1.1.2
-  checksum: 652a40f9dffb9ed749c8adff21c924dec7a6d38129e480ab35ae2e56644bb6e49fcdb5f0cd0451fb6878de7e16cf117e87e34ba01f311bf216b4a8dd5b23aa90
+  checksum: 318386785295b4584289b1aa576d2621392b3a918d127890db62d3f74184f3377694dd9e951e19bfb9ab80e8dc9e38e180236cac2651dead26097d10963731f9
   languageName: node
   linkType: hard
 
@@ -3510,13 +3501,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "async@npm:3.2.4"
-  checksum: 43d07459a4e1d09b84a20772414aa684ff4de085cbcaec6eea3c7a8f8150e8c62aa6cd4e699fe8ee93c3a5b324e777d34642531875a0817a35697522c1b02e89
-  languageName: node
-  linkType: hard
-
 "autoprefixer@npm:^10.4.7":
   version: 10.4.7
   resolution: "autoprefixer@npm:10.4.7"
@@ -4130,9 +4114,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001283, caniuse-lite@npm:^1.0.30001335, caniuse-lite@npm:^1.0.30001400":
-  version: 1.0.30001400
-  resolution: "caniuse-lite@npm:1.0.30001400"
-  checksum: 984e29d3c02fd02a59cc92ef4a5e9390fce250de3791056362347cf901f0d91041246961a57cfa8fed800538d03ee341bc4f7eaed19bf7be0ef8a181d94cd848
+  version: 1.0.30001478
+  resolution: "caniuse-lite@npm:1.0.30001478"
+  checksum: 27a370dcb32a6a35e186307aabc570da1cd0fccc849913665e7df6822a87286de99509b163304e0586c23c539a991717fb68ed84b85bbd21b2cb86475ae5ffb2
   languageName: node
   linkType: hard
 

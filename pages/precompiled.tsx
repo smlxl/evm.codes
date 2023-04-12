@@ -5,10 +5,10 @@ import React, { useContext, useEffect } from 'react'
 
 import matter from 'gray-matter'
 import type { NextPage } from 'next'
-import { serialize } from 'next-mdx-remote/serialize'
 import getConfig from 'next/config'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { serialize } from 'next-mdx-remote/serialize'
 import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
