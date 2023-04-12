@@ -1364,6 +1364,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@browserify/envify@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@browserify/envify@npm:6.0.0"
+  dependencies:
+    acorn-node: ^2.0.1
+    dash-ast: ^2.0.1
+    multisplice: ^1.0.0
+    through2: ^4.0.2
+  bin:
+    envify: bin/envify
+  checksum: e3daa200759c5f8c4b248d9b97641613f604d2bed049dd9f2758ff0863a8d723f679ef0a1fb319f89c15d910bbef5f04153be294f922fe803ba9637acc14d135
+  languageName: node
+  linkType: hard
+
+"@browserify/uglifyify@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@browserify/uglifyify@npm:6.0.0"
+  dependencies:
+    convert-source-map: ^1.9.0
+    minimatch: ^3.0.2
+    terser: ^5.15.1
+    through2: ^4.0.2
+    xtend: ^4.0.1
+  checksum: d0a797b7f550f5a28954a67cd65f4af6d77777cf30bf8aec06c328ac91fb94b77085de3d8218c721558224551a7e5117b794f83a672fa11104aefbf8eeb4f1c8
+  languageName: node
+  linkType: hard
+
 "@chainsafe/as-sha256@npm:^0.3.1":
   version: 0.3.1
   resolution: "@chainsafe/as-sha256@npm:0.3.1"
@@ -2071,7 +2098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@goto-bus-stop/common-shake@npm:^2.2.0":
+"@goto-bus-stop/common-shake@npm:^2.3.0":
   version: 2.4.0
   resolution: "@goto-bus-stop/common-shake@npm:2.4.0"
   dependencies:
@@ -2079,20 +2106,6 @@ __metadata:
     debug: ^3.2.6
     escope: ^3.6.0
   checksum: 3087588eea489814c10d704706762044e002711c31f613a748c47247e4b75328bc7cbe171247356d6468fa76945d44cdf591bbd5c882e39666132bea2b766ab5
-  languageName: node
-  linkType: hard
-
-"@goto-bus-stop/envify@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@goto-bus-stop/envify@npm:5.0.0"
-  dependencies:
-    acorn-node: ^2.0.1
-    dash-ast: ^2.0.1
-    multisplice: ^1.0.0
-    through2: ^2.0.5
-  bin:
-    envify: bin/envify
-  checksum: 80d8e3205e931873d9bee134457361a4f82d8f0c3114434cd8137234a87532fec3ca122dcc1e225edbf18863bfe2b58201aa48ee2f5a9105ade661670548da88
   languageName: node
   linkType: hard
 
@@ -3223,21 +3236,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^5.1.0":
-  version: 5.7.4
-  resolution: "acorn@npm:5.7.4"
-  bin:
-    acorn: bin/acorn
-  checksum: f51392a4d25c7705fadb890f784c59cde4ac1c5452ccd569fa59bd2191b7951b4a6398348ab7ea08a54f0bc0a56c13776710f4e1bae9de441e4d33e2015ad1e0
-  languageName: node
-  linkType: hard
-
 "acorn@npm:^7.0.0, acorn@npm:^7.1.1, acorn@npm:^7.4.0":
   version: 7.4.1
   resolution: "acorn@npm:7.4.1"
   bin:
     acorn: bin/acorn
   checksum: 1860f23c2107c910c6177b7b7be71be350db9e1080d814493fae143ae37605189504152d1ba8743ba3178d0b37269ce1ffc42b101547fdc1827078f82671e407
+  languageName: node
+  linkType: hard
+
+"acorn@npm:^8.0.0":
+  version: 8.8.2
+  resolution: "acorn@npm:8.8.2"
+  bin:
+    acorn: bin/acorn
+  checksum: f790b99a1bf63ef160c967e23c46feea7787e531292bb827126334612c234ed489a0dc2c7ba33156416f0ffa8d25bf2b0fdb7f35c2ba60eb3e960572bece4001
   languageName: node
   linkType: hard
 
@@ -4088,17 +4101,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"call-matcher@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "call-matcher@npm:2.0.0"
-  dependencies:
-    deep-equal: ^1.0.0
-    espurify: ^2.0.0
-    estraverse: ^4.0.0
-  checksum: b0c65d6839a41136ad2780dfc2a2e63e94b6c9fe5f3cf666e79d047333dc0c65606f94c00af6bcf7c760196eafdbc051c8d3295d8bfb5c5a8cf0308b1ee6fd23
-  languageName: node
-  linkType: hard
-
 "callsites@npm:^3.0.0":
   version: 3.1.0
   resolution: "callsites@npm:3.1.0"
@@ -4334,23 +4336,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.19.0, commander@npm:^2.20.0":
+"commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
   checksum: ab8c07884e42c3a8dbc5dd9592c606176c7eb5c1ca5ff274bcf907039b2c41de3626f684ea75ccf4d361ba004bbaff1f577d5384c155f3871e456bdf27becf9e
   languageName: node
   linkType: hard
 
-"common-shakeify@npm:^0.6.0":
-  version: 0.6.2
-  resolution: "common-shakeify@npm:0.6.2"
+"commander@npm:~2.17.1":
+  version: 2.17.1
+  resolution: "commander@npm:2.17.1"
+  checksum: 22e7ed5b422079a13a496e5eb8f73f36c15b5809d46f738e168e20f9ad485c12951bdc2cb366a36eb5f4927dae4f17b355b8adb96a5b9093f5fa4c439e8b9419
+  languageName: node
+  linkType: hard
+
+"common-shakeify@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "common-shakeify@npm:1.1.2"
   dependencies:
-    "@goto-bus-stop/common-shake": ^2.2.0
+    "@goto-bus-stop/common-shake": ^2.3.0
     convert-source-map: ^1.5.1
     through2: ^2.0.3
     transform-ast: ^2.4.3
     wrap-comment: ^1.0.1
-  checksum: 8e8facd924bd8a37422d00ce2dbbffc84d24099272fd7e6c1da1520e872af48922fa05d90976e7354e33a54b437450747d0eca0082cea0eb9d8065529f9faf33
+  checksum: adf19a21c765a9ba4d8572b19dd16640aaf07e8f2711fc1b556cc3c971d5fb21afd3e9d0b36e8a179af668a42e5333e004af517b2c3089b1e5944ee3959a58ff
   languageName: node
   linkType: hard
 
@@ -4405,6 +4414,13 @@ __metadata:
   dependencies:
     safe-buffer: ~5.1.1
   checksum: 985d974a2d33e1a2543ada51c93e1ba2f73eaed608dc39f229afc78f71dcc4c8b7d7c684aa647e3c6a3a204027444d69e53e169ce94e8d1fa8d7dee80c9c8fed
+  languageName: node
+  linkType: hard
+
+"convert-source-map@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "convert-source-map@npm:1.9.0"
+  checksum: dc55a1f28ddd0e9485ef13565f8f756b342f9a46c4ae18b843fe3c30c675d058d6a4823eff86d472f187b176f0adf51ea7b69ea38be34be4a63cbbf91b0593c8
   languageName: node
   linkType: hard
 
@@ -4601,20 +4617,6 @@ __metadata:
   version: 0.7.0
   resolution: "dedent@npm:0.7.0"
   checksum: 87de191050d9a40dd70cad01159a0bcf05ecb59750951242070b6abf9569088684880d00ba92a955b4058804f16eeaf91d604f283929b4f614d181cd7ae633d2
-  languageName: node
-  linkType: hard
-
-"deep-equal@npm:^1.0.0":
-  version: 1.1.1
-  resolution: "deep-equal@npm:1.1.1"
-  dependencies:
-    is-arguments: ^1.0.4
-    is-date-object: ^1.0.1
-    is-regex: ^1.0.4
-    object-is: ^1.0.1
-    object-keys: ^1.1.1
-    regexp.prototype.flags: ^1.2.0
-  checksum: f92686f2c5bcdf714a75a5fa7a9e47cb374a8ec9307e717b8d1ce61f56a75aaebf5619c2a12b8087a705b5a2f60d0292c35f8b58cb1f72e3268a3a15cab9f78d
   languageName: node
   linkType: hard
 
@@ -5019,12 +5021,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escodegen@npm:^1.6.1":
-  version: 1.14.3
-  resolution: "escodegen@npm:1.14.3"
+"escodegen@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "escodegen@npm:2.0.0"
   dependencies:
     esprima: ^4.0.1
-    estraverse: ^4.2.0
+    estraverse: ^5.2.0
     esutils: ^2.0.2
     optionator: ^0.8.1
     source-map: ~0.6.1
@@ -5034,7 +5036,7 @@ __metadata:
   bin:
     escodegen: bin/escodegen.js
     esgenerate: bin/esgenerate.js
-  checksum: 381cdc4767ecdb221206bbbab021b467bbc2a6f5c9a99c9e6353040080bdd3dfe73d7604ad89a47aca6ea7d58bc635f6bd3fbc8da9a1998e9ddfa8372362ccd0
+  checksum: 5aa6b2966fafe0545e4e77936300cc94ad57cfe4dc4ebff9950492eaba83eef634503f12d7e3cbd644ecc1bab388ad0e92b06fd32222c9281a75d1cf02ec6cef
   languageName: node
   linkType: hard
 
@@ -5391,13 +5393,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"espurify@npm:^2.0.0, espurify@npm:^2.0.1":
-  version: 2.1.1
-  resolution: "espurify@npm:2.1.1"
-  checksum: 7d92a7670e3d4833bd6e6ff29759bd2c30aaedfeb93330d8fcf78c1760b535ae0cc5f3aa84d2d49b065cad9ba14a0c4c04b21002e0a7b62580e58dfdfc6a67cf
-  languageName: node
-  linkType: hard
-
 "esquery@npm:^1.4.0":
   version: 1.4.0
   resolution: "esquery@npm:1.4.0"
@@ -5416,10 +5411,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estraverse@npm:^4.0.0, estraverse@npm:^4.1.0, estraverse@npm:^4.1.1, estraverse@npm:^4.2.0":
+"estraverse@npm:^4.1.1":
   version: 4.3.0
   resolution: "estraverse@npm:4.3.0"
   checksum: a6299491f9940bb246124a8d44b7b7a413a8336f5436f9837aaa9330209bd9ee8af7e91a654a3545aee9c54b3308e78ee360cef1d777d37cfef77d2fa33b5827
+  languageName: node
+  linkType: hard
+
+"estraverse@npm:^5.0.0, estraverse@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "estraverse@npm:5.3.0"
+  checksum: 072780882dc8416ad144f8fe199628d2b3e7bbc9989d9ed43795d2c90309a2047e6bc5979d7e2322a341163d22cfad9e21f4110597fe487519697389497e4e2b
   languageName: node
   linkType: hard
 
@@ -5427,13 +5429,6 @@ __metadata:
   version: 5.2.0
   resolution: "estraverse@npm:5.2.0"
   checksum: ec11b70d946bf5d7f76f91db38ef6f08109ac1b36cda293a26e678e58df4719f57f67b9ec87042afdd1f0267cee91865be3aa48d2161765a93defab5431be7b8
-  languageName: node
-  linkType: hard
-
-"estraverse@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "estraverse@npm:5.3.0"
-  checksum: 072780882dc8416ad144f8fe199628d2b3e7bbc9989d9ed43795d2c90309a2047e6bc5979d7e2322a341163d22cfad9e21f4110597fe487519697389497e4e2b
   languageName: node
   linkType: hard
 
@@ -5679,7 +5674,7 @@ __metadata:
     sort-package-json: ^1.52.0
     swc-loader: ^0.2.3
     tailwindcss: ^3.1.2
-    tinyify: ^3.0.0
+    tinyify: ^4.0.0
     ts-loader: ^9.3.1
     typescript: ^4.4.4
     webpack: ^5.74.0
@@ -6764,7 +6759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-regex@npm:^1.0.4, is-regex@npm:^1.1.4":
+"is-regex@npm:^1.1.4":
   version: 1.1.4
   resolution: "is-regex@npm:1.1.4"
   dependencies:
@@ -7607,12 +7602,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multi-stage-sourcemap@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "multi-stage-sourcemap@npm:0.2.1"
+"multi-stage-sourcemap@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "multi-stage-sourcemap@npm:0.3.1"
   dependencies:
     source-map: ^0.1.34
-  checksum: b334c144518bead87fa9ab8cc3fcb100f155a7b4ce43b5a443bbfab4fc44f2cb404950c7f9f4a3ad225ceff84a98ee1a5f93221a406c761fcc52df777c460e0c
+  checksum: 064eee1ae35a5d9e3b5c2759d3307ef5e0f91c753fcf803c3036055495e4a5932128bb2870433d84b5c50601692d95dc9af5140ae6d4e0ee28f06abf58a8d02c
   languageName: node
   linkType: hard
 
@@ -7902,7 +7897,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
+"object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
   checksum: fcc6e4ea8c7fe48abfbb552578b1c53e0d194086e2e6bbbf59e0a536381a292f39943c6e9628af05b5528aa5e3318bb30d6b2e53cadaf5b8fe9e12c4b69af23f
@@ -8593,14 +8588,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:2 || 3, readable-stream@npm:^3.0.2, readable-stream@npm:^3.1.1, readable-stream@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "readable-stream@npm:3.6.0"
+"readable-stream@npm:3":
+  version: 3.6.2
+  resolution: "readable-stream@npm:3.6.2"
   dependencies:
     inherits: ^2.0.3
     string_decoder: ^1.1.1
     util-deprecate: ^1.0.1
-  checksum: d4ea81502d3799439bb955a3a5d1d808592cf3133350ed352aeaa499647858b27b1c4013984900238b0873ec8d0d8defce72469fb7a83e61d53f5ad61cb80dc8
+  checksum: bdcbe6c22e846b6af075e32cf8f4751c2576238c5043169a1c221c92ee2878458a816a4ea33f4c67623c0b6827c8a400409bfb3cf0bf3381392d0b1dfb52ac8d
   languageName: node
   linkType: hard
 
@@ -8616,6 +8611,17 @@ __metadata:
     string_decoder: ~1.1.1
     util-deprecate: ~1.0.1
   checksum: e4920cf7549a60f8aaf694d483a0e61b2a878b969d224f89b3bc788b8d920075132c4b55a7494ee944c7b6a9a0eada28a7f6220d80b0312ece70bbf08eeca755
+  languageName: node
+  linkType: hard
+
+"readable-stream@npm:^3.0.2, readable-stream@npm:^3.1.1, readable-stream@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "readable-stream@npm:3.6.0"
+  dependencies:
+    inherits: ^2.0.3
+    string_decoder: ^1.1.1
+    util-deprecate: ^1.0.1
+  checksum: d4ea81502d3799439bb955a3a5d1d808592cf3133350ed352aeaa499647858b27b1c4013984900238b0873ec8d0d8defce72469fb7a83e61d53f5ad61cb80dc8
   languageName: node
   linkType: hard
 
@@ -8667,7 +8673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regexp.prototype.flags@npm:^1.2.0, regexp.prototype.flags@npm:^1.3.1":
+"regexp.prototype.flags@npm:^1.3.1":
   version: 1.3.1
   resolution: "regexp.prototype.flags@npm:1.3.1"
   dependencies:
@@ -9219,13 +9225,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:~0.5.10, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
+"source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
   version: 0.5.20
   resolution: "source-map-support@npm:0.5.20"
   dependencies:
     buffer-from: ^1.0.0
     source-map: ^0.6.0
   checksum: 43946aff452011960d16154304b11011e0185549493e65dd90da045959409fb2d266ba1c854fff3d5949f8e59382e3fcc7f7c5fa66136007a6750ad06c6c0baa
+  languageName: node
+  linkType: hard
+
+"source-map-support@npm:~0.5.9":
+  version: 0.5.21
+  resolution: "source-map-support@npm:0.5.21"
+  dependencies:
+    buffer-from: ^1.0.0
+    source-map: ^0.6.0
+  checksum: 43e98d700d79af1d36f859bdb7318e601dfc918c7ba2e98456118ebc4c4872b327773e5a1df09b0524e9e5063bb18f0934538eace60cca2710d1fa687645d137
   languageName: node
   linkType: hard
 
@@ -9592,16 +9608,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:^3.7.5":
-  version: 3.17.0
-  resolution: "terser@npm:3.17.0"
+"terser@npm:3.16.1":
+  version: 3.16.1
+  resolution: "terser@npm:3.16.1"
   dependencies:
-    commander: ^2.19.0
+    commander: ~2.17.1
     source-map: ~0.6.1
-    source-map-support: ~0.5.10
+    source-map-support: ~0.5.9
   bin:
     terser: bin/uglifyjs
-  checksum: 4fed679470b65a3290b6b5c9b104fb5007aa195824e421d37c0a65656de927f55bf6b210c20b2dff5664101cbdd7c0f93daa03d4d0da7758e660c9716411d279
+  checksum: 4bf26130f4d1e7735257778134b5abe6f5120345da2781b27704c9f5660cd42ec4cb39c8ccdf9f2895071f7bf19788de6237332eb7d5d2aec39cf4cc75be51f9
   languageName: node
   linkType: hard
 
@@ -9632,6 +9648,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"terser@npm:^5.15.1":
+  version: 5.16.9
+  resolution: "terser@npm:5.16.9"
+  dependencies:
+    "@jridgewell/source-map": ^0.3.2
+    acorn: ^8.5.0
+    commander: ^2.20.0
+    source-map-support: ~0.5.20
+  bin:
+    terser: bin/terser
+  checksum: b373693ee01ce08cc9b9595d57df889acbbc899d929a7fe53662330ce954d53145582f6715c9cc4839d555f5769a28fbeb203155b54e3a9c6c646db292002edd
+  languageName: node
+  linkType: hard
+
 "text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
@@ -9639,7 +9669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"through2@npm:^2.0.0, through2@npm:^2.0.3, through2@npm:^2.0.5":
+"through2@npm:^2.0.0, through2@npm:^2.0.3":
   version: 2.0.5
   resolution: "through2@npm:2.0.5"
   dependencies:
@@ -9649,13 +9679,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"through2@npm:^3.0.1":
-  version: 3.0.2
-  resolution: "through2@npm:3.0.2"
+"through2@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "through2@npm:4.0.2"
   dependencies:
-    inherits: ^2.0.4
-    readable-stream: 2 || 3
-  checksum: 47c9586c735e7d9cbbc1029f3ff422108212f7cc42e06d5cc9fff7901e659c948143c790e0d0d41b1b5f89f1d1200bdd200c7b72ad34f42f9edbeb32ea49e8b7
+    readable-stream: 3
+  checksum: ac7430bd54ccb7920fd094b1c7ff3e1ad6edd94202e5528331253e5fde0cc56ceaa690e8df9895de2e073148c52dfbe6c4db74cacae812477a35660090960cc0
   languageName: node
   linkType: hard
 
@@ -9673,22 +9702,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyify@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "tinyify@npm:3.0.0"
+"tinyify@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "tinyify@npm:4.0.0"
   dependencies:
-    "@goto-bus-stop/envify": ^5.0.0
-    acorn-node: ^1.8.2
+    "@browserify/envify": ^6.0.0
+    "@browserify/uglifyify": ^6.0.0
     browser-pack-flat: ^3.0.9
     bundle-collapser: ^1.3.0
-    common-shakeify: ^0.6.0
-    dash-ast: ^1.0.0
+    common-shakeify: ^1.1.1
     minify-stream: ^2.0.1
     multisplice: ^1.0.0
-    through2: ^3.0.1
-    uglifyify: ^5.0.0
-    unassertify: ^2.1.1
-  checksum: c784afa86a58a75f238d8b6fbb3afb719201a7621cf8e6af03f769fab74c5ab8d1db756612d614c284440327eacc39b113e9af6985a697bfc9ea53a4b5f598ae
+    terser: 3.16.1
+    through2: ^4.0.2
+    unassertify: ^3.0.1
+  checksum: 549fe0b7be6fd4cca351b2de3670ea0c8564db1573f11841e3cbf2e2a2b5778c029f08b6f6b9c87cb72674e427de4cbc90f60ac11bce350495716a033884d1a4
   languageName: node
   linkType: hard
 
@@ -9876,19 +9904,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uglifyify@npm:^5.0.0":
-  version: 5.0.2
-  resolution: "uglifyify@npm:5.0.2"
-  dependencies:
-    convert-source-map: ~1.1.0
-    minimatch: ^3.0.2
-    terser: ^3.7.5
-    through: ~2.3.4
-    xtend: ^4.0.1
-  checksum: d0f18990a2ec4f394c237b4d3d4b8829ad54ed7bf2a54cc434781ea61a75b4c2fd9eed671d75d9bbf633955f9974096229c42a11ad51fa0010036377dd019a1e
-  languageName: node
-  linkType: hard
-
 "umd@npm:^3.0.0, umd@npm:^3.0.3":
   version: 3.0.3
   resolution: "umd@npm:3.0.3"
@@ -9898,32 +9913,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unassert@npm:^1.3.1":
-  version: 1.6.0
-  resolution: "unassert@npm:1.6.0"
+"unassert@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "unassert@npm:2.0.0"
   dependencies:
-    acorn: ^7.0.0
-    call-matcher: ^2.0.0
-    deep-equal: ^1.0.0
-    espurify: ^2.0.1
-    estraverse: ^4.1.0
-    esutils: ^2.0.2
-    object-assign: ^4.1.0
-  checksum: 2191f2c1bd50e624c6a64bb8004491624ac1b28bd26946e496c59be81435f49921ffa5a73ef9d3061e4829ef22c26c866bb8e42218f6d893927332574bf6e16f
+    estraverse: ^5.0.0
+  checksum: 745e6141b37995955e5e7a1ecd881b5d69f875e1589317de11081f34bc4f9fbc19ca7fdaa94c0b6489f3b708ff2fe0026553ba005855453c224a02b0b00686a2
   languageName: node
   linkType: hard
 
-"unassertify@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "unassertify@npm:2.1.1"
+"unassertify@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "unassertify@npm:3.0.1"
   dependencies:
-    acorn: ^5.1.0
+    acorn: ^8.0.0
     convert-source-map: ^1.1.1
-    escodegen: ^1.6.1
-    multi-stage-sourcemap: ^0.2.1
+    escodegen: ^2.0.0
+    multi-stage-sourcemap: ^0.3.1
     through: ^2.3.7
-    unassert: ^1.3.1
-  checksum: 204de71f5c385783d45af552fbc9ddf65e6cfd6282d2ff32794f7f9193596ce62b56c5722a8a824aaa3c7691a4add6f3f31827edf6775646aa00ec019f19d27d
+    unassert: ^2.0.0
+  checksum: 700570a55774bf1451b6a567f722b8e2f38664b41a846da2f4172c01ad780a2eac5ea30cf4884f079512ab030c430fa505d4c5409c645d8053b3e5bc4b3cf380
   languageName: node
   linkType: hard
 

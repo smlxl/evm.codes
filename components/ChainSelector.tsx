@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
-import { useRegisterActions, Action } from 'kbar'
+import { useRegisterActions, ActionId, Action } from 'kbar'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue, components } from 'react-select'
 
@@ -65,7 +65,7 @@ const ChainSelector = () => {
   }, [settingsLoaded, defaultForkOption])
 
   useEffect(() => {
-    const forkIds: string[] = []
+    const forkIds: ActionId[] = []
 
     const forkActions = forkOptions.map(
       (option: OnChangeValue<any, any>, index) => {
