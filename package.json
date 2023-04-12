@@ -12,13 +12,13 @@
     "typecheck": "tsc --pretty"
   },
   "dependencies": {
-    "@ethereumjs/block": "^4.0.1",
-    "@ethereumjs/common": "^3.0.1",
-    "@ethereumjs/evm": "^1.2.0",
-    "@ethereumjs/statemanager": "^1.0.1",
-    "@ethereumjs/tx": "^4.0.1",
-    "@ethereumjs/util": "^8.0.2",
-    "@ethereumjs/vm": "^6.2.0",
+    "@ethereumjs/block": "^4.2.0",
+    "@ethereumjs/common": "^3.1.0",
+    "@ethereumjs/evm": "^1.3.0",
+    "@ethereumjs/statemanager": "^1.0.3",
+    "@ethereumjs/tx": "^4.1.0",
+    "@ethereumjs/util": "^8.0.4",
+    "@ethereumjs/vm": "^6.4.0",
     "@kunigi/string-compression": "1.0.2",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
@@ -77,12 +77,13 @@
     "sort-package-json": "^1.52.0",
     "swc-loader": "^0.2.3",
     "tailwindcss": "^3.1.2",
-    "tinyify": "^3.0.0",
+    "tinyify": "^4.0.0",
     "ts-loader": "^9.3.1",
     "typescript": "^4.4.4",
     "webpack": "^5.74.0"
   },
   "resolutions": {
-    "@ethereumjs/util": "8.0.2"
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2"
   }
 }
