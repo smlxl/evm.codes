@@ -93,7 +93,6 @@ const ChainSelector = () => {
           shortcut: ['f'],
           keywords: 'fork network evm',
           section: 'Preferences',
-          children: forkIds,
         },
       ])
     }
