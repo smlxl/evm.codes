@@ -578,7 +578,7 @@ export const calculatePrecompiledDynamicFee = (
       }
 
       if (common.gteHardfork('berlin')) {
-	result.imul(multComplexityEIP2565(maxLen)).idivn(Gquaddivisor)
+        result.imul(multComplexityEIP2565(maxLen)).idivn(Gquaddivisor)
         if (result.ltn(200)) {
           result = new BN(200)
         }

@@ -5,13 +5,13 @@ import React, { createContext, useEffect, useState, useRef } from 'react'
 import { Block } from '@ethereumjs/block'
 import { Common, Chain } from '@ethereumjs/common'
 import { HardforkConfig } from '@ethereumjs/common/src/types'
-import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
-import { VM } from '@ethereumjs/vm'
 import { RunState, InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
+import { EvmError } from '@ethereumjs/evm/src/exceptions'
 import { Opcode } from '@ethereumjs/evm/src/opcodes'
 import { getActivePrecompiles } from '@ethereumjs/evm/src/precompiles'
-import { EvmError } from '@ethereumjs/evm/src/exceptions'
+import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
 import { Address, Account } from '@ethereumjs/util'
+import { VM } from '@ethereumjs/vm'
 //
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
@@ -424,7 +424,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     common.hardforks().forEach((fork) => {
       // ignore null block forks
-      if (fork.block || fork.name === mergeHardforkName) {
+      if (
+        fork.block ||
+        fork.name === mergeHardforkName ||
+        fork.name === CURRENT_FORK // Hack for Shanghai the timestamp is not set yet
+      ) {
         forks.push(fork)
 
         // set initially selected fork
@@ -531,7 +535,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   // respectively AFTER applying the original methods.
   // This is necessary in order to handle storage operations easily.
   const _setupStateManager = () => {
-    var proxyStateManager = traceMethodCalls(vm.evm.eei)
+    const proxyStateManager = traceMethodCalls(vm.evm.eei)
     vm.evm.eei.putContractStorage = proxyStateManager.putContractStorage
     vm.evm.eei.clearContractStorage = proxyStateManager.clearContractStorage
 

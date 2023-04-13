@@ -1,0 +1,31 @@
+---
+fork: Shanghai
+group: Push Operations
+---
+
+*Index 1 is top of the stack.*
+
+## Notes
+
+The new value is put on top of the stack, incrementing all the other value indices. The values for a specific opcode thus have to be pushed in reverse order of the stack. For example, with [MSTORE](/#52), the first value pushed would have to be `value`, and then `offset`.
+
+## Stack output
+
+0. `value`: pushed value, equal to 0.
+
+## Example
+
+| * | * |
+|---|---|
+| **Code** | `0x5F` |
+| **Text** | `PUSH0` |
+
+| * | Input | Output |
+|--:|------:|-------:|
+| 1 | | `0x00` |
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Stack overflow.
