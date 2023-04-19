@@ -576,12 +576,13 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     exceptionError?: EvmError
   }) => {
     if (runState) {
-      const { programCounter: pc, stack, memory } = runState
+      const { programCounter: pc, stack, memory, memoryWordCount } = runState
       _setExecutionState({
         pc,
         totalGasSpent,
         stack: stack._store,
         memory: memory._store,
+        memoryWordCount,
         returnValue,
       })
     }
@@ -612,7 +613,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   const _stepInto = (
-    { depth, pc, gasLeft, opcode, stack, memory }: InterpreterStep,
+    {
+      depth,
+      pc,
+      gasLeft,
+      opcode,
+      stack,
+      memory,
+      memoryWordCount,
+    }: InterpreterStep,
     continueFunc: ((result?: any) => void) | undefined,
   ) => {
     // We skip over the calls
@@ -628,6 +637,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       totalGasSpent,
       stack,
       memory,
+      memoryWordCount,
       currentGas: opcode.fee,
     })
 
@@ -647,6 +657,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     totalGasSpent,
     stack,
     memory,
+    memoryWordCount,
     currentGas,
     returnValue,
   }: {
@@ -654,6 +665,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     totalGasSpent: bigint
     stack: bigint[]
     memory: Buffer
+    memoryWordCount: bigint
     currentGas?: bigint | number
     returnValue?: Buffer
   }) => {
@@ -669,7 +681,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       programCounter: pc,
       stack: stack.map((value) => value.toString(16)).reverse(),
       totalGas: totalGasSpent.toString(),
-      memory: fromBuffer(memory),
+      memory: fromBuffer(memory).substring(0, Number(memoryWordCount) * 64),
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
       returnValue: returnValue ? returnValue.toString('hex') : undefined,
