@@ -80,7 +80,7 @@
     "tinyify": "^4.0.0",
     "ts-loader": "^9.3.1",
     "typescript": "^4.4.4",
-    "webpack": "^5.74.0"
+    "webpack": "^5.81.0"
   },
   "resolutions": {
     "@types/react": "17.0.2",
