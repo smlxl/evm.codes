@@ -138,7 +138,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   >()
   const [vmError, setVmError] = useState<string | undefined>()
 
-  const nextStepFunction = useRef<Function>()
+  const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
   const breakpointIds = useRef<number[]>([])
 
@@ -512,7 +512,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   function traceMethodCalls(obj: any) {
     const handler = {
-      get(target: any, propKey: any, receiver: any) {
+      get(target: any, propKey: any) {
         const origMethod = target[propKey]
         return (...args: any[]) => {
           const result = origMethod.apply(target, args)
