@@ -24,7 +24,7 @@ import {
   IChain,
 } from 'types'
 
-import { CURRENT_FORK } from 'util/constants'
+import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
 import {
   calculateOpcodeDynamicFee,
   calculatePrecompiledDynamicFee,
@@ -423,13 +423,20 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     let currentForkFound = false
 
     common.hardforks().forEach((fork) => {
-      // ignore null block forks
-      if (
-        fork.block ||
-        fork.name === mergeHardforkName ||
-        fork.name === CURRENT_FORK // Hack for Shanghai the timestamp is not set yet
-      ) {
-        forks.push(fork)
+      // FIXME: After shanghai, timestamps are used, so support them in addition
+      // to blocks, and in the meantime use timestamp as the block num.
+      const hasTimestamp = Object.keys(FORKS_WITH_TIMESTAMPS).includes(
+        fork.name,
+      )
+      if (fork.block || hasTimestamp) {
+        if (hasTimestamp) {
+          forks.push({
+            ...fork,
+            block: FORKS_WITH_TIMESTAMPS[fork.name],
+          })
+        } else {
+          forks.push(fork)
+        }
 
         // set initially selected fork
         if (!currentForkFound && fork.name === CURRENT_FORK) {
