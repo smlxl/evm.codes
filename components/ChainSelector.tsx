@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import Select, { OnChangeValue, components } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
-import { SettingsContext } from 'context/settingsContext'
 
 import { CURRENT_FORK } from 'util/constants'
 import { toKeyIndex } from 'util/string'
