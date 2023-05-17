@@ -12,7 +12,6 @@ import { serialize } from 'next-mdx-remote/serialize'
 import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 
 import { EthereumContext } from 'context/ethereumContext'
-import { SettingsContext, Setting } from 'context/settingsContext'
 
 import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
@@ -30,7 +29,6 @@ const PrecompiledPage = ({
   gasDocs: IGasDocs
 }) => {
   const { precompiled, onForkChange } = useContext(EthereumContext)
-  const { setSetting } = useContext(SettingsContext)
 
   // Change selectedFork according to query param
   const router = useRouter()
@@ -40,7 +38,6 @@ const PrecompiledPage = ({
 
     if ('fork' in query) {
       onForkChange(query.fork as string)
-      setSetting(Setting.VmFork, query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])

@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import Select, { OnChangeValue, components } from 'react-select'
 
 import { EthereumContext } from 'context/ethereumContext'
-import { SettingsContext, Setting } from 'context/settingsContext'
 
 import { CURRENT_FORK } from 'util/constants'
 import { toKeyIndex } from 'util/string'
@@ -25,7 +24,6 @@ const ChainOption = (props: any) => {
 }
 
 const ChainSelector = () => {
-  const { settingsLoaded, getSetting, setSetting } = useContext(SettingsContext)
   const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
 
   const [forkValue, setForkValue] = useState()
@@ -46,23 +44,20 @@ const ChainSelector = () => {
     (option: OnChangeValue<any, any>) => {
       setForkValue(option)
       onForkChange(option.value)
-      setSetting(Setting.VmFork, option.value)
 
       router.query.fork = option.value
       router.push(router)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onForkChange, setSetting],
+    [onForkChange],
   )
 
   useEffect(() => {
-    if (settingsLoaded && defaultForkOption) {
-      const setting = getSetting(Setting.VmFork)
-      const storedFork = forkOptions.find((fork) => fork.value === setting)
-      handleForkChange(storedFork || defaultForkOption)
+    if (defaultForkOption) {
+      handleForkChange(defaultForkOption)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsLoaded, defaultForkOption])
+  }, [defaultForkOption])
 
   useEffect(() => {
     const forkIds: string[] = []
