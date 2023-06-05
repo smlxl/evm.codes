@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 
-import React, { createContext, useEffect, useState, useRef } from 'react'
+import React, {createContext, useEffect, useState, useRef, useContext} from 'react'
 
 import { Block } from '@ethereumjs/block'
 import { Common, Chain } from '@ethereumjs/common'
@@ -46,7 +46,18 @@ const gasLimit = 0xffffffffffffn
 export const mergeHardforkName = 'merge'
 export const prevrandaoDocName = '44_merge'
 
+export interface IBackupState {
+  pc: number
+  totalGasSpent: bigint
+  stack: bigint[]
+  memory: Buffer
+  memoryWordCount: bigint
+  currentGas: number
+  fnSetExecutionState: (params: IBackupState) => void
+}
+
 type ContextProps = {
+  backupState: IBackupState | undefined
   common: Common | undefined
   chains: IChain[]
   forks: HardforkConfig[]
@@ -92,6 +103,7 @@ const initialExecutionState = {
 }
 
 export const EthereumContext = createContext<ContextProps>({
+  backupState: undefined,
   common: undefined,
   chains: [],
   forks: [],
@@ -122,6 +134,7 @@ export const EthereumContext = createContext<ContextProps>({
 })
 
 export const EthereumProvider: React.FC<{}> = ({ children }) => {
+  const [backupState, setBackupState] = useState<IBackupState | undefined>()
   const [chains, setChains] = useState<IChain[]>([])
   const [forks, setForks] = useState<HardforkConfig[]>([])
   const [selectedChain, setSelectedChain] = useState<IChain>()
@@ -638,7 +651,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
 
     const totalGasSpent = gasLimit - gasLeft
-
     _setExecutionState({
       pc,
       totalGasSpent,
@@ -646,6 +658,16 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       memory,
       memoryWordCount,
       currentGas: opcode.fee,
+    })
+
+    setBackupState({
+      pc,
+      totalGasSpent,
+      stack,
+      memory,
+      memoryWordCount,
+      currentGas: opcode.fee,
+      fnSetExecutionState: _setExecutionState,
     })
 
     nextStepFunction.current = continueFunc
@@ -733,6 +755,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   return (
     <EthereumContext.Provider
       value={{
+        backupState,
         common,
         chains,
         forks,
