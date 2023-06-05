@@ -47,8 +47,11 @@ export const StackBox2: React.FC<Props> = ({
   return (
     <>
       {(parts.length > 0 ? parts : [value]).map((p: string, index: number) => (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
           key={index}
+          role="button"
+          tabIndex={0}
           onClick={editStack}
           className={cn(
             'font-mono inline-block border px-2 py-1 mb-1 rounded-sm',
