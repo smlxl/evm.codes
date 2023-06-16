@@ -2,5 +2,6 @@
 
     data_word_size = (data_size + 31) / 32
 
+    gas_cost = static_gas + dynamic_gas
     static_gas = {gasPrices|ripemd160}
     dynamic_gas = {gasPrices|ripemd160Word} * data_word_size

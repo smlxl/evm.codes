@@ -2,5 +2,6 @@
 
     data_word_size = (data_size + 31) / 32
 
+    gas_cost = static_gas + dynamic_gas
     static_gas = {gasPrices|identity}
     dynamic_gas = {gasPrices|identityWord} * data_word_size

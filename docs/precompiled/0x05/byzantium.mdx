@@ -12,5 +12,6 @@
     elif Esize > 32: iteration_count = (8 * (Esize - 32)) + ((exponent & (2**256 - 1)).bit_length() - 1)
     calculate_iteration_count = max(iteration_count, 1)
 
+    gas_cost = static_gas + dynamic_gas
     static_gas = 0
     dynamic_gas = max(200, multiplication_complexity * iteration_count / {gasPrices|modexpGquaddivisor})
