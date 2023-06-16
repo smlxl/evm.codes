@@ -5,9 +5,10 @@
 - **current_value**: current value of the storage slot.
 - **original_value**: value of the storage slot before the current transaction.
 
-
+    gas_cost = static_gas + dynamic_gas
     static_gas = {gasPrices|sstore}
-
+    dynamic_gas = base_dynamic_gas + variable_dynamic_gas
+    
     if value == current_value
         if key is warm
             base_dynamic_gas = {gasPrices|warmstorageread}
@@ -21,7 +22,11 @@
     else
         base_dynamic_gas = {gasPrices|sstoreDirtyGasEIP2200}
 
-On top of the cost above, {gasPrices|coldsload} is added to `base_dynamic_gas` if the slot is cold. See section [access sets](/about).
+    variable_dynamic_gas =
+        {gasPrices|coldsload} if the slot is cold
+        0 otherwise
+
+See section [access sets](/about).
 
 ## Gas refunds
 

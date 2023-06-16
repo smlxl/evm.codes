@@ -2,6 +2,7 @@
 
     minimum_word_size = (size + 31) / 32
 
+    gas_cost = static_gas + dynamic_gas
     static_gas = {gasPrices|codecopy}
     dynamic_gas = {gasPrices|copy} * minimum_word_size + memory_expansion_cost
 

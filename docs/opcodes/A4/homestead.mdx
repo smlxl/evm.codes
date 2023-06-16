@@ -1,5 +1,6 @@
 ## Dynamic gas
 
+    gas_cost = static_gas + dynamic_gas
     static_gas = {gasPrices|log}
     dynamic_gas = {gasPrices|logTopic} * topic_count + {gasPrices|logData} * size + memory_expansion_cost
 

@@ -1,3 +1,10 @@
 ## Gas
 
-The static gas is {gasPrices|selfdestruct}. If a positive balance is sent to an empty account, the dynamic gas is {gasPrices|callNewAccount}. An account is empty if its balance is 0, its nonce is 0 and it has no code. Additionally, if `address` is cold, there is an additional dynamic cost of {gasPrices|coldaccountaccess}. See section [access sets](/about). There is no additional cost otherwise.
+    gas_cost = static_gas + dynamic_gas
+    static_gas = {gasPrices|selfdestruct}
+    dynamic_gas = new_account_gas + cold_account_access_gas
+
+    new_account_gas = {gasPrices|callNewAccount} if a positive balance is sent to an empty account
+    cold_account_access_gas = {gasPrices|coldaccountaccess} if `address` is cold
+
+An account is empty if its balance is 0, its nonce is 0 and it has no code. See section [access sets](/about).

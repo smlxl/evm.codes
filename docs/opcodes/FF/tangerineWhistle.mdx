@@ -1,6 +1,8 @@
 ## Gas
 
-The static gas is {gasPrices|selfdestruct}. If `address` is an unexisting account, the dynamic cost is {gasPrices|callNewAccount}. Otherwise there is no additional cost.
+    gas_cost = static_gas + dynamic_gas
+    static_gas = {gasPrices|selfdestruct}
+    dynamic_gas = {gasPrices|callNewAccount} if `address` is an unexisting account
 
 ## Gas refunds
 

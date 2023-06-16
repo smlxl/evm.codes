@@ -1,6 +1,10 @@
 ## Gas
 
-The static cost is {gasPrices|sstore}. If the value is changed from zero to non-zero, then the dynamic gas is {gasPrices|sstoreSet}. Otherwise the dynamic gas  is {gasPrices|sstoreReset}.
+    gas_cost = static_gas + dynamic_gas
+    static_gas = {gasPrices|sstore}
+    dynamic_gas =
+        {gasPrices|sstoreSet} if the value is changed from zero to non-zero
+        {gasPrices|sstoreReset} otherwise
 
 ## Gas refunds
 

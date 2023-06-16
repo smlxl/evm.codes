@@ -1,3 +1,9 @@
 ## Gas
 
-The static cost is {gasPrices|extcodesize}. If the accessed address is warm, the dynamic cost is {gasPrices|warmstorageread}. Otherwise the dynamic cost is {gasPrices|coldaccountaccess}. See section [access sets](/about).
+    gas_cost = static_gas + dynamic_gas
+    static_gas = {gasPrices|extcodesize}
+    dynamic_gas =
+        {gasPrices|warmstorageread} if the accessed address is warm
+        {gasPrices|coldaccountaccess} otherwise
+
+See section [access sets](/about).
