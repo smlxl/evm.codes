@@ -68,6 +68,7 @@ const DynamicFee = ({ referenceItem, fork }: Props) => {
   ) => {
     if (opcode.opcodeOrAddress === '55' && common.gteHardfork('berlin')) {
       if (inputs.currentValue !== inputs.originalValue) {
+        inputs.cold = '0'
         return new Set(['cold'])
       }
     }
