@@ -16,6 +16,7 @@ import ContributeBox from 'components/ContributeBox'
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import { H1, Container } from 'components/ui'
+import EvmStorageBanner from 'components/EvmStorageBanner'
 
 const { serverRuntimeConfig } = getConfig()
 
@@ -38,6 +39,7 @@ const HomePage = ({
           content="An Ethereum Virtual Machine Opcodes Interactive Reference"
         />
       </Head>
+      <EvmStorageBanner className="mt-0 mb-10" />
       <Container>
         <H1>
           An Ethereum Virtual Machine <br></br> Opcodes Interactive Reference
