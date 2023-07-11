@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 const EvmStorageBanner = () => {
-  const [isShown, setIsShown] = useState(true);
+  const [isShown, setIsShown] = useState(true)
 
   if (!isShown) {
-    return null; 
+    return null
   }
 
   return (
@@ -15,21 +15,47 @@ const EvmStorageBanner = () => {
           onClick={() => setIsShown(false)}
           aria-label="Close banner"
         >
-          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
         <div className="container mx-auto px-4 md:px-6">
-          <p className="font-medium md:text-xl mb-4 pt-6">Introducing evm.storage</p>
-          <p className="font-normal text-2base text-gray-400 mb-4">Dive deep into the storage of any contract on Ethereum and Avalanche. Explore contract storage and state at any block height.</p>
+          <p className="font-medium md:text-xl mb-4 pt-6">
+            Introducing evm.storage
+          </p>
+          <p className="font-normal text-2base text-gray-400 mb-4">
+            Dive deep into the storage of any contract on Ethereum and
+            Avalanche. Explore contract storage and state at any block height.
+          </p>
           <div className="flex flex-row space-x-4 text-2base font-medium">
-            <a className="underline text-indigo-500" href="https://www.evm.storage">Try it out</a>
-            <a className="underline text-indigo-500" href="https://blog.smlxl.io/introducing-evm-storage-c9fae8055286">Learn more</a>
+            <a
+              className="underline text-indigo-500"
+              href="https://www.evm.storage"
+            >
+              Try it out
+            </a>
+            <a
+              className="underline text-indigo-500"
+              href="https://blog.smlxl.io/introducing-evm-storage-c9fae8055286"
+            >
+              Learn more
+            </a>
           </div>
         </div>
       </div>
     )
-  );
-};
+  )
+}
 
-export default EvmStorageBanner;
+export default EvmStorageBanner
