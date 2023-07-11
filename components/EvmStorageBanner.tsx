@@ -1,11 +1,15 @@
 import { useState } from 'react';
 
-const EvmStorageBanner = ({ className = "" }) => {
+const EvmStorageBanner = () => {
   const [isShown, setIsShown] = useState(true);
+
+  if (!isShown) {
+    return null; 
+  }
 
   return (
     isShown && (
-      <div className={`relative bg-gray-50 dark:bg-black-700 pb-6 ${className}`}>
+      <div className={`relative bg-gray-50 dark:bg-black-700 pb-6 mt-0 mb-10`}>
         <button
           className="absolute top-6 right-6 focus:outline-none"
           onClick={() => setIsShown(false)}

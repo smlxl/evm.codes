@@ -39,7 +39,7 @@ const HomePage = ({
           content="An Ethereum Virtual Machine Opcodes Interactive Reference"
         />
       </Head>
-      <EvmStorageBanner className="mt-0 mb-10" />
+      <EvmStorageBanner/>
       <Container>
         <H1>
           An Ethereum Virtual Machine <br></br> Opcodes Interactive Reference
