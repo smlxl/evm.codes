@@ -13,6 +13,7 @@ import { IItemDocs, IGasDocs, IDocMeta } from 'types'
 import { EthereumContext } from 'context/ethereumContext'
 
 import ContributeBox from 'components/ContributeBox'
+import EvmStorageBanner from 'components/EvmStorageBanner'
 import HomeLayout from 'components/layouts/Home'
 import ReferenceTable from 'components/Reference'
 import { H1, Container } from 'components/ui'
@@ -38,6 +39,7 @@ const HomePage = ({
           content="An Ethereum Virtual Machine Opcodes Interactive Reference"
         />
       </Head>
+      <EvmStorageBanner />
       <Container>
         <H1>
           An Ethereum Virtual Machine <br></br> Opcodes Interactive Reference
