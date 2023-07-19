@@ -25,7 +25,7 @@ The input must always be a multiple of 6 32-byte values. 0 inputs is valid and r
 |-----------:|-----:|------------:|
 | `[0; 31]` (32 bytes) | success | 1 if the pairing was a success, 0 otherwise |
 
-If the input is not valid, or if not enough gas was given, then there is no return data.
+If the input is not valid, all gas provided is consumed and there is no return data, indicating a precompile contract error. Also, if not enough gas was given, there is no return data.
 
 ## Example
 

@@ -21,7 +21,7 @@ The point at infinity is encoded with both field `x` and `y` at `0`.
 | `[0; 31]` (32 bytes) | x | X coordinate of the result point on the elliptic curve 'alt_bn128' |
 | `[32; 63]` (32 bytes) | y | Y coordinate of the result point on the elliptic curve 'alt_bn128' |
 
-If the input is not valid, or if not enough gas was given, then there is no return data.
+If the input is not valid, all gas provided is consumed and there is no return data, indicating a precompile contract error. Also, if not enough gas was given, there is no return data.
 
 ## Example
 
