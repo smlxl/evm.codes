@@ -18,7 +18,7 @@ fork: Istanbul
 |-----------:|-----:|------------:|
 | `[0; 63]` (64 bytes) | h | State vector (8 8-byte little-endian unsigned integer) |
 
-If the input is not valid, or if not enough gas was given, then there is no return data.
+If the input is not valid, all gas provided is consumed and there is no return data, indicating a precompile contract error. Also, if not enough gas was given, there is no return data.
 
 ## Example
 
