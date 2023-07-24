@@ -43,7 +43,7 @@ const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
 const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
-export const mergeHardforkName = 'merge'
+export const postMergeHardforkNames: Array<string> = ['merge', 'shanghai']
 export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
@@ -453,7 +453,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     const meta = OpcodesMeta as IReferenceItemMetaList
     // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
     // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
-    if (selectedFork?.name === mergeHardforkName && toHex(op.code) == '44') {
+    if (
+      selectedFork?.name != null &&
+      postMergeHardforkNames.indexOf(selectedFork?.name) > -1 &&
+      toHex(op.code) == '44'
+    ) {
       return {
         ...meta[prevrandaoDocName],
         ...{
