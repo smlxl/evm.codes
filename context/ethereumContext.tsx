@@ -43,7 +43,7 @@ const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
 const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
-export const postMergeHardforkNames: Array<string> = ['merge', 'shanghai']
+const postMergeHardforkNames: Array<string> = ['merge', 'shanghai']
 export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
@@ -120,6 +120,13 @@ export const EthereumContext = createContext<ContextProps>({
   nextExecution: () => undefined,
   resetExecution: () => undefined,
 })
+
+export const CheckIfAfterMergeHardfork = (forkName?: string) => {
+  if (forkName == null) {
+    return false
+  }
+  return postMergeHardforkNames.indexOf(forkName) > -1
+}
 
 export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [chains, setChains] = useState<IChain[]>([])
@@ -454,8 +461,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     // TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
     // Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
     if (
-      selectedFork?.name != null &&
-      postMergeHardforkNames.indexOf(selectedFork?.name) > -1 &&
+      CheckIfAfterMergeHardfork(selectedFork?.name) &&
       toHex(op.code) == '44'
     ) {
       return {

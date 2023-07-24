@@ -18,7 +18,7 @@ import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import {
   EthereumContext,
-  postMergeHardforkNames,
+  CheckIfAfterMergeHardfork,
   prevrandaoDocName,
 } from 'context/ethereumContext'
 
@@ -83,8 +83,7 @@ const ReferenceTable = ({
       // @ts-ignore: TODO: need to implement proper selection of doc according to selected fork (maybe similar to dynamic gas fee)
       // @ts-ignore: Hack for "difficulty" -> "prevrandao" replacement for "merge" HF
       return opcodeOrAddress == '44' &&
-        selectedFork?.name != null &&
-        postMergeHardforkNames.indexOf(selectedFork?.name) > -1
+        CheckIfAfterMergeHardfork(selectedFork?.name)
         ? itemDocs[prevrandaoDocName]
         : itemDocs[opcodeOrAddress]
     },
