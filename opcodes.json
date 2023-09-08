@@ -117,7 +117,7 @@
   "15": {
     "input": "a",
     "output": "a == 0",
-    "description": "Simple not operator"
+    "description": "Is-zero comparison"
   },
   "16": {
     "input": "a | b",
