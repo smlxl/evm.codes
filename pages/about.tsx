@@ -375,11 +375,11 @@ const AboutPage = () => {
           Each transaction may be defined by some combination of its sender,
           calldata, or callee. Transactions can either be external or internal.
           External transactions are sent to the Ethereum network. Internal
-          transactions are external transactions that have executed the xCALL
-          instruction. As such, internal transactions are also known as calls.
-          Access sets can be thought of as two independent types of lists: those
-          of touch contract addresses, and those of touched contract storage
-          slots.
+          transactions are triggered by external transactions that have executed
+          the xCALL instruction. As such, internal transactions are also known
+          as calls. Access sets can be thought of as two independent types of
+          lists: those of touched addresses, and those of touched contract
+          storage slots.
         </p>
         <p className="pb-6">
           When an address is accessed by a transaction, instruction, or used as
@@ -416,10 +416,10 @@ const AboutPage = () => {
           If an address or storage slot is present in the set, it is called
           'warm'; otherwise it is 'cold'. Storage slots that are touched for the
           first time in a transaction change from cold to warm for the duration
-          of the transaction. Transactions can pre-specify contracts as warm.
-          The dynamic cost of some opcodes depend on whether an address or slot
-          is warm or cold. After the hardfork <b>Berlin</b>, all precompiled
-          contract addresses are always ‘warm’.
+          of the transaction. Transactions can pre-specify contracts as warm
+          using EIP-2930 access lists. The dynamic cost of some opcodes depend
+          on whether an address or slot is warm or cold. After the hardfork
+          <b>Berlin</b>, all precompiled contract addresses are always ‘warm’.
         </p>
       </SectionWrapper>
 
