@@ -3,11 +3,11 @@ fork: Frontier
 group: System operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
-Creates a new contract. Enters a new sub [context](/about) of the calculated destination address and executes the provided initialisation code, then resumes the current context.
+Creates a new contract using the initialisation code provided at the indicated `offset` in the memory. Enters a new sub [context](/about) of the calculated destination address and executes the initialisation code, then resumes the current context.
 
 Should deployment succeed, the new account's [code](/about) is set to the [return data](/about) resulting from executing the initialisation code.
 
@@ -16,6 +16,7 @@ The destination address is calculated as the rightmost 20 bytes (160 bits) of th
     address = keccak256(rlp([sender_address,sender_nonce]))[12:]
 
 Deployment can fail due to:
+
 - Insufficient value to send.
 - Sub [context](/about) [reverted](/#FD).
 - Insufficient gas to execute the initialisation code.
@@ -40,6 +41,7 @@ Note that these failures only affect the return value and do not cause the calli
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).
