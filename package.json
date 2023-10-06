@@ -77,7 +77,7 @@
     "loader-utils": "^2.0.4",
     "next-images": "^1.8.5",
     "nstall": "^0.2.0",
-    "postcss": "^8.4.14",
+    "postcss": "^8.4.31",
     "prettier": "^2.4.1",
     "sort-package-json": "^1.52.0",
     "swc-loader": "^0.2.3",
