@@ -31,7 +31,7 @@ const Main = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <PlausibleProvider domain="evm.codes">
+    <PlausibleProvider domain="evm.codes,rollup.smlxl.io">
       <ThemeProvider attribute="class">
         <SettingsProvider>
           <EthereumProvider>
