@@ -21,7 +21,7 @@ app
 
 ## Ethereum Context
 
-The core of the application is an [context/ethereumContext.tsx](../context/ethereumContext.tsx) powered by [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), which provides an application-wide state to the Ethereum Virtual Machine and its operating mechanics. Additionally, smart contracts compilation is handled by [SolcJS](https://github.com/ethereum/solc-js) through [lib/solcWorker.js](../lib/solcWorker.js).
+The core of the application is a [context/ethereumContext.tsx](../context/ethereumContext.tsx) powered by [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), which provides an application-wide state to the Ethereum Virtual Machine and its operating mechanics. Additionally, smart contracts compilation is handled by [SolcJS](https://github.com/ethereum/solc-js) through [lib/solcWorker.js](../lib/solcWorker.js).
 
 ## MDX docs
 
@@ -34,9 +34,9 @@ The dynamic gas fee calculation is handled by the following pieces of code:
 
 1. [opcodes.json](../opcodes.json) defines the user input metadata in `dynamicFee` section of the opcodes, where each field is represented by a `number` or `boolean` with their corresponding labels. The app then builds the gas calculation UI form dynamically. The same happens for the precompiled contracts with [precompiled.json](../precompiled.json).
 
-1. The actual gas calculation is performed by the [util/gas.ts#calculateDynamicFee](../util/gas.ts) based on the selected [EthereumJS Common](https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common) object, via the get `param` method.
+2. The actual gas calculation is performed by the [util/gas.ts#calculateDynamicFee](../util/gas.ts) based on the selected [EthereumJS Common](https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common) object, via the get `param` method.
 
-1. Opcode with dynamic gas fee portion in [docs/opcodes](../docs/opcodes) can then have fork specific documentation (for example, `0A/london.mdx`), which are picked by the [components/Reference/DocRow.tsx](../components/Reference/DocRow.tsx) depending on the selected hardfork. In case of multiple hardfork docs, the latest to the selected one is picked. Additionally, these Markdown documents may have dynamic variables that are processed client-side and converted to MDX server-side by the [api/getDynamicDoc.ts](../pages/api/getDynamicDoc.ts) (due to node module dependencies of the `next-mdx-remote` package).
+3. Opcode with dynamic gas fee portion in [docs/opcodes](../docs/opcodes) can then have fork specific documentation (for example, `0A/london.mdx`), which are picked by the [components/Reference/DocRow.tsx](../components/Reference/DocRow.tsx) depending on the selected hardfork. In case of multiple hardfork docs, the latest to the selected one is picked. Additionally, these Markdown documents may have dynamic variables that are processed client-side and converted to MDX server-side by the [api/getDynamicDoc.ts](../pages/api/getDynamicDoc.ts) (due to node module dependencies of the `next-mdx-remote` package).
 
 ### Supported dynamic variables
 
