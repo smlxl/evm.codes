@@ -48,7 +48,11 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
   }
 
   const handleCtrlF = (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key === 'f' && inputRef.current !== document.activeElement) {
+    if (
+      event.ctrlKey &&
+      event.key === 'f' &&
+      inputRef.current !== document.activeElement
+    ) {
       event.preventDefault()
 
       inputRef.current?.focus()
