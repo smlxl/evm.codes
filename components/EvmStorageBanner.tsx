@@ -48,23 +48,17 @@ const EvmStorageBanner = () => {
           Introducing evm.storage
         </p>
         <p className="font-normal text-2base text-gray-400 mb-4">
-          Dive deep into the storage of any contract on Ethereum or Avalanche.
-          Explore contract storage and state at any block height.
-        </p>
-        <div className="flex flex-row space-x-4 text-2base font-medium">
+          Explore any contract, externally owned account, or transaction on
+          Ethereum and Avalanche. With contract interaction, an unrivaled
+          representation of storage, and transaction tracing and simulation,
+          evm.storage is the blockchain explorer designed for you.{' '}
           <a
             className="underline text-indigo-500"
             href="https://www.evm.storage"
           >
             Try it out
           </a>
-          <a
-            className="underline text-indigo-500"
-            href="https://blog.smlxl.io/introducing-evm-storage-c9fae8055286"
-          >
-            Learn more
-          </a>
-        </div>
+        </p>
       </div>
     </div>
   )
