@@ -285,11 +285,13 @@ const Editor = ({ readOnly = false }: Props) => {
   }
 
   const stripBytecode = (value: string) => {
+    const findHexPrefix = /^0x/
     return value
       .replaceAll(/\/\/.*$/gm, '')
       .replaceAll(/;.*$/gm, '')
       .replaceAll(/#.*$/gm, '')
       .replaceAll(/\s/gm, '')
+      .replace(findHexPrefix, '')
   }
 
   const handleCodeChange = (value: string) => {
