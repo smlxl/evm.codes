@@ -48,7 +48,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
   }
 
   const handleAltK = (event: KeyboardEvent) => {
-    if (event.altKey && (event.key.toLowerCase() === 'k')) {
+    if (event.altKey && event.key.toLowerCase() === 'k') {
       inputRef.current?.focus()
       inputRef.current?.value && inputRef.current.select()
     }
@@ -66,7 +66,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
       router.push(router)
     }
 
-    // Register and clean up Ctrl+F event listener
+    // Register and clean up Alt+K event listener
     window.addEventListener('keydown', handleAltK)
     return () => window.removeEventListener('keydown', handleAltK)
 
