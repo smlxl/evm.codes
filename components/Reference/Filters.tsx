@@ -48,7 +48,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
   }
 
   const handleAltK = (event: KeyboardEvent) => {
-    if (event.altKey && (event.key === 'k' || event.key === 'K')) {
+    if (event.altKey && (event.key.toLowerCase() === 'k')) {
       inputRef.current?.focus()
       inputRef.current?.value && inputRef.current.select()
     }
