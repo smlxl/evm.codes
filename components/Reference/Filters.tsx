@@ -47,14 +47,8 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     setSearchFilter(option)
   }
 
-  const handleCtrlF = (event: KeyboardEvent) => {
-    if (
-      event.ctrlKey &&
-      event.key === 'f' &&
-      inputRef.current !== document.activeElement
-    ) {
-      event.preventDefault()
-
+  const handleAltK = (event: KeyboardEvent) => {
+    if (event.altKey && (event.key === 'k' || event.key === 'K')) {
       inputRef.current?.focus()
       inputRef.current?.value && inputRef.current.select()
     }
@@ -73,8 +67,8 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     }
 
     // Register and clean up Ctrl+F event listener
-    window.addEventListener('keydown', handleCtrlF)
-    return () => window.removeEventListener('keydown', handleCtrlF)
+    window.addEventListener('keydown', handleAltK)
+    return () => window.removeEventListener('keydown', handleAltK)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
