@@ -16,6 +16,7 @@ export const Input: React.FC<Props> = forwardRef(
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
     const [isFocused, setIsFocused] = useState(false)
+    const [isInputEmpty, setIsInputEmpty] = useState(true)
 
     const handleFocus = (e: any) => {
       setIsFocused(true)
@@ -31,10 +32,18 @@ export const Input: React.FC<Props> = forwardRef(
       }
     }
 
+    const handleInput = (e: any) => {
+      if (e.target.value === '') {
+        setIsInputEmpty(true)
+      } else {
+        setIsInputEmpty(false)
+      }
+    }
+
     return (
       <div
         className={cn(
-          'flex items-center rounded px-3 py-2',
+          'flex items-center rounded px-3 py-2 text-sm relative',
           {
             shadow: isFocused,
           },
@@ -45,19 +54,25 @@ export const Input: React.FC<Props> = forwardRef(
           ref={ref}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="w-full outline-none bg-transparent dark:placeholder-black-400 text-sm"
+          onInput={handleInput}
+          className="w-full outline-none bg-transparent dark:placeholder-black-400"
           {...rest}
         />
         {searchable && (
-          <Icon
-            name="search-line"
-            className={cn(
-              'ml-2',
-              isFocused
-                ? 'text-gray-400 dark:text-gray-300'
-                : 'text-gray-300 dark:text-gray-400',
+          <>
+            {isInputEmpty && (
+              <span className="text-black-400 absolute right-8">Alt+K</span>
             )}
-          />
+            <Icon
+              name="search-line"
+              className={cn(
+                'ml-2',
+                isFocused
+                  ? 'text-gray-400 dark:text-gray-300'
+                  : 'text-gray-300 dark:text-gray-400',
+              )}
+            />
+          </>
         )}
       </div>
     )
