@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 
 import debounce from 'lodash.debounce'
 import { useRouter } from 'next/router'
@@ -33,6 +33,8 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     [isPrecompiled],
   )
 
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const handleKeywordChange = debounce(
     (value: string) => onSetFilter(searchFilter.value, value),
     debounceTimeout,
@@ -43,6 +45,13 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     onSetFilter(searchFilter.value, '')
     setSearchKeyword('')
     setSearchFilter(option)
+  }
+
+  const handleAltK = (event: KeyboardEvent) => {
+    if (event.altKey && event.key.toLowerCase() === 'k') {
+      inputRef.current?.focus()
+      inputRef.current?.value && inputRef.current.select()
+    }
   }
 
   // Change filter and search opcode according to query param
@@ -56,6 +65,11 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
       handleKeywordChange(query.name as string)
       router.push(router)
     }
+
+    // Register and clean up Alt+K event listener
+    window.addEventListener('keydown', handleAltK)
+    return () => window.removeEventListener('keydown', handleAltK)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
 
@@ -78,6 +92,7 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
       </div>
 
       <Input
+        ref={inputRef}
         searchable
         value={searchKeyword}
         onChange={(e) => {
