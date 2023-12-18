@@ -70,9 +70,9 @@ const AboutPage = () => {
             EVM
           </a>
           ) is a stack-based computer, responsible for the execution of smart
-          contract instructions. All EVM instructions take their parameter from
-          the stack, except for <RelativeLink to="#60" title="PUSHx" />, which
-          takes their parameters from the code. Each instruction has stack
+          contract instructions. All EVM instructions take their parameter(s) from
+          the stack, except for <RelativeLink to="#60" title="PUSHx" /> instructions, 
+          which take their parameters from the code. Each instruction has stack
           inputs, the parameters that they may need, and stack outputs (their
           return values). The list of these instructions, with their opcodes, is
           accessible in our <RelativeLink title="reference" />.
