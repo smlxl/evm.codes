@@ -35,6 +35,7 @@ const ChainSelector = () => {
     [forks],
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const defaultForkOption = useMemo(
     () => forkOptions.find((fork) => fork.value === selectedFork?.name),
     [forkOptions, selectedFork],
@@ -46,18 +47,23 @@ const ChainSelector = () => {
       onForkChange(option.value)
 
       router.query.fork = option.value
-      router.push(router)
+      router.push({ query: router.query })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [onForkChange],
   )
 
-  useEffect(() => {
-    if (defaultForkOption) {
-      handleForkChange(defaultForkOption)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultForkOption])
+  // TODO: don't redirect (or at least don't override address query param)
+  // useEffect(() => {
+  //   if (!router.isReady) {
+  //     return
+  //   }
+
+  //   if (defaultForkOption) {
+  //     handleForkChange(defaultForkOption)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [router.isReady, defaultForkOption])
 
   useEffect(() => {
     const forkIds: string[] = []
