@@ -9,9 +9,9 @@ html {
 /*
  * Code editor
  */
-.code-editor {
+/* .code-editor {
   @apply font-mono text-base md:text-tiny leading-4;
-}
+} */
 
 /* Since Pre overlays Textarea, these two must be identical */
 .code-editor pre,

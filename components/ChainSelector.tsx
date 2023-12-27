@@ -46,18 +46,19 @@ const ChainSelector = () => {
       onForkChange(option.value)
 
       router.query.fork = option.value
-      router.push(router)
+      router.replace({ query: router.query })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [onForkChange],
   )
 
-  useEffect(() => {
-    if (defaultForkOption) {
-      handleForkChange(defaultForkOption)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultForkOption])
+  // TODO: don't redirect (or at least don't override address query param)
+  // useEffect(() => {
+  //   if (defaultForkOption) {
+  //     handleForkChange(defaultForkOption)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [defaultForkOption])
 
   useEffect(() => {
     const forkIds: string[] = []

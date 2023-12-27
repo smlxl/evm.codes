@@ -1,7 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next'
-// import { serialize } from 'next-mdx-remote/serialize'
-import { Address, BN, bufferToHex } from 'ethereumjs-util'
-import { etherscan_getsource } from '../../util/etherscan'
+import { etherscanGetSource } from '../../util/EtherscanApi'
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,8 +9,8 @@ export default async function handler(
         res.status(405)
     }
 
-    let addr = req.query?.addr as string
-    let ethscan_resp = await etherscan_getsource(addr)
+    let addr = req.query?.address as string
+    let ethscan_resp = await etherscanGetSource(addr)
     let data = await ethscan_resp.json()
     res.status(200).json(data)
 }

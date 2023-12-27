@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack')
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withPlausibleProxy } = require('next-plausible')
@@ -8,10 +9,17 @@ module.exports = withPlausibleProxy()({
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
+  webpack5: true,
   webpack: (config, options) => {
-    const { dir, defaultLoaders } = options
+    const { dir, defaultLoaders, isServer } = options
 
-    config.resolve.extensions.push('.ts', '.tsx')
+    // config.plugins.push(new webpack.DefinePlugin({ BROWSER: true }))
+
+    // if (!isServer) {
+      config.resolve.alias['@solidity-parser/parser'] = require.resolve('@solidity-parser/parser/dist/index.iife.js');
+    // }
+
+    config.resolve.extensions.push('.ts', '.tsx', 'js')
     config.module.rules.push({
       test: /\.+(ts|tsx)$/,
       include: [dir],

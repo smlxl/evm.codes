@@ -24,11 +24,11 @@ function onCompileRequest(msg) {
   }
 
   loadCompiler(version)
-  console.log('compiling with version:', version)
+  // console.log('compiling with version:', version)
   const compiler = wrapper(self.Module)
   const input = JSON.stringify(msg.data.SourceCode)
   const result = compiler.compile(input)
-  console.log('compilation result:', result)
+  // console.log('compilation result:', result)
   self.postMessage(result)
 }
 

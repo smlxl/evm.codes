@@ -8,9 +8,8 @@ import { Container } from 'components/ui'
 import { useRouter } from 'next/router'
 
 const ContractPage = () => {
-  const router = useRouter()
-  const { addr } = router?.query
-  console.log('addr:', addr)
+  // const router = useRouter()
+  // const { address } = router?.query
 
   return (
     <>
