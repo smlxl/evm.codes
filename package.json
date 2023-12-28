@@ -7,7 +7,7 @@
   "scripts": {
     "build": "next build",
     "build:solcjs-worker": "npx browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
-    "dev": "npm run build:solcjs-worker && next dev",
+    "dev": "next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
@@ -59,9 +59,12 @@
     "next-mdx-remote": "^3.0.8",
     "next-plausible": "^3.1.4",
     "next-themes": "^0.0.15",
+    "path-browserify": "^1.0.1",
     "process": "^0.11.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-no-ssr": "^1.1.0",
+    "react-resizable-panels": "^1.0.5",
     "react-select": "^5.1.0",
     "react-simple-code-editor": "^0.11.2",
     "react-table": "^7.7.0",

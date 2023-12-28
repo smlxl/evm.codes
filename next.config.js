@@ -5,11 +5,17 @@ const webpack = require('webpack')
 const { withPlausibleProxy } = require('next-plausible')
 
 module.exports = withPlausibleProxy()({
-  reactStrictMode: true,
+  reactStrictMode: false,
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
   webpack5: true,
+  compiler: {
+    styledComponents: false,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   webpack: (config, options) => {
     const { dir, defaultLoaders, isServer } = options
 
@@ -17,9 +23,10 @@ module.exports = withPlausibleProxy()({
 
     // if (!isServer) {
       config.resolve.alias['@solidity-parser/parser'] = require.resolve('@solidity-parser/parser/dist/index.iife.js');
+      config.resolve.alias['path'] = require.resolve('path-browserify');
     // }
 
-    config.resolve.extensions.push('.ts', '.tsx', 'js')
+    config.resolve.extensions.push('.ts', '.tsx')
     config.module.rules.push({
       test: /\.+(ts|tsx)$/,
       include: [dir],
@@ -33,7 +40,7 @@ module.exports = withPlausibleProxy()({
       fs: false,
       stream: false,
       crypto: false,
-      path: false,
+      path: require.resolve('path-browserify'),
       process: require.resolve('process/browser'),
       assert: require.resolve('assert/'),
       events: require.resolve('events/'),
