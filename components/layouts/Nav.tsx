@@ -19,7 +19,7 @@ const Nav = () => {
     <nav className="fixed z-40 top-0 inset-x-0 py-2 bg-white dark:bg-black-800">
       <Container>
         <div className="h-10 flex items-center justify-between">
-          <Link href="/" passHref>
+          <Link legacyBehavior href="/" passHref>
             <a>
               <Logo />
             </a>

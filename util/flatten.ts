@@ -29,7 +29,8 @@ export function flattenCode(solidity_parser, stdio, filepath, remove_pragma = fa
 
   let index = 0
   for (let imp of imports) {
-    let realpath = path.normalize(path.join(dirname, imp.path)).replaceAll('\\', '/')
+    let rel_path = (imp.path[0] == '.' ? path.join(dirname, imp.path) : imp.path)
+    let realpath = path.normalize(rel_path).replaceAll('\\', '/')
     flat += source.slice(index, imp.range[0]) + flattenCode(solidity_parser, stdio, realpath, true)
     index = imp.range[1] + 1;
   }
