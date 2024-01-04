@@ -15,6 +15,7 @@ import { VM } from '@ethereumjs/vm'
 //
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
+import TranscationsMeta from 'transactions.json'
 import {
   IReferenceItem,
   IReferenceItemMetaList,
@@ -54,6 +55,7 @@ type ContextProps = {
   selectedFork: HardforkConfig | undefined
   opcodes: IReferenceItem[]
   precompiled: IReferenceItem[]
+  transactionTypes: IReferenceItem[]
   instructions: IInstruction[]
   deployedContractAddress: string | undefined
   isExecuting: boolean
@@ -135,6 +137,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [selectedFork, setSelectedFork] = useState<HardforkConfig>()
   const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
   const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
+  const [transactionTypes, setTransactionTypes] = useState<IReferenceItem[]>([]);
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -151,8 +154,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   useEffect(() => {
     initVmInstance()
+    loadTransactionTypes()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const loadTransactionTypes = () => {
+    // Transforma o JSON em um array apropriado
+    const typesTransactions = Object.entries(TranscationsMeta).map(([key, value]) => ({
+      ...value,
+      id: key,
+    }));
+    setTransactionTypes(typesTransactions);
+  };
 
   /**
    * Initializes the EVM instance.
@@ -750,6 +763,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         selectedFork,
         opcodes,
         precompiled,
+        transactionTypes,
         instructions,
         deployedContractAddress,
         isExecuting,

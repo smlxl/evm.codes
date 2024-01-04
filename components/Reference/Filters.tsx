@@ -11,9 +11,10 @@ const debounceTimeout = 100 // ms
 type Props = {
   onSetFilter: (columnId: string, value: string) => void
   isPrecompiled?: boolean
+  isTransactionType?: boolean
 }
 
-const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
+const Filters = ({ onSetFilter, isPrecompiled = false, isTransactionType = false  }: Props) => {
   const router = useRouter()
   const [searchKeyword, setSearchKeyword] = useState('')
   const [searchFilter, setSearchFilter] = useState({
@@ -21,17 +22,18 @@ const Filters = ({ onSetFilter, isPrecompiled = false }: Props) => {
     label: 'Name',
   })
 
-  const filterByOptions = useMemo(
-    () => [
-      {
-        label: !isPrecompiled ? 'Opcode' : 'Address',
-        value: 'opcodeOrAddress',
-      },
-      { label: 'Name', value: 'name' },
-      { label: 'Description', value: 'description' },
-    ],
-    [isPrecompiled],
-  )
+  const filterByOptions = useMemo(() => {
+    if (isTransactionType) {
+      
+      return [{ label: 'Type', value: 'type' }, { label: 'Name', value: 'name' }, { label: 'Description', value: 'description' }];
+    } else {      
+      return [
+        { label: !isPrecompiled ? 'Opcode' : 'Address', value: 'opcodeOrAddress' },
+        { label: 'Name', value: 'name' },
+        { label: 'Description', value: 'description' },
+      ];
+    }
+  }, [isPrecompiled, isTransactionType]);
 
   const inputRef = useRef<HTMLInputElement>(null)
 

@@ -36,3 +36,10 @@ yarn-error.log*
 
 # jet brains
 .idea
+
+
+# bun 
+bun.lockb
+
+# pnpm
+pnpm-lock.yaml

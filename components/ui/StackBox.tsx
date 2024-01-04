@@ -1,29 +1,28 @@
-import React from 'react'
-
-import cn from 'classnames'
+import React from 'react';
+import cn from 'classnames';
 
 type Props = {
-  value: string
-  showEmpty?: boolean
-  isFullWidth?: boolean
-  className?: string
-}
+  value?: string; 
+  showEmpty?: boolean;
+  isFullWidth?: boolean;
+  className?: string;
+};
 
 export const StackBox: React.FC<Props> = ({
-  value,
-  showEmpty,
+  value = '', 
+  showEmpty = true, 
   isFullWidth,
   className,
 }) => {
-  if (!showEmpty && value.length === 0) {
-    return null
+  if (!showEmpty && value.trim().length === 0) {
+    return null; 
   }
 
-  const parts = value.split(/[^\\]\|/)
+  const parts = value.split(/[^\\]\|/);
 
   return (
     <>
-      {(parts.length > 0 ? parts : [value]).map((p: string, index: number) => (
+      {(parts.length > 1 ? parts : [value]).map((p: string, index: number) => (
         <div
           key={index}
           className={cn(
@@ -37,5 +36,5 @@ export const StackBox: React.FC<Props> = ({
         </div>
       ))}
     </>
-  )
-}
+  );
+};

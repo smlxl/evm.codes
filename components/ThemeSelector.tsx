@@ -8,6 +8,14 @@ const ThemeSelector = () => {
 
   const actions: Action[] = [
     {
+      id: 'theme',
+      name: 'Select theme…',
+      shortcut: ['t'],
+      keywords: 'theme appearance',
+      section: 'Preferences',
+      children: ['theme-light', 'theme-dark', 'theme-system'],
+    },
+    {
       id: 'theme-light',
       name: 'Light',
       shortcut: [],
@@ -34,14 +42,7 @@ const ThemeSelector = () => {
       perform: () => setTheme('system'),
       parent: 'theme',
     },
-    {
-      id: 'theme',
-      name: 'Select theme…',
-      shortcut: ['t'],
-      keywords: 'theme appearance',
-      section: 'Preferences',
-      children: ['theme-light', 'theme-dark', 'theme-system'],
-    },
+    
   ]
 
   useRegisterActions(actions, [actions])
