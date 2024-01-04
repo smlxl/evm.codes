@@ -1,5 +1,6 @@
 {
     "type0": {
+        "type": "T0",
         "name": "User Transactions (Pre-EIP-2718)",
         "description": "Represent pre-EIP-2718 transactions",
         "rollups": {
@@ -27,6 +28,7 @@
         }
       },
     "type1": {
+      "type": "T1",
       "name": "User Transactions (Post EIP-2718)",
       "description": "Represent legacy transactions post EIP-2718",
       "rollups": {
@@ -39,6 +41,7 @@
       }
     },
     "type2": {
+      "type": "T2",
       "name": "User Transactions (EIP-1559)",
       "description": "Represent EIP-1559 transactions",
       "rollups": {
@@ -50,7 +53,9 @@
         }
       }
     },
+    
     "type100": {
+        "type": "T100",
         "name": "System (Bridge) Transaction",
         "description": "A deposit of ETH from L1 to L2 via the Arbitrum bridge",
         "rollups": {
@@ -60,6 +65,7 @@
         }
       },
     "type101": {
+        "type": "T101",
         "name": "System (Bridge) Transaction",
         "description": "An L1 user can use to call an L2 contract via the bridge",
         "rollups": {
@@ -69,6 +75,7 @@
         }
       },
     "type126": {
+     "type": "T126",
       "name": "System Transactions",
       "description": "Transactions importing L1 data into rollups or User-deposited transactions",
       "rollups": {

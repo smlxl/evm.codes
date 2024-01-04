@@ -3,7 +3,10 @@ import { StackBox } from 'components/ui';
 
 const filter = (rows: Row[], id: string, filterValue: string) => {
   const re = new RegExp(`${filterValue}`, 'i');
-  return rows.filter((row: any) => row.original[id].match(re));
+  return rows.filter((row: any) => {
+    const value = row.original[id]; // Ensure row.original[id] exists
+    return value && value.match(re);
+  });
 };
 
 const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => {  
@@ -25,6 +28,32 @@ const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => 
         Header: 'Description',
         accessor: 'description',
         className: 'hidden md:table-cell',
+      },
+      {
+        Header: 'Rollups',
+        accessor: 'rollups',
+        className: 'hidden md:table-cell',
+        Cell: ({ value }: { value: string }) => (
+          <div className="flex flex-wrap">
+            {Object.keys(value).map((rollupName, index) => (
+              <span
+                key={index}
+                className={`ml-2 py-1 px-3 leading-normal rounded-full text-2xs tracking-widest font-medium ${
+                  rollupName === 'optimism'
+                    ? 'bg-red-500 text-white' 
+                    : rollupName === 'base'
+                    ? 'bg-blue-500 text-white'
+                    : rollupName === 'arbitrumOne'
+                    ? 'bg-blue-300 text-white'
+                    : 'bg-gray-400 text-gray-800' 
+                }`}
+                style={{ margin: '4px' }}
+              >
+                {rollupName}
+              </span>
+            ))}
+          </div>
+        ),
       },
     ];
   }
