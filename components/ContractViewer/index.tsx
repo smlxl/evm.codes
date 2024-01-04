@@ -23,6 +23,7 @@ import { findContract, flattenCode } from 'util/flatten'
 import { signal, batch } from '@preact/signals-react'
 
 import AstTreeView from './AstTreeView'
+import { useTheme } from 'next-themes'
 
 // TODO: not all of this needs to be signals...?
 const state = {
@@ -261,6 +262,8 @@ const ContractViewer = () => {
     })
   }
 
+  const { theme, setTheme, resolvedTheme } = useTheme()
+
   return (
     <NoSSR>
       <input
@@ -280,7 +283,7 @@ const ContractViewer = () => {
           <div className="h-full">
             <Editor
               defaultLanguage="sol"
-              theme="vs-dark"
+              theme={theme == 'dark' ? "vs-dark" : "vs-light"}
               value={state.code.value}
               onMount={handleEditorDidMount}
             />
