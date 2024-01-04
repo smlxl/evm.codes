@@ -216,12 +216,7 @@ const ContractViewer = () => {
       EventDefinition: addNode,
       ErrorDefinition: addNode,
       EnumDefinition: addNode,
-      StateVariableDeclaration: (node, parent) => {
-        if (tree[parent.name])
-          addNode(node, parent)
-          
-          console.log(node, parent)
-      },
+      StateVariableDeclaration: addNode,
     })
 
     state.defTree.value = tree
@@ -278,10 +273,11 @@ const ContractViewer = () => {
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="w-full block h-[800px]"
+        className="w-full"
+        style={{ height: '800px' }}
       >
         <ResizablePanel defaultSize={60}>
-          <div className="h-[500px]">
+          <div className="h-full">
             <Editor
               defaultLanguage="sol"
               theme="vs-dark"
