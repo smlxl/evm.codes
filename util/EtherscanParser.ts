@@ -66,7 +66,7 @@ export type EtherscanContractResponse = {
   OptimizationUsed: string
   Runs: string
   // it's called "SourceCode" but it's actually entire SolidityCompilerInput as json-escaped string, possibly doubly-wrapped in brackets because fuck you
-  SourceCode: SolidityCompilerInput | string | string[]
+  SourceCode: SolidityCompilerInput
   ABI: string
   ConstructorArguments: string
   EVMVersion: string
@@ -96,14 +96,15 @@ export function etherscanParse(response: EtherscanResponse): (null | EtherscanCo
     return null;
   }
 
-  if (typeof data.SourceCode == 'string') {
-    // SourceCode is json-escaped, convert for convenience
-    if (data.SourceCode.startsWith('{{')) {
-      // sometimes it is doubly-wrapped, idk. fuck it
-      data.SourceCode = JSON.parse(data.SourceCode.slice(1, -1))
-    } else if (data.SourceCode != '') {
-      data.SourceCode = JSON.parse(data.SourceCode)
-    }
+  // SourceCode is json-escaped, convert for convenience
+  let sourceStr = data.SourceCode.toString()
+  if (sourceStr.startsWith('{{')) {
+    // sometimes it is doubly-wrapped, idk. fuck it
+    data.SourceCode = JSON.parse(sourceStr.slice(1, -1))
+  } else if (sourceStr.startsWith('{')) {
+    data.SourceCode = JSON.parse(sourceStr)
+  } else {
+    data.SourceCode = { sources: { [data.ContractName]: { content: sourceStr } } }
   }
 
   return data

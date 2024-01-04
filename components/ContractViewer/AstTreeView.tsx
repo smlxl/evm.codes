@@ -7,6 +7,7 @@ import AstDefinitionItem from './AstDefinitionItem'
 type AstTreeViewProps = {
   name: string
   tree: object
+  onSelect: (node) => void
 }
 
 // function renderTreeItems(tree: object) {
@@ -35,15 +36,15 @@ const AstTreeView = ({
       defaultExpanded={expanded}
     >
       {tree && 
-        <AstDefinitionItem id="ast_root" name={"📀 " + name}>
+        <TreeItem nodeId="ast_root" label={"🗂️ " + name}>
           {Object.values(tree).map(contract => (
-            <AstDefinitionItem id={"ast_" + contract.id} kind={contract.kind} name={contract.name} onclick={() => onSelect(contract)}>
+            <AstDefinitionItem id={"ast_" + contract.id} node={contract.node} onclick={() => onSelect(contract)}>
               {contract.children.map(subdef => (
-                <AstDefinitionItem id={"ast_" + subdef.id} kind={subdef.kind} name={subdef.name} onclick={() => onSelect(subdef)} />
+                <AstDefinitionItem id={"ast_" + subdef.id} node={subdef.node} onclick={() => onSelect(subdef)} />
               ))}
             </AstDefinitionItem>
           ))}
-        </AstDefinitionItem>
+        </TreeItem>
       }
     </TreeView>
   )

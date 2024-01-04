@@ -1,6 +1,9 @@
 import path from 'path'
 
 export function findContract(stdio, contractName) {
+  if (!stdio || !stdio.sources)
+    return contractName
+
   for (let [filename, code] of Object.entries(stdio.sources)) {
     if (code.content.match(`(contract|library)\\s+${contractName}`)) {
       return filename

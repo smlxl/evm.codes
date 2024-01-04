@@ -173,7 +173,7 @@ const ContractViewer = () => {
       return
     }
 
-    let contractPath = findContract(state.contractInfo.value?.SourceCode, state.contractInfo.value?.ContractName)
+    let contractPath = findContract(state.contractInfo.value.SourceCode, state.contractInfo.value.ContractName)
     if (!contractPath) {
       state.code.value = '/*\nfailed to find contract..\n*/'
       state.defTree.value = {}
@@ -187,35 +187,40 @@ const ContractViewer = () => {
     state.ast = astParser.parse(flatCode, { loc: true, range: true, tolerant: true })
     let tree = {}
     let id = 0
-    astParser.visit(state.ast, {
-      ContractDefinition: (node, parent) => {
-        let kind = node.kind
-        if (kind == 'abstract') {
-          kind = 'abstract contract'
-        }
+    
+    /*
+      tree has only two nesting levels (below the root):
+      - parent is one of contract, interface, library or an orphan child (eg. floating function)
+      - child is one of function, struct, event, enum
+    */
+    let addNode = (node, parent, ...props) => {
+      let obj = {
+        id: id++,
+        node,
+        parent,
+        children: [],
+        ...props
+      }
 
-        tree[node.name] = {
-          id: id++,
-          node,
-          name: kind + ' ' + node.name,
-          children: []
-        }
-      },
-      FunctionDefinition: (node, parent) => {
-        tree[parent.name].children.push({
-          id: id++,
-          node,
-          kind: 'function',
-          name: 'function ' + (node.name ? node.name : '')
-        })
-      },
-      StructDefinition: (node, parent) => {
-        tree[parent.name].children.push({
-          id: id++,
-          node,
-          kind: 'struct',
-          name: 'struct ' + (node.name ? node.name : '')
-        })
+      if (parent && parent.name && tree[parent.name]) {
+        tree[parent.name].children.push(obj)
+      } else {
+        tree[node.name] = obj
+      }
+    }
+  
+    astParser.visit(state.ast, {
+      ContractDefinition: addNode,
+      FunctionDefinition: addNode,
+      StructDefinition: addNode,
+      EventDefinition: addNode,
+      ErrorDefinition: addNode,
+      EnumDefinition: addNode,
+      StateVariableDeclaration: (node, parent) => {
+        if (tree[parent.name])
+          addNode(node, parent)
+          
+          console.log(node, parent)
       },
     })
 
@@ -230,7 +235,7 @@ const ContractViewer = () => {
   // the code is parsed (the ast parser is loaded in a separate script)
   const loadContract = (address: string) => {
     const cache_key = `contractInfo_${address}`
-    let contractInfo = JSON.parse(sessionStorage.getItem(cache_key))
+    let contractInfo = JSON.parse(localStorage.getItem(cache_key))
     if (contractInfo) {
       // console.log('found cached contract info')
       onSourceAvailable(contractInfo)
@@ -241,8 +246,8 @@ const ContractViewer = () => {
       .then(res => res.json())
       .then(data => {
         let contractInfo = etherscanParse(data)
-        sessionStorage.setItem(cache_key, JSON.stringify(contractInfo))
         onSourceAvailable(contractInfo)
+        localStorage.setItem(cache_key, JSON.stringify(contractInfo))
       })
       .catch((err) => {
         console.error(err)
