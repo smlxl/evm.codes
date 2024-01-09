@@ -3,33 +3,39 @@ import wrapper from 'solc/wrapper';
 let loadedCompilers = {}
 
 function loadCompiler(version) {
-  if (!version) {
-    console.warn('no version specified')
-    return;
-  }
-
   if (!loadedCompilers[version]) {
     const url = `https://binaries.soliditylang.org/bin/soljson-${version}.js`
-    console.log('loading compiler:', url)
-    importScripts(url)
+    try {
+      importScripts(url)
+    } catch (e) {
+      return false
+    }
     loadedCompilers[version] = true
   }
+
+  return true
 }
 
 function onCompileRequest(msg) {
-  let version = msg.data.CompilerVersion
-  if (!version) {
-    console.warn('no version specified')
-    return;
+  let { version, stdJson } = msg.data.version
+  if (!version || !stdJson) {
+    self.postMessage({ error: 'no version or standard json specified' })
+    return
   }
 
-  loadCompiler(version)
+  // console.log('loading compiler:', url)
+  if (!loadCompiler(version)) {
+    self.postMessage({ error: `failed to load compiler version ${version}` })
+    return
+  }
+
   // console.log('compiling with version:', version)
   const compiler = wrapper(self.Module)
-  const input = JSON.stringify(msg.data.SourceCode)
+  // compiler expects json string
+  const input = typeof stdJson == 'string' ? stdJson : JSON.stringify(stdJson)
   const result = compiler.compile(input)
   // console.log('compilation result:', result)
-  self.postMessage(result)
+  self.postMessage({ result })
 }
 
 self.addEventListener('message', onCompileRequest, false)

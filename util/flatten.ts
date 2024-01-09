@@ -1,10 +1,19 @@
 import path from 'path'
+import { SolidityCompilerInput } from 'types/contract'
 
-export function findContract(stdio, contractName) {
-  if (!stdio || !stdio.sources)
+export function findContract(
+  stdJson: SolidityCompilerInput,
+  contractName: string
+) {
+  if (!stdJson || !stdJson.sources)
     return contractName
 
-  for (let [filename, code] of Object.entries(stdio.sources)) {
+  for (let [filename, code] of Object.entries(stdJson.sources)) {
+    if (!code.content) {
+      // throw 'missing code.content (if URL reference is used then it is not currently supported)'
+      continue
+    }
+
     if (code.content.match(`(contract|library)\\s+${contractName}`)) {
       return filename
     }
@@ -13,18 +22,38 @@ export function findContract(stdio, contractName) {
   return null
 }
 
+type SolidityParser = {
+  parse: (code: string, params?: object) => object
+  visit: (ast: object, callbacks: object) => void
+}
 
-export function flattenCode(solidity_parser, stdio, filepath, remove_pragma = false) {
-  let imports = []
+// TODO: fix solidity parser import so it won't be necessary as param
+export function flattenCode(
+  astParser: SolidityParser,
+  stdJson: SolidityCompilerInput,
+  filepath: string,
+  remove_pragma: boolean = false,
+  imported: string[] = []
+) {
+  let imports: any[] = []
   let flat = ''
-  let source = stdio.sources[filepath].content
-  if (remove_pragma) {
-    source = source.replace(/^pragma solidity.*$\s*/gm, '').replace(/^\/\/ SPDX-.*$\s*/gm, '')
+  let source = stdJson.sources[filepath].content
+  if (!source) {
+    throw 'source not found: ' + filepath
   }
-  const ast = solidity_parser.parse(source, {loc: true, range: true})
+
+  if (remove_pragma) {
+    source = source
+      .replace(/^pragma solidity.*$\s*/gm, '')
+      .replace(/^\/\/ SPDX-.*$\s*/gm, '')
+  }
+
+  // source = '/// file: ' + filepath + '\n\n' + source
+
+  const ast = astParser.parse(source, { loc: true, range: true })
   let dirname = path.dirname(filepath)
 
-  solidity_parser.visit(ast, {
+  astParser.visit(ast, {
     ImportDirective: (node) => {
       imports.push(node)
     }
@@ -34,9 +63,22 @@ export function flattenCode(solidity_parser, stdio, filepath, remove_pragma = fa
   for (let imp of imports) {
     let rel_path = (imp.path[0] == '.' ? path.join(dirname, imp.path) : imp.path)
     let realpath = path.normalize(rel_path).replaceAll('\\', '/')
-    flat += source.slice(index, imp.range[0]) + flattenCode(solidity_parser, stdio, realpath, true)
+    let preImport = source.slice(index, imp.range[0])
+    let flatImport = ''
+    if (!imported.includes(realpath)) {
+      imported.push(realpath)
+      flatImport = flattenCode(
+        astParser,
+        stdJson,
+        realpath,
+        true,
+        imported
+      )
+    }
+
+    flat += preImport + flatImport
     index = imp.range[1] + 1;
   }
-  flat += source.slice(index, source.length) 
+  flat += source.slice(index, source.length)
   return flat
 }

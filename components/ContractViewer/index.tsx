@@ -25,15 +25,7 @@ import { signal, batch } from '@preact/signals-react'
 import AstTreeView from './AstTreeView'
 import { useTheme } from 'next-themes'
 
-// TODO: not all of this needs to be signals...?
-const state = {
-  address: signal<string>(''),
-  code: signal<string>('/*\nenter an address to load source code\n*/'),
-  contractInfo: signal<EtherscanContractResponse | null>(null),
-  compilationResult: signal(null),
-  ast: null,
-  defTree: signal({})
-}
+import { state } from './ContractState'
 
 const ContractViewer = () => {
   const router = useRouter()
@@ -139,6 +131,8 @@ const ContractViewer = () => {
   // load contract from url once everything is ready
   useEffect(() => {
     const address = router.query.address as string
+    if (window.txt_address)
+      window.txt_address.value = address
     tryLoadAddress(address)
   }, [router.isReady, solcWorkerRef, editorRef, astParser])
 
@@ -156,7 +150,7 @@ const ContractViewer = () => {
       info_with_settings.SourceCode.settings.outputSelection = {'*': {'': ['ast']}}
 
       // console.log(info_with_settings)
-      solcWorkerRef.current?.postMessage(info_with_settings)
+      solcWorkerRef.current?.postMessage({ version: info_with_settings.CompilerVersion, stdJson: info_with_settings.SourceCode })
     }, [solcWorkerRef])
 
   function onSourceAvailable(contractInfo: EtherscanContractResponse) {
@@ -231,7 +225,7 @@ const ContractViewer = () => {
   // the code is parsed (the ast parser is loaded in a separate script)
   const loadContract = (address: string) => {
     const cache_key = `contractInfo_${address}`
-    let contractInfo = JSON.parse(localStorage.getItem(cache_key))
+    let contractInfo = JSON.parse(sessionStorage.getItem(cache_key))
     if (contractInfo) {
       // console.log('found cached contract info')
       onSourceAvailable(contractInfo)
@@ -243,35 +237,38 @@ const ContractViewer = () => {
       .then(data => {
         let contractInfo = etherscanParse(data)
         onSourceAvailable(contractInfo)
-        localStorage.setItem(cache_key, JSON.stringify(contractInfo))
+        sessionStorage.setItem(cache_key, JSON.stringify(contractInfo))
       })
       .catch((err) => {
         console.error(err)
       })
   }
 
-  const tryLoadAddress = (address: string) => {
-    batch(() => {
-      state.address.value = address
-      if (!isValidAddress(address))
-        return
+  const tryLoadAddress = useCallback(
+    (address: string) => {
+      batch(() => {
+        state.address.value = address
+        if (!isValidAddress(address))
+          return
 
-      router.push({query:{address}})
-      // console.log('astParser', astParser && astParser.parse)
-      loadContract(address)
-    })
-  }
+        router.push({query:{address}})
+        // console.log('astParser', astParser && astParser.parse)
+        loadContract(address)
+      })
+    },
+    [astParser, router.isReady, editorRef/*, solcWorkerRef*/]
+  )
 
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   return (
     <NoSSR>
       <input
+        id="txt_address"
         type="text"
         placeholder="Address..."
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
         onChange={e => tryLoadAddress(e.target.value)}
-        value={state.address.value}
       />
 
       <ResizablePanelGroup
@@ -294,18 +291,23 @@ const ContractViewer = () => {
           <ResizablePanelGroup direction="vertical">
             <ResizablePanel defaultSize={80} style={{'overflow':'auto'}}>
               {state.contractInfo.value && (
-                <AstTreeView name={state.contractInfo.value.ContractName} tree={state.defTree.value} onSelect={
-                  (item) => {
-                    let { loc } = item.node
-                    editorRef.current.setPosition({lineNumber: loc.start.line, column: loc.start.column })
-                    editorRef.current.setSelection({
-                      startLineNumber: loc.start.line,
-                      startColumn: loc.start.column,
-                      endLineNumber: loc.end.line,
-                      endColumn: loc.end.column + 2,
-                    })
-                    editorRef.current.revealLineInCenter(loc.start.line)
-                  }
+                <AstTreeView
+                  name={state.contractInfo.value.ContractName}
+                  rootLabel={<div><p>🗂️ {state.contractInfo.value.ContractName}</p><span className="text-xs">{state.address.value}</span></div>}
+                  tree={state.defTree.value}
+                  onSelect={
+                    (item) => {
+                      let { loc } = item.node
+                      editorRef.current.setPosition({lineNumber: loc.start.line, column: loc.start.column })
+                      // TODO: potentially select on double click?
+                      // editorRef.current.setSelection({
+                      //   startLineNumber: loc.start.line,
+                      //   startColumn: loc.start.column,
+                      //   endLineNumber: loc.end.line,
+                      //   endColumn: loc.end.column + 2,
+                      // })
+                      editorRef.current.revealLineInCenter(loc.start.line)
+                    }
                 } />
               )}
             </ResizablePanel>
