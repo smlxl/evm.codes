@@ -28,9 +28,8 @@ const ContractViewer = () => {
 
   const { theme } = useTheme()
 
-  const editorRef = useRef(null)
+  const editorRef = useRef<any>(null)
   const solcWorkerRef = useRef<null | Worker>(null)
-  // const [astParser, setAstParser] = useState<any>(null)
 
   const [currentAddress, setCurrentAddress] = useState<string>('')
   // const [currentCode, setCurrentCode] = useState<string>('')
@@ -131,9 +130,7 @@ const ContractViewer = () => {
 
   const tryLoadAddress = useCallback(
     (address: string) => {
-      //batch(() => {
       address = (address || '').toLowerCase()
-      // state.address.value = address
       if (!isValidAddress(address)) {
         return
       }
@@ -144,7 +141,6 @@ const ContractViewer = () => {
         // setCode(state.selectedContract().code)
         editorRef.current.setValue(state.selectedContract().code)
       })
-      //}) // /batch
     },
     [router],
   )
@@ -154,13 +150,13 @@ const ContractViewer = () => {
     const address = router.query.address as string
     // instead of setting value attribute directly, otherwise it won't be editable
     // TODO: fix this hack
-    // if (window['txt_address']) {
-    //   window['txt_address'].value = address
-    // }
+    if (window['txt_address']) {
+      window['txt_address'].value = address
+    }
 
     tryLoadAddress(address)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solcWorkerRef, editorRef])
+  }, [router.isReady, solcWorkerRef, editorRef])
 
   return (
     <NoSSR>

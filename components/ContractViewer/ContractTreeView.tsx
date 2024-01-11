@@ -11,7 +11,7 @@ type ContractTreeViewProps = {
 
 const ContractTreeView = ({ forest, onSelect }: ContractTreeViewProps) => {
   let expanded: string[] = [] //"ast_root"] //, "ast_" + (tree[name] ? tree[name].id : "")]
-  console.log('tree:', forest)
+  // console.log('tree:', forest)
   expanded = forest.map((t) => t.id as string)
 
   return (
