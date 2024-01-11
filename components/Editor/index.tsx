@@ -255,7 +255,7 @@ const Editor = ({ readOnly = false }: Props) => {
   useEffect(() => {
     if (solcWorkerRef && solcWorkerRef.current) {
       // @ts-ignore change the worker message, when value and args changed.
-      solcWorkerRef.current?.onmessage = handleWorkerMessage
+      solcWorkerRef.current.onmessage = handleWorkerMessage
     }
   }, [solcWorkerRef, handleWorkerMessage])
 
@@ -410,7 +410,7 @@ const Editor = ({ readOnly = false }: Props) => {
               language: codeType,
               evmVersion: getTargetEvmVersion(selectedFork?.name),
               source: code,
-            }
+            },
           })
         }
       }

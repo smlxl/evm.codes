@@ -1,24 +1,36 @@
 import { ASTNode } from '@solidity-parser/parser/src/ast-types'
 
-export type SolidityParser = {
-  parse: (code: string, params?: object) => object
-  visit: (ast: object, callbacks: object) => void
-}
+// type DeploymentTree = {
+//   codeAddress: string
+//   contextAddress: string
+// }
+
+// type ComponentType = 'contract' | 'interface' | 'library'
+
+// a contract / interface / library
+// type ContractComponent = {
+//   name: string
+//   type: ComponentType // string
+//   code: string
+//   // codeAdderss: string
+//   filepath: string
+// }
 
 export type ContractTreeNode = {
-  id: string
-  ast: ASTNode
+  id: number
+  // astNode: object
+  // astParentNode: object
   // onclick?: (e) => void
   // children?: React.ReactNode
 }
 
 // function / struct / enum / event / error
-export type ContractClause = {
+export type ContractClause = ContractTreeNode & {
   type: string // 'function' | 'event' | 'enum' | 'struct' | 'mapping' | 'array'
 }
 
 // a contract / abstract / interface / (embedded) library
-export type ContractSection = {
+export type ContractSection = ContractTreeNode & {
   name: string
   type: string // 'contract' | 'interface' | 'library'
   clauses: ContractClause[]
@@ -33,13 +45,13 @@ export type ContractReference = {
 }
 
 // a master contract ("Agreement"/"Deployment")
-export type ContractDeployment = {
+export type ContractDeployment = ContractTreeNode & {
   // name of the master contract
   deploymentName: string
   codeAddress: string
   contextAddress: string
   // flattened code
-  code: string
+  // code: string
   ast: ASTNode
   // contracts, interfaces and libraries
   sections: ContractSection[]

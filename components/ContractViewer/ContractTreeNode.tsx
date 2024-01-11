@@ -1,31 +1,32 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable react/jsx-key */
+/* eslint-disable jsx-a11y/accessible-emoji */
+import { useState } from 'react'
 
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import { TreeItem } from '@mui/x-tree-view/TreeItem'
 
-
-import { ASTNode } from '@solidity-parser/parser/src/ast-types'
-import { useState } from 'react';
-import { state } from './ContractState'
+// import { state } from './ContractState'
 
 type ContractTreeNodeProps = {
-  node: ASTNode
-  onclick?: (e) => void
+  node: any
+  root: any
+  onSelect: (e) => void
 }
 
 const NodeTypeMap = {
-  'Deployment': {
-    emoji: '🗂️',
-    // className: 'text-purple-600',
+  Deployment: {
     label: (node) => {
-      let text = node.codeAddress
-      if (node.codeAddress != node.contextAddress)
-        text += ' @ ' + node.contextAddress
+      let text = node.info.codeAddress
+      if (node.codeAddress != node.info.contextAddress) {
+        text += ' @ ' + node.info.contextAddress
+      }
 
       return (
         <div className="whitespace-nowrap">
-          <p>🗂️ {node.name}</p>
+          <p>🗂️ {node.info.etherscanInfo.ContractName}</p>
           <span className="text-xs">{text}</span>
         </div>
       )
@@ -36,42 +37,43 @@ const NodeTypeMap = {
     //   }
     // }
   },
-  'ContractDefinition': {
-    emoji: '📜',
-    // className: 'text-purple-600',
+  ContractDefinition: {
     label: (node) => {
       return '📜 ' + node.kind + ' ' + node.name
-    }
+    },
   },
-  'FunctionDefinition': {
-    emoji: '🔧',
-    // className: 'text-green-600',
+  FunctionDefinition: {
     label: (node) => {
       if (!node.name) {
-        if (node.isConstructor)
-          return (<i>🔧🔧 constructor</i>)
-        
-        if (node.isFallback)
-          return (<i>🔧🔧 fallback</i>)
-        
-        if (node.isReceiveEther)
-          return (<i>🔧🔧 receive</i>)
-        
+        if (node.isConstructor) {
+          return <i>🔧🔧 constructor</i>
+        }
+
+        if (node.isFallback) {
+          return <i>🔧🔧 fallback</i>
+        }
+
+        if (node.isReceiveEther) {
+          return <i>🔧🔧 receive</i>
+        }
+
         return '*unknown function*'
       }
 
       return '🔧 function ' + node.name
     },
     widget: (node, root) => {
-      if (node.isConstructor)
+      if (node.isConstructor) {
         return null
+      }
 
       // TODO: support
-      if (node.isFallback || node.isReceiveEther)
+      if (node.isFallback || node.isReceiveEther) {
         return null
+      }
 
-      let [weiValue, setWeiValue] = useState(0n)
-      let [retValue, setRetValue] = useState(null)
+      const [weiValue, setWeiValue] = useState(0n)
+      const [retValue, setRetValue] = useState<string>('')
       // console.log(node)
 
       function callFunction() {
@@ -80,91 +82,106 @@ const NodeTypeMap = {
 
       return (
         <div className="flex flex-col mx-10 gap-2 text-black-500 p-1">
-          {node.parameters.length > 0 && node.parameters.map((param) => {
-            let type = param.typeName.name || param.typeName.namePath
-            return (
-              <TextField variant="outlined" label={type + ' ' + (param.name || "")} size="small" onChange={(e)=>{setRetValue('demo: ' + e.target.value)}} />
-            )
-          })}
-          {
-            node.stateMutability == 'payable' && (
-              <TextField variant="outlined" label="value (wei)" size="small" onChange={(e)=>{setWeiValue(BigInt(e.target.value))}} />
+          {node.parameters.length > 0 &&
+            node.parameters.map((param) => {
+              const type = param.typeName.name || param.typeName.namePath
+              // TODO: set jsx key = address_context_contract_function_param
+              return (
+                <TextField
+                  variant="outlined"
+                  label={type + ' ' + (param.name || '')}
+                  size="small"
+                  onChange={(e) => {
+                    setRetValue('demo: ' + e.target.value)
+                  }}
+                />
+              )
+            })}
+          {node.stateMutability == 'payable' && (
+            <TextField
+              variant="outlined"
+              label="value (wei)"
+              size="small"
+              onChange={(e) => {
+                setWeiValue(BigInt(e.target.value))
+              }}
+            />
           )}
-          <Button onClick={callFunction} variant="contained">Call</Button>
-          {node.returnParameters && node.returnParameters.length > 0 && node.returnParameters.map((param) => {
-            let type = param.typeName.name || param.typeName.namePath
-            return (
-              <>
-                <hr />
-                <TextField variant="filled" label={type + ' ' + (param.name || "")} value={retValue} size="small" />
-              </>
-            )
-          })}
+          <Button onClick={callFunction} variant="contained">
+            Call
+          </Button>
+          {node.returnParameters &&
+            node.returnParameters.length > 0 &&
+            node.returnParameters.map((param) => {
+              const type = param.typeName.name || param.typeName.namePath
+              return (
+                <>
+                  <hr />
+                  <TextField
+                    variant="filled"
+                    label={type + ' ' + (param.name || '')}
+                    value={retValue}
+                    size="small"
+                  />
+                </>
+              )
+            })}
         </div>
-        )
-    }
+      )
+    },
   },
-  'EventDefinition': {
-    emoji: '🔔',
-    // className: 'text-red-600',
+  EventDefinition: {
     label: (node) => {
       return '🔔 event ' + node.name
-    }
+    },
   },
-  'StructDefinition': {
-    emoji: '🏗️',
-    // className: 'text-blue-600',
+  StructDefinition: {
     label: (node) => {
       return '🏗️ struct ' + node.name
-    }
+    },
   },
-  'EnumDefinition': {
-    emoji: '📚',
-    // className: 'text-blue-600',
+  EnumDefinition: {
     label: (node) => {
       return '📚 enum ' + node.name
-    }
+    },
   },
-  'StateVariableDeclaration': {
-    emoji: '📦',
-    // className: 'text-orange-500',
+  StateVariableDeclaration: {
     label: (node) => {
       // console.log(node)
       return '📦 storage ' + node.variables[0].name
     },
-    widget: (node, parent) => {
-      let type = node.variables[0].typeName
-      if (type.type == 'ElementaryTypeName')
-        return (null)
+    widget: (node) => {
+      const type = node.variables[0].typeName
+      if (type.type == 'ElementaryTypeName') {
+        return null
+      }
 
       let keyType
       if (type.keyType) {
-        keyType = type.keyType.name ||  type.keyType.namePath
+        keyType = type.keyType.name || type.keyType.namePath
       }
 
-      return (
-        <TextField variant="outlined" label={keyType} size="small" />
-      )
-    }
-  }
+      return <TextField variant="outlined" label={keyType} size="small" />
+    },
+  },
 }
 
 const EmptyMap = {
   emoji: '?',
   className: '',
-  label: (node) => 'N/A',
+  label: () => 'N/A',
 }
 
-const ContractTreeNode = ({
-      node,
-      root,
-      onSelect
-    }: ContractTreeNodeProps
-  ) => {
-  let map = { ...EmptyMap, ...(NodeTypeMap[node.type] || {}) }
+const ContractTreeNode = ({ node, root, onSelect }: ContractTreeNodeProps) => {
+  const map = { ...EmptyMap, ...(NodeTypeMap[node.type] || {}) }
 
   return (
-    <TreeItem nodeId={node.id} key={node.id} label={map.label(node.node)} onClick={(e) => onSelect(node)}>
+    <TreeItem
+      nodeId={node.id}
+      key={node.id}
+      label={map.label(node.node)}
+      onClick={() => onSelect(node)}
+    >
       {map.widget && map.widget(node.node, root.node)}
       {node.children.map((child) => (
         <ContractTreeNode root={root} node={child} onSelect={onSelect} />

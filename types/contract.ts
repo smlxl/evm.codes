@@ -1,39 +1,41 @@
+type SoliditySourceExplicitContent = {
+  content: string
+  keccak256?: string
+}
+
+type SoliditySourceUrlContent = {
+  urls: string[]
+  content?: string
+  keccak256?: string
+}
 
 export type SoliditySources = {
-  [file: string]: {
-    content?: string
-    keccak256?: string
-    urls?: string[]
-    mortal?: {
-      keccak256?: string
-      content: string
-    }
-  }
+  [file: string]: SoliditySourceExplicitContent | SoliditySourceUrlContent
 }
 
 export type OptimizerSettings = {
-  enabled: Boolean
+  enabled: boolean
   // Optimize for how many times you intend to run the code.
   // Lower values will optimize more for initial deployment cost, higher values will optimize more for high-frequency usage.
-  runs: Number
+  runs: number
 }
 
 export type EvmVersion =
-  'homestead' |
-  'dao' |
-  'tangerineWhistle' |
-  'spuriousDragon' |
-  'byzantium' |
-  'constantinople' |
-  'petersburg' |
-  'istanbul' |
-  'muirGlacier' |
-  'berlin' |
-  'london' |
-  'arrowGlacier' |
-  'grayGlacier' |
-  'merge' |
-  'shanghai'
+  | 'homestead'
+  | 'dao'
+  | 'tangerineWhistle'
+  | 'spuriousDragon'
+  | 'byzantium'
+  | 'constantinople'
+  | 'petersburg'
+  | 'istanbul'
+  | 'muirGlacier'
+  | 'berlin'
+  | 'london'
+  | 'arrowGlacier'
+  | 'grayGlacier'
+  | 'merge'
+  | 'shanghai'
 
 export type SoliditySettings = {
   // Optional: Sorted list of remappings
@@ -42,19 +44,19 @@ export type SoliditySettings = {
   optimizer?: OptimizerSettings
   evmVersion: EvmVersion // Version of the EVM to compile for. Affects type checking and code generation. Can be homestead, tangerineWhistle, spuriousDragon, byzantium or constantinople
   // Metadata settings (optional)
-  metadata?: { useLiteralContent: Boolean }
+  metadata?: { useLiteralContent: boolean }
   // Addresses of the libraries. If not all libraries are given here, it can result in unlinked objects whose output data is different.
-  libraries: Object,
+  libraries: object
   // The following can be used to select desired outputs.
   // If this field is omitted, then the compiler loads and does type checking, but will not generate any outputs apart from errors.
   // The first level key is the file name and the second is the contract name, where empty contract name refers to the file itself,
   // while the star refers to all of the contracts.
-  outputSelection: Object
+  outputSelection: object
 }
 
 export type SolidityCompilerInput = {
   // Required: Source code language, such as "Solidity", "Vyper", "lll", "assembly", etc.
-  language: String // "Solidity"
+  language: string // "Solidity"
   // Required
   sources: SoliditySources
   // Optional

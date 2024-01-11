@@ -5,25 +5,22 @@ import ContractViewer from 'components/ContractViewer'
 import HomeLayout from 'components/layouts/Home'
 import { Container } from 'components/ui'
 
-import { useRouter } from 'next/router'
-
 const ContractPage = () => {
-  // const router = useRouter()
-  // const { address } = router?.query
-
   return (
     <>
       <Head>
         <meta property="og:type" content="website" />
         <title>EVM Codes - Contract Viewer</title>
-        <meta
-          name="description"
-          content="EVM Codes - Contract Viewer"
-        />
+        <meta name="description" content="EVM Codes - Contract Viewer" />
       </Head>
 
       <Container>
+        <p className="text-xl">Contract Viewer</p>
         <ContractViewer />
+        <sub>
+          Alpha version - <a href="https://twitter.com/high_byte">@high_byte</a>{' '}
+          for feature requests or bug fixes
+        </sub>
       </Container>
     </>
   )

@@ -417,8 +417,8 @@ const AboutPage = () => {
           <b>Berlin</b>, all precompiled contract addresses are always ‘warm’.
         </p>
         <p className="pb-6">
-          If a context is reverted, access warming effects are reverted to their state before the
-          context.
+          If a context is reverted, access warming effects are reverted to their
+          state before the context.
         </p>
       </SectionWrapper>
 

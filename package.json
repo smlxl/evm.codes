@@ -5,7 +5,7 @@
   "homepage": "https://github.com/smlxl/evm.codes",
   "license": "MIT",
   "scripts": {
-    "build": "next build",
+    "build": "npm run build:solcjs-worker && next build",
     "build:solcjs-worker": "npx browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
     "dev": "next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
@@ -55,6 +55,7 @@
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.5",
     "events": "^3.3.0",
+    "exports-loader": "^4.0.0",
     "framer-motion": "^10.16.16",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.3.1",
