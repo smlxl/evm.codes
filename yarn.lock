@@ -2162,7 +2162,7 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@preact/signals-core@^1.5.1":
+"@preact/signals-core@^1.4.0", "@preact/signals-core@^1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@preact/signals-core/-/signals-core-1.5.1.tgz#77d375fcd03fa01ac560cd2e9b038fe10a80fb23"
   integrity sha512-dE6f+WCX5ZUDwXzUIWNMhhglmuLpqJhuy3X3xHrhZYI0Hm2LyQwOu0l9mdPiWrVNsE+Q7txOnJPgtIqHCYoBVA==
@@ -2174,6 +2174,13 @@
   dependencies:
     "@preact/signals-core" "^1.5.1"
     use-sync-external-store "^1.2.0"
+
+"@preact/signals@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@preact/signals/-/signals-1.2.2.tgz#78df53b2d7e6cdda0bb32843f12eb0418a0d82b0"
+  integrity sha512-ColCqdo4cRP18bAuIR4Oik5rDpiyFtPIJIygaYPMEAwTnl4buWkBOflGBSzhYyPyJfKpkwlekrvK+1pzQ2ldWw==
+  dependencies:
+    "@preact/signals-core" "^1.4.0"
 
 "@radix-ui/primitive@1.0.0":
   version "1.0.0"

@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import TextField from '@mui/material/TextField';
@@ -8,61 +9,33 @@ import { ASTNode } from '@solidity-parser/parser/src/ast-types'
 import { useState } from 'react';
 import { state } from './ContractState'
 
-type AstDefinitionProps = {
-  id: string
+type ContractTreeNodeProps = {
   node: ASTNode
   onclick?: (e) => void
-  children?: React.ReactNode
-}
-
-const KindMap = {
-  interface: {
-    emoji: '🧬', // 📎
-  },
-  library: {
-    emoji: '🏛️',
-  },
-  contract: {
-    emoji: '📜',
-  },
-  abstract: {
-    emoji: '🗿',
-  },
-  function: {
-    className: 'text-green-600',
-    emoji: '🔢', // 🕹️
-  },
-  constructor: {
-    emoji: '0️⃣',
-  },
-  fallback: {
-    emoji: '🍂',
-  },
-  receive: {
-    emoji: '📥',
-  },
-  modifier: {
-    emoji: '🔧',
-  },
-  event: {
-    emoji: '🔔', // 💡
-  },
-  enum: {
-    emoji: '#️⃣',
-  },
-  struct: {
-    className: 'text-blue-600',
-    emoji: '🏗️', // 🚥
-  },
-  mapping: { 
-    emoji: '🗺️',
-  },
-  array: {
-    emoji: '📚',
-  }
 }
 
 const NodeTypeMap = {
+  'Deployment': {
+    emoji: '🗂️',
+    // className: 'text-purple-600',
+    label: (node) => {
+      let text = node.codeAddress
+      if (node.codeAddress != node.contextAddress)
+        text += ' @ ' + node.contextAddress
+
+      return (
+        <div className="whitespace-nowrap">
+          <p>🗂️ {node.name}</p>
+          <span className="text-xs">{text}</span>
+        </div>
+      )
+    },
+    // widget: (node) => {
+    //   if (node.impls.length > 0) {
+    //     return (node.impls.map(tree => <ContractTreeNode node={tree} />))
+    //   }
+    // }
+  },
   'ContractDefinition': {
     emoji: '📜',
     // className: 'text-purple-600',
@@ -89,13 +62,21 @@ const NodeTypeMap = {
 
       return '🔧 function ' + node.name
     },
-    widget: (node) => {
+    widget: (node, root) => {
       if (node.isConstructor)
         return null
 
+      // TODO: support
+      if (node.isFallback || node.isReceiveEther)
+        return null
+
       let [weiValue, setWeiValue] = useState(0n)
-      let [retValue, setRetValue] = useState('<ret val here>')
-      console.log(node)
+      let [retValue, setRetValue] = useState(null)
+      // console.log(node)
+
+      function callFunction() {
+        console.log('callfunction', node, root)
+      }
 
       return (
         <div className="flex flex-col mx-10 gap-2 text-black-500 p-1">
@@ -109,12 +90,13 @@ const NodeTypeMap = {
             node.stateMutability == 'payable' && (
               <TextField variant="outlined" label="value (wei)" size="small" onChange={(e)=>{setWeiValue(BigInt(e.target.value))}} />
           )}
+          <Button onClick={callFunction} variant="contained">Call</Button>
           {node.returnParameters && node.returnParameters.length > 0 && node.returnParameters.map((param) => {
             let type = param.typeName.name || param.typeName.namePath
             return (
               <>
                 <hr />
-                <TextField variant="outlined" label={type + ' ' + (param.name || "")} value={retValue} size="small" />
+                <TextField variant="filled" label={type + ' ' + (param.name || "")} value={retValue} size="small" />
               </>
             )
           })}
@@ -147,6 +129,7 @@ const NodeTypeMap = {
     emoji: '📦',
     // className: 'text-orange-500',
     label: (node) => {
+      // console.log(node)
       return '📦 storage ' + node.variables[0].name
     },
     widget: (node, parent) => {
@@ -163,43 +146,7 @@ const NodeTypeMap = {
         <TextField variant="outlined" label={keyType} size="small" />
       )
     }
-  },
-  // 'EnumDefinition': '🔢',
-  // 'EnumValue': '🔢',
-  // 'ModifierDefinition': '🔧',
-  // 'VariableDeclaration': '📦',
-  // 'InheritanceSpecifier': '🧬',
-  // 'UsingForDirective': '🔧',
-  // 'ArrayTypeName': '📚',
-  // 'Mapping': '🗺️',
-  // 'ElementaryTypeName': '📚',
-  // 'UserDefinedTypeName': '📚',
-  // 'Block': '🧱',
-  // 'ExpressionStatement': '📝',
-  // 'IfStatement': '🔀',
-  // 'WhileStatement': '🔁',
-  // 'ForStatement': '🔁',
-  // 'DoWhileStatement': '🔁',
-  // 'ContinueStatement': '⏩',
-  // 'BreakStatement': '⏹️',
-  // 'ReturnStatement': '🔙',
-  // 'EmitStatement': '📢',
-  // 'ThrowStatement': '🤷',
-  // 'VariableDeclarationStatement': '📦',
-  // 'ElementaryTypeNameExpression': '📚',
-  // 'BinaryOperation': '🔁',
-  // 'Conditional': '🔀',
-  // 'IndexAccess': '📚',
-  // 'MemberAccess': '📚',
-  // 'FunctionCall': '📞',
-  // 'NewExpression': '🆕',
-  // 'TupleExpression': '📦',
-  // 'UnaryOperation': '🔁',
-  // 'Identifier': '🆔',
-  // 'Literal': '🔤',
-  // 'InlineAssembly': '🏭',
-  // 'PlaceholderStatement': '📝',
-  // 'YulBlock': '🧱'
+  }
 }
 
 const EmptyMap = {
@@ -208,22 +155,22 @@ const EmptyMap = {
   label: (node) => 'N/A',
 }
 
-const AstDefinitionItem = ({
-      id,
+const ContractTreeNode = ({
       node,
-      onclick,
-      children,
-      ...props
-    }: AstDefinitionProps
+      root,
+      onSelect
+    }: ContractTreeNodeProps
   ) => {
-  // let { className, emoji } = KindMap[kind] || { emoji: '', className: '' }
   let map = { ...EmptyMap, ...(NodeTypeMap[node.type] || {}) }
 
   return (
-    <TreeItem nodeId={id} key={id} label={map.label(node)} onClick={onclick} className={map.className} {...props}>
-      {map.widget ? map.widget(node, children) : children}
+    <TreeItem nodeId={node.id} key={node.id} label={map.label(node.node)} onClick={(e) => onSelect(node)}>
+      {map.widget && map.widget(node.node, root.node)}
+      {node.children.map((child) => (
+        <ContractTreeNode root={root} node={child} onSelect={onSelect} />
+      ))}
     </TreeItem>
   )
 }
 
-export default AstDefinitionItem
+export default ContractTreeNode

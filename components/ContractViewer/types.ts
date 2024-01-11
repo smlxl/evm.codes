@@ -1,43 +1,53 @@
-// export enum CodeType {
-//   Yul = 'Yul',
-//   Solidity = 'Solidity',
-//   Bytecode = 'Bytecode',
-//   Mnemonic = 'Mnemonic',
+import { ASTNode } from '@solidity-parser/parser/src/ast-types'
+
+export type SolidityParser = {
+  parse: (code: string, params?: object) => object
+  visit: (ast: object, callbacks: object) => void
+}
+
+export type ContractTreeNode = {
+  id: string
+  ast: ASTNode
+  // onclick?: (e) => void
+  // children?: React.ReactNode
+}
+
+// function / struct / enum / event / error
+export type ContractClause = {
+  type: string // 'function' | 'event' | 'enum' | 'struct' | 'mapping' | 'array'
+}
+
+// a contract / abstract / interface / (embedded) library
+export type ContractSection = {
+  name: string
+  type: string // 'contract' | 'interface' | 'library'
+  clauses: ContractClause[]
+}
+
+// reference to another Agreement/Deployment? (call; what about delegatecall? Delegations)
+// export type ContractDelegation = {
 // }
 
-// export enum ValueUnit {
-//   Wei = 'Wei',
-//   Gwei = 'Gwei',
-//   Finney = 'Finney',
-//   Ether = 'Ether',
-// }
+export type ContractReference = {
+  context: string
+}
 
-// export interface IConsoleOutput {
-//   type: 'info' | 'warn' | 'error'
-//   message: string
-// }
-
-// export type ExampleCode = {
-//   [codeType in CodeType]: string[]
-// }
-
-// export interface MethodAbiInput {
-//   internalType: string
-//   name: string
-//   type: string
-// }
-
-// export interface Contract {
-//   code: string
-//   name: string
-//   abi: Array<MethodAbi>
-// }
-
-// export interface MethodAbi {
-//   name: string
-//   inputs: MethodAbiInput[]
-//   outputs: MethodAbiInput[]
-//   inputTypes: string
-//   stateMutability: 'nonpayable' | 'view' | 'payable'
-//   type: 'constructor' | 'function' | 'compiler'
-// }
+// a master contract ("Agreement"/"Deployment")
+export type ContractDeployment = {
+  // name of the master contract
+  deploymentName: string
+  codeAddress: string
+  contextAddress: string
+  // flattened code
+  code: string
+  ast: ASTNode
+  // contracts, interfaces and libraries
+  sections: ContractSection[]
+  // floating functions, structs, enums, events, errors
+  freeClauses: ContractClause[]
+  // proxy implementation or other delegatecalls
+  delegations: ContractDeployment[]
+  // addresses of external libraries or other external calls
+  // (references are not be part of the tree, this only serves as a link)
+  referenceAddresses: string[]
+}

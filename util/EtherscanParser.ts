@@ -28,6 +28,7 @@ export function etherscanParse(response: EtherscanResponse): (null | EtherscanCo
   } else {
     // TODO: need mock settings?
     // https://gydocument.readthedocs.io/en/latest/using-the-compiler.html#input-description
+    // the compiler should accept raw string, but the UI expects sources by filenames
     data.SourceCode = {
       language: "Solidity",
       sources: { [data.ContractName]: { content: sourceStr } }

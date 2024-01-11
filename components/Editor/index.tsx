@@ -24,7 +24,7 @@ import { SettingsContext, Setting } from 'context/settingsContext'
 import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
-  compilerSemVer,
+  compilerVersion,
   getBytecodeFromMnemonic,
   getMnemonicFromBytecode,
   getBytecodeLinesFromInstructions,
@@ -94,7 +94,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [output, setOutput] = useState<IConsoleOutput[]>([
     {
       type: 'info',
-      message: `Loading Solidity compiler ${compilerSemVer}...`,
+      message: `Loading Solidity compiler ${compilerVersion}...`,
     },
   ])
   const solcWorkerRef = useRef<null | Worker>(null)
@@ -405,9 +405,12 @@ const Editor = ({ readOnly = false }: Props) => {
 
         if (solcWorkerRef?.current) {
           solcWorkerRef.current.postMessage({
-            language: codeType,
-            evmVersion: getTargetEvmVersion(selectedFork?.name),
-            source: code,
+            version: compilerVersion,
+            stdJson: {
+              language: codeType,
+              evmVersion: getTargetEvmVersion(selectedFork?.name),
+              source: code,
+            }
           })
         }
       }

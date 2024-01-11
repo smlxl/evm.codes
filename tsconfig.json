@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "components/ContractViewer/ContractTreeNode.tsx.old"  ],
   "exclude": [
     "node_modules"
   ]

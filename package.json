@@ -33,6 +33,7 @@
     "@mui/icons-material": "^5.15.2",
     "@mui/material": "^5.15.2",
     "@mui/x-tree-view": "^6.17.0",
+    "@preact/signals": "^1.2.2",
     "@preact/signals-core": "^1.5.1",
     "@preact/signals-react": "^2.0.0",
     "@radix-ui/react-accordion": "^1.1.2",
