@@ -632,7 +632,7 @@ const Editor = ({ readOnly = false }: Props) => {
       </div>
 
       <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
-        Solidity Compiler {compilerSemVer}
+        Solidity Compiler {compilerVersion}
       </div>
     </div>
   )

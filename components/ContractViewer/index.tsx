@@ -7,23 +7,13 @@ import { useTheme } from 'next-themes'
 import NoSSR from 'react-no-ssr'
 
 import { state } from './ContractState'
+import ContractTreeView from './ContractTreeView'
 
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import ContractTreeView from './ContractTreeView'
-
-// function astToTreeView(
-//   astParser: SolidityParser,
-//   ast,
-//   etherscanInfo: EtherscanContractResponse,
-//   address: string,
-//   context?: string
-// ): ContractDeployment {
-//   // TODO: move from index.tsx
-// }
 
 const ContractViewer = () => {
   const [forceRender, setForceRender] = useState(0)
@@ -203,8 +193,6 @@ const ContractViewer = () => {
             <ResizablePanel defaultSize={80} style={{ overflow: 'auto' }}>
               {isValidAddress(state.selectedAddress) && (
                 <ContractTreeView
-                  // name={state.etherscanInfo.value.ContractName}
-                  // rootLabel={<div><p>🗂️ {state.etherscanInfo.value.ContractName}</p><span className="text-xs">{state.address.value}</span></div>}
                   forest={Object.values(state.contracts).map((c) => c.defTree)}
                   onSelect={(item, root) => {
                     if (!item || !item.node || !item.node.loc) {
@@ -212,14 +200,18 @@ const ContractViewer = () => {
                     }
 
                     const { loc } = item.node
-                    const addr = root.node.codeAddress
+                    const addr = root.node.info.codeAddress
+                    console.log(addr, root.node.info.codeAddress)
                     if (addr != currentAddress) {
-                      setCurrentAddress(currentAddress)
+                      setCurrentAddress(addr)
                       // state.address.value = addr
                       // state.code.value = root.node.code
-                      // editorRef.current.setValue(state.selectedContract().code)
-
-                      // rerender()
+                      const code = state.contracts[addr].code
+                      if (code) {
+                        editorRef.current.setValue(code)
+                        // TODO: verify this isn't needed anymore then remove
+                        // rerender()
+                      }
                     }
 
                     editorRef.current.setPosition({
@@ -235,7 +227,6 @@ const ContractViewer = () => {
                     // })
                     editorRef.current.revealLineInCenter(loc.start.line)
                   }}
-                  name=""
                 />
               )}
             </ResizablePanel>

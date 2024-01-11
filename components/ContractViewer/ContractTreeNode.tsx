@@ -20,7 +20,7 @@ const NodeTypeMap = {
   Deployment: {
     label: (node) => {
       let text = node.info.codeAddress
-      if (node.codeAddress != node.info.contextAddress) {
+      if (node.info.codeAddress != node.info.contextAddress) {
         text += ' @ ' + node.info.contextAddress
       }
 

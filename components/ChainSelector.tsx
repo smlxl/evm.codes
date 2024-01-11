@@ -35,6 +35,7 @@ const ChainSelector = () => {
     [forks],
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const defaultForkOption = useMemo(
     () => forkOptions.find((fork) => fork.value === selectedFork?.name),
     [forkOptions, selectedFork],
