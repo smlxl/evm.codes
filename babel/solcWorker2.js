@@ -1,4 +1,4 @@
-import wrapper from 'solc/wrapper';
+import wrapper from 'solc/wrapper'
 
 let loadedCompilers = {}
 
@@ -6,6 +6,7 @@ function loadCompiler(version) {
   if (!loadedCompilers[version]) {
     const url = `https://binaries.soliditylang.org/bin/soljson-${version}.js`
     try {
+      // eslint-disable-next-line no-undef
       importScripts(url)
     } catch (e) {
       return false
@@ -17,7 +18,7 @@ function loadCompiler(version) {
 }
 
 function onCompileRequest(msg) {
-  let { version, stdJson } = msg.data.version
+  let { version, stdJson } = msg.data
   if (!version || !stdJson) {
     self.postMessage({ error: 'no version or standard json specified' })
     return

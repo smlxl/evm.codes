@@ -8,6 +8,8 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 
+import { state } from './ContractState'
+
 // import { state } from './ContractState'
 
 type ContractTreeNodeProps = {
@@ -26,8 +28,15 @@ const NodeTypeMap = {
 
       return (
         <div className="whitespace-nowrap">
-          <p>🗂️ {node.info.etherscanInfo.ContractName}</p>
-          <span className="text-xs">{text}</span>
+          <button
+            onClick={() => {
+              state.removeContract(node.info.codeAddress)
+            }}
+          >
+            XX
+          </button>
+          <span>🗂️ {node.info.etherscanInfo.ContractName}</span>
+          <p className="text-xs">{text}</p>
         </div>
       )
     },
@@ -77,6 +86,7 @@ const NodeTypeMap = {
       // console.log(node)
 
       function callFunction() {
+        // TODO: viem call here
         console.log('callfunction', node, root)
       }
 

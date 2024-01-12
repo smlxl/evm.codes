@@ -29,8 +29,10 @@ export function findContract(
 export function flattenCode(
   stdJson: SolidityCompilerInput,
   filepath: string,
+  lenses: any[] | undefined = undefined,
   remove_pragma = false,
   imported: string[] = [],
+  lineOffset = 0,
 ) {
   const imports: any[] = []
   let flat = ''
@@ -44,6 +46,14 @@ export function flattenCode(
       .replace(/^pragma solidity.*$\s*/gm, '')
       .replace(/^\/\/ SPDX-.*$\s*/gm, '')
   }
+
+  // TODO: fix lenses or remove entirely
+  // if (lenses && lineOffset == 0) {
+  //   lenses.push({
+  //     line: 1,
+  //     path: filepath,
+  //   })
+  // }
 
   // source = '/// file: ' + filepath + '\n\n' + source
 
@@ -62,17 +72,43 @@ export function flattenCode(
       imp.path[0] == '.' ? path.join(dirname, imp.path) : imp.path
 
     const realpath = path.normalize(rel_path).replaceAll('\\', '/')
-    const preImport = source.slice(index, imp.range[0])
+    const preImport = source.slice(index, imp.range[0]).trim() + '\n'
     let flatImport = ''
+    flat += preImport
+
     if (!imported.includes(realpath)) {
+      const countLines = lineOffset + flat.split('\n').length
+      // flat += '/* preimport at ' + countLines + ' of ' + realpath + '*/'
+
+      // if (lenses) {
+      //   lenses.push({
+      //     line: countLines,
+      //     path: source.slice(imp.range[0], imp.range[1]),
+      //   })
+      // }
+
       imported.push(realpath)
-      flatImport = flattenCode(stdJson, realpath, true, imported)
+      flatImport = flattenCode(
+        stdJson,
+        realpath,
+        lenses,
+        true,
+        imported,
+        countLines,
+      )
     }
 
-    flat += preImport + flatImport
+    flat += flatImport.trim() + '\n'
+    // if (lenses && lineOffset == 0) {
+    //   lenses.push({
+    //     line: lineOffset + flat.split('\n').length,
+    //     path: '...cont ' + filepath,
+    //   })
+    // }
+
     index = imp.range[1] + 1
   }
 
-  flat += source.slice(index, source.length)
+  flat += source.slice(index, source.length).trim() + '\n'
   return flat
 }

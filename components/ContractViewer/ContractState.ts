@@ -21,18 +21,17 @@ const astParser = parser
 //   ast: null,
 // }
 
-// TODO: not all of this needs to be signals...?
-
-class ContractInfo {
+export class ContractInfo {
   codeAddress: string
   contextAddress: string
   mainContractPath: string
   code: string
+  originalPathLenses: any[] = []
   // ast: any
   // definitions tree - for contracts, functions, storage, etc.
   defTree: ContractTreeNode
   compilationResult: any
-  etherscanInfo: EtherscanContractResponse | null
+  etherscanInfo: EtherscanContractResponse
 
   parseAst() {
     // parse ast and process definitions tree
@@ -121,12 +120,13 @@ class ContractInfo {
       throw 'failed to find contract...'
     }
 
-    // const astParser = window['SolidityParser']
-    // if (!astParser)
-    //   throw 'ast parser not loaded'
-
     info.mainContractPath = contractPath
-    info.code = flattenCode(etherscanInfo.SourceCode, contractPath)
+    info.code = flattenCode(
+      etherscanInfo.SourceCode,
+      contractPath,
+      info.originalPathLenses,
+    )
+    // console.log(info.originalPathLenses)
     info.parseAst()
 
     return info
@@ -137,7 +137,7 @@ class ContractViewerState {
   selectedAddress: string
   contracts: { [address: string]: ContractInfo } = {}
   viewedCode: string
-  // astParser: SolidityParser
+  onChange: ((address: string, info: ContractInfo) => void)[] = []
 
   selectedContract(): ContractInfo {
     return this.contracts[this.selectedAddress]
@@ -158,24 +158,10 @@ class ContractViewerState {
       contextAddress,
     )
 
-    // TODO: yes it's weird. is there a nicer way to work with signals of objects?
-    // let defTree = state.defTree.value
-    // defTree[codeAddress] = tree
-    // state.defTree.value = { ...defTree }
-
     this.contracts[codeAddress] = info
     if (!this.selectedAddress) {
       this.selectedAddress = codeAddress
     }
-
-    // recursively load proxy implementation if available
-    // it's async so it won't block the rest of the code
-    if (etherscanInfo?.Implementation) {
-      // console.warn('loading proxy implementation:', etherscanInfo.Implementation, 'for context:', contextAddress, 'from:', codeAddress)
-      this.loadContract(etherscanInfo.Implementation, contextAddress)
-    }
-
-    // startCompilation(etherscanInfo)
   }
 
   async loadContract(codeAddress: string, contextAddress = '') {
@@ -211,6 +197,21 @@ class ContractViewerState {
     }
 
     return this.onSourceAvailable(etherscanInfo, codeAddress, contextAddress)
+  }
+
+  removeContract(codeAddress: string) {
+    const info = this.contracts[codeAddress]
+    delete this.contracts[codeAddress]
+    if (this.selectedAddress == codeAddress) {
+      const remaining = Object.values(this.contracts)
+      if (remaining.length > 0) {
+        this.selectedAddress = remaining[0].codeAddress
+      } else {
+        this.selectedAddress = ''
+      }
+    }
+
+    this.onChange.map((f) => f(codeAddress, info))
   }
 }
 

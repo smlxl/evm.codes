@@ -81,7 +81,8 @@
     "solc-typed-ast": "^17.0.3",
     "stream": "^0.0.2",
     "tailwind-merge": "^2.2.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^2.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.19.1",
