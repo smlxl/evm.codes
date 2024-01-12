@@ -1,17 +1,28 @@
-import { useContext, useEffect, useMemo, useState, useCallback } from 'react';
+import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 
-import { useRegisterActions, Action } from 'kbar';
-import { useRouter } from 'next/router';
-import Select, { OnChangeValue, components } from 'react-select';
+import { useRegisterActions, Action } from 'kbar'
+import { useRouter } from 'next/router'
+import Select, { OnChangeValue, components } from 'react-select'
 
-import { EthereumContext } from 'context/ethereumContext';
+import { EthereumContext } from 'context/ethereumContext'
 
-import { CURRENT_FORK } from 'util/constants';
-import { toKeyIndex } from 'util/string';
+import { CURRENT_FORK } from 'util/constants'
+import { toKeyIndex } from 'util/string'
 
-import { Icon, Label } from 'components/ui';
+import { Icon, Label } from 'components/ui'
 
-const useBuildForkActions = (forkOptions: any[], handleForkChange: { (option: any): void; (arg0: any): any; }) => {
+interface ForkOption {
+  label: string;
+}
+
+
+type HandleForkChange = (option: ForkOption) => void;
+
+
+const useBuildForkActions = (
+  forkOptions: ForkOption[],
+  handleForkChange: HandleForkChange
+) => {
   return useMemo(() => {
     const forkIds = forkOptions.map((option, index) => toKeyIndex('fork', index));
 
@@ -41,36 +52,37 @@ const useBuildForkActions = (forkOptions: any[], handleForkChange: { (option: an
 
 
 
+
 const ChainOption = (props: any) => {
-  const { data, children } = props;
-  const isCurrent = data.value === CURRENT_FORK;
+  const { data, children } = props
+  const isCurrent = data.value === CURRENT_FORK
 
   return (
     <components.Option {...props}>
       {children}
       {isCurrent && <Label>Live</Label>}
     </components.Option>
-  );
-};
+  )
+}
 
 const ChainSelector = () => {
-  const { forks, selectedFork, onForkChange } = useContext(EthereumContext);
-  const [forkValue, setForkValue] = useState(null);
-  const router = useRouter();
+  const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
+  const [forkValue, setForkValue] = useState(null)
+  const router = useRouter()
 
-  const forkOptions = useMemo(() => forks.map((fork) => ({ value: fork.name, label: fork.name })), [forks]);
+  const forkOptions = useMemo(() => forks.map((fork) => ({ value: fork.name, label: fork.name })), [forks])
 
   const handleForkChange = useCallback((option: OnChangeValue<any, any>) => {
-    setForkValue(option);
-    onForkChange(option.value);
+    setForkValue(option)
+    onForkChange(option.value)
 
-    router.query.fork = option.value;
-    router.push(router);
-  }, [onForkChange, router]);
+    router.query.fork = option.value
+    router.push(router)
+  }, [onForkChange, router])
 
-  const actions = useBuildForkActions(forkOptions, handleForkChange);
+  const actions = useBuildForkActions(forkOptions, handleForkChange)
 
-  useRegisterActions(actions, [actions]);
+  useRegisterActions(actions, [actions])
 
   return (
     <div className="flex justify-end items-center rounded">
@@ -89,8 +101,8 @@ const ChainSelector = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 
-export default ChainSelector;
+export default ChainSelector

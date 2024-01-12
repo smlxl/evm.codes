@@ -1,13 +1,13 @@
-import { Row } from 'react-table';
-import { StackBox } from 'components/ui';
+import { Row } from 'react-table'
+import { StackBox } from 'components/ui'
 
 const filter = (rows: Row[], id: string, filterValue: string) => {
-  const re = new RegExp(`${filterValue}`, 'i');
+  const re = new RegExp(`${filterValue}`, 'i')
   return rows.filter((row: any) => {
-    const value = row.original[id]; // Ensure row.original[id] exists
-    return value && value.match(re);
-  });
-};
+    const value = row.original[id] // Ensure row.original[id] exists
+    return value && value.match(re)
+  })
+}
 
 const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => {  
   if (isTransactionType) {
@@ -55,7 +55,7 @@ const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => 
           </div>
         ),
       },
-    ];
+    ]
   }
 
   return [
@@ -106,7 +106,7 @@ const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => 
       accessor: 'description',
       className: 'hidden md:table-cell',
     },
-  ];
-};
+  ]
+}
 
-export default columns;
+export default columns

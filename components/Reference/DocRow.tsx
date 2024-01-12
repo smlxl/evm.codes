@@ -137,7 +137,7 @@ const DocRow = ({
           >
             contribute?
           </a>{' '}
-          ;)
+          )
         </div>
       )}
     </div>

@@ -20,7 +20,7 @@ import { H1, H2, Container, RelativeLink as Link } from 'components/ui'
 
 const { serverRuntimeConfig } = getConfig()
 
-// It seems the memory expansion computation and constants did not change since frontier, but we have to keep an eye on new fork to keep this up to date
+
 const TransactionsPage = ({
   transactionDocs,  
 }: {
@@ -28,7 +28,7 @@ const TransactionsPage = ({
 }) => {
   const { transactionTypes, onForkChange } = useContext(EthereumContext)
 
-  // Change selectedFork according to query param
+  
   const router = useRouter()
 
   useEffect(() => {
@@ -72,7 +72,8 @@ const TransactionsPage = ({
           <ReferenceTable
             isTransactionType
             reference={transactionTypes}
-            itemDocs={transactionDocs}            
+            itemDocs={transactionDocs}
+            gasDocs={{}}            
           />
         </Container>
       </section>
@@ -90,41 +91,64 @@ TransactionsPage.getLayout = function getLayout(page: NextPage) {
 
 export const getStaticProps = async () => {
   const docsPath = path.join(serverRuntimeConfig.APP_ROOT, 'docs/transactions')
-  const docs = fs.readdirSync(docsPath)
+  
+  const transactionDocs: IItemDocs = {}
+  const gasDocs: IGasDocs = {}
 
-  const transactionDocs = {}; 
+  const docs = await readDocsFromDirectory(docsPath)
 
-  await Promise.all(
-    docs.map(async (doc) => {
-      const filePath = path.join(docsPath, doc);
-      const stat = fs.statSync(filePath);
-      const transactionType = path.parse(doc).name.toLowerCase();
-
-      try {
-        if (stat.isFile()) {
-          const markdownWithMeta = fs.readFileSync(filePath, 'utf-8');
-          const { data, content } = matter(markdownWithMeta);
-          const meta = data as IDocMeta;
-          const mdxSource = await serialize(content);
-
-          transactionDocs[transactionType] = {
-            type: transactionType,
-            meta,
-            mdxSource,
-          };
-        }
-      } catch (error) {
-        console.debug("Couldn't read the Markdown doc for the transaction type", error);
-      }
-    }),
-  );
+  await processDocuments(docs, docsPath, transactionDocs)
 
   return {
     props: {
       transactionDocs, 
+      gasDocs,
     },
-  };
-};
+  }
+}
 
-export default TransactionsPage;
+async function readDocsFromDirectory(docsPath: string): Promise<string[]> {
+  try {
+    return fs.readdirSync(docsPath)
+  } catch (error) {
+    console.debug("Error reading documents directory:", error)
+    return []
+  }
+}
+
+async function processDocuments(docs: string[], docsPath: string, transactionDocs: IItemDocs): Promise<void> {
+  await Promise.all(docs.map(async (doc) => {
+    const filePath = path.join(docsPath, doc)
+    if (isFile(filePath)) {
+      await processDocument(filePath, transactionDocs)
+    }
+  }))
+}
+
+function isFile(filePath: string): boolean {
+  try {
+    const stat = fs.statSync(filePath)
+    return stat.isFile()
+  } catch (error) {
+    console.debug("Error accessing file:", filePath, error)
+    return false
+  }
+}
+
+async function processDocument(filePath: string, transactionDocs: IItemDocs): Promise<void> {
+  const transactionType = path.parse(filePath).name.toLowerCase()
+
+  try {
+    const markdownWithMeta = fs.readFileSync(filePath, 'utf-8')
+    const { data, content } = matter(markdownWithMeta)
+    const meta = data as IDocMeta
+    const mdxSource = await serialize(content)
+
+    transactionDocs[transactionType] = { meta, mdxSource }
+  } catch (error) {
+    console.debug("Error processing document:", filePath, error)
+  }
+}
+
+export default TransactionsPage
 

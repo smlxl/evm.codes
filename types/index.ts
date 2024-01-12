@@ -22,6 +22,12 @@ export interface IReferenceItem {
       }
     }
   }
+  rollups?: {
+    [rollupName: string]: {
+      details: string
+    };
+  };
+  transactionType?: string
 }
 
 export interface IReferenceItemMeta {

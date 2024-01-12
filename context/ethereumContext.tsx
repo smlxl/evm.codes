@@ -22,7 +22,7 @@ import {
   IInstruction,
   IStorage,
   IExecutionState,
-  IChain,
+  IChain,  
 } from 'types'
 
 import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
@@ -101,6 +101,7 @@ export const EthereumContext = createContext<ContextProps>({
   selectedFork: undefined,
   opcodes: [],
   precompiled: [],
+  transactionTypes: [],
   instructions: [],
   deployedContractAddress: undefined,
   isExecuting: false,
@@ -137,7 +138,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [selectedFork, setSelectedFork] = useState<HardforkConfig>()
   const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
   const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
-  const [transactionTypes, setTransactionTypes] = useState<IReferenceItem[]>([]);
+  const [transactionTypes, setTransactionTypes] = useState<IReferenceItem[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionState, setExecutionState] = useState<IExecutionState>(
@@ -159,13 +160,23 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }, [])
 
   const loadTransactionTypes = () => {
-    // Transforma o JSON em um array apropriado
-    const typesTransactions = Object.entries(TranscationsMeta).map(([key, value]) => ({
-      ...value,
-      id: key,
-    }));
+    const typesTransactions: IReferenceItem[] = Object.entries(TranscationsMeta).map(([key, value]) => {
+      return {
+        opcodeOrAddress: key, 
+        name: value.name, 
+        input: '', 
+        output: '', 
+        description: value.description, 
+        staticFee: 0, 
+        minimumFee: 0,                
+        rollups: value.rollups, 
+        transactionType: '',
+      };
+    });
+  
     setTransactionTypes(typesTransactions);
-  };
+  }
+  
 
   /**
    * Initializes the EVM instance.

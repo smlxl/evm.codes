@@ -14,7 +14,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
+import { IReferenceItem, IItemDocs, IGasDocs} from 'types'
 
 import {
   EthereumContext,
@@ -38,21 +38,20 @@ type CustomHeaderGroup = {
 const ReferenceTable = ({
   itemDocs,
   gasDocs,
-  reference,
+  reference,  
   isPrecompiled = false,
   isTransactionType = false,
 }: {
   itemDocs: IItemDocs
   gasDocs: IGasDocs
-  reference: IReferenceItem[]
-  transactionTypes: IReferenceItem[]
+  reference: IReferenceItem[]   
   isPrecompiled?: boolean
   isTransactionType?: boolean
 }) => {
   const router = useRouter()
   const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
   const data = useMemo(() => reference, [reference])
-  const columns = useMemo(() => tableColumns(isPrecompiled, isTransactionType), [isPrecompiled, isTransactionType]);
+  const columns = useMemo(() => tableColumns(isPrecompiled, isTransactionType), [isPrecompiled, isTransactionType])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
   const { width: screenWidth } = useWindowSize()

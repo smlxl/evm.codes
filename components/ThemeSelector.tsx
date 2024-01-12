@@ -12,8 +12,7 @@ const ThemeSelector = () => {
       name: 'Select theme…',
       shortcut: ['t'],
       keywords: 'theme appearance',
-      section: 'Preferences',
-      children: ['theme-light', 'theme-dark', 'theme-system'],
+      section: 'Preferences',      
     },
     {
       id: 'theme-light',

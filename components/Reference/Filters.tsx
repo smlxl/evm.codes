@@ -25,15 +25,15 @@ const Filters = ({ onSetFilter, isPrecompiled = false, isTransactionType = false
   const filterByOptions = useMemo(() => {
     if (isTransactionType) {
       
-      return [{ label: 'Type', value: 'type' }, { label: 'Name', value: 'name' }, { label: 'Description', value: 'description' }];
+      return [{ label: 'Type', value: 'type' }, { label: 'Name', value: 'name' }, { label: 'Description', value: 'description' }]
     } else {      
       return [
         { label: !isPrecompiled ? 'Opcode' : 'Address', value: 'opcodeOrAddress' },
         { label: 'Name', value: 'name' },
         { label: 'Description', value: 'description' },
-      ];
+      ]
     }
-  }, [isPrecompiled, isTransactionType]);
+  }, [isPrecompiled, isTransactionType])
 
   const inputRef = useRef<HTMLInputElement>(null)
 
