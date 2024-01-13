@@ -7,19 +7,9 @@ import { findContract, flattenCode } from 'util/flatten'
 
 import { ContractTreeNode } from './types'
 
+// TODO: ast parser may not be necessary since solc can give ast
+// ...but solc might not give standardized ast. so need to test both
 const astParser = parser
-
-// TODO: not all of this needs to be signals...?
-// export const state = {
-//   // signals:
-//   address: signal<string>(''),
-//   code: signal<string>('/*\nenter an address to load source code\n*/'),
-//   compilationResult: signal(null),
-//   defTree: signal({}),
-//   contractInfo: signal<EtherscanContractResponse | null>(null), // move to non-signals?
-//   // non-signals:
-//   ast: null,
-// }
 
 export class ContractInfo {
   codeAddress: string
