@@ -3,16 +3,23 @@ import { SolidityCompilerInput, SoliditySettings } from 'types/contract'
 class SolidityCompiler {
   worker: Worker
 
-  constructor(url) {
-    // console.info('starting solc worker')
-    this.worker = new Worker(url)
+  // NOTE: this lazy-load instead of constructor is due to a bug:
+  // "ReferenceError: Worker is not defined"
+  // this lazy-loading seems to fix it
+  init() {
+    if (!this.worker) {
+      // console.info('starting solc worker')
+      this.worker = new Worker('/solcWorker.js')
+    }
   }
 
   listen(callback: (event: MessageEvent) => void) {
+    this.init()
     return this.worker.addEventListener('message', callback)
   }
 
   compile(stdJson: SolidityCompilerInput, version: string) {
+    this.init()
     this.worker.postMessage({
       version,
       stdJson,
@@ -46,4 +53,4 @@ class SolidityCompiler {
   }
 }
 
-export const solidityCompiler = new SolidityCompiler('/solcWorker.js')
+export const solidityCompiler = new SolidityCompiler()

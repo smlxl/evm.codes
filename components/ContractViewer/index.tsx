@@ -5,8 +5,10 @@ import { useRouter } from 'next/router'
 // import { useTheme } from 'next-themes'
 import NoSSR from 'react-no-ssr'
 
+import { solidityCompiler } from 'util/solc'
+
 import ContractCodeEditor from './ContractCodeEditor'
-import { ContractInfo, solidityCompiler, state } from './ContractState'
+import { ContractInfo, state } from './ContractState'
 import ContractTreeView from './ContractTreeView'
 
 import {
@@ -35,6 +37,8 @@ const ContractViewer = () => {
   const [currentCode, setCurrentCode] = useState<string>('')
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
+  // const solidityCompiler = new SolidityCompiler('/solcWorker.js')
+
   // TODO: move compilation to ContractsState?
   const onCompilationResult = (event: MessageEvent) => {
     // console.log('onCompilationResult', event.data)
@@ -44,6 +48,7 @@ const ContractViewer = () => {
 
   // load solidity compiler
   useEffect(() => {
+    console.log(solidityCompiler)
     solidityCompiler.listen(onCompilationResult)
   }, [])
 
