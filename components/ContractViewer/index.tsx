@@ -49,27 +49,30 @@ const ContractViewer = () => {
     solidityCompiler.listen(onCompilationResult)
   }, [])
 
-  async function tryLoadContract(codeAddress: string, contextAddress: string) {
-    setStatus('Loading...')
-    return state.loadContract(codeAddress).then(() => {
-      if (state.selectedContract()) {
-        setCurrentCode(state.selectedContract().code)
-      }
+  const tryLoadContract = useCallback(
+    async (codeAddress: string, contextAddress: string) => {
+      setStatus('Loading...')
+      return state.loadContract(codeAddress).then(() => {
+        if (state.selectedContract()) {
+          setCurrentCode(state.selectedContract().code)
+        }
 
-      const contract = state.contracts[codeAddress]
-      startCompilation(contract)
+        const contract = state.contracts[codeAddress]
+        startCompilation(contract)
 
-      // TODO: recursively load proxy implementation if available
-      // it's async so it won't block the rest of the code
-      const impl = contract.etherscanInfo?.Implementation as string
-      if (impl) {
-        // console.log('loading proxy implementation:', etherscanInfo.Implementation, 'for context:', contextAddress, 'from:', codeAddress)
-        tryLoadContract(impl.toLowerCase(), contextAddress)
-      } else {
-        setStatus('') // '✌️ Loaded'
-      }
-    })
-  }
+        // TODO: recursively load proxy implementation if available
+        // it's async so it won't block the rest of the code
+        const impl = contract.etherscanInfo?.Implementation as string
+        if (impl) {
+          // console.log('loading proxy implementation:', etherscanInfo.Implementation, 'for context:', contextAddress, 'from:', codeAddress)
+          tryLoadContract(impl.toLowerCase(), contextAddress)
+        } else {
+          setStatus('') // '✌️ Loaded'
+        }
+      })
+    },
+    [],
+  )
 
   // TODO: should this be useCallback?
   const tryLoadAddress = useCallback(
@@ -87,7 +90,7 @@ const ContractViewer = () => {
 
       tryLoadContract(address, address)
     },
-    [router],
+    [router, tryLoadContract],
   )
 
   // load contract from url once everything is ready

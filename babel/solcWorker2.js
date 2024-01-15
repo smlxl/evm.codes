@@ -24,18 +24,15 @@ function onCompileRequest(msg) {
     return
   }
 
-  // console.log('loading compiler:', url)
   if (!loadCompiler(version)) {
     self.postMessage({ error: `failed to load compiler version ${version}` })
     return
   }
 
-  // console.log('compiling with version:', version)
   const compiler = wrapper(self.Module)
   // compiler expects json string
   const input = typeof stdJson == 'string' ? stdJson : JSON.stringify(stdJson)
   const result = compiler.compile(input)
-  // console.log('compilation result:', result)
   self.postMessage({ result })
 }
 

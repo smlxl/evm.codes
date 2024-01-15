@@ -105,25 +105,23 @@ const ContractCodeEditor = ({ line, column, ...props }) => {
   }
 
   useEffect(() => {
-    if (!codeEditor) {
+    if (!codeEditor || !line || !column) {
       return
     }
 
-    if (codeEditor) {
-      codeEditor.setPosition({
-        lineNumber: line,
-        column: column,
-      })
-      // TODO: potentially select on double click?
-      // codeEditor.setSelection({
-      //   startLineNumber: loc.start.line,
-      //   startColumn: loc.start.column,
-      //   endLineNumber: loc.end.line,
-      //   endColumn: loc.end.column + 2,
-      // })
-      codeEditor.revealLineInCenter(line)
-    }
-  }, [line, column])
+    codeEditor.setPosition({
+      lineNumber: line,
+      column: column,
+    })
+    // TODO: potentially select on double click?
+    // codeEditor.setSelection({
+    //   startLineNumber: loc.start.line,
+    //   startColumn: loc.start.column,
+    //   endLineNumber: loc.end.line,
+    //   endColumn: loc.end.column + 2,
+    // })
+    codeEditor.revealLineInCenter(line)
+  }, [line, column, codeEditor])
 
   return (
     <div className="h-full">

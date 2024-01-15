@@ -116,7 +116,7 @@ export class ContractInfo {
       contractPath,
       info.originalPathLenses,
     )
-    // console.log(info.originalPathLenses)
+
     info.parseAst()
 
     return info
@@ -165,7 +165,6 @@ class ContractViewerState {
     const cacheKey = `contractInfo_${codeAddress}`
     const cachedValue = sessionStorage.getItem(cacheKey)
     if (cachedValue) {
-      // console.log('found cached contract info')
       etherscanInfo = JSON.parse(cachedValue)
     } else {
       const data = await fetch('/api/getContract?address=' + codeAddress)

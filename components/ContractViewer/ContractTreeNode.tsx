@@ -83,11 +83,9 @@ const NodeTypeMap = {
 
       const [weiValue, setWeiValue] = useState(0n)
       const [retValue, setRetValue] = useState<string>('')
-      // console.log(node)
 
       function callFunction() {
         // TODO: viem call here
-        console.log('callfunction', node, root)
       }
 
       return (
@@ -157,7 +155,6 @@ const NodeTypeMap = {
   },
   StateVariableDeclaration: {
     label: (node) => {
-      // console.log(node)
       return '📦 storage ' + node.variables[0].name
     },
     widget: (node) => {

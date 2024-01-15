@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run build:solcjs-worker && next build",
     "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
-    "dev": "next dev",
+    "dev": "npm run build:solcjs-worker && next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
