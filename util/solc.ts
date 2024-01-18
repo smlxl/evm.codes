@@ -15,7 +15,11 @@ class SolidityCompiler {
 
   listen(callback: (event: MessageEvent) => void) {
     this.init()
-    return this.worker.addEventListener('message', callback)
+    this.worker.addEventListener('message', callback)
+  }
+
+  unlisten(callback: (event: MessageEvent) => void) {
+    this.worker.removeEventListener('message', callback)
   }
 
   compile(stdJson: SolidityCompilerInput, version: string) {

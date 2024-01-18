@@ -17,7 +17,8 @@ export function findContract(
       continue
     }
 
-    if (code.content.match(`(contract|library)\\s+${contractName}`)) {
+    // TODO: ensure \s+ eats newlines (need RegExp() with flags?)
+    if (code.content.match(`(contract|library)\\s+${contractName}\\b`)) {
       return filename
     }
   }
@@ -25,7 +26,6 @@ export function findContract(
   return null
 }
 
-// TODO: fix solidity parser import so it won't be necessary as param
 export function flattenCode(
   stdJson: SolidityCompilerInput,
   filepath: string,

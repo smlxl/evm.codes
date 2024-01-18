@@ -22,6 +22,7 @@ export type ContractTreeNode = {
   // astParentNode: object
   // onclick?: (e) => void
   // children?: React.ReactNode
+  // impls?: ContractTreeNode[]
 }
 
 // function / struct / enum / event / error
