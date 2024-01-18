@@ -104,7 +104,7 @@ const ContractViewer = () => {
         setCurrentAddress(address)
       })
     },
-    [router, tryLoadContract],
+    [router, tryLoadContract, updateRoute],
   )
 
   // load contract from url once everything is ready
@@ -134,7 +134,7 @@ const ContractViewer = () => {
       updateRoute()
       setTimeout(() => setStatus(''), 200)
     })
-  }, [])
+  }, [updateRoute])
 
   return (
     <NoSSR>
