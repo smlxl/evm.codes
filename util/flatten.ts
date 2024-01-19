@@ -3,15 +3,50 @@ import path from 'path'
 import parser from '@solidity-parser/parser'
 import { SolidityCompilerInput } from 'types/contract'
 
+function remapFile(filename, remappings) {
+  for (const map of remappings) {
+    if (filename.startsWith(map[0])) {
+      filename = map[1] + filename.slice(map[0].length, filename.length)
+    }
+  }
+
+  return filename
+}
+
+// function remapSources(sources, remappings) {
+//   if (!remappings) {
+//     return sources
+//   }
+
+//   remappings = remappings.map((map) => map.split('='))
+//   for (const filename of Object.keys(sources)) {
+//     const remapped = remapFile(filename, remappings)
+//     if (filename != remapped) {
+//       sources[remapped] = sources[filename]
+//       delete sources[filename]
+//     }
+//   }
+
+//   return sources
+// }
+
+function getSources(stdJson) {
+  if (stdJson.sources) {
+    const remappings = (stdJson.settings?.remappings || []).map((map: string) =>
+      map.split('='),
+    )
+    return [stdJson.sources, remappings]
+  } else {
+    return [stdJson, null]
+  }
+}
+
 export function findContract(
   stdJson: SolidityCompilerInput,
   contractName: string,
 ) {
-  if (!stdJson || !stdJson.sources) {
-    return contractName
-  }
-
-  for (const [filename, code] of Object.entries(stdJson.sources)) {
+  const sources = getSources(stdJson)[0]
+  for (const [filename, code] of Object.entries(sources) as any) {
     if (!code.content) {
       // throw 'missing code.content (if URL reference is used then it is not currently supported)'
       continue
@@ -36,10 +71,15 @@ export function flattenCode(
 ) {
   const imports: any[] = []
   let flat = ''
-  let source = stdJson.sources[filepath].content
-  if (!source) {
-    throw 'source not found: ' + filepath
+  const [sources, remappings] = getSources(stdJson)
+  const remappedPath = remapFile(filepath, remappings)
+  console.log('remap', filepath, remappedPath)
+  if (!sources[remappedPath]) {
+    console.warn('stdJson:', stdJson)
+    throw 'source not found: ' + remappedPath
   }
+
+  let source = sources[remappedPath].content
 
   if (remove_pragma) {
     source = source
@@ -51,14 +91,14 @@ export function flattenCode(
   // if (lenses && lineOffset == 0) {
   //   lenses.push({
   //     line: 1,
-  //     path: filepath,
+  //     path: remappedPath,
   //   })
   // }
 
-  // source = '/// file: ' + filepath + '\n\n' + source
+  // source = '/// file: ' + remappedPath + '\n\n' + source
 
   const ast = parser.parse(source, { loc: true, range: true })
-  const dirname = path.dirname(filepath)
+  const dirname = path.dirname(remappedPath)
 
   parser.visit(ast, {
     ImportDirective: (node) => {
@@ -102,7 +142,7 @@ export function flattenCode(
     // if (lenses && lineOffset == 0) {
     //   lenses.push({
     //     line: lineOffset + flat.split('\n').length,
-    //     path: '...cont ' + filepath,
+    //     path: '...cont ' + remappedPath,
     //   })
     // }
 
