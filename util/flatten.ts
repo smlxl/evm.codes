@@ -4,6 +4,10 @@ import parser from '@solidity-parser/parser'
 import { SolidityCompilerInput } from 'types/contract'
 
 function remapFile(filename, remappings) {
+  if (!remappings) {
+    return filename
+  }
+
   for (const map of remappings) {
     if (filename.startsWith(map[0])) {
       filename = map[1] + filename.slice(map[0].length, filename.length)
