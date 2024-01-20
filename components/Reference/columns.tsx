@@ -1,12 +1,16 @@
 import { Row } from 'react-table'
 import { StackBox } from 'components/ui'
 
-const filter = (rows: Row[], id: string, filterValue: string) => {
-  const re = new RegExp(`${filterValue}`, 'i')
-  return rows.filter((row: any) => {
-    const value = row.original[id] // Ensure row.original[id] exists
-    return value && value.match(re)
-  })
+
+// Possible fields are defined in `Opcodes.json`
+type OpcodeRow = Row<Record<string, string | undefined>>
+
+const filter = (rows: OpcodeRow[], id: string, filterValue: string) => {
+  return rows.filter((row) =>
+    row.original[id]
+      ?.toLocaleLowerCase()
+      .includes(filterValue.toLocaleLowerCase()),
+  )
 }
 
 const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => {  
