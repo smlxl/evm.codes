@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 
-import { /*bufferToHex, Address,*/ isValidAddress } from '@ethereumjs/util'
+import { isValidAddress } from '@ethereumjs/util'
+import { TextField } from '@mui/material'
 import { useRouter } from 'next/router'
-// import { useTheme } from 'next-themes'
 import NoSSR from 'react-no-ssr'
 
 import { solidityCompiler } from 'util/solc'
@@ -20,11 +20,7 @@ import {
 const ContractViewer = () => {
   const router = useRouter()
 
-  // const { theme } = useTheme()
-
   const [status, setStatus] = useState('Loading...')
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentAddress, setCurrentAddress] = useState<string>('')
   const [currentCode, setCurrentCode] = useState<string>('')
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
@@ -47,25 +43,22 @@ const ContractViewer = () => {
     return state
       .loadContract(codeAddress, contextAddress)
       .then(() => {
-        if (state.selectedContract()) {
-          setCurrentCode(state.selectedContract().code)
-        }
-
         const contract = state.contracts[codeAddress]
         // TODO: restore compilation
         // contract.compile(onCompilationResult, ['abi'])
 
-        // TODO: recursively load proxy implementation if available
-        // it's async so it won't block the rest of the code
         const impl = contract.etherscanInfo?.Implementation as string
         if (impl) {
           tryLoadContract(impl.toLowerCase(), contextAddress)
         } else {
           setStatus('✌️ Loaded')
+          setCurrentAddress(contract.codeAddress)
+          setCurrentCode(contract.code)
         }
       })
-      .catch(() => {
-        setStatus('failed to load contract')
+      .catch((err) => {
+        setStatus('failed to load contract\n' + err)
+        throw err
       })
   }
 
@@ -116,20 +109,30 @@ const ContractViewer = () => {
     const addresses = ((router.query.address as string) || '').split(',')
     // instead of setting value attribute directly, otherwise it won't be editable
     // TODO: fix this hack
-    if (window['txt_address']) {
-      window['txt_address'].value = addresses[0]
-    }
+    // if (window['txt_address']) {
+    //   window['txt_address'].value = addresses[0]
+    // }
+    setCurrentAddress(addresses[0])
 
     for (const addr of addresses) {
       tryLoadAddress(addr, false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     state.onChange.push((codeAddress: string, info: ContractInfo) => {
-      setCurrentAddress(state.selectedAddress)
+      const contract = state.selectedContract()
+      if (!contract) {
+        setCurrentAddress('')
+        setCurrentCode('')
+        updateRoute()
+        setStatus('')
+        return
+      }
+
+      setCurrentAddress(contract.codeAddress)
+      setCurrentCode(contract.code)
       setStatus('Reloading... (' + Date.now() + ')')
       updateRoute()
       setTimeout(() => setStatus(''), 200)
@@ -138,56 +141,72 @@ const ContractViewer = () => {
 
   return (
     <NoSSR>
-      <input
+      <TextField
         id="txt_address"
-        type="text"
-        placeholder="Address..."
-        className="bg-gray-50 border border-2 border-gray-300 text-gray-900 text-sm w-[374px] rounded-xl px-2"
-        onInput={(e: any) => tryLoadAddress(e.target.value, true)}
+        variant="outlined"
+        label="address"
+        size="small"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm w-[374px] rounded-xl px-2"
+        onInput={(e: any) => tryLoadAddress(e.target.value.trim(), true)}
       />
-      <div className="inline-block mx-2">{status}</div>
+      <div className="inline-block m-2">{status}</div>
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="w-full"
+        className="w-full border-2 mt-2"
         style={{ height: '800px' }}
       >
-        <ResizablePanel defaultSize={60}>
-          <ContractCodeEditor
-            value={currentCode}
-            line={codePeekLocation.line}
-            column={codePeekLocation.column + 1}
+        <ResizablePanel defaultSize={45} style={{ overflow: 'auto' }}>
+          <ContractTreeView
+            forest={state.getProxies()}
+            onSelect={(item, root) => {
+              if (!item || !item.node || !item.node.loc) {
+                return
+              }
+
+              setCodePeekLocation(item.node.loc.start)
+
+              const addr = root.node.info.codeAddress
+              const code = state.contracts[addr].code
+              if (addr != currentAddress) {
+                setCurrentAddress(addr)
+                setCurrentCode(code)
+              }
+            }}
           />
         </ResizablePanel>
+
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={40}>
+
+        <ResizablePanel>
           <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={80} style={{ overflow: 'auto' }}>
-              {isValidAddress(currentAddress) && (
-                <ContractTreeView
-                  forest={state.getProxies()}
-                  onSelect={(item, root) => {
-                    if (!item || !item.node || !item.node.loc) {
-                      return
-                    }
-
-                    setCodePeekLocation(item.node.loc.start)
-
-                    const addr = root.node.info.codeAddress
-                    const code = state.contracts[addr].code
-                    if (addr != currentAddress) {
-                      setCurrentAddress(addr)
-                      setCurrentCode(code)
-                    }
-                  }}
-                />
-              )}
+            <ResizablePanel defaultSize={90}>
+              <ContractCodeEditor
+                codeAddress={currentAddress}
+                code={currentCode}
+                name={
+                  state.contracts[currentAddress]?.etherscanInfo?.ContractName
+                }
+                line={codePeekLocation.line}
+                column={codePeekLocation.column + 1}
+              />
             </ResizablePanel>
+
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={20}>
-              <div className="h-full py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
-                {/* <p>Compiler version: {state.etherscanInfo.value && state.etherscanInfo.value?.CompilerVersion}</p> */}
-                <p>*Additional metadata info should go here*</p>
+
+            <ResizablePanel>
+              <div className="h-full py-2 px-4 border-t text-sm flex flex-col gap-2">
+                {currentAddress && (
+                  <p>
+                    Compiler version:{' '}
+                    {
+                      state.contracts[currentAddress]?.etherscanInfo
+                        .CompilerVersion
+                    }
+                  </p>
+                )}
+                {/* <p>*Additional metadata info should go here*</p> */}
+                {/* TODO: try moving this inside the treeview? */}
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

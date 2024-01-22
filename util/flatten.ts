@@ -77,7 +77,6 @@ export function flattenCode(
   let flat = ''
   const [sources, remappings] = getSources(stdJson)
   const remappedPath = remapFile(filepath, remappings)
-  console.log('remap', filepath, remappedPath)
   if (!sources[remappedPath]) {
     console.warn('stdJson:', stdJson)
     throw 'source not found: ' + remappedPath

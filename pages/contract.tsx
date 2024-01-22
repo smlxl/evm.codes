@@ -15,7 +15,6 @@ const ContractPage = () => {
       </Head>
 
       <Container>
-        <p className="text-xl">Contract Viewer</p>
         <ContractViewer />
         <sub>
           Alpha version - <a href="https://twitter.com/high_byte">@high_byte</a>{' '}

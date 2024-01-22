@@ -19,22 +19,6 @@ module.exports = withPlausibleProxy()({
   webpack: (config, options) => {
     const { dir, defaultLoaders } = options
 
-    config.resolve.alias['path'] = require.resolve('path-browserify')
-
-    // see: https://github.com/solidity-parser/parser/issues/47
-    config.resolve.alias['@solidity-parser/parser'] =
-      '@solidity-parser/parser/dist/index.iife.js'
-
-    config.module.rules.push({
-      // We tell webpack to append "module.exports = SolidityParser;" at the end of the file.
-      test: require.resolve('@solidity-parser/parser/dist/index.iife.js'),
-      loader: 'exports-loader',
-      options: {
-        type: 'commonjs',
-        exports: 'single SolidityParser',
-      },
-    })
-
     config.resolve.extensions.push('.ts', '.tsx')
     config.module.rules.push({
       test: /\.+(ts|tsx)$/,

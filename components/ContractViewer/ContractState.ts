@@ -223,7 +223,7 @@ class ContractViewerState {
     }
 
     if (!etherscanInfo) {
-      Promise.reject('failed to load contract info')
+      return Promise.reject('failed to load contract info')
     }
 
     if (!cachedValue) {
