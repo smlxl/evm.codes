@@ -56,7 +56,9 @@ function spaceBetween(str: string, pad = 16) {
     str
       .slice(2)
       .split('')
-      .map((c, i) => (i % pad ? c : ' ' + c))
+      .reverse()
+      .map((c, i) => (i % pad ? c : c + ' '))
+      .reverse()
       .join('')
   )
 }
@@ -251,12 +253,14 @@ const NodeTypeMap = {
                 </>
               )
             })} */}
-          <input
-            type="button"
-            className="cursor-pointer hover:bg-blue-100 text-left"
-            onClick={() => navigator.clipboard.writeText(retValue || '')}
-            value={'📋 ' + status}
-          />
+          {status && (
+            <input
+              type="button"
+              className="cursor-pointer hover:bg-blue-100 text-left whitespace-break-spaces break-words text-sm"
+              onClick={() => navigator.clipboard.writeText(retValue || status)}
+              value={'📋 ' + status}
+            />
+          )}
           <p className="text-xs text-gray-500 break-words">
             {spaceBetween(retValue || '')}
           </p>
