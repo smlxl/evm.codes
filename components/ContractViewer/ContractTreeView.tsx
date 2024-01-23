@@ -1,3 +1,4 @@
+import { HorizontalRule } from '@mui/icons-material'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Box, TextField } from '@mui/material'
@@ -98,13 +99,12 @@ const ContractTreeView = ({ forest, onSelect }: ContractTreeViewProps) => {
 
   return (
     <TreeView
-      className="font-mono"
+      className="font-mono dark:border-gray-600"
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       defaultExpanded={expanded}
+      defaultEndIcon={<HorizontalRule />}
     >
-      {/* <EnvironmentOverrides /> */}
-
       <ContractsNode forest={forest} onSelect={onSelect} />
     </TreeView>
   )

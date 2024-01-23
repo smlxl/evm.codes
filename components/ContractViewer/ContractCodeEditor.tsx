@@ -3,14 +3,7 @@ import { useState, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 
-const ContractCodeEditor = ({
-  codeAddress,
-  code,
-  name,
-  line,
-  column,
-  ...props
-}: any) => {
+const ContractCodeEditor = ({ code, line, column, ...props }: any) => {
   const [codeEditor, setCodeEditor] = useState<any>(null)
   const { theme } = useTheme()
 
@@ -44,9 +37,6 @@ const ContractCodeEditor = ({
 
   return (
     <div className="h-full">
-      <p className="mx-2 font-bold">
-        {name} @ {codeAddress}
-      </p>
       <Editor
         defaultLanguage="sol"
         theme={theme == 'dark' ? 'vs-dark' : 'vs-light'}

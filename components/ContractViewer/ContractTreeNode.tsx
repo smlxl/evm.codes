@@ -4,11 +4,15 @@
 import { Key, useState } from 'react'
 
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
-import { encodeFunctionData } from 'viem'
+import { decodeFunctionResult, encodeFunctionData } from 'viem'
 
 import { ContractInfo, state, rpc } from './ContractState'
+
+const TextField = ({ ...props }) => {
+  return <MuiTextField className="bg-gray-100 dark:invert" {...props} />
+}
 
 type ContractTreeNodeProps = {
   contract: ContractInfo
@@ -18,14 +22,40 @@ type ContractTreeNodeProps = {
   onSelect: (e: any) => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NodeItem = ({ title, subtitle, emoji }: any) => {
+  const getBadgeColor = (str: string) => {
+    const colors = ['red', 'green', 'blue', 'purple', 'pink']
+    const hash = str.charCodeAt(0) + str.charCodeAt(str.length - 1)
+    return colors[hash % colors.length]
+  }
+
   return (
-    <>
-      <p>
+    <div className="w-full flex justify-between">
+      {/* <p>
         {emoji} {title}
-      </p>
-      {subtitle && <p className="text-xs">{subtitle}</p>}
-    </>
+      </p> */}
+      <span>{title}</span>
+      {subtitle && (
+        <span className="text-xs">
+          {subtitle
+            .split(' ')
+            .slice(0, 2) // TODO: this is just a temp override
+            .map((str: string) => (
+              // eslint-disable-next-line react/jsx-key
+              <span
+                className={
+                  'text-gray-700 bg-' +
+                  getBadgeColor(str) +
+                  '-300 dark:invert rounded-xl px-2 mx-1'
+                }
+              >
+                {str}
+              </span>
+            ))}
+        </span>
+      )}
+    </div>
   )
 }
 
@@ -43,7 +73,7 @@ function getType(type: any): string {
     )
   }
 
-  return type?.name || type?.namePath
+  return (type?.name || type?.namePath).split(' ')[0]
 }
 
 function spaceBetween(str: string, pad = 16) {
@@ -51,25 +81,19 @@ function spaceBetween(str: string, pad = 16) {
     return ''
   }
 
-  return (
-    '0x ' +
-    str
-      .slice(2)
-      .split('')
-      .reverse()
-      .map((c, i) => (i % pad ? c : c + ' '))
-      .reverse()
-      .join('')
-  )
+  return str
+    .slice(2)
+    .split('')
+    .reverse()
+    .map((c, i) => (i % pad ? c : c + ' '))
+    .reverse()
+    .join('')
 }
 
 const NodeTypeMap = {
   Deployment: {
     label: (_contract: any, node: { info: ContractInfo }) => {
       const text = node.info.codeAddress
-      // if (node.info.codeAddress != node.info.contextAddress) {
-      //   text += ' @ ' + node.info.contextAddress
-      // }
 
       return (
         <div className="whitespace-nowrap">
@@ -83,25 +107,15 @@ const NodeTypeMap = {
           >
             ❌
           </button>
-          <span>🗂️ {node.info.etherscanInfo.ContractName}</span>
+          <span>{node.info.etherscanInfo.ContractName}</span>
           <p className="text-xs">{text}</p>
         </div>
       )
     },
-    // widget: (contract, node) => {
-    //   if (node.impls.length > 0) {
-    //     return (node.impls.map(tree => <ContractTreeNode node={tree} />))
-    //   }
-    // }
   },
   ContractDefinition: {
     label: (_contract: ContractInfo, node: { name: any; kind: any }) => {
-      // if (node.kind == 'library') {
-      //   return '📚 library ' + node.name + ' [' + Object.keys(contract.etherscanInfo.SourceCode.settings.libraries)[0] + ']'
-      // }
-
       return <NodeItem title={node.name} subtitle={node.kind} emoji="📜" />
-      // return '📜 ' + node.kind + ' ' + node.name
     },
   },
   FunctionDefinition: {
@@ -149,6 +163,7 @@ const NodeTypeMap = {
       const [status, setStatus] = useState('')
       const [weiValue, setWeiValue] = useState(0n)
       const [retValue, setRetValue] = useState<string | undefined>(undefined)
+      const [retValueDecoded, setRetValueDecoded] = useState<any[]>([])
       const [argValues, setArgValues] = useState(Array(node.parameters.length))
 
       function callFunction(encodeOnly = false) {
@@ -165,8 +180,9 @@ const NodeTypeMap = {
             setRetValue(data)
             return
           }
-        } catch (e: any) {
-          console.error(e)
+        } catch (err: any) {
+          setStatus(err.toString())
+          setRetValue('')
           return
         }
 
@@ -180,6 +196,21 @@ const NodeTypeMap = {
           .then((res: any) => {
             setStatus('return data:')
             setRetValue(res.data as string)
+            try {
+              const decoded = decodeFunctionResult({
+                abi: contract.abi,
+                functionName: node.name,
+                data: res?.data,
+              })
+              if (Array.isArray(decoded)) {
+                setRetValueDecoded(decoded)
+              } else {
+                setRetValueDecoded([decoded])
+              }
+            } catch (err: any) {
+              console.warn(err)
+              setRetValueDecoded([])
+            }
           })
           .catch((err: any) => {
             setStatus(err.toString())
@@ -236,10 +267,9 @@ const NodeTypeMap = {
               </Button>
             </div>
           )}
-          {/* TODO: decode return params */}
-          {/* {node.returnParameters &&
+          {node.returnParameters &&
             node.returnParameters.length > 0 &&
-            node.returnParameters.map((param) => {
+            node.returnParameters.map((param: any, i: number) => {
               const type = getType(param.typeName)
               return (
                 <>
@@ -247,16 +277,16 @@ const NodeTypeMap = {
                   <TextField
                     variant="filled"
                     label={type + ' ' + (param.name || '')}
-                    value={retValue}
+                    value={retValueDecoded[i] + ''}
                     size="small"
                   />
                 </>
               )
-            })} */}
+            })}
           {status && (
             <input
               type="button"
-              className="cursor-pointer hover:bg-blue-100 text-left whitespace-break-spaces break-words text-sm"
+              className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
               onClick={() => navigator.clipboard.writeText(retValue || status)}
               value={'📋 ' + status}
             />
@@ -273,7 +303,7 @@ const NodeTypeMap = {
       let subtitle = 'event'
       const params = node.parameters
         .map((p: { typeName: { name: any } }) => p.typeName.name)
-        .join(', ')
+        .join(' ')
       if (params) {
         subtitle += ' ' + params
       }
@@ -411,7 +441,7 @@ const ContractTreeNode = ({
       key={node.id}
       label={map.label(contract, node.node)}
       onClick={() => onSelect(node)}
-      className="border-b border-l"
+      className="border-l border-b dark:border-gray-600"
       {...icons}
     >
       {widget && <div className="p-2">{widget}</div>}
