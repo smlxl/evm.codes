@@ -120,7 +120,21 @@ function createCost(common: Common, inputs: any): BN {
   const depositCost = new BN(inputs.deployedSize).imuln(
     Number(common.param('gasPrices', 'createData')),
   )
-  return expansionCost.iadd(depositCost).iadd(new BN(inputs.executionCost))
+
+  const result = expansionCost
+    .iadd(depositCost)
+    .iadd(new BN(inputs.executionCost))
+
+  if (common.gteHardfork('shanghai')) {
+    const initCodeCost = new BN(
+      toWordSize(new BN(inputs.size)).imuln(
+        Number(common.param('gasPrices', 'initCodeWordCost')),
+      ),
+    )
+    result.iadd(initCodeCost)
+  }
+
+  return result
 }
 
 function callCost(common: Common, inputs: any): BN {
