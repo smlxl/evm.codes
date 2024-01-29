@@ -11,45 +11,6 @@ import { toKeyIndex } from 'util/string'
 
 import { Icon, Label } from 'components/ui'
 
-interface ForkOption {
-  label: string
-}
-
-type HandleForkChange = (option: ForkOption) => void
-
-const useBuildForkActions = (
-  forkOptions: ForkOption[],
-  handleForkChange: HandleForkChange,
-) => {
-  return useMemo(() => {
-    const forkIds = forkOptions.map((option, index) =>
-      toKeyIndex('fork', index),
-    )
-
-    const forkActions = forkOptions.map((option, index) => ({
-      id: toKeyIndex('fork', index),
-      name: option.label,
-      shortcut: [],
-      keywords: option.label,
-      section: '',
-      perform: () => handleForkChange(option),
-      parent: 'fork',
-    }))
-
-    return [
-      {
-        id: 'fork',
-        name: 'Select hardfork…',
-        shortcut: ['f'],
-        keywords: 'fork network evm',
-        section: 'Preferences',
-        children: forkIds,
-      },
-      ...forkActions,
-    ]
-  }, [forkOptions, handleForkChange])
-}
-
 const ChainOption = (props: any) => {
   const { data, children } = props
   const isCurrent = data.value === CURRENT_FORK
@@ -64,12 +25,19 @@ const ChainOption = (props: any) => {
 
 const ChainSelector = () => {
   const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
-  const [forkValue, setForkValue] = useState(null)
+
+  const [forkValue, setForkValue] = useState()
+  const [actions, setActions] = useState<Action[]>([])
   const router = useRouter()
 
   const forkOptions = useMemo(
     () => forks.map((fork) => ({ value: fork.name, label: fork.name })),
     [forks],
+  )
+
+  const defaultForkOption = useMemo(
+    () => forkOptions.find((fork) => fork.value === selectedFork?.name),
+    [forkOptions, selectedFork],
   )
 
   const handleForkChange = useCallback(
@@ -80,10 +48,50 @@ const ChainSelector = () => {
       router.query.fork = option.value
       router.push(router)
     },
-    [onForkChange, router],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onForkChange],
   )
 
-  const actions = useBuildForkActions(forkOptions, handleForkChange)
+  useEffect(() => {
+    if (defaultForkOption) {
+      handleForkChange(defaultForkOption)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultForkOption])
+
+  useEffect(() => {
+    const forkIds: string[] = []
+
+    const forkActions = forkOptions.map(
+      (option: OnChangeValue<any, any>, index) => {
+        const keyId = toKeyIndex('fork', index)
+        forkIds.push(keyId)
+
+        return {
+          id: keyId,
+          name: option.label,
+          shortcut: [],
+          keywords: option.label,
+          section: '',
+          perform: () => handleForkChange(option),
+          parent: 'fork',
+        }
+      },
+    )
+
+    if (forkIds.length > 0) {
+      setActions([
+        ...forkActions,
+        {
+          id: 'fork',
+          name: 'Select hardfork…',
+          shortcut: ['f'],
+          keywords: 'fork network evm',
+          section: 'Preferences',
+        },
+      ])
+    }
+  }, [forkOptions, handleForkChange])
 
   useRegisterActions(actions, [actions])
 
@@ -92,6 +100,7 @@ const ChainSelector = () => {
       {forks.length > 0 && (
         <div className="flex items-center mr-2">
           <Icon name="git-branch-line" className="text-indigo-500 mr-2" />
+
           <Select
             onChange={handleForkChange}
             options={forkOptions}
