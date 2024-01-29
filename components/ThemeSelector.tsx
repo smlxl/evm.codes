@@ -12,7 +12,7 @@ const ThemeSelector = () => {
       name: 'Select theme…',
       shortcut: ['t'],
       keywords: 'theme appearance',
-      section: 'Preferences',      
+      section: 'Preferences',
     },
     {
       id: 'theme-light',
@@ -41,7 +41,6 @@ const ThemeSelector = () => {
       perform: () => setTheme('system'),
       parent: 'theme',
     },
-    
   ]
 
   useRegisterActions(actions, [actions])

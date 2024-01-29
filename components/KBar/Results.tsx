@@ -1,19 +1,21 @@
 import { useMemo } from 'react'
+
 import { KBarResults, useMatches } from 'kbar'
+
 import ResultItem from './ResultItem'
 
 const NO_GROUP = 'none'
 
 const Results = () => {
-  const { results } = useMatches() 
+  const { results } = useMatches()
 
   const flattened = useMemo(() => {
     return results.reduce((acc: any[], curr: any) => {
       if (typeof curr === 'string') {
         acc.push(curr)
       } else {
-        acc.push(curr.name) 
-        acc.push(...curr.actions) 
+        acc.push(curr.name)
+        acc.push(...curr.actions)
       }
       return acc
     }, [])

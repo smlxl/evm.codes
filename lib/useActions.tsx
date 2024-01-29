@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
+import { useTheme } from 'next-themes'
 
 import { GITHUB_REPO_URL } from 'util/constants'
-import { useTheme } from 'next-themes'
 
 import { Icon } from 'components/ui'
 

@@ -1,6 +1,6 @@
 import { Row } from 'react-table'
-import { StackBox } from 'components/ui'
 
+import { StackBox } from 'components/ui'
 
 // Possible fields are defined in `Opcodes.json`
 type OpcodeRow = Row<Record<string, string | undefined>>
@@ -13,7 +13,7 @@ const filter = (rows: OpcodeRow[], id: string, filterValue: string) => {
   )
 }
 
-const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => {  
+const columns = (isPrecompiled: boolean, isTransactionType = false) => {
   if (isTransactionType) {
     return [
       {
@@ -44,12 +44,12 @@ const columns = (isPrecompiled: boolean, isTransactionType: boolean = false) => 
                 key={index}
                 className={`ml-2 py-1 px-3 leading-normal rounded-full text-2xs tracking-widest font-medium ${
                   rollupName === 'optimism'
-                    ? 'bg-red-500 text-white' 
+                    ? 'bg-red-500 text-white'
                     : rollupName === 'base'
                     ? 'bg-blue-500 text-white'
                     : rollupName === 'arbitrumOne'
                     ? 'bg-blue-300 text-white'
-                    : 'bg-gray-400 text-gray-800' 
+                    : 'bg-gray-400 text-gray-800'
                 }`}
                 style={{ margin: '4px' }}
               >

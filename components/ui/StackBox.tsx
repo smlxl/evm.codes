@@ -1,21 +1,22 @@
 import React from 'react'
+
 import cn from 'classnames'
 
 type Props = {
-  value?: string 
+  value?: string
   showEmpty?: boolean
   isFullWidth?: boolean
   className?: string
 }
 
 export const StackBox: React.FC<Props> = ({
-  value = '', 
-  showEmpty = true, 
+  value = '',
+  showEmpty = true,
   isFullWidth,
   className,
 }) => {
   if (!showEmpty && value.trim().length === 0) {
-    return null 
+    return null
   }
 
   const parts = value.split(/[^\\]\|/)

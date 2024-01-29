@@ -22,7 +22,7 @@ import {
   IInstruction,
   IStorage,
   IExecutionState,
-  IChain,  
+  IChain,
 } from 'types'
 
 import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
@@ -160,23 +160,24 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }, [])
 
   const loadTransactionTypes = () => {
-    const typesTransactions: IReferenceItem[] = Object.entries(TranscationsMeta).map(([key, value]) => {
+    const typesTransactions: IReferenceItem[] = Object.entries(
+      TranscationsMeta,
+    ).map(([key, value]) => {
       return {
-        opcodeOrAddress: key, 
-        name: value.name, 
-        input: '', 
-        output: '', 
-        description: value.description, 
-        staticFee: 0, 
-        minimumFee: 0,                
-        rollups: value.rollups, 
+        opcodeOrAddress: key,
+        name: value.name,
+        input: '',
+        output: '',
+        description: value.description,
+        staticFee: 0,
+        minimumFee: 0,
+        rollups: value.rollups,
         transactionType: '',
-      };
-    });
-  
-    setTransactionTypes(typesTransactions);
+      }
+    })
+
+    setTransactionTypes(typesTransactions)
   }
-  
 
   /**
    * Initializes the EVM instance.

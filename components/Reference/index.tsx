@@ -14,7 +14,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
 import ReactTooltip from 'react-tooltip'
-import { IReferenceItem, IItemDocs, IGasDocs} from 'types'
+import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import {
   EthereumContext,
@@ -38,20 +38,23 @@ type CustomHeaderGroup = {
 const ReferenceTable = ({
   itemDocs,
   gasDocs,
-  reference,  
+  reference,
   isPrecompiled = false,
   isTransactionType = false,
 }: {
   itemDocs: IItemDocs
   gasDocs: IGasDocs
-  reference: IReferenceItem[]   
+  reference: IReferenceItem[]
   isPrecompiled?: boolean
   isTransactionType?: boolean
 }) => {
   const router = useRouter()
   const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
   const data = useMemo(() => reference, [reference])
-  const columns = useMemo(() => tableColumns(isPrecompiled, isTransactionType), [isPrecompiled, isTransactionType])
+  const columns = useMemo(
+    () => tableColumns(isPrecompiled, isTransactionType),
+    [isPrecompiled, isTransactionType],
+  )
   const rowRefs = useRef<HTMLTableRowElement[]>([])
   const [focusedOpcode, setFocusedOpcode] = useState<number | null>()
   const { width: screenWidth } = useWindowSize()
@@ -149,8 +152,15 @@ const ReferenceTable = ({
   return (
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-10">
-        <Header isPrecompiled={isPrecompiled} isTransactionType={isTransactionType} />
-        <Filters onSetFilter={setFilter} isPrecompiled={isPrecompiled} isTransactionType={isTransactionType}/>
+        <Header
+          isPrecompiled={isPrecompiled}
+          isTransactionType={isTransactionType}
+        />
+        <Filters
+          onSetFilter={setFilter}
+          isPrecompiled={isPrecompiled}
+          isTransactionType={isTransactionType}
+        />
       </div>
 
       <table {...getTableProps()} className="w-full table-fixed">

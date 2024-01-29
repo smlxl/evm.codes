@@ -12,19 +12,19 @@ import { toKeyIndex } from 'util/string'
 import { Icon, Label } from 'components/ui'
 
 interface ForkOption {
-  label: string;
+  label: string
 }
 
-
-type HandleForkChange = (option: ForkOption) => void;
-
+type HandleForkChange = (option: ForkOption) => void
 
 const useBuildForkActions = (
   forkOptions: ForkOption[],
-  handleForkChange: HandleForkChange
+  handleForkChange: HandleForkChange,
 ) => {
   return useMemo(() => {
-    const forkIds = forkOptions.map((option, index) => toKeyIndex('fork', index));
+    const forkIds = forkOptions.map((option, index) =>
+      toKeyIndex('fork', index),
+    )
 
     const forkActions = forkOptions.map((option, index) => ({
       id: toKeyIndex('fork', index),
@@ -34,7 +34,7 @@ const useBuildForkActions = (
       section: '',
       perform: () => handleForkChange(option),
       parent: 'fork',
-    }));
+    }))
 
     return [
       {
@@ -46,12 +46,9 @@ const useBuildForkActions = (
         children: forkIds,
       },
       ...forkActions,
-    ];
-  }, [forkOptions, handleForkChange]);
-};
-
-
-
+    ]
+  }, [forkOptions, handleForkChange])
+}
 
 const ChainOption = (props: any) => {
   const { data, children } = props
@@ -70,15 +67,21 @@ const ChainSelector = () => {
   const [forkValue, setForkValue] = useState(null)
   const router = useRouter()
 
-  const forkOptions = useMemo(() => forks.map((fork) => ({ value: fork.name, label: fork.name })), [forks])
+  const forkOptions = useMemo(
+    () => forks.map((fork) => ({ value: fork.name, label: fork.name })),
+    [forks],
+  )
 
-  const handleForkChange = useCallback((option: OnChangeValue<any, any>) => {
-    setForkValue(option)
-    onForkChange(option.value)
+  const handleForkChange = useCallback(
+    (option: OnChangeValue<any, any>) => {
+      setForkValue(option)
+      onForkChange(option.value)
 
-    router.query.fork = option.value
-    router.push(router)
-  }, [onForkChange, router])
+      router.query.fork = option.value
+      router.push(router)
+    },
+    [onForkChange, router],
+  )
 
   const actions = useBuildForkActions(forkOptions, handleForkChange)
 
@@ -103,6 +106,5 @@ const ChainSelector = () => {
     </div>
   )
 }
-
 
 export default ChainSelector
