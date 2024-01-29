@@ -3,7 +3,7 @@ fork: Frontier
 group: Push Operations
 ---
 
-*Index 1 is top of the stack.*
+_Index 1 is top of the stack._
 
 ## Notes
 
@@ -15,20 +15,21 @@ The new value is put on top of the stack, incrementing all the other value indic
 
 ## Example
 
-| * | * |
-|---|---|
-| **Code** | `0x72FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7200000000000000000000000000000000000000` |
+| \*       | \*                                                                                            |
+| -------- | --------------------------------------------------------------------------------------------- |
+| **Code** | `0x72FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7200000000000000000000000000000000000000`          |
 | **Text** | `PUSH19 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF PUSH19 00000000000000000000000000000000000000` |
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | | `0x00000000000000000000000000000000000000` |
-| `2` | | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+|  \* | Input |                                     Output |
+| --: | ----: | -----------------------------------------: |
+| `1` |       | `0x00000000000000000000000000000000000000` |
+| `2` |       | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='zx~~~~~~y%5Cnz'~yyyzPUSH19%200yFF%01yz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Stack overflow.

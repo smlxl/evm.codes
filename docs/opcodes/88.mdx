@@ -3,7 +3,7 @@ fork: Frontier
 group: Duplication Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -32,24 +32,25 @@ group: Duplication Operations
 
 ## Example
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `0` | `1` |
-| `2` | `0` | `0` |
-| `3` | `0` | `0` |
-| `4` | `0` | `0` |
-| `5` | `0` | `0` |
-| `6` | `0` | `0` |
-| `7` | `0` | `0` |
-| `8` | `0` | `0` |
-| `9` | `1` | `0` |
-| `10` | | `1` |
+|   \* | Input | Output |
+| ---: | ----: | -----: |
+|  `1` |   `0` |    `1` |
+|  `2` |   `0` |    `0` |
+|  `3` |   `0` |    `0` |
+|  `4` |   `0` |    `0` |
+|  `5` |   `0` |    `0` |
+|  `6` |   `0` |    `0` |
+|  `7` |   `0` |    `0` |
+|  `8` |   `0` |    `0` |
+|  `9` |   `1` |    `0` |
+| `10` |       |    `1` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='xSet%20state~1yyyyzzxDuplicatezDUP9'~zPUSH1%20z%5Cny~0~0x%2F%2F%20%01xyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - Stack overflow.

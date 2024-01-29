@@ -3,7 +3,7 @@ fork: Frontier
 group: Environmental Information
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -15,8 +15,8 @@ group: Environmental Information
 
 ## Example
 
-| * | Input | Output |
-|--:|------:|-------:|
+|  \* |                                        Input |   Output |
+| --: | -------------------------------------------: | -------: |
 | `1` | `0x9bbfed6889322e016e0a02ee459d306fc19545d8` | `125985` |
 
 [Reproduce in playground](/playground?callValue=125985&unit=Wei&codeType=Mnemonic&code='%2F%2F%20Read%20current%20contract%20balance%5CnADDRESS%5CnBALANCE'_).
@@ -24,5 +24,6 @@ group: Environmental Information
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

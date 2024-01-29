@@ -3,7 +3,7 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -23,6 +23,7 @@ The **JUMPI** instruction may alter the program counter, thus breaking the linea
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - `Counter` offset is not a [JUMPDEST](/#5B). The error is generated only if the JUMP would have been done.

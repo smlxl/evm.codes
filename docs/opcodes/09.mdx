@@ -3,7 +3,7 @@ fork: Frontier
 group: Stop and Arithmetic Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -21,16 +21,17 @@ All intermediate calculations of this operation are not subject to the 2<sup>256
 
 ## Examples
 
-| * | Input | Output | * | * | Input | Output |
-|--:|------:|-------:|--:|--:|------:|-------:|
-| `1` | `10` | `4` | * | `1` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | `9` |
-| `2` | `10` | | * | `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | |
-| `3` | `8` | | * | `3` | `12` | |
+|  \* | Input | Output |  \* |  \* |                                                                Input | Output |
+| --: | ----: | -----: | --: | --: | -------------------------------------------------------------------: | -----: |
+| `1` |  `10` |    `4` |  \* | `1` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |    `9` |
+| `2` |  `10` |        |  \* | `2` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |        |
+| `3` |   `8` |        |  \* | `3` |                                                                 `12` |        |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='y1v8v10v10twwy2v12usust'~rrrrzwPUSHy%2F%2F%20Example%20w%5Cnvz1%20uz32%200xstwMULMODs~~~~rFF%01rstuvwyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

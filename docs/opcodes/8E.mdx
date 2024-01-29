@@ -3,7 +3,7 @@ fork: Frontier
 group: Duplication Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -44,30 +44,31 @@ group: Duplication Operations
 
 ## Example
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `0` | `1` |
-| `2` | `0` | `0` |
-| `3` | `0` | `0` |
-| `4` | `0` | `0` |
-| `5` | `0` | `0` |
-| `6` | `0` | `0` |
-| `7` | `0` | `0` |
-| `8` | `0` | `0` |
-| `9` | `0` | `0` |
-| `10` | `0` | `0` |
-| `11` | `0` | `0` |
-| `12` | `0` | `0` |
-| `13` | `0` | `0` |
-| `14` | `0` | `0` |
-| `15` | `1` | `0` |
-| `16` | | `1` |
+|   \* | Input | Output |
+| ---: | ----: | -----: |
+|  `1` |   `0` |    `1` |
+|  `2` |   `0` |    `0` |
+|  `3` |   `0` |    `0` |
+|  `4` |   `0` |    `0` |
+|  `5` |   `0` |    `0` |
+|  `6` |   `0` |    `0` |
+|  `7` |   `0` |    `0` |
+|  `8` |   `0` |    `0` |
+|  `9` |   `0` |    `0` |
+| `10` |   `0` |    `0` |
+| `11` |   `0` |    `0` |
+| `12` |   `0` |    `0` |
+| `13` |   `0` |    `0` |
+| `14` |   `0` |    `0` |
+| `15` |   `1` |    `0` |
+| `16` |       |    `1` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='ySet%20statex1wwwwwwwzzyDuplicatezDUP15'~x0z%5Cny%2F%2F%20xzPUSH1%20w~~%01wxyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - Stack overflow.

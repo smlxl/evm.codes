@@ -3,7 +3,7 @@ fork: Constantinople
 group: System operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -17,6 +17,7 @@ The destination address is calculated as follows:
     address = keccak256(0xff + sender_address + salt + keccak256(initialisation_code))[12:]
 
 Deployment can fail due to:
+
 - A contract already exists at the destination address.
 - Insufficient value to transfer.
 - Sub [context](/about) [reverted](/#FD).
@@ -43,6 +44,7 @@ Note that these failures only affect the return value and do not cause the calli
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA).

@@ -3,7 +3,7 @@ fork: Istanbul
 group: Block Information
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -15,14 +15,15 @@ Semantically equivalent of calling [BALANCE](/#31) with [ADDRESS](/#30) as param
 
 ## Example
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | | `9` |
+|  \* | Input | Output |
+| --: | ----: | -----: |
+| `1` |       |    `9` |
 
 [Reproduce in playground](/playground?callValue=9&unit=Wei&codeType=Mnemonic&code='SELFBALANCE'_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Stack overflow.
