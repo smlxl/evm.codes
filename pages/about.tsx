@@ -445,7 +445,7 @@ const AboutPage = () => {
           Some opcodes can trigger gas refunds, which reduces the gas cost of a
           transaction. Gas refunds are applied at the end of a transaction. If a
           transaction has insufficient gas to reach the end of its run, its gas
-          refund can not be triggered, and the transaction fails. With the
+          refund cannot be triggered, and the transaction fails. With the
           introduction of the <b>London</b> hardfork, two aspects of gas refunds
           changed. First, the limit to how much gas can be refunded is lowered
           from half of the total transaction cost to one fifth of the total
