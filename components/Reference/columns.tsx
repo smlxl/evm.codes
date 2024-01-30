@@ -5,6 +5,20 @@ import { StackBox } from 'components/ui'
 // Possible fields are defined in `Opcodes.json`
 type OpcodeRow = Row<Record<string, string | undefined>>
 
+type RollupStyles = {
+  [key: string]: string
+}
+
+const rollupStyles: RollupStyles = {
+  optimism: 'bg-red-500 text-white',
+  base: 'bg-blue-500 text-white',
+  arbitrumOne: 'bg-blue-300 text-white',
+  default: 'bg-gray-400 text-gray-800',
+}
+
+const getRollupStyle = (rollupName: string | number) =>
+  rollupStyles[rollupName] || rollupStyles.default
+
 const filter = (rows: OpcodeRow[], id: string, filterValue: string) => {
   return rows.filter((row) =>
     row.original[id]
@@ -42,15 +56,9 @@ const columns = (isPrecompiled: boolean, isTransactionType = false) => {
             {Object.keys(value).map((rollupName, index) => (
               <span
                 key={index}
-                className={`ml-2 py-1 px-3 leading-normal rounded-full text-2xs tracking-widest font-medium ${
-                  rollupName === 'optimism'
-                    ? 'bg-red-500 text-white'
-                    : rollupName === 'base'
-                    ? 'bg-blue-500 text-white'
-                    : rollupName === 'arbitrumOne'
-                    ? 'bg-blue-300 text-white'
-                    : 'bg-gray-400 text-gray-800'
-                }`}
+                className={`ml-2 py-1 px-3 leading-normal rounded-full text-2xs tracking-widest font-medium ${getRollupStyle(
+                  rollupName,
+                )}`}
                 style={{ margin: '4px' }}
               >
                 {rollupName}
