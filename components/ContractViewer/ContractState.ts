@@ -2,7 +2,7 @@
 import { useState } from 'react'
 
 import { type Abi, type AbiFunction, type AbiParameter } from 'abitype'
-import parser from '@solidity-parser/parser'
+import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { EtherscanContractResponse } from 'types/contract'
 import { createPublicClient, http } from 'viem'
@@ -49,8 +49,9 @@ export class DeploymentInfo {
   contextAddress: string
   mainContractPath: string
   code: string
+  accessibleCode: string
   originalPathLenses: any[] = []
-  // ast: any
+  ast: any
   // definitions tree - for contracts, functions, storage, etc.
   defTree: any
   defTreev2: SourceDefinition | undefined
@@ -71,6 +72,7 @@ export class DeploymentInfo {
     this.codeAddress = codeAddress
     this.contextAddress = contextAddress
     this.code = ''
+    this.accessibleCode = ''
 
     const contractPath = findContract(
       etherscanInfo.SourceCode,
@@ -89,7 +91,8 @@ export class DeploymentInfo {
     )
 
     this.new_parseAst()
-    this.old_parseAst()
+    // this.old_parseAst()
+    this.makeAccessibleCode()
   }
 
   isImpl(): boolean {
@@ -100,9 +103,46 @@ export class DeploymentInfo {
     return Object.values(this.impls)
   }
 
+  makeAccessibleCode() {
+    let accessibleCode = this.code
+    let currentContract: AstTypes.ContractDefinition | undefined
+    function publicizeNode(node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration) {
+      if (!currentContract || currentContract.kind == 'library' || node.isConstructor || node.isFallback || node.isReceiveEther) {
+        return
+      }
+
+      if (node.visibility != 'external' && node.visibility != 'public') {
+        const prefix = accessibleCode.slice(0, node.range[0])
+        const suffix = accessibleCode.slice(node.range[1])
+        const funcCode = accessibleCode
+          .slice(node.range[0], node.range[1])
+          .replace(/\b(internal| private)\b/, '  public')
+
+        // TODO: publicize visibility == 'default' functions
+        // funcCode = funcCode.replace(/function .+?\)(.+?)
+        // console.log(funcCode)
+        accessibleCode = prefix + funcCode + suffix
+      }
+    }
+
+    solParser.visit(this.ast, {
+      ContractDefinition: (node: AstTypes.ContractDefinition) => {
+        currentContract = node
+      },
+      'ContractDefinition:exit': () => {
+        currentContract = undefined
+      },
+      FunctionDefinition: publicizeNode,
+      StateVariableDeclaration: publicizeNode,
+    })
+
+    this.accessibleCode = accessibleCode
+    // return accessibleCode
+  }
+
   new_parseAst() {
     // parse ast and process definitions tree
-    const ast = parser.parse(this.code, {
+    this.ast = solParser.parse(this.code, {
       loc: true,
       range: true,
       tolerant: true,
@@ -113,7 +153,7 @@ export class DeploymentInfo {
     let currentContract: AstTypes.BaseASTNode | undefined
 
     // TODO: perhaps make custom visit logic? using ast._isAstNode()
-    parser.visit(ast, {
+    solParser.visit(this.ast, {
       ContractDefinition: (node: AstTypes.ContractDefinition) => {
         currentContract = node
         defTree.contracts.push({
@@ -125,6 +165,10 @@ export class DeploymentInfo {
         currentContract = undefined
       },
       FunctionDefinition: (node: AstTypes.FunctionDefinition) => {
+        if (currentContract.kind == 'library') {
+          return
+        }
+
         defTree.functions.push({
           id: id++,
           node,
@@ -173,7 +217,7 @@ export class DeploymentInfo {
 
   old_parseAst() {
     // parse ast and process definitions tree
-    const ast = parser.parse(this.code, {
+    this.ast = solParser.parse(this.code, {
       loc: true,
       range: true,
       tolerant: true,
@@ -237,7 +281,7 @@ export class DeploymentInfo {
     )
 
     // TODO: perhaps make custom visit logic? using ast._isAstNode()
-    parser.visit(ast, allNodesVisitor)
+    solParser.visit(this.ast, allNodesVisitor)
 
     this.defTree = tree
     // return tree

@@ -110,5 +110,9 @@ export function initStateFromComponent(component: AbiComponent): any {
 }
 
 export function initStateFromAbiInputs(inputs: readonly AbiParameter[] | AbiComponent[]) {
+  if (!inputs.map) {
+    console.warn(inputs)
+  }
+
   return (inputs as AbiComponent[]).map(initStateFromComponent)
 }

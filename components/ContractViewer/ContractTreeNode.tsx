@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
@@ -242,7 +242,7 @@ export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) =
   if (output) {
     props = {
       label: (inputAbi.internalType  || inputAbi.type),
-      value: getState(_paramData, path, 'dv').toString(),
+      value: getState(_paramData, path, '').toString(),
     }
   } else {
     props = {
@@ -254,10 +254,13 @@ export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) =
     <TextField
       size="small"
       className="border rounded-xl bg-gray-100"
+      readOnly={output}
       sx={{ marginTop: '4px', marginBottom: '4px', marginRight: '16px' }}
       onChange={(e: any) => {
         // console.log(`updating ${path)}`)
-        updateParamData({ [path]: e.target.value })
+        if (!output) {
+          updateParamData({ [path]: e.target.value })
+        }
       }}
       {...props}
     />
@@ -275,7 +278,7 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {abi.inputs.map((inputAbi: any, i: number) => (
+      {abi.inputs && abi.inputs.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
           inputAbi={inputAbi}
@@ -308,11 +311,12 @@ type ReturnDataBox = {
 
 export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   const [funcData, updateFuncData] = reducer
-  console.log('ReturnDataBox funcData', funcData)
+  // console.log('ReturnDataBox funcData', funcData)
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {abi.outputs.map((inputAbi: any, i: number) => (
+      result:
+      {abi.outputs && abi.outputs.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
           inputAbi={inputAbi}
@@ -328,11 +332,17 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   )
 }
 
-export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) => {
+type FunctionDefinitionItemProps = {
+  contract: DeploymentInfo
+  artifact: Artifact<AstTypes.FunctionDefinition>
+  onSelect?: (e: any) => void
+}
+
+export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: FunctionDefinitionItemProps) => {
   const node = artifact.node
 
   if (
-    node.isConstructor ||
+    node.isConstructor || // TODO: support internal/private :(
     node.visibility == 'internal' ||
     node.visibility == 'private'
   ) {
@@ -350,7 +360,8 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
   )
 
   // TODO: get funcAbi as param?
-  const funcAbi: AbiFunction = contract.abi.find((a) => a.name == node.name) || {}
+  // const funcAbi: AbiFunction = useMemo(() => contract.abi.find((a) => a.name == node.name) || {}, [])
+  const funcAbi: AbiFunction = (contract.accessibleAbi ? contract.accessibleAbi.find((a) => a.name == node.name) : {})
 
   type FuncData = {
     params: any[]
@@ -358,11 +369,13 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
     outputs: any[] | undefined
   }
 
+  // TODO: check why inputs is undefined sometimes
+  // console.log('funcAbi inputs', funcAbi.inputs)
   const reducer = useGenericReducer<FuncData>(
     {
-      params: initStateFromAbiInputs(funcAbi.inputs), //initState,
+      params: initStateFromAbiInputs(funcAbi.inputs || []), //initState,
       value: (node.stateMutability == 'payable' ? '0' : undefined),
-      outputs: initStateFromAbiInputs(funcAbi.outputs),
+      outputs: initStateFromAbiInputs(funcAbi.outputs || []),
     },
     true,
   )
@@ -404,19 +417,39 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
       }
     }
 
-    const props = [
-      {
-        // TODO: support overrides, eg. from, block, gas, etc.
-        to: contract.contextAddress,
-        data,
-        value: funcData.value,
-      },
-      'latest',
-    ]
+    const props = {
+      // TODO: support overrides, eg. from, block, gas, etc.
+      to: contract.contextAddress,
+      data,
+      value: funcData.value,
+    }
 
-    rpc
-      .call(...props)
-      .then((res: any) => {
+    // TODO: how to override code from accessibleCode compilation?
+    let request
+    if (contract.accessibleRuntimeCodeBin) {
+      request = rpc
+        .request({
+          method: 'eth_call',
+          params: [
+            props,
+            'latest',
+            {
+              [contract.codeAddress]: {
+                code: contract.accessibleRuntimeCodeBin,
+              }
+            },
+          ]
+        })
+        .then((res: any) => {
+          // direct requests return raw bytes, need to wrap it
+          return { data: res }
+        })
+    } else {
+      request = rpc.call([props, 'latest'])
+    }
+
+    request
+      .then((res: any, err) => {
         setStatus('return data:' + res.data)
         // setRetValue(res.data as string)
         try {
@@ -477,23 +510,6 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
           </div>
         )}
         {(funcAbi && funcAbi?.outputs?.length > 0) && <ReturnDataBox abi={funcAbi} reducer={reducer} />}
-        {/* RET VALUE DECODED FIELDS HERE ..
-        {node.returnParameters &&
-          node.returnParameters.length > 0 &&
-          node.returnParameters.map((param: any, i: number) => {
-            const type = getTypePrettyName(param.typeName)
-            return (
-              <>
-                <hr />
-                <TextField
-                  variant="filled"
-                  label={type + ' ' + (param.name || '')}
-                  value={retValueDecoded[i] + ''}
-                  size="small"
-                />
-              </>
-            )
-          })} */}
         {status && (
           <input
             type="button"
@@ -508,6 +524,88 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
           {spaceBetween('0xretValue-was-here' || '')}
         </p>
       </div>
+    </ContractTreeItem>
+  )
+}
+
+const StateVariableDeclarationItem = ({ contract, artifact }: any) => {
+  const innernode = artifact.node as AstTypes.StateVariableDeclarationVariable
+  let subtitle = 'storage '
+  const var0 = innernode.variables[0]
+  const type = var0.typeName
+  if (type) {
+    if (type.type == 'Mapping') {
+      // eslint-disable-next-line prettier/prettier
+      subtitle += `mapping (${getTypePrettyName(type.keyType)} => ${getTypePrettyName(type.valueType)})`
+    } else {
+      subtitle += getTypePrettyName(type)
+    }
+  } else {
+    subtitle += '*unknown type*'
+  }
+
+  let type2 = var0.typeName
+  if (var0.visibility == 'public') {
+    const fakeFuncNode: any = {
+      type: 'StateVariableDeclaration',
+      name: var0.name,
+      parameters: [],
+      returnParameters: [],
+      visibility: 'public',
+    }
+
+    while (type2.keyType) {
+      fakeFuncNode.parameters.push({
+        typeName: type.keyType,
+        name: type.keyName,
+      })
+      type2 = type2.valueType
+    }
+
+    fakeFuncNode.returnParameters.push({
+      typeName: type2.name,
+      name: var0.name,
+    })
+
+    // TODO: FIX NASTY HACK, NOW ITS WORSE BECAUSE IT ALSO SAYS FUNCTION IN THE SUBTITLE..
+    return FunctionDefinitionItem({
+      contract,
+      artifact: {
+        id: artifact.id,
+        node: fakeFuncNode,
+        scope: artifact.scope,
+      },
+    })
+  }
+
+  let indexComps
+  if (type.keyType) {
+    const keyType = getTypePrettyName(type.keyType)
+    indexComps = <TextField variant="outlined" label={keyType} size="small" />
+  }
+
+  return (
+    <ContractTreeItem
+      nodeId={'statevar_' + artifact.id}
+      title={var0.name}
+      subtitle={subtitle}
+    >
+      {indexComps}
+      <p className="text-xs">
+        <i>not yet implemented, can the devs do something?</i>
+      </p>
+      <p>
+        &gt;&gt; view on{' '}
+        <u>
+          <a
+            target="_blank"
+            href={`https://evm.storage/eth/latest/${contract.contextAddress}#map`}
+            rel="noreferrer"
+          >
+            evm.storage
+          </a>
+        </u>
+      </p>
     </ContractTreeItem>
   )
 }
@@ -535,37 +633,57 @@ export const SourceItem = ({
   )
 
   const sort = true
+  // console.log('len', contract.defTreev2?.storage.length)
 
   return (
     <ContractTreeItem nodeId={contract.codeAddress} title={title} onSelect={() => onSelect(contract)}>
-      {contract.defTreev2?.functions
-        ?.sort(
-          (a, b) =>
-            sort && (a.node.name || '').localeCompare(b.node.name || ''),
-        )
-        .filter((a: Artifact<AstTypes.FunctionDefinition>) => a.node.body)
-        .map(
-          (artifact: Artifact<AstTypes.FunctionDefinition>, i: number) =>
-            (artifact.node.visibility == 'external' ||
-              artifact.node.visibility == 'public') && (
-              <FunctionDefinitionItem
-                key={contract.codeAddress + i}
+      <TreeItem nodeId="ti_storage" label="Storage">
+        {contract.defTreev2?.storage
+          ?.sort(
+            (a, b) =>
+              sort && (a.node.name || '').localeCompare(b.node.name || ''),
+          )
+          .map(
+            (artifact: Artifact<AstTypes.StateVariableDeclaration>, i: number) =>
+              <StateVariableDeclarationItem
+                key={'storageitem_' + contract.codeAddress + i}
                 contract={contract}
                 artifact={artifact}
                 onSelect={() => onSelect(contract, artifact)}
               />
-            ),
-        )}
+          )}
+      </TreeItem>
 
-      {contract // TODO: this should move inside SourceItem & be recursive
-        .getImplementations()
-        .map((impl: DeploymentInfo) => (
-          <SourceItem
-            key={impl.codeAddress}
-            contract={impl}
-            // onSelect={(node) => onSelect(node, impl.defTree)}
-          />
-        ))}
+      <TreeItem nodeId="ti_functions" label="Functions">
+        {contract.defTreev2?.functions
+          ?.sort(
+            (a, b) =>
+              sort && (a.node.name || '').localeCompare(b.node.name || ''),
+          )
+          .filter((a: Artifact<AstTypes.FunctionDefinition>) => a.node.body)
+          .map(
+            (artifact: Artifact<AstTypes.FunctionDefinition>, i: number) =>
+              <FunctionDefinitionItem
+                key={'funcitem_' + contract.codeAddress + i}
+                contract={contract}
+                artifact={artifact}
+                onSelect={() => onSelect(contract, artifact)}
+              />
+          )}
+      </TreeItem>
+
+      {contract.getImplementations().length > 0 && <TreeItem nodeId="ti_impls" label="Implementations">
+        {contract // TODO: this should move inside SourceItem & be recursive
+          .getImplementations()
+          .map((impl: DeploymentInfo) => (
+            <SourceItem
+              key={impl.codeAddress}
+              contract={impl}
+              onSelect={onSelect}
+            />
+          ))}
+        </TreeItem>
+      }
     </ContractTreeItem>
   )
 }

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { isValidAddress } from '@ethereumjs/util'
 import { TextField } from '@mui/material'
 import { useRouter } from 'next/router'
 import NoSSR from 'react-no-ssr'
 
-// import { solidityCompiler } from 'util/solc'
+import { solidityCompiler } from 'util/solc'
 
 import ContractCodeEditor from './ContractCodeEditor'
 import { Artifact, DeploymentInfo, state, useContracts } from './ContractState'
@@ -36,6 +35,13 @@ const ContractViewer = () => {
   // load solidity compiler
   // useEffect(() => {
   //   solidityCompiler.init()
+  //   solidityCompiler.listen(onCompilationResult)
+  //   // solidityCompiler.compileCode(
+  //   //   this.code,
+  //   //   this.etherscanInfo.CompilerVersion,
+  //   //   outputs,
+  //   // )
+  //   return () => solidityCompiler.unlisten(onCompilationResult)
   // }, [])
 
   const tryLoadContract = async (
@@ -47,8 +53,48 @@ const ContractViewer = () => {
       .loadContract(codeAddress, contextAddress)
       .then(() => {
         const contract = state.contracts[codeAddress]
-        // TODO: restore compilation
-        // contract.compile(onCompilationResult, ['abi'])
+        // TODO: restore compilation (need to rename identifiers to prevent clashes...)
+        // if (contract.accessibleCode) {
+        //   console.log('compiling accessible code')
+        //   solidityCompiler.compileCode(
+        //     contract.accessibleCode,
+        //     contract.etherscanInfo.CompilerVersion,
+        //     ['abi', 'evm.deployedBytecode'],
+        //     ({ result, error }) => {
+        //       if (error) {
+        //         console.warn('could not compile:', error)
+        //         return
+        //       }
+
+        //       if (!result || !result.contracts) {
+        //         console.warn('bad result?', typeof result, result)
+        //         return
+        //       }
+
+        //       const mainFile = result['contracts']['main.sol']
+        //       // console.log(mainFile, contract.etherscanInfo.ContractName)
+        //       const mainContract = mainFile[contract.etherscanInfo.ContractName]
+        //       if (!mainContract) {
+        //         console.warn(
+        //           'could not find main contract',
+        //           contract.etherscanInfo.ContractName,
+        //           'in',
+        //           mainFile,
+        //         )
+        //         return
+        //       }
+
+        //       setCurrentCode(contract.accessibleCode)
+        //       // console.log('new', mainContract.abi)
+        //       // console.log('og', contract.abi)
+
+        //       // TODO: should go into accessibleAbi
+        //       contract.accessibleAbi = mainContract.abi
+        //       contract.accessibleRuntimeCodeBin =
+        //         mainContract?.evm?.deployedBytecode?.object
+        //     },
+        //   )
+        // }
 
         const impl = contract.etherscanInfo?.Implementation as string
         if (impl) {
@@ -170,17 +216,16 @@ const ContractViewer = () => {
             <ContractTreeView
               deployments={state.getProxies()}
               onSelect={(contract: DeploymentInfo, artifact: Artifact) => {
-                if (!contract) {
+                if (!contract || !contract.codeAddress) {
                   console.warn('missing contract')
                   return
                 }
 
                 const addr = contract.codeAddress
-                const code = state.contracts[addr].code
                 if (addr != selectedContract?.codeAddress) {
                   // state.selectedAddress = contract.codeAddress
                   setSelectedContract(contract)
-                  setCurrentCode(code)
+                  setCurrentCode(contract.code)
                 }
 
                 // console.log('item select', artifact)

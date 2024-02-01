@@ -9,6 +9,7 @@ function loadCompiler(version) {
       // eslint-disable-next-line no-undef
       importScripts(url)
     } catch (e) {
+      console.error('failed to load compiler version', version, url, e)
       return false
     }
     loadedCompilers[version] = true
@@ -18,7 +19,7 @@ function loadCompiler(version) {
 }
 
 function onCompileRequest(msg) {
-  let { version, stdJson } = msg.data
+  let { jobId, version, stdJson } = msg.data
   if (!version || !stdJson) {
     self.postMessage({ error: 'no version or standard json specified' })
     return
@@ -33,7 +34,7 @@ function onCompileRequest(msg) {
   // compiler expects json string
   const input = typeof stdJson == 'string' ? stdJson : JSON.stringify(stdJson)
   const result = compiler.compile(input)
-  self.postMessage({ result })
+  self.postMessage({ jobId, result: JSON.parse(result) })
 }
 
 self.addEventListener('message', onCompileRequest, false)
