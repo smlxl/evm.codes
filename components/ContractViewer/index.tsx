@@ -8,7 +8,7 @@ import NoSSR from 'react-no-ssr'
 // import { solidityCompiler } from 'util/solc'
 
 import ContractCodeEditor from './ContractCodeEditor'
-import { ContractInfo, state } from './ContractState'
+import { DeploymentInfo, state, useContracts } from './ContractState'
 import ContractTreeView from './ContractTreeView'
 import Header from './Header'
 
@@ -21,8 +21,10 @@ import {
 const ContractViewer = () => {
   const router = useRouter()
 
+  const { selectedContract, setSelectedContract } = useContracts()
+
   const [status, setStatus] = useState('Loading...')
-  const [currentAddress, setCurrentAddress] = useState<string>('')
+  // const [currentAddress, setCurrentAddress] = useState<string>('')
   const [currentCode, setCurrentCode] = useState<string>('')
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
@@ -52,8 +54,8 @@ const ContractViewer = () => {
         if (impl) {
           tryLoadContract(impl.toLowerCase(), contextAddress)
         } else {
-          setStatus('✌️ Loaded')
-          setCurrentAddress(contract.codeAddress)
+          setStatus('Loaded')
+          setSelectedContract(contract)
           setCurrentCode(contract.code)
         }
       })
@@ -95,7 +97,7 @@ const ContractViewer = () => {
           updateRoute()
         }
 
-        setCurrentAddress(address)
+        setSelectedContract(state.contracts[address])
       })
     },
     [router, tryLoadContract, updateRoute],
@@ -108,7 +110,7 @@ const ContractViewer = () => {
     }
 
     const addresses = ((router.query.address as string) || '').split(',')
-    setCurrentAddress(addresses[0])
+    // setCurrentAddress(addresses[0])
 
     for (const addr of addresses) {
       tryLoadAddress(addr, false)
@@ -117,18 +119,18 @@ const ContractViewer = () => {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    state.onChange.push((codeAddress: string, info: ContractInfo) => {
-      const contract = state.selectedContract()
-      if (!contract) {
-        setCurrentAddress('')
+    state.onChange.push((codeAddress: string, info: DeploymentInfo) => {
+      if (info == selectedContract) {
+        // setCurrentAddress('')
+        setSelectedContract(undefined)
         setCurrentCode('')
         updateRoute()
         setStatus('')
         return
       }
 
-      setCurrentAddress(contract.codeAddress)
-      setCurrentCode(contract.code)
+      // setSelectedContract(contract)
+      // setCurrentCode(contract.code)
       setStatus('Reloading...')
       updateRoute()
       setTimeout(() => setStatus(''), 200)
@@ -143,7 +145,7 @@ const ContractViewer = () => {
           className="w-full border mt-2 rounded-xl dark:border-gray-600"
           style={{ height: '800px' }}
         >
-          <ResizablePanel defaultSize={45} style={{ overflow: 'auto' }}>
+          <ResizablePanel defaultSize={45}>
             <Header>
               <div className="flex pt-1 gap-2 items-center">
                 <TextField
@@ -155,11 +157,18 @@ const ContractViewer = () => {
                     tryLoadAddress(e.target.value.trim(), true)
                   }
                 />
-                <span className="whitespace-nowrap">{status}</span>
+                <span
+                  className="whitespace-nowrap"
+                  onClick={() => {
+                    setStatus('✌️ ' + status)
+                  }}
+                >
+                  {status}
+                </span>
               </div>
             </Header>
             <ContractTreeView
-              forest={state.getProxies()}
+              deployments={state.getProxies()}
               onSelect={(item, root) => {
                 if (!item || !item.node || !item.node.loc) {
                   return
@@ -167,10 +176,12 @@ const ContractViewer = () => {
 
                 setCodePeekLocation(item.node.loc.start)
 
-                const addr = root.node.info.codeAddress
+                const contract = root.node.info
+                const addr = contract.codeAddress
                 const code = state.contracts[addr].code
-                if (addr != currentAddress) {
-                  setCurrentAddress(addr)
+                if (addr != contract.codeAddress) {
+                  // state.selectedAddress = contract.codeAddress
+                  setSelectedContract(contract)
                   setCurrentCode(code)
                 }
               }}
@@ -184,12 +195,11 @@ const ContractViewer = () => {
               <ResizablePanel defaultSize={90}>
                 <Header>
                   <p className="font-semibold">
-                    {
-                      state.contracts[currentAddress]?.etherscanInfo
-                        ?.ContractName
-                    }
+                    {selectedContract?.etherscanInfo?.ContractName}
                   </p>
-                  <span className="text-xs">{currentAddress}</span>
+                  <span className="text-xs">
+                    {selectedContract?.codeAddress}
+                  </span>
                 </Header>
                 <ContractCodeEditor
                   code={currentCode}
@@ -202,13 +212,10 @@ const ContractViewer = () => {
 
               <ResizablePanel>
                 <div className="h-full py-2 px-4 text-sm flex flex-col gap-2">
-                  {currentAddress && (
+                  {selectedContract && (
                     <p>
                       Compiler version:{' '}
-                      {
-                        state.contracts[currentAddress]?.etherscanInfo
-                          .CompilerVersion
-                      }
+                      {selectedContract?.etherscanInfo.CompilerVersion}
                     </p>
                   )}
                   {/* <p>*Additional metadata info should go here*</p> */}

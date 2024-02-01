@@ -9,15 +9,18 @@ type EtherscanResponse = {
 /// parse response from etherscan api and return the compiler inputs object
 export function etherscanParse(
   response: EtherscanResponse,
-): null | EtherscanContractResponse {
+): EtherscanContractResponse {
   if (response.message !== 'OK') {
-    // throw 'bad response: ' + response.result
-    return null
+    throw 'etherscan response is not OK'
+  }
+
+  if (!response.result || response.result.length == 0) {
+    throw 'etherscan returned empty result'
   }
 
   const data = response.result[0]
   if (typeof data == 'string') {
-    return null
+    throw 'etherscan response malformed'
   }
 
   // SourceCode is json-escaped, convert for convenience
@@ -37,5 +40,5 @@ export function etherscanParse(
     } //as SolidityCompilerInput
   }
 
-  return data
+  return data as EtherscanContractResponse
 }

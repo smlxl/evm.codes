@@ -1,17 +1,18 @@
 import { HorizontalRule } from '@mui/icons-material'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Box, TextField } from '@mui/material'
+import { Box, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { TreeItem } from '@mui/x-tree-view'
 import { TreeView } from '@mui/x-tree-view/TreeView'
 
 import { Button } from 'components/ui'
 
-import { ContractInfo } from './ContractState'
-import ContractTreeNode from './ContractTreeNode'
+import { DeploymentInfo } from './ContractState'
+import { SourceItem, DeploymentItem } from './ContractTreeNode'
+import { createContext, useContext, useState } from 'react'
 
 type ContractTreeViewProps = {
-  forest: any[]
+  deployments: any[]
   onSelect: (node: any, root: any) => void
 }
 
@@ -33,7 +34,7 @@ const ContractAdder = ({ onClick }: any) => {
   )
 }
 
-const ContractsNode = ({ forest, onSelect }: any) => {
+const ContractsTreeItem = ({ deployments, onSelect }: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddContract = () => {
     alert('unimplemented')
@@ -42,29 +43,14 @@ const ContractsNode = ({ forest, onSelect }: any) => {
   return (
     <TreeItem nodeId="ti_contracts" label="Contracts">
       {/* <ContractAdder onClick={handleAddContract} /> */}
-      {forest &&
-        forest.map((contract: any) => (
-          <ContractTreeNode
-            key={contract.defTree.id}
-            contract={contract}
-            root={contract.defTree}
-            node={contract.defTree}
-            onSelect={(node) => onSelect(node, contract.defTree)}
-          >
-            {contract.impls && // TODO: this should move inside ContractTreeNode & be recursive
-              (Object.values(contract.impls) as ContractInfo[]).map(
-                (impl: ContractInfo) => (
-                  <ContractTreeNode
-                    key={impl.defTree.id}
-                    contract={impl}
-                    root={impl.defTree}
-                    node={impl.defTree}
-                    onSelect={(node) => onSelect(node, impl.defTree)}
-                  />
-                ),
-              )}
-          </ContractTreeNode>
-        ))}
+      {/* TODO: FILTER BOX HERE; ternary checkboxes (eg. show external funcs, internal+external or none) */}
+      {deployments?.map((contract: DeploymentInfo) => (
+        <SourceItem
+          key={contract.codeAddress}
+          contract={contract}
+          // onSelect={(node) => onSelect(node, contract.defTree)}
+        />
+      ))}
     </TreeItem>
   )
 }
@@ -93,20 +79,74 @@ const EnvironmentOverrides = () => {
   )
 }
 
-const ContractTreeView = ({ forest, onSelect }: ContractTreeViewProps) => {
+enum FunctionFilter {
+  None,
+  External,
+  Internal,
+  All,
+}
+
+type ViewFilter = {
+  libraries: boolean
+  functions: FunctionFilter
+  structs: boolean
+  events: boolean
+  errors: boolean
+  enums: boolean
+}
+
+const FilterContext = createContext<ViewFilter>({
+  libraries: true,
+  functions: FunctionFilter.All,
+  structs: true,
+  events: true,
+  errors: true,
+  enums: true,
+})
+
+const FilterToolbar = ({ values, onChange }) => {
+  return (
+    <ToggleButtonGroup
+      size="small"
+      value={values}
+      className="dark:invert m-1"
+      onChange={onChange}
+    >
+      <ToggleButton value="external">external</ToggleButton>
+      <ToggleButton value="internal">internal</ToggleButton>
+      <ToggleButton value="structs">structs</ToggleButton>
+      <ToggleButton value="events">events</ToggleButton>
+    </ToggleButtonGroup>
+  )
+}
+
+const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
   const expanded = ['ti_contracts']
   // expanded = forest.map((t) => t.defTree.id as string)
 
+  const [states, setStates] = useState(() => ['external', 'internal', 'structs'])
+
+  const handleState = (
+    event: MouseEvent<HTMLElement>,
+    newStates: string[],
+  ) => {
+    console.log(newStates)
+    setStates(newStates)
+  }
+
   return (
-    <TreeView
-      className="font-mono dark:border-gray-600"
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
-      defaultExpanded={expanded}
-      defaultEndIcon={<HorizontalRule />}
-    >
-      <ContractsNode forest={forest} onSelect={onSelect} />
-    </TreeView>
+    <>
+      <FilterToolbar onChange={handleState} values={states} />
+      <TreeView
+        className="font-mono h-[690px] overflow-x-hidden" // TODO: h-full not working. how to fill height?
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+        defaultExpanded={expanded}
+        defaultEndIcon={<HorizontalRule />}
+      >
+        <ContractsTreeItem deployments={deployments} />
+      </TreeView>
+    </>
   )
 }
 

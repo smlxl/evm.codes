@@ -20,6 +20,13 @@ const ContractCodeEditor = ({ code, line, column, ...props }: any) => {
       folding: true,
       readOnly: true,
     })
+
+    // fetch('/synthwave-color-theme.json')
+    //   .then((res) => res.json())
+    //   .then((res) => {
+    //     _monaco.editor.defineTheme('synthwave', res)
+    //     _monaco.editor.setTheme('synthwave')
+    //   })
   }
 
   useEffect(() => {

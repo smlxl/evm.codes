@@ -1,3 +1,5 @@
+import { type Abi } from 'abitype'
+
 type SoliditySourceExplicitContent = {
   content: string
   keccak256?: string
@@ -38,12 +40,11 @@ export type EvmVersion =
   | 'shanghai'
 
 export type SoliditySettings = {
-  // Optional: Sorted list of remappings
+  // Sorted list of remappings
   remappings?: Array<string>
-  // Optional: Optimizer settings
+  // Optimizer settings
   optimizer?: OptimizerSettings
-  evmVersion?: EvmVersion // Version of the EVM to compile for. Affects type checking and code generation. Can be homestead, tangerineWhistle, spuriousDragon, byzantium or constantinople
-  // Metadata settings (optional)
+  evmVersion?: EvmVersion
   metadata?: { useLiteralContent: boolean }
   // Addresses of the libraries. If not all libraries are given here, it can result in unlinked objects whose output data is different.
   libraries?: object
@@ -51,15 +52,13 @@ export type SoliditySettings = {
   // If this field is omitted, then the compiler loads and does type checking, but will not generate any outputs apart from errors.
   // The first level key is the file name and the second is the contract name, where empty contract name refers to the file itself,
   // while the star refers to all of the contracts.
-  outputSelection: object
+  outputSelection: { [file: string]: { [contract: string]: string[] } }
 }
 
 export type SolidityCompilerInput = {
-  // Required: Source code language, such as "Solidity", "Vyper", "lll", "assembly", etc.
+  // source code language, such as "Solidity", "Vyper", "lll", "assembly", etc.
   language: string // "Solidity"
-  // Required
   sources: SoliditySources
-  // Optional
   settings?: SoliditySettings
 }
 

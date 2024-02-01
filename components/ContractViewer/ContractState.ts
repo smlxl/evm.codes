@@ -1,5 +1,8 @@
-// import { signal, batch } from '@preact/signals-react'
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { useState } from 'react'
+
 import parser from '@solidity-parser/parser'
+import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { EtherscanContractResponse } from 'types/contract'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
@@ -8,14 +11,50 @@ import { etherscanParse } from 'util/EtherscanParser'
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
 
-import { ContractTreeNode } from './types'
-
 export const rpc = createPublicClient({
   chain: mainnet,
   transport: http('https://rpc.ankr.com/eth'),
 })
 
-export class ContractInfo {
+/*type StorageDef = StateVariableDeclarationVariable & {
+  name: string
+  type: string
+  visibility: string
+  constant: boolean
+  stateVariable: boolean
+  storageLocation: string
+  storageLocationIndex: number
+  node: AstTypes.BaseASTNode
+}*/
+
+export type Artifact<T> = {
+  id: number
+  node: T
+  // undefined for global scope
+  scope?: T
+
+  // constructor(node: AstTypes.BaseASTNode, scope?: AstTypes.BaseASTNode) {
+  //   this.node = node
+  //   this.scope = scope
+  // }
+}
+
+// this represents a single contract/interface/library definition block
+export class SourceDefinition {
+  // name: string = ''
+  // filepath: string = ''
+  // c3 inheritance / ast node ref?
+  contracts: Artifact<AstTypes.ContractDefinition>[] = []
+  functions: Artifact<AstTypes.FunctionDefinition>[] = []
+  storage: Artifact<AstTypes.VariableDeclarationStatement>[] = [] // TODO: rename as variables? (to include floating immutables, constants)
+  structs: Artifact<AstTypes.StructDefinition>[] = []
+  events: Artifact<AstTypes.EventDefinition>[] = []
+  errors: Artifact<AstTypes.CustomErrorDefinition>[] = []
+  enums: Artifact<AstTypes.EnumDefinition>[] = []
+}
+
+// this represents an on-chain deployment, defTree may include multiple contract definitions
+export class DeploymentInfo {
   codeAddress: string
   contextAddress: string
   mainContractPath: string
@@ -23,17 +62,124 @@ export class ContractInfo {
   originalPathLenses: any[] = []
   // ast: any
   // definitions tree - for contracts, functions, storage, etc.
-  defTree: ContractTreeNode
+  defTree: any
+  defTreev2: SourceDefinition | undefined
   compilationResult: any
   etherscanInfo: EtherscanContractResponse
   abi: any
-  impls: { [address: string]: ContractInfo } = {}
+  impls: { [address: string]: DeploymentInfo } = {}
+
+  constructor(
+    etherscanInfo: EtherscanContractResponse,
+    codeAddress: string,
+    contextAddress: string,
+  ) {
+    this.etherscanInfo = etherscanInfo
+    this.abi = JSON.parse(etherscanInfo.ABI)
+    this.codeAddress = codeAddress
+    this.contextAddress = contextAddress
+    this.code = ''
+
+    const contractPath = findContract(
+      etherscanInfo.SourceCode,
+      etherscanInfo.ContractName,
+    )
+    if (!contractPath) {
+      throw 'failed to find contract...'
+    }
+
+    this.mainContractPath = contractPath
+
+    this.code = flattenCode(
+      etherscanInfo.SourceCode,
+      contractPath,
+      this.originalPathLenses,
+    )
+
+    this.new_parseAst()
+    this.old_parseAst()
+  }
 
   isImpl(): boolean {
     return this.contextAddress != this.codeAddress
   }
 
-  parseAst() {
+  getImplementations(): DeploymentInfo[] {
+    return Object.values(this.impls)
+  }
+
+  new_parseAst() {
+    // parse ast and process definitions tree
+    const ast = parser.parse(this.code, {
+      loc: true,
+      range: true,
+      tolerant: true,
+    })
+
+    let id = 0
+    const defTree = new SourceDefinition()
+    let currentContract: AstTypes.BaseASTNode | undefined
+
+    // TODO: perhaps make custom visit logic? using ast._isAstNode()
+    parser.visit(ast, {
+      ContractDefinition: (node: AstTypes.ContractDefinition) => {
+        currentContract = node
+        defTree.contracts.push({
+          id: id++,
+          node,
+        })
+      },
+      'ContractDefinition:exit': () => {
+        currentContract = undefined
+      },
+      FunctionDefinition: (node: AstTypes.FunctionDefinition) => {
+        defTree.functions.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+      StateVariableDeclaration: (node: AstTypes.StateVariableDeclaration) => {
+        defTree.storage.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+      StructDefinition: (node: AstTypes.StructDefinition) => {
+        defTree.structs.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+      EnumDefinition: (node: AstTypes.EnumDefinition) => {
+        defTree.enums.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+      EventDefinition: (node: AstTypes.EventDefinition) => {
+        defTree.events.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+      CustomErrorDefinition: (node: AstTypes.CustomErrorDefinition) => {
+        defTree.errors.push({
+          id: id++,
+          node,
+          scope: currentContract,
+        })
+      },
+    })
+
+    this.defTreev2 = defTree
+  }
+
+  old_parseAst() {
     // parse ast and process definitions tree
     const ast = parser.parse(this.code, {
       loc: true,
@@ -45,7 +191,7 @@ export class ContractInfo {
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this
-    function makeItem(type, props) {
+    function makeItem(type: any, props: any) {
       return {
         id: self.codeAddress + '_' + self.contextAddress + '_' + id,
         type,
@@ -70,7 +216,7 @@ export class ContractInfo {
       'StateVariableDeclaration',
     ]
 
-    function onNodeEnter(node, parent) {
+    function onNodeEnter(node: any, parent: any) {
       node.nodeId = id++
       if (parent) {
         node.parentId = parent.nodeId
@@ -83,7 +229,7 @@ export class ContractInfo {
       }
     }
 
-    function onNodeExit(node) {
+    function onNodeExit(node: any) {
       if (callbackNames.indexOf(node.type) != -1) {
         context.pop()
       }
@@ -105,8 +251,8 @@ export class ContractInfo {
     // return tree
   }
 
-  compile(callback, outputs) {
-    const tmpCallback = (...args) => {
+  compile(callback, outputs: string[]) {
+    const tmpCallback = (...args: any) => {
       solidityCompiler.unlisten(tmpCallback)
       callback(...args)
     }
@@ -117,56 +263,18 @@ export class ContractInfo {
       outputs,
     )
   }
-
-  static fromEtherscanInfo(
-    etherscanInfo: EtherscanContractResponse,
-    codeAddress: string,
-    contextAddress: string,
-  ) {
-    const info = new ContractInfo()
-    info.etherscanInfo = etherscanInfo
-    info.abi = JSON.parse(etherscanInfo.ABI)
-    info.codeAddress = codeAddress
-    info.contextAddress = contextAddress
-
-    const contractPath = findContract(
-      etherscanInfo.SourceCode,
-      etherscanInfo.ContractName,
-    )
-    if (!contractPath) {
-      throw 'failed to find contract...'
-    }
-
-    info.mainContractPath = contractPath
-
-    info.code = flattenCode(
-      etherscanInfo.SourceCode,
-      contractPath,
-      info.originalPathLenses,
-    )
-
-    info.parseAst()
-
-    return info
-  }
 }
 
 class ContractViewerState {
-  selectedAddress: string
-  contracts: { [address: string]: ContractInfo } = {}
-  viewedCode: string
-  onChange: ((address: string, info: ContractInfo) => void)[] = []
+  contracts: { [address: string]: DeploymentInfo } = {}
+  onChange: ((address: string, info: DeploymentInfo) => void)[] = []
 
-  getImpls(): ContractInfo[] {
+  getImpls(): DeploymentInfo[] {
     return Object.values(this.contracts).filter((c) => c.isImpl())
   }
 
-  getProxies(): ContractInfo[] {
+  getProxies(): DeploymentInfo[] {
     return Object.values(this.contracts).filter((c) => !c.isImpl())
-  }
-
-  selectedContract(): ContractInfo {
-    return this.contracts[this.selectedAddress]
   }
 
   onSourceAvailable(
@@ -178,11 +286,7 @@ class ContractViewerState {
       throw 'no source code found'
     }
 
-    const info = ContractInfo.fromEtherscanInfo(
-      etherscanInfo,
-      codeAddress,
-      contextAddress,
-    )
+    const info = new DeploymentInfo(etherscanInfo, codeAddress, contextAddress)
 
     this.contracts[codeAddress] = info
     if (contextAddress != codeAddress) {
@@ -190,12 +294,6 @@ class ContractViewerState {
       // but it should be the second proxy here, ie the immediate parent
       // info.proxy = contextAddress
       this.contracts[contextAddress].impls[codeAddress] = info
-    }
-
-    // TODO: should we also load settings.libraries? (standalone, not delegated)
-
-    if (!this.selectedAddress) {
-      this.selectedAddress = codeAddress
     }
   }
 
@@ -233,17 +331,17 @@ class ContractViewerState {
     return this.onSourceAvailable(etherscanInfo, codeAddress, contextAddress)
   }
 
-  removeContract(info: ContractInfo) {
+  removeContract(info: DeploymentInfo) {
     // const info = this.contracts[codeAddress]
     delete this.contracts[info.codeAddress]
-    if (this.selectedAddress == info.codeAddress) {
-      const remaining = Object.values(this.contracts)
-      if (remaining.length > 0) {
-        this.selectedAddress = remaining[0].codeAddress
-      } else {
-        this.selectedAddress = ''
-      }
-    }
+    // if (this.selectedAddress == info.codeAddress) {
+    //   const remaining = Object.values(this.contracts)
+    //   if (remaining.length > 0) {
+    //     this.selectedAddress = remaining[0].codeAddress
+    //   } else {
+    //     this.selectedAddress = ''
+    //   }
+    // }
 
     // console.log(info)
     if (info.contextAddress != info.codeAddress) {
@@ -258,3 +356,16 @@ class ContractViewerState {
 }
 
 export const state = new ContractViewerState()
+
+export const useContracts = () => {
+  const [selectedContract, setSelectedContract] = useState<DeploymentInfo | undefined>(undefined)
+  const [contracts, setContracts] = useState({})
+
+  return {
+    contracts,
+    setContracts,
+
+    selectedContract,
+    setSelectedContract,
+  }
+}
