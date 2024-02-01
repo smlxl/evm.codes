@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-
+import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { isValidAddress } from '@ethereumjs/util'
 import { TextField } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -8,7 +8,7 @@ import NoSSR from 'react-no-ssr'
 // import { solidityCompiler } from 'util/solc'
 
 import ContractCodeEditor from './ContractCodeEditor'
-import { DeploymentInfo, state, useContracts } from './ContractState'
+import { Artifact, DeploymentInfo, state, useContracts } from './ContractState'
 import ContractTreeView from './ContractTreeView'
 import Header from './Header'
 
@@ -151,8 +151,8 @@ const ContractViewer = () => {
                 <TextField
                   size="small"
                   label="address"
-                  variant="outlined"
                   className="bg-gray-200 dark:invert w-[350px] font-mono"
+                  variant="outlined"
                   onInput={(e: any) =>
                     tryLoadAddress(e.target.value.trim(), true)
                   }
@@ -169,20 +169,23 @@ const ContractViewer = () => {
             </Header>
             <ContractTreeView
               deployments={state.getProxies()}
-              onSelect={(item, root) => {
-                if (!item || !item.node || !item.node.loc) {
+              onSelect={(contract: DeploymentInfo, artifact: Artifact) => {
+                if (!contract) {
+                  console.warn('missing contract')
                   return
                 }
 
-                setCodePeekLocation(item.node.loc.start)
-
-                const contract = root.node.info
                 const addr = contract.codeAddress
                 const code = state.contracts[addr].code
-                if (addr != contract.codeAddress) {
+                if (addr != selectedContract?.codeAddress) {
                   // state.selectedAddress = contract.codeAddress
                   setSelectedContract(contract)
                   setCurrentCode(code)
+                }
+
+                // console.log('item select', artifact)
+                if (artifact?.node?.loc) {
+                  setCodePeekLocation(artifact.node.loc.start)
                 }
               }}
             />

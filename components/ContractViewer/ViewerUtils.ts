@@ -1,8 +1,8 @@
-import { type Abi, type AbiFunction, type AbiParameter, type AbiInternalType } from 'abitype'
+import { type AbiFunction, type AbiParameter, type AbiInternalType } from 'abitype'
 
 // redefined here because maybe there is a bug in abitypes,
 // since components is not recognized
-type AbiComponent = AbiParameter & { 
+export type AbiComponent = AbiParameter & { 
   components: AbiComponent[]
   internalType?: AbiInternalType
 }

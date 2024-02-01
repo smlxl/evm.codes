@@ -14,7 +14,7 @@ import { Artifact, DeploymentInfo, state, rpc } from './ContractState'
 import useGenericReducer, { convertShortpath } from './GenericReducer'
 import { type AbiComponent, getComponentArraySize, getArrayBaseComponent, getBadgeColor, getTypePrettyName, spaceBetween, initStateFromAbiInputs, initStateFromComponent } from './ViewerUtils'
 
-import { type Abi, type AbiFunction, type AbiParameter } from 'abitype'
+import { type AbiFunction, type AbiParameter } from 'abitype'
 
 const TextField = ({ ...props }) => {
   return <MuiTextField className="bg-gray-100 dark:invert" {...props} />
@@ -86,18 +86,21 @@ const TreeItemLabel = ({ title, subtitle }: any) => {
   )
 }
 
-const ContractTreeItem = ({ nodeId, title, subtitle, children }: any) => {
+const ContractTreeItem = ({ nodeId, title, subtitle, children, ...props }: any) => {
   return (
     <TreeItem
       nodeId={nodeId}
       label={<TreeItemLabel title={title} subtitle={subtitle} />}
       className="border-l border-b dark:border-gray-600"
+      onClick={props.onSelect} // IT'S DUMB I KNOW
+      {...props}
     >
       {children}
     </TreeItem>
   )
 }
 
+// TODO: move to GenericReducer.ts
 function getState(state: any, path: string, defaultValue: any) {
   let current = state
   for (const part of path.split('.')) {
@@ -161,10 +164,10 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
         <Button
           size="small"
           onClick={() => {
-            console.log('init empty component', inputAbi)
+            // console.log('init empty component', inputAbi)
             const initVal = initStateFromComponent(inputAbi)
             fields.push(initVal)
-            console.log('initVal', initVal, path, fields)
+            // console.log('initVal', initVal, path, fields)
             updateArrayData({ [path]: fields })
           }}
         >
@@ -288,7 +291,7 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
   )
 }
 
-export const FunctionDefinitionItem = ({ contract, artifact }: any) => {
+export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) => {
   const node = artifact.node
 
   if (
@@ -415,6 +418,7 @@ export const FunctionDefinitionItem = ({ contract, artifact }: any) => {
       nodeId={`function_${contract.codeAddress}_${artifact.id}`}
       title={title}
       subtitle={scopeName + ' ' + subtitle}
+      onSelect={onSelect}
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
@@ -491,7 +495,7 @@ export const SourceItem = ({
   const sort = true
 
   return (
-    <ContractTreeItem nodeId={contract.codeAddress} title={title}>
+    <ContractTreeItem nodeId={contract.codeAddress} title={title} onSelect={() => onSelect(contract)}>
       {contract.defTreev2?.functions
         ?.sort(
           (a, b) =>
@@ -506,6 +510,7 @@ export const SourceItem = ({
                 key={contract.codeAddress + i}
                 contract={contract}
                 artifact={artifact}
+                onSelect={() => onSelect(contract, artifact)}
               />
             ),
         )}

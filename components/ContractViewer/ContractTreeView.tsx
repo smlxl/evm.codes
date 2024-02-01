@@ -44,11 +44,11 @@ const ContractsTreeItem = ({ deployments, onSelect }: any) => {
     <TreeItem nodeId="ti_contracts" label="Contracts">
       {/* <ContractAdder onClick={handleAddContract} /> */}
       {/* TODO: FILTER BOX HERE; ternary checkboxes (eg. show external funcs, internal+external or none) */}
-      {deployments?.map((contract: DeploymentInfo) => (
+      {deployments?.map((info: DeploymentInfo) => (
         <SourceItem
-          key={contract.codeAddress}
-          contract={contract}
-          // onSelect={(node) => onSelect(node, contract.defTree)}
+          key={info.codeAddress}
+          contract={info}
+          onSelect={onSelect}
         />
       ))}
     </TreeItem>
@@ -144,7 +144,7 @@ const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
         defaultExpanded={expanded}
         defaultEndIcon={<HorizontalRule />}
       >
-        <ContractsTreeItem deployments={deployments} />
+        <ContractsTreeItem deployments={deployments} onSelect={onSelect} />
       </TreeView>
     </>
   )
