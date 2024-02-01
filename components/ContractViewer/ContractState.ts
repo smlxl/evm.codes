@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { useState } from 'react'
 
+import { type Abi, type AbiFunction, type AbiParameter } from 'abitype'
 import parser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { EtherscanContractResponse } from 'types/contract'
@@ -13,19 +14,8 @@ import { solidityCompiler } from 'util/solc'
 
 export const rpc = createPublicClient({
   chain: mainnet,
-  transport: http('https://rpc.ankr.com/eth'),
+  transport: http('https://eth.merkle.io/'),
 })
-
-/*type StorageDef = StateVariableDeclarationVariable & {
-  name: string
-  type: string
-  visibility: string
-  constant: boolean
-  stateVariable: boolean
-  storageLocation: string
-  storageLocationIndex: number
-  node: AstTypes.BaseASTNode
-}*/
 
 export type Artifact<T> = {
   id: number
@@ -66,7 +56,9 @@ export class DeploymentInfo {
   defTreev2: SourceDefinition | undefined
   compilationResult: any
   etherscanInfo: EtherscanContractResponse
-  abi: any
+  abi: Abi
+  // accessible abi is the output from the compiler after converting everything to public
+  accessibleAbi: Abi | undefined
   impls: { [address: string]: DeploymentInfo } = {}
 
   constructor(

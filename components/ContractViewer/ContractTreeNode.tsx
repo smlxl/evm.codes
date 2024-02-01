@@ -266,8 +266,6 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
         <ParamItem
           key={i}
           inputAbi={inputAbi}
-          // path={[input.name || ('_' + i)]}
-          // path={['params', input.name]}
           path={i.toString()}
           reducer={[
             funcData.params,
@@ -287,6 +285,32 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
           }}
         />
       )}
+    </div>
+  )
+}
+
+type ReturnDataBox = {
+  abi: AbiFunction
+  reducer: any
+}
+
+export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
+  const [funcData, updateFuncData] = reducer
+  console.log('ReturnDataBox funcData', funcData)
+
+  return (
+    <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
+      {/* {abi.outputs.map((inputAbi: any, i: number) => (
+        <ParamItem
+          key={i}
+          inputAbi={inputAbi}
+          path={i.toString()}
+          reducer={[
+            funcData.outputs,
+            (val: any) => updateFuncData({ outputs: convertShortpath(val) }),
+          ]}
+        />
+      ))} */}
     </div>
   )
 }
@@ -325,7 +349,7 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
     {
       params: initStateFromAbiInputs(funcAbi.inputs), //initState,
       value: (node.stateMutability == 'payable' ? '0' : undefined),
-      // outputs: undefined,
+      outputs: initStateFromAbiInputs(funcAbi.outputs),
     },
     true,
   )
@@ -388,12 +412,12 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
             functionName: node.name,
             data: res?.data,
           })
-          // // if (Array.isArray(decoded)) {
-          // //   setRetValueDecoded(decoded)
-          // // } else {
-          // //   setRetValueDecoded([decoded])
-          // // }
-          // updateFuncData({ outputs: funcData.outputs })
+          // if (Array.isArray(decoded)) {
+          //   setRetValueDecoded(decoded)
+          // } else {
+          //   setRetValueDecoded([decoded])
+          // }
+          updateFuncData({ outputs: decoded })
         } catch (err: any) {
           console.warn(err)
           // setRetValueDecoded(Array(node.parameters.length).fill(''))
@@ -405,13 +429,14 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
       })
   }
 
-  if (
-    funcAbi.outputs.length > 0 &&
-    funcAbi.inputs.length == 0 &&
-    funcData.value === undefined
-  ) {
-    callFunction()
-  }
+  // need a useMemo here?
+  // if (
+  //   funcAbi.outputs.length > 0 &&
+  //   funcAbi.inputs.length == 0 &&
+  //   funcData.value === undefined
+  // ) {
+  //   callFunction()
+  // }
 
   return (
     <ContractTreeItem
@@ -435,6 +460,7 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
             </Button>
           </div>
         )}
+        {(funcAbi && funcAbi?.outputs?.length > 0) && <ReturnDataBox abi={funcAbi} reducer={reducer} />}
         {/* RET VALUE DECODED FIELDS HERE ..
         {node.returnParameters &&
           node.returnParameters.length > 0 &&
