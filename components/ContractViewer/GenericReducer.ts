@@ -59,8 +59,6 @@ export function convertShortpath(action: GenericReducerAction) {
     newAction[parts.pop() as string] = obj
   }
 
-  // console.log('old action', action, 'new action', newAction)
-
   return newAction
 }
 
@@ -119,7 +117,7 @@ export default function useGenericReducer<T>(
     state as T,
     (action: GenericReducerAction) => {
       const newAction = convertShortpath(action)
-      console.log('old action', action, 'new action', newAction)
+      // console.log('old action', action, 'new action', newAction)
       return dispatch(newAction)
     },
   ]

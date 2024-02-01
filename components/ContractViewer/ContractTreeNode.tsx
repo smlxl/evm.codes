@@ -210,9 +210,10 @@ type ParamItemProps = {
   path: string
   inputAbi: AbiComponent
   reducer: any
+  output?: boolean
 }
 
-export const ParamItem = ({ path, inputAbi, reducer }: ParamItemProps) => {
+export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_paramData, updateParamData] = reducer
 
@@ -237,16 +238,28 @@ export const ParamItem = ({ path, inputAbi, reducer }: ParamItemProps) => {
     )
   }
 
+  let props
+  if (output) {
+    props = {
+      label: (inputAbi.internalType  || inputAbi.type),
+      value: getState(_paramData, path, 'dv').toString(),
+    }
+  } else {
+    props = {
+      label: (inputAbi.internalType || inputAbi.type) + ' ' + inputAbi.name,
+    }
+  }
+
   return (
     <TextField
       size="small"
       className="border rounded-xl bg-gray-100"
       sx={{ marginTop: '4px', marginBottom: '4px', marginRight: '16px' }}
-      label={(inputAbi.internalType || inputAbi.type) + ' ' + inputAbi.name}
       onChange={(e: any) => {
         // console.log(`updating ${path)}`)
         updateParamData({ [path]: e.target.value })
       }}
+      {...props}
     />
   )
 }
@@ -280,7 +293,6 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
           size="small"
           type="number"
           onChange={(e: any) => {
-            // setWeiValue(BigInt(e.target.value))
             updateFuncData({ value: e.target.value })
           }}
         />
@@ -300,17 +312,18 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {/* {abi.outputs.map((inputAbi: any, i: number) => (
+      {abi.outputs.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
           inputAbi={inputAbi}
           path={i.toString()}
           reducer={[
             funcData.outputs,
-            (val: any) => updateFuncData({ outputs: convertShortpath(val) }),
+            null, // (val: any) => updateFuncData({ outputs: convertShortpath(val) }),
           ]}
+          output={true}
         />
-      ))} */}
+      ))}
     </div>
   )
 }
@@ -412,12 +425,11 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
             functionName: node.name,
             data: res?.data,
           })
-          // if (Array.isArray(decoded)) {
-          //   setRetValueDecoded(decoded)
-          // } else {
-          //   setRetValueDecoded([decoded])
-          // }
-          updateFuncData({ outputs: decoded })
+          if (funcAbi.outputs.length == 1) {
+            updateFuncData({ outputs: [decoded] })
+          } else {
+            updateFuncData({ outputs: decoded })
+          }
         } catch (err: any) {
           console.warn(err)
           // setRetValueDecoded(Array(node.parameters.length).fill(''))
@@ -438,6 +450,9 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
   //   callFunction()
   // }
 
+  // console.log('out', funcAbi?.outputs?.length)
+  // console.log('out', funcData.outputs)
+
   return (
     <ContractTreeItem
       nodeId={`function_${contract.codeAddress}_${artifact.id}`}
@@ -447,7 +462,8 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: any) =>
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
-        {(funcAbi.inputs.length > 0 ||
+        {/* TODO: remove this temp true cond */}
+        {(true || funcAbi.inputs.length > 0 ||
           funcAbi.stateMutability == 'payable') && (
           <div className="flex gap-1">
             <Button onClick={() => callFunction(false)} variant="contained">
