@@ -1,4 +1,12 @@
-import { type AbiFunction, type AbiParameter, type AbiInternalType } from 'abitype'
+// eslint-disable-next-line prettier/prettier
+import { type AbiParameter, type AbiInternalType } from 'abitype'
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+
+export const rpc = createPublicClient({
+  chain: mainnet,
+  transport: http('https://eth.merkle.io/'),
+})
 
 // redefined here because maybe there is a bug in abitypes,
 // since components is not recognized
@@ -45,6 +53,10 @@ export function getTypePrettyName(type: any): string {
 export function spaceBetween(str: string, pad = 16) {
   if (!str) {
     return ''
+  }
+
+  if (!str.startsWith('0x')) {
+    str = '0x' + str
   }
 
   return str

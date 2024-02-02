@@ -1,49 +1,25 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-import { useState } from 'react'
-
-import { type Abi, type AbiFunction, type AbiParameter } from 'abitype'
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
+// eslint-disable-next-line prettier/prettier
+import { type Abi } from 'abitype'
 import { EtherscanContractResponse } from 'types/contract'
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
 
 import { etherscanParse } from 'util/EtherscanParser'
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
 
-export const rpc = createPublicClient({
-  chain: mainnet,
-  transport: http('https://eth.merkle.io/'),
-})
+import { SourceDefinition, buildDefinitionTreev2 } from './AstProcessor'
 
-export type Artifact<T> = {
-  id: number
-  node: T
-  // undefined for global scope
-  scope?: T
-
-  // constructor(node: AstTypes.BaseASTNode, scope?: AstTypes.BaseASTNode) {
-  //   this.node = node
-  //   this.scope = scope
-  // }
-}
-
-// this represents a single contract/interface/library definition block
-export class SourceDefinition {
-  // name: string = ''
-  // filepath: string = ''
-  // c3 inheritance / ast node ref?
-  contracts: Artifact<AstTypes.ContractDefinition>[] = []
-  functions: Artifact<AstTypes.FunctionDefinition>[] = []
-  storage: Artifact<AstTypes.VariableDeclarationStatement>[] = [] // TODO: rename as variables? (to include floating immutables, constants)
-  structs: Artifact<AstTypes.StructDefinition>[] = []
-  events: Artifact<AstTypes.EventDefinition>[] = []
-  errors: Artifact<AstTypes.CustomErrorDefinition>[] = []
-  enums: Artifact<AstTypes.EnumDefinition>[] = []
-}
-
-// this represents an on-chain deployment, defTree may include multiple contract definitions
+/**
+ * DeploymentInfo represents an on-chain deployment:
+ * 
+ * @property {string} code address
+ * @property context address (proxy or contract) [may be logical to move this out?]
+ * @property code (raw flattenned string for simplicity)
+ * @property abi (fetched from etherscan, sourcify or compiled with solcjs)
+ * @property defTree may include multiple contract definitions  
+ * @property accessible abi (publicized functions, etc.)
+ */
 export class DeploymentInfo {
   codeAddress: string
   contextAddress: string
@@ -60,6 +36,7 @@ export class DeploymentInfo {
   abi: Abi
   // accessible abi is the output from the compiler after converting everything to public
   accessibleAbi: Abi | undefined
+  accessibleRuntimeCodeBin: string
   impls: { [address: string]: DeploymentInfo } = {}
 
   constructor(
@@ -73,6 +50,7 @@ export class DeploymentInfo {
     this.contextAddress = contextAddress
     this.code = ''
     this.accessibleCode = ''
+    this.accessibleRuntimeCodeBin = ''
 
     const contractPath = findContract(
       etherscanInfo.SourceCode,
@@ -90,9 +68,14 @@ export class DeploymentInfo {
       this.originalPathLenses,
     )
 
-    this.new_parseAst()
-    // this.old_parseAst()
-    this.makeAccessibleCode()
+    // this.ast = solParser.parse(this.code, {
+    //   loc: true,
+    //   range: true,
+    //   tolerant: true,
+    // })
+
+    this.defTreev2 = buildDefinitionTreev2(this.code)
+    // this.processAst()
   }
 
   isImpl(): boolean {
@@ -107,7 +90,7 @@ export class DeploymentInfo {
     let accessibleCode = this.code
     let currentContract: AstTypes.ContractDefinition | undefined
     function publicizeNode(node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration) {
-      if (!currentContract || currentContract.kind == 'library' || node.isConstructor || node.isFallback || node.isReceiveEther) {
+      if (!currentContract || currentContract?.kind == 'library' || node.isConstructor || node.isFallback || node.isReceiveEther) {
         return
       }
 
@@ -140,170 +123,65 @@ export class DeploymentInfo {
     // return accessibleCode
   }
 
-  new_parseAst() {
-    // parse ast and process definitions tree
-    this.ast = solParser.parse(this.code, {
-      loc: true,
-      range: true,
-      tolerant: true,
-    })
-
-    let id = 0
-    const defTree = new SourceDefinition()
-    let currentContract: AstTypes.BaseASTNode | undefined
-
-    // TODO: perhaps make custom visit logic? using ast._isAstNode()
-    solParser.visit(this.ast, {
-      ContractDefinition: (node: AstTypes.ContractDefinition) => {
-        currentContract = node
-        defTree.contracts.push({
-          id: id++,
-          node,
-        })
-      },
-      'ContractDefinition:exit': () => {
-        currentContract = undefined
-      },
-      FunctionDefinition: (node: AstTypes.FunctionDefinition) => {
-        if (currentContract.kind == 'library') {
-          return
-        }
-
-        defTree.functions.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-      StateVariableDeclaration: (node: AstTypes.StateVariableDeclaration) => {
-        defTree.storage.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-      StructDefinition: (node: AstTypes.StructDefinition) => {
-        defTree.structs.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-      EnumDefinition: (node: AstTypes.EnumDefinition) => {
-        defTree.enums.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-      EventDefinition: (node: AstTypes.EventDefinition) => {
-        defTree.events.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-      CustomErrorDefinition: (node: AstTypes.CustomErrorDefinition) => {
-        defTree.errors.push({
-          id: id++,
-          node,
-          scope: currentContract,
-        })
-      },
-    })
-
-    this.defTreev2 = defTree
-  }
-
-  old_parseAst() {
-    // parse ast and process definitions tree
-    this.ast = solParser.parse(this.code, {
-      loc: true,
-      range: true,
-      tolerant: true,
-    })
-    //this.ast = ast
-    let id = 0
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this
-    function makeItem(type: any, props: any) {
-      return {
-        id: self.codeAddress + '_' + self.contextAddress + '_' + id,
-        type,
-        children: [],
-        ...props,
-      }
-    }
-
-    // TODO: a library can be deployed as a contract
-    // so we need to distinguish between embedded and deployed libraries
-    // the issue is that in the ast it is under a ContractDefinition node
-    const tree = makeItem('Deployment', { node: { info: this } })
-    const context: any = [tree]
-
-    const callbackNames = [
-      'ContractDefinition',
-      'FunctionDefinition',
-      'StructDefinition',
-      'EventDefinition',
-      'ErrorDefinition',
-      'EnumDefinition',
-      'StateVariableDeclaration',
-    ]
-
-    function onNodeEnter(node: any, parent: any) {
-      node.nodeId = id++
-      if (parent) {
-        node.parentId = parent.nodeId
-      }
-
-      if (callbackNames.indexOf(node.type) != -1) {
-        const item = makeItem(node.type, { node })
-        context.at(-1).children.push(item)
-        context.push(item)
-      }
-    }
-
-    function onNodeExit(node: any) {
-      if (callbackNames.indexOf(node.type) != -1) {
-        context.pop()
-      }
-    }
-
-    const allNodesVisitor = new Proxy(
-      {},
-      {
-        get(target, name: string) {
-          return name.endsWith(':exit') ? onNodeExit : onNodeEnter
-        },
-      },
-    )
-
-    // TODO: perhaps make custom visit logic? using ast._isAstNode()
-    solParser.visit(this.ast, allNodesVisitor)
-
-    this.defTree = tree
-    // return tree
-  }
-
-  compile(callback, outputs: string[]) {
-    const tmpCallback = (...args: any) => {
-      solidityCompiler.unlisten(tmpCallback)
-      callback(...args)
-    }
-    solidityCompiler.listen(tmpCallback)
+  compile(outputs: string[], callback: (data: any) => void) {
     solidityCompiler.compileCode(
       this.code,
       this.etherscanInfo.CompilerVersion,
       outputs,
+      callback,
+    )
+  }
+  
+  // TODO: this is supposed to simply make every function and storage public
+  // but there can be name clashes (eg. two private "name" variables in
+  // different contracts is ok but if both are public then it is an error; need
+  // to rename based on ast node id)
+  publicizeEverything() {
+    // TODO: restore compilation (need to rename identifiers to prevent clashes...)
+    this.makeAccessibleCode()
+    if (!this.accessibleCode) {
+      return false
+    }
+  
+    console.log('compiling accessible code')
+    solidityCompiler.compileCode(
+      this.accessibleCode,
+      this.etherscanInfo.CompilerVersion,
+      ['abi', 'evm.deployedBytecode'],
+      ({ result, error }) => {
+        if (error) {
+          console.warn('could not compile:', error)
+          return
+        }
+
+        if (!result || !result.contracts) {
+          console.warn('bad result?', typeof result, result)
+          return
+        }
+
+        const mainFile = result['contracts']['main.sol']
+        const mainContract = mainFile[this.etherscanInfo.ContractName]
+        if (!mainContract) {
+          console.warn(
+            'could not find main contract',
+            this.etherscanInfo.ContractName,
+            'in',
+            mainFile,
+          )
+          return
+        }
+
+        this.accessibleAbi = mainContract.abi
+        this.accessibleRuntimeCodeBin =
+          mainContract?.evm?.deployedBytecode?.object
+      }
     )
   }
 }
 
 class ContractViewerState {
   contracts: { [address: string]: DeploymentInfo } = {}
-  onChange: ((address: string, info: DeploymentInfo) => void)[] = []
+  onRemove: ((address: string, info: DeploymentInfo) => void)[] = []
 
   getImpls(): DeploymentInfo[] {
     return Object.values(this.contracts).filter((c) => c.isImpl())
@@ -356,7 +234,7 @@ class ContractViewerState {
       etherscanInfo = etherscanParse(data)
     }
 
-    if (!etherscanInfo) {
+    if (!etherscanInfo || !etherscanInfo?.SourceCode || etherscanInfo?.ABI == "Contract source code not verified") {
       return Promise.reject('failed to load contract info')
     }
 
@@ -387,21 +265,23 @@ class ContractViewerState {
       }
     }
 
-    this.onChange.map((f) => f(info.codeAddress, info))
+    this.onRemove.map((f) => f(info.codeAddress, info))
   }
 }
 
 export const state = new ContractViewerState()
 
-export const useContracts = () => {
-  const [selectedContract, setSelectedContract] = useState<DeploymentInfo | undefined>(undefined)
-  const [contracts, setContracts] = useState({})
+// I don't get why I need to wrap everything in useState
+// if I already have a perfectly working class
+// export const useContracts = () => {
+//   const [selectedContract, setSelectedContract] = useState<DeploymentInfo | undefined>(undefined)
+//   // const [contracts, setContracts] = useState({})
 
-  return {
-    contracts,
-    setContracts,
+//   return {
+//     // contracts,
+//     // setContracts,
 
-    selectedContract,
-    setSelectedContract,
-  }
-}
+//     selectedContract,
+//     setSelectedContract,
+//   }
+// }

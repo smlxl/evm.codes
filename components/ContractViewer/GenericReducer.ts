@@ -1,5 +1,5 @@
 // import React from 'react'
-import { useCallback, useReducer } from 'react'
+import { useReducer } from 'react'
 
 export type GenericReducerState = {
   [key: string]: GenericReducerState
@@ -89,7 +89,7 @@ export function convertShortpath(action: GenericReducerAction) {
 //     innerState = defaultValue
 //   }
 
-//   // console.log('inner state', state, innerState, key)
+//   console.log('inner state', state, innerState, key)
 
 //   return [
 //     innerState,

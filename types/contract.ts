@@ -1,5 +1,3 @@
-import { type Abi } from 'abitype'
-
 type SoliditySourceExplicitContent = {
   content: string
   keccak256?: string

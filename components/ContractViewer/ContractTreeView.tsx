@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { createContext, useState } from 'react'
+
 import { HorizontalRule } from '@mui/icons-material'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -8,15 +11,13 @@ import { TreeView } from '@mui/x-tree-view/TreeView'
 import { Button } from 'components/ui'
 
 import { DeploymentInfo } from './ContractState'
-import { SourceItem, DeploymentItem } from './ContractTreeNode'
-import { createContext, useContext, useState } from 'react'
+import { SourceItem } from './ContractTreeNode'
 
 type ContractTreeViewProps = {
   deployments: any[]
   onSelect: (node: any, root: any) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ContractAdder = ({ onClick }: any) => {
   return (
     <Box className="pr-2 my-2">
@@ -35,7 +36,6 @@ const ContractAdder = ({ onClick }: any) => {
 }
 
 const ContractsTreeItem = ({ deployments, onSelect }: any) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddContract = () => {
     alert('unimplemented')
   }
@@ -55,7 +55,6 @@ const ContractsTreeItem = ({ deployments, onSelect }: any) => {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EnvironmentOverrides = () => {
   return (
     <TreeItem nodeId="ti_block" label="Block">
@@ -124,19 +123,20 @@ const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
   const expanded = ['ti_contracts']
   // expanded = forest.map((t) => t.defTree.id as string)
 
-  const [states, setStates] = useState(() => ['external', 'internal', 'structs'])
+  const [states, setStates] = useState(() => [
+    'external',
+    'internal',
+    'structs',
+  ])
 
-  const handleState = (
-    event: MouseEvent<HTMLElement>,
-    newStates: string[],
-  ) => {
+  const handleState = (event: MouseEvent, newStates: string[]) => {
     console.log(newStates)
     setStates(newStates)
   }
 
   return (
     <>
-      <FilterToolbar onChange={handleState} values={states} />
+      {/* <FilterToolbar onChange={handleState} values={states} /> */}
       <TreeView
         className="font-mono h-[690px] overflow-x-hidden" // TODO: h-full not working. how to fill height?
         defaultCollapseIcon={<ExpandMoreIcon />}

@@ -1,9 +1,8 @@
-import { randomId } from 'kbar/lib/utils'
 import { SolidityCompilerInput, SoliditySettings } from 'types/contract'
 
 class SolidityCompiler {
-  worker: Worker
-  callbacks: { [id: string]: (data: any) => void }
+  worker?: Worker
+  callbacks: { [id: string]: (data: any) => void } = {}
 
   // NOTE: this lazy-load instead of constructor is due to a bug:
   // "ReferenceError: Worker is not defined"
@@ -25,8 +24,8 @@ class SolidityCompiler {
       return
     }
 
-    callback(data)
     delete this.callbacks[data.jobId]
+    callback(data)
   }
 
   listen(callback: (event: MessageEvent) => void) {
@@ -38,6 +37,7 @@ class SolidityCompiler {
     this.worker.removeEventListener('message', callback)
   }
 
+  // TODO: promisify??
   compile(
     stdJson: SolidityCompilerInput,
     version: string,
@@ -45,6 +45,7 @@ class SolidityCompiler {
   ) {
     this.init()
     const randomId = 'jobId_' + Math.random()
+    // TODO: wrap callback in promise
     this.callbacks[randomId] = callback
     // delete job after 1 minute to release memory
     setTimeout(() => {

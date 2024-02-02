@@ -79,6 +79,8 @@
     "stream": "^0.0.2",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
+    "use-http": "^1.0.28",
+    "usehooks-ts": "^2.12.1",
     "viem": "^2.0.6"
   },
   "devDependencies": {
@@ -90,7 +92,7 @@
     "@types/js-cookie": "^3.0.1",
     "@types/lodash.debounce": "^4.0.6",
     "@types/mdx-js__react": "^1.5.5",
-    "@types/react": "^17.0.30",
+    "@types/react": "^18.2.51",
     "@types/react-dom": "^17.0.2",
     "@types/react-no-ssr": "^1.1.7",
     "@types/react-table": "^7.7.6",
