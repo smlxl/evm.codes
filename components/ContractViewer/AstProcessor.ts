@@ -1,7 +1,7 @@
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 
-import { DeploymentInfo } from './ContractState'
+import { DeploymentInfo } from './DeploymentInfo'
 
 export type ContractArtifact<T = AstTypes.BaseASTNode> = {
   id: number
@@ -113,7 +113,7 @@ export function buildDefinitionTree(contract: DeploymentInfo) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   function makeItem(type: any, props: any) {
     return {
-      id: contract.codeAddress + '_' + contract.contextAddress + '_' + id,
+      id: contract.address + '_' + contract.context + '_' + id,
       type,
       children: [],
       ...props,

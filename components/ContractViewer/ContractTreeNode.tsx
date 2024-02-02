@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
@@ -10,21 +10,21 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 // eslint-disable-next-line prettier/prettier
 import { type AbiFunction, type AbiParameter } from 'abitype'
-import { decodeFunctionResult, encodeFunctionData } from 'viem'
+import { decodeFunctionResult, encodeFunctionData, encodeAbiParameters } from 'viem'
 
 import { ContractArtifact } from './AstProcessor'
-import { DeploymentInfo, state } from './ContractState'
+import { DeploymentInfo, state, useDeployments } from './DeploymentInfo'
 import useGenericReducer, { convertShortpath } from './GenericReducer'
 import { rpc, type AbiComponent, getComponentArraySize, getArrayBaseComponent, getBadgeColor, getTypePrettyName, spaceBetween, initStateFromAbiInputs, initStateFromComponent } from './ViewerUtils'
 
 const TextField = ({ ...props }) => {
-  return <MuiTextField className="bg-gray-100 dark:invert" {...props} />
+  return <MuiTextField autoComplete="off" className="bg-gray-100 dark:invert" {...props} />
 }
 
 type SourceItemProps = {
   contract: DeploymentInfo
   children?: any
-  onSelect: (contract: DeploymentInfo, artifact: ContractArtifact) => void
+  onSelect: (contract: DeploymentInfo, artifact?: ContractArtifact) => void
 }
 
 function getFunctionTitle(
@@ -102,6 +102,7 @@ const ContractTreeItem = ({ nodeId, title, subtitle, children, ...props }: any) 
 }
 
 // TODO: move to GenericReducer.ts
+// TODO: this is really ugly, try useReducerProp again
 function getState(state: any, path: string, defaultValue: any) {
   let current = state
   for (const part of path.split('.')) {
@@ -125,7 +126,6 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
   const [arrayData, updateArrayData] = reducer
   const arraySize = getComponentArraySize(inputAbi)
 
-  // TODO: this is really ugly, try useReducerProp again
   const fields = getState(arrayData, path, new Array(arraySize || 0))
 
   return (
@@ -145,7 +145,7 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
                 left: '12px',
                 paddingLeft: '8px',
                 paddingRight: '8px',
-                borderRadius: '10px',
+                borderRadius: '20px',
                 zIndex: 9999,
               }}
               className="text-red-500 bg-white dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-800"
@@ -153,9 +153,8 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
                 fields.splice(index, 1)
                 updateArrayData({ [path]: fields })
               }}
-            >
-              X
-            </input>
+              value="X"
+            />
             <ParamItem
               path={`${path}.${index}`}
               inputAbi={getArrayBaseComponent(inputAbi)}
@@ -169,7 +168,7 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
           size="small"
           onClick={() => {
             // console.log('init empty component', inputAbi)
-            const initVal = initStateFromComponent(inputAbi)
+            const initVal = initStateFromComponent(getArrayBaseComponent(inputAbi))
             fields.push(initVal)
             // console.log('initVal', initVal, path, fields)
             updateArrayData({ [path]: fields })
@@ -220,6 +219,13 @@ type ParamItemProps = {
 export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_paramData, updateParamData] = reducer
+  const val = getState(_paramData, path, '')
+  let error = false
+  try {
+    encodeAbiParameters([inputAbi], [val])
+  } catch (err: any) {
+    error = true
+  }
 
   // array
   if (inputAbi.type.endsWith(']')) {
@@ -259,6 +265,7 @@ export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) =
       size="small"
       className="border rounded-xl bg-gray-100"
       readOnly={output}
+      error={error}
       sx={{ marginTop: '4px', marginBottom: '4px', marginRight: '16px' }}
       onChange={(e: any) => {
         // console.log(`updating ${path)}`)
@@ -278,7 +285,7 @@ type ParamsBoxProps = {
 
 export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
   const [funcData, updateFuncData] = reducer
-  console.log('ParamsBox funcData', funcData)
+  // console.log('ParamsBox funcData', funcData)
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
@@ -316,7 +323,6 @@ type ReturnDataBox = {
 export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [funcData, updateFuncData] = reducer
-  // console.log('ReturnDataBox funcData', funcData)
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
@@ -345,11 +351,13 @@ type FunctionDefinitionItemProps = {
 
 export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: FunctionDefinitionItemProps) => {
   const node = artifact.node
+  // console.log(artifact.node.name, artifact.node)
 
   if (
     node.isConstructor || // TODO: support internal/private :(
     node.visibility == 'internal' ||
-    node.visibility == 'private'
+    node.visibility == 'private' ||
+    !artifact.node.name
   ) {
     return null
   }
@@ -367,8 +375,8 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
   // TODO: get funcAbi as param?
   // const funcAbi: AbiFunction = useMemo(() => contract.abi.find((a) => a.name == node.name) || {}, [])
   // const funcAbi: AbiFunction = (contract.accessibleAbi ? contract.accessibleAbi.find((a) => a.name == node.name) : {})
-  const funcAbi: AbiFunction = (contract.abi ? contract.abi.find((a: any) => a.name == node.name) : {})
-  console.log('funcAbi', funcAbi)
+  const funcAbi: AbiFunction = (contract.abi ? contract.abi.find((a: any) => a.name == node.name) : null) || {}
+  // console.log('funcAbi', funcAbi)
 
   type FuncData = {
     params: any[]
@@ -393,17 +401,21 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
   function ethCall(encodeOnly = false, useAccessibleAbi = false) {
     let data
     try {
+      // console.log('ethCall', contract.abi, node.name, funcData.params)
       data = encodeFunctionData({
         abi: (useAccessibleAbi && contract.accessibleAbi ? contract.accessibleAbi : contract.abi),
         functionName: node.name,
         args: funcData.params,
       })
+      // console.log(data)
 
       if (encodeOnly) {
         setStatus('calldata: ' + data)
         return
       }
     } catch (err: any) {
+      console.warn(err)
+
       if (useAccessibleAbi) {
         console.warn(err)
         setStatus(err.toString())
@@ -416,13 +428,13 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
 
     const props = {
       // TODO: support overrides, eg. from, block, gas, etc.
-      to: contract.contextAddress,
+      to: contract.rootContext().address,
       data,
       value: funcData.value,
     }
 
     let request
-    if (contract.accessibleRuntimeCodeBin) {
+    if (contract.accessibleRuntimeBytecode) {
       request = rpc
         .request({
           method: 'eth_call',
@@ -430,8 +442,8 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
             props,
             'latest',
             {
-              [contract.codeAddress]: {
-                code: contract.accessibleRuntimeCodeBin,
+              [contract.address]: {
+                code: contract.accessibleRuntimeBytecode,
               }
             },
           ]
@@ -465,6 +477,7 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
       })
       .catch((err: any) => {
         setStatus(err.toString())
+        updateFuncData({ outputs: [] })
       })
   }
 
@@ -482,7 +495,7 @@ export const FunctionDefinitionItem = ({ contract, artifact, onSelect }: Functio
 
   return (
     <ContractTreeItem
-      nodeId={`function_${contract.codeAddress}_${artifact.id}`}
+      nodeId={`function_${contract.id}_${artifact.id}`}
       title={title}
       subtitle={scopeName + ' ' + subtitle}
       onSelect={onSelect}
@@ -606,23 +619,31 @@ const StateVariableDeclarationItem = ({ contract, artifact, onSelect }: any) => 
 }
 
 export const SourceItem = ({
-  contract,
+  contract: deployment,
   onSelect,
 }: SourceItemProps) => {
+  // console.log('rendering contract', deployment.address, deployment.context)
+
+  const { deployments, loadDeployment } = useDeployments()
+  let impls = deployment.getImplementations()
+  useEffect(() => {
+    impls = deployment.getImplementations()
+  }, [deployments])
+
   const title = (
     <div className="whitespace-nowrap">
       <button
         className="hover:bg-red-100 active:bg-red-300 mr-1"
         onClick={() => {
           if (confirm('Are you sure you want to remove this contract?')) {
-            state.removeContract(contract)
+            state.removeDeployment(deployment)
           }
         }}
       >
         ❌
       </button>
-      <span>{contract.etherscanInfo.ContractName}</span>
-      <p className="text-xs">{contract.codeAddress}</p>
+      <span>{deployment.etherscanInfo.ContractName}</span>
+      <p className="text-xs">{deployment.address}{deployment.context ? ' @ ' + deployment.rootContext().address : ''}</p>
     </div>
   )
 
@@ -630,9 +651,13 @@ export const SourceItem = ({
   // console.log('len', contract.defTreev2?.storage.length)
 
   return (
-    <ContractTreeItem nodeId={contract.codeAddress} title={title} onSelect={() => onSelect(contract)}>
-      <TreeItem nodeId={"ti_storage" + contract.codeAddress} label="Storage">
-        {contract.defTreev2?.storage
+    <ContractTreeItem nodeId={'deployment_' + deployment.id} title={title} onSelect={() => onSelect(deployment)}>
+      <TreeItem
+        nodeId={'ti_compiler_' + deployment.id}
+        label={'Compiler: ' + deployment.etherscanInfo?.CompilerVersion}
+      />
+      <TreeItem nodeId={"ti_storage_" + deployment.id} label="Storage">
+        {deployment.defTreev2?.storage
           ?.sort(
             (a, b) =>
               sort && (a.node?.name || '').localeCompare(b.node?.name || ''),
@@ -640,44 +665,65 @@ export const SourceItem = ({
           .map(
             (artifact: ContractArtifact<AstTypes.StateVariableDeclaration>, i: number) =>
               <StateVariableDeclarationItem
-                key={'storageitem_' + contract.codeAddress + i}
-                contract={contract}
+                key={'storageitem_' + deployment.address + i}
+                contract={deployment}
                 artifact={artifact}
-                onSelect={() => onSelect(contract, artifact)}
+                onSelect={() => onSelect(deployment, artifact)}
               />
           )}
       </TreeItem>
 
-      <TreeItem nodeId={"ti_functions_" + contract.codeAddress} label="Functions">
-        {contract.defTreev2?.functions
-          ?.sort(
-            (a, b) =>
-              sort && (a.node.name || '').localeCompare(b.node.name || ''),
-          )
-          .filter((a: ContractArtifact<AstTypes.FunctionDefinition>) => a.node.body)
-          .map(
-            (artifact: ContractArtifact<AstTypes.FunctionDefinition>, i: number) =>
-              <FunctionDefinitionItem
-                key={'funcitem_' + contract.codeAddress + i}
-                contract={contract}
-                artifact={artifact}
-                onSelect={() => onSelect(contract, artifact)}
-              />
-          )}
-      </TreeItem>
+      {deployment.defTreev2?.functions?.length > 0 &&
+        <TreeItem
+          nodeId={"ti_functions_" + deployment.id}
+          // label={`Functions (${contract.defTreev2?.functions?.length})`}
+          label="Functions"
+        >
+          {deployment.defTreev2?.functions
+            ?.sort(
+              (a, b) =>
+                sort && (a.node.name || '').localeCompare(b.node.name || ''),
+            )
+            .filter((a: ContractArtifact<AstTypes.FunctionDefinition>) => a.node.body && (a.node.visibility == 'external' || a.node.visibility == 'public'))
+            .map(
+              (artifact: ContractArtifact<AstTypes.FunctionDefinition>, i: number) =>
+                <FunctionDefinitionItem
+                  key={'funcitem_' + deployment.address + i}
+                  contract={deployment}
+                  artifact={artifact}
+                  onSelect={() => onSelect(deployment, artifact)}
+                />
+            )}
+        </TreeItem>
+      }
 
-      {contract.getImplementations().length > 0 && <TreeItem nodeId="ti_impls" label="Implementations">
-        {contract // TODO: this should move inside SourceItem & be recursive
-          .getImplementations()
-          .map((impl: DeploymentInfo) => (
+      <TreeItem
+        nodeId={"ti_impls_" + deployment.id}
+        label={
+          <span>Implementations
+            <input type="button"
+              className="mx-2 rounded-xl hover:bg-blue-200"
+              onClick={() => {
+                const addr = prompt('address')
+                if (addr) {
+                  // console.log('loading ', addr, deployment.address)
+                  loadDeployment(addr, deployment)
+                }
+              }}
+              value="➕"
+            />
+          </span>
+        }
+      >
+        {impls // TODO: this should move inside SourceItem & be recursive
+          ?.map((impl: DeploymentInfo) => (
             <SourceItem
-              key={impl.codeAddress}
+              key={'impl_' + deployment.address + '_' + impl.address}
               contract={impl}
               onSelect={onSelect}
             />
           ))}
-        </TreeItem>
-      }
+      </TreeItem>
     </ContractTreeItem>
   )
 }

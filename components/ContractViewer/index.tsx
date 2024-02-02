@@ -9,7 +9,7 @@ import NoSSR from 'react-no-ssr'
 
 import { ContractArtifact } from './AstProcessor'
 import ContractCodeEditor from './ContractCodeEditor'
-import { DeploymentInfo, state } from './ContractState'
+import { DeploymentInfo, state, useDeployments } from './DeploymentInfo'
 import ContractTreeView from './ContractTreeView'
 import Header from './Header'
 
@@ -67,14 +67,15 @@ const ContractViewer = () => {
   // address bar routing
   const router = useRouter()
 
-  // const { selectedContract, setSelectedContract } = useContracts()
-  const [selectedContract, setSelectedContract] =
-    useState<DeploymentInfo>(undefined)
+  const {
+    deployments,
+    selectedDeployment,
+    setSelectedDeployment,
+    loadDeployment,
+  } = useDeployments()
 
-  const [status, setStatus] = useState('Loading...')
+  const [status, setStatus] = useState('loading...')
   const [loading, setLoading] = useState(false)
-
-  const [currentCode, setCurrentCode] = useState<string>('')
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
   // const onCompilationResult = (event: MessageEvent) => {
@@ -82,29 +83,23 @@ const ContractViewer = () => {
   //   console.log(event.data)
   // }
 
-  const tryLoadContract = async (
-    codeAddress: string,
-    contextAddress: string,
-  ) => {
-    setStatus('Loading...')
+  const tryLoadContract = async (address: string, context?: DeploymentInfo) => {
+    setStatus('loading...')
     setLoading(true)
 
-    return state
-      .loadContract(codeAddress, contextAddress)
-      .then(() => {
-        const contract = state.contracts[codeAddress]
-        const impl = contract.etherscanInfo?.Implementation as string
+    return loadDeployment(address, context)
+      .then((deployment: DeploymentInfo) => {
+        const impl = deployment.etherscanInfo?.Implementation as string
         if (impl) {
-          tryLoadContract(impl.toLowerCase(), contextAddress)
+          tryLoadContract(impl.toLowerCase(), deployment)
         } else {
-          setStatus('Loaded')
+          setStatus('loaded')
           setLoading(false)
-          setSelectedContract(contract)
-          setCurrentCode(contract.code)
+          setSelectedDeployment(deployment)
         }
       })
       .catch((err: any) => {
-        setStatus('Failed to load contract\n' + err)
+        setStatus('failed to load contract\n' + err)
         setLoading(false)
         // throw err
       })
@@ -112,9 +107,8 @@ const ContractViewer = () => {
 
   const updateRoute = () => {
     const query: any = {}
-    const addresses = state
-      .getProxies()
-      .map((c) => c.codeAddress)
+    const addresses = Object.values(deployments)
+      .map((c) => c.address)
       .join(',')
     if (addresses) {
       query.address = addresses
@@ -132,18 +126,18 @@ const ContractViewer = () => {
     }
 
     address = address.toLowerCase()
-    if (state.contracts[address]) {
-      setStatus('already loaded')
+    if (deployments[address]) {
+      setStatus('loaded')
       setLoading(false)
       return
     }
 
-    tryLoadContract(address, address).then(() => {
+    tryLoadContract(address).then(() => {
       if (invalidateRoute) {
         updateRoute()
       }
 
-      setSelectedContract(state.contracts[address])
+      setSelectedDeployment(deployments[address])
     })
   }
   // useCallback(^, [router, tryLoadContract, updateRoute])
@@ -160,129 +154,98 @@ const ContractViewer = () => {
     }
   }, [router.isReady])
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    state.onRemove.push((codeAddress: string, info: DeploymentInfo) => {
-      // removing currently viewed contract
-      if (info == selectedContract) {
-        // setCurrentAddress('')
-        setSelectedContract(undefined)
-        setCurrentCode('')
-        updateRoute()
-        setStatus('')
-        setLoading(false)
-        return
-      }
-
-      updateRoute()
-    })
-  }, [updateRoute])
+  // useEffect(() => {
+  //   updateRoute()
+  // }, [deployments])
 
   return (
     // don't ask me why NoSSR is necessary
     <NoSSR>
-      <div className="dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
-        {/* vertical panel group: tree viewer and code editor on top, console on bottom */}
-        <ResizablePanelGroup
-          direction="vertical"
-          className="w-full border mt-2 rounded-xl dark:border-gray-600"
-          style={{ height: '800px' }}
-        >
-          {/* top panel: tree viewer & code editor */}
-          <ResizablePanel defaultSize={90}>
-            <ResizablePanelGroup direction="horizontal">
-              {/* contract tree view panel */}
-              <ResizablePanel defaultSize={50}>
-                {/* tree view header & search box */}
-                <Header>
-                  <TextField
-                    size="small"
-                    label="address"
-                    className="bg-gray-200 dark:invert w-[350px] font-mono"
-                    variant="outlined"
-                    onInput={(e: any) =>
-                      tryLoadAddress(e.target.value.trim(), true)
-                    }
-                  />
-                </Header>
+      <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
+        <ResizablePanelGroup direction="horizontal">
+          {/* contract tree view panel */}
+          <ResizablePanel defaultSize={40}>
+            {/* tree view header & search box */}
+            <Header>
+              <TextField
+                size="small"
+                label="address"
+                className="bg-gray-200 dark:invert w-[350px] font-mono"
+                variant="outlined"
+                onInput={(e: any) =>
+                  tryLoadAddress(e.target.value.trim(), true)
+                }
+              />
+            </Header>
 
-                {/* tree view */}
-                <ContractTreeView
-                  deployments={state.getProxies()}
-                  onSelect={(
-                    contract: DeploymentInfo,
-                    artifact: ContractArtifact,
-                  ) => {
-                    if (!contract || !contract.codeAddress) {
-                      console.warn('missing contract')
-                      return
-                    }
+            {/* tree view */}
+            <ContractTreeView
+              deployments={Object.values(deployments)}
+              onSelect={(
+                contract: DeploymentInfo,
+                artifact: ContractArtifact,
+              ) => {
+                if (!contract || !contract.address) {
+                  console.warn('missing contract')
+                  return
+                }
 
-                    const addr = contract.codeAddress
-                    if (addr != selectedContract?.codeAddress) {
-                      // state.selectedAddress = contract.codeAddress
-                      setSelectedContract(contract)
-                      setCurrentCode(contract.code)
-                    }
+                const addr = contract.address
+                if (addr != selectedDeployment?.address) {
+                  // state.selectedAddress = contract.codeAddress
+                  setSelectedDeployment(contract)
+                }
 
-                    // console.log('item select', artifact)
-                    if (artifact?.node?.loc) {
-                      setCodePeekLocation(artifact.node.loc.start)
-                    }
-                  }}
-                />
-              </ResizablePanel>
-
-              {/* horizontal handle */}
-              <ResizableHandle className="border-2 dark:border-gray-600" />
-
-              {/* code editor panel */}
-              <ResizablePanel defaultSize={50}>
-                {/* code editor header */}
-                <Header>
-                  <p className="font-semibold">
-                    {selectedContract?.etherscanInfo?.ContractName}
-                  </p>
-                  <span className="text-xs">
-                    {selectedContract?.codeAddress}
-                  </span>
-                </Header>
-
-                {/* code editor */}
-                <ContractCodeEditor
-                  code={currentCode}
-                  line={codePeekLocation.line}
-                  column={codePeekLocation.column + 1}
-                />
-              </ResizablePanel>
-            </ResizablePanelGroup>
+                // console.log('item select', artifact)
+                if (artifact?.node?.loc) {
+                  setCodePeekLocation(artifact.node.loc.start)
+                }
+              }}
+            />
           </ResizablePanel>
 
-          <ResizableHandle className="dark:border-gray-600 border-2" />
+          {/* horizontal handle */}
+          <ResizableHandle className="border-2 dark:border-gray-600" />
 
-          {/* bottom panel: console & metadata information panel */}
-          <ResizablePanel defaultSize={10}>
-            <div className="h-full py-2 px-4 text-sm flex flex-col gap-2">
-              <Box className="whitespace-nowrap">
-                {loading && <CircularProgress />} {status}
-              </Box>
-              <LinearProgress
-                sx={{ visibility: loading ? 'visible' : 'hidden' }}
-              />
-              {/* {error && <p>Error! {error}</p>} */}
-              {/* <p>Data: {data}</p> */}
+          {/* code editor panel */}
+          <ResizablePanel defaultSize={60}>
+            {/* code editor header */}
+            <Header>
+              <p className="font-semibold">
+                {selectedDeployment?.etherscanInfo?.ContractName}
+              </p>
+              <span className="text-xs">
+                {selectedDeployment?.address}
+              </span>
+            </Header>
 
-              {selectedContract && (
-                <p>
-                  Compiler version:{' '}
-                  {selectedContract?.etherscanInfo?.CompilerVersion}
-                </p>
-              )}
-              {/* <p>*Additional metadata info should go here*</p> */}
-              {/* TODO: try moving this inside the treeview? */}
-            </div>
+            {/* code editor */}
+            <ContractCodeEditor
+              code={selectedDeployment?.code}
+              line={codePeekLocation.line}
+              column={codePeekLocation.column + 1}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
+
+        {/* bottom panel: console & metadata information panel */}
+        <Header className="py-2 px-4 text-sm flex flex-col gap-2">
+          <Box className="whitespace-nowrap">
+            {loading && <CircularProgress />} {status}
+          </Box>
+          <LinearProgress sx={{ visibility: loading ? 'visible' : 'hidden' }} />
+          {/* {error && <p>Error! {error}</p>} */}
+          {/* <p>Data: {data}</p> */}
+
+          {/* <p>*Additional metadata info should go here*</p> */}
+          {/* TODO: try moving this inside the treeview? */}
+        </Header>
+
+        <sub>
+          Alpha version -{' '}
+          <a href="https://twitter.com/smlxldotio">@smlxldotio</a> for feature
+          requests or bug fixes
+        </sub>
       </div>
     </NoSSR>
   )

@@ -16,11 +16,6 @@ const ContractPage = () => {
 
       <Container>
         <ContractViewer />
-        <sub>
-          Alpha version -{' '}
-          <a href="https://twitter.com/smlxldotio">@smlxldotio</a> for feature
-          requests or bug fixes
-        </sub>
       </Container>
     </>
   )

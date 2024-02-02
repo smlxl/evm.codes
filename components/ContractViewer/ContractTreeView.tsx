@@ -10,11 +10,11 @@ import { TreeView } from '@mui/x-tree-view/TreeView'
 
 import { Button } from 'components/ui'
 
-import { DeploymentInfo } from './ContractState'
+import { DeploymentInfo } from './DeploymentInfo'
 import { SourceItem } from './ContractTreeNode'
 
 type ContractTreeViewProps = {
-  deployments: any[]
+  deployments: DeploymentInfo[]
   onSelect: (node: any, root: any) => void
 }
 
@@ -46,7 +46,7 @@ const ContractsTreeItem = ({ deployments, onSelect }: any) => {
       {/* TODO: FILTER BOX HERE; ternary checkboxes (eg. show external funcs, internal+external or none) */}
       {deployments?.map((info: DeploymentInfo) => (
         <SourceItem
-          key={info.codeAddress}
+          key={info.address}
           contract={info}
           onSelect={onSelect}
         />
@@ -121,7 +121,6 @@ const FilterToolbar = ({ values, onChange }) => {
 
 const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
   const expanded = ['ti_contracts']
-  // expanded = forest.map((t) => t.defTree.id as string)
 
   const [states, setStates] = useState(() => [
     'external',
@@ -130,7 +129,7 @@ const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
   ])
 
   const handleState = (event: MouseEvent, newStates: string[]) => {
-    console.log(newStates)
+    // console.log(newStates)
     setStates(newStates)
   }
 
@@ -138,7 +137,7 @@ const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
     <>
       {/* <FilterToolbar onChange={handleState} values={states} /> */}
       <TreeView
-        className="font-mono h-[690px] overflow-x-hidden" // TODO: h-full not working. how to fill height?
+        className="font-mono h-[736px] overflow-x-hidden" // TODO: h-full not working. how to fill height?
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
         defaultExpanded={expanded}

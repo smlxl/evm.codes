@@ -55,11 +55,20 @@ export function spaceBetween(str: string, pad = 16) {
     return ''
   }
 
+  let prefix = ''
+  const parts = str.split(': ', 2)
+  if (parts.length == 1) {
+    prefix = ''
+  } else {
+    prefix = parts[0] + ': '
+    str = parts[1]
+  }
+
   if (!str.startsWith('0x')) {
     str = '0x' + str
   }
 
-  return str
+  return prefix + str
     .slice(2)
     .split('')
     .reverse()

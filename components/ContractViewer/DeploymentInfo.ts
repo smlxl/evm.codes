@@ -1,56 +1,85 @@
+import { useState } from 'react'
+
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 // eslint-disable-next-line prettier/prettier
 import { type Abi } from 'abitype'
 import { EtherscanContractResponse } from 'types/contract'
 
-import { etherscanParse } from 'util/EtherscanParser'
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
 
 import { SourceDefinition, buildDefinitionTreev2 } from './AstProcessor'
+import EtherscanLoader from './EtherscanLoader'
+
+type ParseResult = AstTypes.SourceUnit & {
+  errors?: any[]
+  tokens?: any[]
+}
+
+// TODO: should probably move some of the contract code parts to another class
+// it might be useful to have separate compilationInfo for separate deployments but
+// this class is too big rn, can and probably should move code, abi, compilationInfo to
+// a "SolidityContract" class
 
 /**
  * DeploymentInfo represents an on-chain deployment:
  * 
- * @property {string} code address
- * @property context address (proxy or contract) [may be logical to move this out?]
+ * @property chainId (chain id as decimal number)
  * @property code (raw flattenned string for simplicity)
+ * @property address (on-chain address, currently mainnet only)
+ * @property context (optional reference to proxy deployment) [may be logical to move this out?]
+ * @property impls (deployment references of proxy implementations or delegations)
+ * @property mainContractPath (path to main contract in source code - taken from etherscan)
+ * @property etherscanInfo (slightly parsed response from etherscan)
+ * @property compilationInfo (need to decide if this is directly from etherscan
+ *           or flattenned or post-processed code for accessiblity)
  * @property abi (fetched from etherscan, sourcify or compiled with solcjs)
- * @property defTree may include multiple contract definitions  
- * @property accessible abi (publicized functions, etc.)
+ * @property accessibleCode (publicized functions, etc.)
+ * @property accessibleAbi (publicized functions, etc.)
+ * @property accessibleRuntimeBytecode (accessible bytecode for eth_call overrides)
+ * @property defTree (may include multiple contract definitions)
+ * @property defTreev2 (better structured definition tree, but also not perfect)
  */
 export class DeploymentInfo {
-  codeAddress: string
-  contextAddress: string
-  mainContractPath: string
+  id: string
+  chainId = 1
   code: string
-  accessibleCode: string
-  originalPathLenses: any[] = []
-  ast: any
+  address: string
+  context?: DeploymentInfo
+  impls: { [address: string]: DeploymentInfo } = {}
+
+  mainContractPath: string
+  // originalPathLenses: any[] = []
+
+  etherscanInfo: EtherscanContractResponse
+  compilationInfo: any // TODO: types
+
+  ast?: ParseResult // TODO: types
   // definitions tree - for contracts, functions, storage, etc.
   defTree: any
   defTreev2: SourceDefinition | undefined
-  compilationResult: any
-  etherscanInfo: EtherscanContractResponse
+
   abi: Abi
-  // accessible abi is the output from the compiler after converting everything to public
+
+  // accessible props are output from the compiler after converting everything to public
+  accessibleCode: string
   accessibleAbi: Abi | undefined
-  accessibleRuntimeCodeBin: string
-  impls: { [address: string]: DeploymentInfo } = {}
+  accessibleRuntimeBytecode: string
 
   constructor(
     etherscanInfo: EtherscanContractResponse,
-    codeAddress: string,
-    contextAddress: string,
+    address: string,
+    context?: DeploymentInfo,
   ) {
+    this.id = Math.random().toString().slice(2, 10)
     this.etherscanInfo = etherscanInfo
     this.abi = JSON.parse(etherscanInfo.ABI)
-    this.codeAddress = codeAddress
-    this.contextAddress = contextAddress
+    this.address = address
+    this.context = context
     this.code = ''
     this.accessibleCode = ''
-    this.accessibleRuntimeCodeBin = ''
+    this.accessibleRuntimeBytecode = ''
 
     const contractPath = findContract(
       etherscanInfo.SourceCode,
@@ -79,11 +108,15 @@ export class DeploymentInfo {
   }
 
   isImpl(): boolean {
-    return this.contextAddress != this.codeAddress
+    return !!this.context
   }
 
   getImplementations(): DeploymentInfo[] {
     return Object.values(this.impls)
+  }
+
+  rootContext(): DeploymentInfo {
+    return this.context ? this.context.rootContext() : this
   }
 
   makeAccessibleCode() {
@@ -94,7 +127,7 @@ export class DeploymentInfo {
         return
       }
 
-      if (node.visibility != 'external' && node.visibility != 'public') {
+      if (node?.visibility != 'external' && node?.visibility != 'public') {
         const prefix = accessibleCode.slice(0, node.range[0])
         const suffix = accessibleCode.slice(node.range[1])
         const funcCode = accessibleCode
@@ -172,116 +205,56 @@ export class DeploymentInfo {
         }
 
         this.accessibleAbi = mainContract.abi
-        this.accessibleRuntimeCodeBin =
+        this.accessibleRuntimeBytecode =
           mainContract?.evm?.deployedBytecode?.object
       }
     )
   }
 }
 
-class ContractViewerState {
-  contracts: { [address: string]: DeploymentInfo } = {}
-  onRemove: ((address: string, info: DeploymentInfo) => void)[] = []
+export const useDeployments = () => {
+  const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
+  const [deployments, setDeployments] = useState<{ [address: string]: DeploymentInfo }>({})
 
-  getImpls(): DeploymentInfo[] {
-    return Object.values(this.contracts).filter((c) => c.isImpl())
+  const loadDeployment = (address: string, context?: DeploymentInfo) => {
+    return EtherscanLoader.loadDeployment(address, context)
+      .then((deployment: DeploymentInfo) => {
+        // TODO: should we avoid overriding if it already exists?
+        console.log('loaded new deployment', deployment.address, 'at context', context?.address)
+        if (context) {
+          context.impls[address] = deployment
+        } else {
+          deployments[address] = deployment
+        }
+
+        setDeployments({ ...deployments })
+        setSelectedDeployment(deployment)
+
+        return deployment
+      })
   }
 
-  getProxies(): DeploymentInfo[] {
-    return Object.values(this.contracts).filter((c) => !c.isImpl())
-  }
-
-  onSourceAvailable(
-    etherscanInfo: EtherscanContractResponse,
-    codeAddress: string,
-    contextAddress: string,
-  ) {
-    if (!etherscanInfo || !etherscanInfo.SourceCode) {
-      throw 'no source code found'
-    }
-
-    const info = new DeploymentInfo(etherscanInfo, codeAddress, contextAddress)
-
-    this.contracts[codeAddress] = info
-    if (contextAddress != codeAddress) {
-      // this is not true because for two delegatecalls then contextAddress is the first proxy
-      // but it should be the second proxy here, ie the immediate parent
-      // info.proxy = contextAddress
-      this.contracts[contextAddress].impls[codeAddress] = info
-    }
-  }
-
-  async loadContract(codeAddress: string, contextAddress = '') {
-    codeAddress = codeAddress.toLowerCase()
-    contextAddress = contextAddress.toLowerCase()
-    if (!contextAddress) {
-      contextAddress = codeAddress
-    }
-
-    let etherscanInfo
-    const cacheKey = `contractInfo_${codeAddress}`
-    const cachedValue = sessionStorage.getItem(cacheKey)
-    if (cachedValue) {
-      etherscanInfo = JSON.parse(cachedValue)
+  const removeDeployment = (deployment: DeploymentInfo, context?: DeploymentInfo) => {
+    if (context) {
+      delete context.impls[deployment.address]
     } else {
-      const data = await fetch('/api/getContract?address=' + codeAddress)
-        .then((res) => res.json())
-        .catch((err) => {
-          console.error(err)
-          throw err
-        })
-
-      etherscanInfo = etherscanParse(data)
+      delete deployments[deployment.address]
     }
 
-    if (!etherscanInfo || !etherscanInfo?.SourceCode || etherscanInfo?.ABI == "Contract source code not verified") {
-      return Promise.reject('failed to load contract info')
+    setDeployments({ ...deployments })
+    if (selectedDeployment == deployment) {
+      setSelectedDeployment(undefined)
     }
-
-    if (!cachedValue) {
-      sessionStorage.setItem(cacheKey, JSON.stringify(etherscanInfo))
-    }
-
-    return this.onSourceAvailable(etherscanInfo, codeAddress, contextAddress)
   }
 
-  removeContract(info: DeploymentInfo) {
-    // const info = this.contracts[codeAddress]
-    delete this.contracts[info.codeAddress]
-    // if (this.selectedAddress == info.codeAddress) {
-    //   const remaining = Object.values(this.contracts)
-    //   if (remaining.length > 0) {
-    //     this.selectedAddress = remaining[0].codeAddress
-    //   } else {
-    //     this.selectedAddress = ''
-    //   }
-    // }
+  return {
+    deployments,
+    setDeployments,
 
-    // console.log(info)
-    if (info.contextAddress != info.codeAddress) {
-      // it is a proxy impl - remove references from proxies
-      for (const c of Object.values(this.contracts)) {
-        delete c.impls[info.codeAddress]
-      }
-    }
+    loadDeployment,
+    removeDeployment,
 
-    this.onRemove.map((f) => f(info.codeAddress, info))
+    selectedDeployment,
+    setSelectedDeployment,
   }
 }
-
-export const state = new ContractViewerState()
-
-// I don't get why I need to wrap everything in useState
-// if I already have a perfectly working class
-// export const useContracts = () => {
-//   const [selectedContract, setSelectedContract] = useState<DeploymentInfo | undefined>(undefined)
-//   // const [contracts, setContracts] = useState({})
-
-//   return {
-//     // contracts,
-//     // setContracts,
-
-//     selectedContract,
-//     setSelectedContract,
-//   }
-// }
