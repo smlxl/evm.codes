@@ -42,6 +42,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@solidity-parser/parser": "^0.18.0",
     "@types/ethereumjs-abi": "^0.6.3",
+    "@uidotdev/usehooks": "^2.4.1",
     "assert": "^2.0.0",
     "babel-preset-es2020": "^1.0.2",
     "babelify": "^10.0.0",

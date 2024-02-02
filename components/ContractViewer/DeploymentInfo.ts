@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
@@ -12,9 +12,13 @@ import { solidityCompiler } from 'util/solc'
 import { SourceDefinition, buildDefinitionTreev2 } from './AstProcessor'
 import EtherscanLoader from './EtherscanLoader'
 
-type ParseResult = AstTypes.SourceUnit & {
+export type ParseResult = AstTypes.SourceUnit & {
   errors?: any[]
   tokens?: any[]
+}
+
+export type DeploymentsCollection = {
+  [address: string]: DeploymentInfo
 }
 
 // TODO: should probably move some of the contract code parts to another class
@@ -47,7 +51,7 @@ export class DeploymentInfo {
   code: string
   address: string
   context?: DeploymentInfo
-  impls: { [address: string]: DeploymentInfo } = {}
+  impls: DeploymentsCollection = {}
 
   mainContractPath: string
   // originalPathLenses: any[] = []
@@ -94,7 +98,7 @@ export class DeploymentInfo {
     this.code = flattenCode(
       etherscanInfo.SourceCode,
       contractPath,
-      this.originalPathLenses,
+      this?.originalPathLenses || [],
     )
 
     // this.ast = solParser.parse(this.code, {
@@ -176,7 +180,7 @@ export class DeploymentInfo {
       return false
     }
   
-    console.log('compiling accessible code')
+    // console.log('compiling accessible code')
     solidityCompiler.compileCode(
       this.accessibleCode,
       this.etherscanInfo.CompilerVersion,
@@ -212,15 +216,28 @@ export class DeploymentInfo {
   }
 }
 
-export const useDeployments = () => {
-  const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
-  const [deployments, setDeployments] = useState<{ [address: string]: DeploymentInfo }>({})
+export const DeploymentsContext = createContext<{
+  deployments: DeploymentsCollection,
+  setDeployments: (deployments: DeploymentsCollection) => void
+}>({
+  deployments: {},
+  setDeployments: () => {
+    console.warn('NOT WORKING')
+  },
+})
 
-  const loadDeployment = (address: string, context?: DeploymentInfo) => {
+export const useDeployments = () => {
+  const { deployments, setDeployments } = useContext(DeploymentsContext)
+  const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
+  const [reqCount, setReqCount] = useState(0)
+
+  const isLoading = () => reqCount > 0
+
+  const loadDeployment = (address: string, context?: DeploymentInfo, loadImplementation = true) => {
+    setReqCount(reqCount + 1)
     return EtherscanLoader.loadDeployment(address, context)
-      .then((deployment: DeploymentInfo) => {
+      .then(async (deployment: DeploymentInfo) => {
         // TODO: should we avoid overriding if it already exists?
-        console.log('loaded new deployment', deployment.address, 'at context', context?.address)
         if (context) {
           context.impls[address] = deployment
         } else {
@@ -229,12 +246,26 @@ export const useDeployments = () => {
 
         setDeployments({ ...deployments })
         setSelectedDeployment(deployment)
+        setReqCount(reqCount - 1)
+
+
+        if (loadImplementation) {
+          const impl = deployment.etherscanInfo?.Implementation as string
+            if (impl) {
+              await loadDeployment(impl.toLowerCase(), deployment)
+            }
+          }
 
         return deployment
       })
+      .catch((err) => {
+        setReqCount(reqCount - 1)
+        throw err
+      })
   }
 
-  const removeDeployment = (deployment: DeploymentInfo, context?: DeploymentInfo) => {
+  const removeDeployment = (deployment: DeploymentInfo) => {
+    const context = deployment.context
     if (context) {
       delete context.impls[deployment.address]
     } else {
@@ -249,12 +280,14 @@ export const useDeployments = () => {
 
   return {
     deployments,
-    setDeployments,
+    // setDeployments,
 
     loadDeployment,
     removeDeployment,
 
     selectedDeployment,
     setSelectedDeployment,
+
+    isLoading,
   }
 }

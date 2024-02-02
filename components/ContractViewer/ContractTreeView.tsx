@@ -10,8 +10,8 @@ import { TreeView } from '@mui/x-tree-view/TreeView'
 
 import { Button } from 'components/ui'
 
+import { DeploymentItem } from './ContractTreeNode'
 import { DeploymentInfo } from './DeploymentInfo'
-import { SourceItem } from './ContractTreeNode'
 
 type ContractTreeViewProps = {
   deployments: DeploymentInfo[]
@@ -42,12 +42,12 @@ const ContractsTreeItem = ({ deployments, onSelect }: any) => {
 
   return (
     <TreeItem nodeId="ti_contracts" label="Contracts">
+      {/* TODO: fix filter box */}
       {/* <ContractAdder onClick={handleAddContract} /> */}
-      {/* TODO: FILTER BOX HERE; ternary checkboxes (eg. show external funcs, internal+external or none) */}
-      {deployments?.map((info: DeploymentInfo) => (
-        <SourceItem
-          key={info.address}
-          contract={info}
+      {deployments?.map((deployment: DeploymentInfo) => (
+        <DeploymentItem
+          key={deployment.address}
+          deployment={deployment}
           onSelect={onSelect}
         />
       ))}
@@ -103,7 +103,7 @@ const FilterContext = createContext<ViewFilter>({
   enums: true,
 })
 
-const FilterToolbar = ({ values, onChange }) => {
+const FilterToolbar = ({ values, onChange }: any) => {
   return (
     <ToggleButtonGroup
       size="small"

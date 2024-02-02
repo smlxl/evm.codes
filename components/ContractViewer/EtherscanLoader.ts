@@ -1,6 +1,7 @@
 import { EtherscanContractResponse } from 'types/contract'
 
 import { etherscanParse } from 'util/EtherscanParser'
+
 import { DeploymentInfo } from './DeploymentInfo'
 
 export default class EtherscanLoader {

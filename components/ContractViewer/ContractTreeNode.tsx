@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
@@ -13,7 +13,7 @@ import { type AbiFunction, type AbiParameter } from 'abitype'
 import { decodeFunctionResult, encodeFunctionData, encodeAbiParameters } from 'viem'
 
 import { ContractArtifact } from './AstProcessor'
-import { DeploymentInfo, state, useDeployments } from './DeploymentInfo'
+import { DeploymentInfo, useDeployments } from './DeploymentInfo'
 import useGenericReducer, { convertShortpath } from './GenericReducer'
 import { rpc, type AbiComponent, getComponentArraySize, getArrayBaseComponent, getBadgeColor, getTypePrettyName, spaceBetween, initStateFromAbiInputs, initStateFromComponent } from './ViewerUtils'
 
@@ -21,10 +21,10 @@ const TextField = ({ ...props }) => {
   return <MuiTextField autoComplete="off" className="bg-gray-100 dark:invert" {...props} />
 }
 
-type SourceItemProps = {
-  contract: DeploymentInfo
+type DeploymentItemProps = {
+  deployment: DeploymentInfo
   children?: any
-  onSelect: (contract: DeploymentInfo, artifact?: ContractArtifact) => void
+  onSelect: (deployment: DeploymentInfo, artifact?: ContractArtifact) => void
 }
 
 function getFunctionTitle(
@@ -618,17 +618,14 @@ const StateVariableDeclarationItem = ({ contract, artifact, onSelect }: any) => 
   )
 }
 
-export const SourceItem = ({
-  contract: deployment,
+export const DeploymentItem = ({
+  deployment,
   onSelect,
-}: SourceItemProps) => {
+}: DeploymentItemProps) => {
   // console.log('rendering contract', deployment.address, deployment.context)
 
-  const { deployments, loadDeployment } = useDeployments()
-  let impls = deployment.getImplementations()
-  useEffect(() => {
-    impls = deployment.getImplementations()
-  }, [deployments])
+  const { loadDeployment, removeDeployment } = useDeployments()
+  const impls = deployment.getImplementations()
 
   const title = (
     <div className="whitespace-nowrap">
@@ -636,7 +633,7 @@ export const SourceItem = ({
         className="hover:bg-red-100 active:bg-red-300 mr-1"
         onClick={() => {
           if (confirm('Are you sure you want to remove this contract?')) {
-            state.removeDeployment(deployment)
+            removeDeployment(deployment)
           }
         }}
       >
@@ -715,11 +712,11 @@ export const SourceItem = ({
           </span>
         }
       >
-        {impls // TODO: this should move inside SourceItem & be recursive
+        {impls // TODO: this should move inside DeploymentItem & be recursive
           ?.map((impl: DeploymentInfo) => (
-            <SourceItem
+            <DeploymentItem
               key={'impl_' + deployment.address + '_' + impl.address}
-              contract={impl}
+              deployment={impl}
               onSelect={onSelect}
             />
           ))}

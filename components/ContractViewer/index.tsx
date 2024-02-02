@@ -9,8 +9,13 @@ import NoSSR from 'react-no-ssr'
 
 import { ContractArtifact } from './AstProcessor'
 import ContractCodeEditor from './ContractCodeEditor'
-import { DeploymentInfo, state, useDeployments } from './DeploymentInfo'
 import ContractTreeView from './ContractTreeView'
+import {
+  DeploymentsCollection,
+  DeploymentsContext,
+  DeploymentInfo,
+  useDeployments,
+} from './DeploymentInfo'
 import Header from './Header'
 
 import {
@@ -19,51 +24,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 
-// wtf why are there so many of useFetch?
-// import useFetch from 'use-http'
-// import { useFetch } from '@uidotdev/usehooks'
-// import { useFetch } from 'usehooks-ts'
-
-const ContractViewer = () => {
-  // function useSimpleFetch(address: string) {
-  //   const [data, setData] = useState()
-  //   const [error, setError] = useState()
-  //   const [loading, setLoading] = useState(false)
-
-  //   useEffect(() => {
-  //     if (!address) {
-  //       setData('')
-  //       setError('no address provided')
-  //       setLoading(false)
-  //       // console.warn('undef cont', address)
-  //       return
-  //     }
-
-  //     if (loading) {
-  //       console.warn('already loading contract, requested', address)
-  //       return
-  //     }
-
-  //     console.log('loading contract', address)
-
-  //     setLoading(true)
-  //     fetch(`/api/getContract?address=${address}`)
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         setData(data)
-  //         setError('')
-  //         setLoading(false)
-  //       })
-  //       .catch((error) => {
-  //         setData('')
-  //         setError(error)
-  //         setLoading(false)
-  //       })
-  //   }, [address])
-
-  //   return { loading, error, data }
-  // }
-
+const ContractViewerInner = () => {
   // address bar routing
   const router = useRouter()
 
@@ -72,10 +33,10 @@ const ContractViewer = () => {
     selectedDeployment,
     setSelectedDeployment,
     loadDeployment,
+    isLoading,
   } = useDeployments()
 
   const [status, setStatus] = useState('loading...')
-  const [loading, setLoading] = useState(false)
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
   // const onCompilationResult = (event: MessageEvent) => {
@@ -85,22 +46,14 @@ const ContractViewer = () => {
 
   const tryLoadContract = async (address: string, context?: DeploymentInfo) => {
     setStatus('loading...')
-    setLoading(true)
 
     return loadDeployment(address, context)
       .then((deployment: DeploymentInfo) => {
-        const impl = deployment.etherscanInfo?.Implementation as string
-        if (impl) {
-          tryLoadContract(impl.toLowerCase(), deployment)
-        } else {
-          setStatus('loaded')
-          setLoading(false)
-          setSelectedDeployment(deployment)
-        }
+        setStatus('loaded')
+        setSelectedDeployment(deployment)
       })
       .catch((err: any) => {
         setStatus('failed to load contract\n' + err)
-        setLoading(false)
         // throw err
       })
   }
@@ -121,14 +74,12 @@ const ContractViewer = () => {
   const tryLoadAddress = (address: string, invalidateRoute: boolean) => {
     if (!isValidAddress(address)) {
       setStatus('invalid address format')
-      setLoading(false)
       return
     }
 
     address = address.toLowerCase()
     if (deployments[address]) {
       setStatus('loaded')
-      setLoading(false)
       return
     }
 
@@ -154,9 +105,10 @@ const ContractViewer = () => {
     }
   }, [router.isReady])
 
-  // useEffect(() => {
-  //   updateRoute()
-  // }, [deployments])
+  // TODO: fix router to support user-added implementations too
+  useEffect(() => {
+    updateRoute()
+  }, [deployments])
 
   return (
     // don't ask me why NoSSR is necessary
@@ -214,9 +166,7 @@ const ContractViewer = () => {
               <p className="font-semibold">
                 {selectedDeployment?.etherscanInfo?.ContractName}
               </p>
-              <span className="text-xs">
-                {selectedDeployment?.address}
-              </span>
+              <span className="text-xs">{selectedDeployment?.address}</span>
             </Header>
 
             {/* code editor */}
@@ -231,9 +181,11 @@ const ContractViewer = () => {
         {/* bottom panel: console & metadata information panel */}
         <Header className="py-2 px-4 text-sm flex flex-col gap-2">
           <Box className="whitespace-nowrap">
-            {loading && <CircularProgress />} {status}
+            {isLoading() && <CircularProgress />} {status}
           </Box>
-          <LinearProgress sx={{ visibility: loading ? 'visible' : 'hidden' }} />
+          <LinearProgress
+            sx={{ visibility: isLoading() ? 'visible' : 'hidden' }}
+          />
           {/* {error && <p>Error! {error}</p>} */}
           {/* <p>Data: {data}</p> */}
 
@@ -248,6 +200,15 @@ const ContractViewer = () => {
         </sub>
       </div>
     </NoSSR>
+  )
+}
+const ContractViewer = () => {
+  const [deployments, setDeployments] = useState<DeploymentsCollection>({})
+
+  return (
+    <DeploymentsContext.Provider value={{ deployments, setDeployments }}>
+      <ContractViewerInner />
+    </DeploymentsContext.Provider>
   )
 }
 
