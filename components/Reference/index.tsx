@@ -245,6 +245,7 @@ const ReferenceTable = ({
                       <div className="flex items-center flex-wrap">
                         {cell.column.id === 'opcodeOrAddress' && (
                           <Link
+                            legacyBehavior
                             href={
                               isPrecompiled
                                 ? `/precompiled#${opcodeOrAddress}?fork=${selectedFork?.name}`

@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -36,3 +37,8 @@ yarn-error.log*
 
 # jet brains
 .idea
+
+# auto gen
+public/solcWorker.js
+
+node_modules_/
