@@ -90,10 +90,10 @@ const AboutPage = () => {
           Transaction reversion can also be triggered with the{' '}
           <RelativeLink to="#FD" title="REVERT" /> opcode, though the{' '}
           <RelativeLink to="#FD" title="REVERT" /> opcode refunds unused gas
-          fees of its call context, while other causes of revert consumes it
-          all. In the event of a reverted transaction, any state changes
-          dictated by the transaction instructions are returned to their state
-          before the transaction.
+          fees of its call context, while other causes of revert consume it all.
+          In the event of a reverted transaction, any state changes dictated by
+          the transaction instructions are returned to their state before the
+          transaction.
         </p>
       </SectionWrapper>
 
@@ -105,7 +105,7 @@ const AboutPage = () => {
           When the EVM executes a smart contract, a context is created for it.
           This context is made of several data regions, each with a distinct
           purpose, as well as variables, such as the program counter, the
-          current caller, callee and the address of the current code.
+          current caller, the callee and the address of the current code.
         </p>
       </SectionWrapper>
 
@@ -137,7 +137,7 @@ const AboutPage = () => {
           the PC's value, instead, it modifies the program counter to a position
           specified by the top of the stack.{' '}
           <RelativeLink to="#57" title="JUMPI" /> does this as well, if its
-          condition is true (a nonzero code value), otherwise it increments the
+          condition is true (a nonzero code value), otherwise, it increments the
           PC like other instructions.
         </p>
       </SectionWrapper>
@@ -160,7 +160,7 @@ const AboutPage = () => {
 
       <SectionWrapper header={<H3>The Memory</H3>} anchorKey="memory">
         <p className="pb-8">
-          EVM memory is not persistent, and is destroyed at the end of the call
+          EVM memory is not persistent and is destroyed at the end of the call
           context. At the start of a call context, memory is initialized to 0.
           Reading and Writing from memory is usually done with{' '}
           <RelativeLink to="#51" title="MLOAD" /> and{' '}
@@ -230,8 +230,8 @@ const AboutPage = () => {
             <li>
               <b>Current price of one gas unit:</b> Gas, or gwei, is a
               denomination of Ethereum, used in fee payment. Gas prices vary
-              over time, based on current demand for block space, measured in
-              ETH per gas.
+              over time, based on the current demand for block space, measured
+              in ETH per gas.
             </li>
             <br></br>
             <li>
@@ -252,7 +252,7 @@ const AboutPage = () => {
             </li>
             <br></br>
             <li>
-              <b>Opcode Fixed Execution Cost</b> : Each opcode has a fixed cost
+              <b>Opcode Fixed Execution Cost</b>: Each opcode has a fixed cost
               to be paid upon execution, measured in gas. This cost is the same
               for all executions, though this is subject to change in new
               hardforks. See our{' '}
@@ -272,7 +272,7 @@ const AboutPage = () => {
               <b>Opcode Dynamic Execution Cost:</b> Some instructions conduct
               more work than others, depending on their parameters. Because of
               this, on top of fixed costs, some instructions have dynamic costs.
-              These dynamic costs are dependant on several factors (which vary
+              These dynamic costs are dependent on several factors (which vary
               from hardfork to hardfork). See our{' '}
               <a
                 href="https://www.evm.codes/"
@@ -344,7 +344,7 @@ const AboutPage = () => {
           <p className="pb-4">
             When a memory expansion is triggered, only the additional bytes of
             memory must be paid for. Therefore, the cost of memory expansion for
-            specific opcode is thus:
+            the specific opcode is thus:
           </p>
           <Pre>
             <code>
@@ -396,7 +396,7 @@ const AboutPage = () => {
           <RelativeLink to="#FA" title="STATICCALL" />,{' '}
           <RelativeLink to="#F0" title="CREATE" />,{' '}
           <RelativeLink to="#F5" title="CREATE2" /> and{' '}
-          <RelativeLink to="#FF" title="SELFDESTRUCT" />. Each opcode has their
+          <RelativeLink to="#FF" title="SELFDESTRUCT" />. Each opcode has its
           own cost when modifying the access set.
         </p>
         <p className="pb-6">
@@ -412,14 +412,31 @@ const AboutPage = () => {
           If a context is reverted, sets are reverted to their state before the
           context.
         </p>
-        <p className="pb-8">
+        <p className="pb-6">
           If an address or storage slot is present in the set, it is called
           'warm'; otherwise it is 'cold'. Storage slots that are touched for the
           first time in a transaction change from cold to warm for the duration
           of the transaction. Transactions can pre-specify contracts as warm
-          using EIP-2930 access lists. The dynamic cost of some opcodes depend
-          on whether an address or slot is warm or cold. After the hardfork
-          <b>Berlin</b>, all precompiled contract addresses are always ‘warm’.
+          using EIP-2930 access lists. The dynamic cost of some opcodes depends
+          on whether an address or slot is warm or cold.
+        </p>
+        <p className="pb-8">
+          At the start of a transaction's execution, the touched addresses set
+          is initialized to include the following addresses, which are hence
+          always 'warm':
+          <ul className="list-disc mb-2">
+            <br></br>
+            <li>
+              After the <b>Berlin</b> hardfork: all precompiled contract
+              addresses as well as <b>tx.sender</b> and <b>tx.to</b> (or the
+              address being created if it is a contract creation transaction).
+            </li>
+            <br></br>
+            <li>
+              After the <b>Shanghai</b> hardfork: the{' '}
+              <RelativeLink to="#41" title="COINBASE" /> address.
+            </li>
+          </ul>
         </p>
       </SectionWrapper>
 
@@ -428,10 +445,10 @@ const AboutPage = () => {
           Some opcodes can trigger gas refunds, which reduces the gas cost of a
           transaction. Gas refunds are applied at the end of a transaction. If a
           transaction has insufficient gas to reach the end of its run, its gas
-          refund cannot not be triggered, and the transaction fails. With the
+          refund cannot be triggered, and the transaction fails. With the
           introduction of the <b>London</b> hardfork, two aspects of gas refunds
           changed. First, the limit to how much gas can be refunded is lowered
-          from half of the total transaction cost, to one fifth of the total
+          from half of the total transaction cost to one fifth of the total
           transaction cost. Second, the{' '}
           <RelativeLink to="#FF" title="SELFDESTRUCT" /> opcode cannot trigger
           gas refunds, only <RelativeLink to="#55" title="SSTORE" />.
