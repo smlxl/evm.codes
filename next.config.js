@@ -6,7 +6,7 @@ require('path')
 const { withPlausibleProxy } = require('next-plausible')
 
 module.exports = withPlausibleProxy()({
-  reactStrictMode: false,
+  reactStrictMode: true,
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
