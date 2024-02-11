@@ -276,8 +276,6 @@ export const useDeployments = () => {
   const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
   const [reqCount, setReqCount] = useState(0)
 
-  const isLoading = () => reqCount > 0
-
   const loadDeployment = async (address: string, context?: DeploymentInfo, loadImplementation = true) => {
     setReqCount(reqCount + 1)
     return EtherscanLoader.loadDeployment(address, context)
@@ -351,6 +349,6 @@ export const useDeployments = () => {
     selectedDeployment,
     setSelectedDeployment,
 
-    isLoading,
+    reqCount,
   }
 }

@@ -33,7 +33,7 @@ const ContractViewerInner = () => {
     selectedDeployment,
     setSelectedDeployment,
     loadDeployment,
-    isLoading,
+    reqCount,
   } = useDeployments()
 
   const [status, setStatus] = useState('')
@@ -183,10 +183,10 @@ const ContractViewerInner = () => {
         {/* bottom panel: console & metadata information panel */}
         <Header className="py-2 px-4 text-sm flex flex-col gap-2">
           <Box className="whitespace-nowrap">
-            {isLoading() && <CircularProgress />} {status}
+            {reqCount > 0 && <CircularProgress />} {status}
           </Box>
           <LinearProgress
-            sx={{ visibility: isLoading() ? 'visible' : 'hidden' }}
+            sx={{ visibility: reqCount > 0 ? 'visible' : 'hidden' }}
           />
           {/* {error && <p>Error! {error}</p>} */}
           {/* <p>Data: {data}</p> */}
