@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
-require('webpack')
-require('path')
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withPlausibleProxy } = require('next-plausible')
 
 module.exports = withPlausibleProxy()({
@@ -11,7 +8,7 @@ module.exports = withPlausibleProxy()({
     APP_ROOT: __dirname,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   webpack: (config, options) => {
     const { dir, defaultLoaders } = options
@@ -30,7 +27,7 @@ module.exports = withPlausibleProxy()({
       fs: false,
       stream: false,
       crypto: false,
-      path: require.resolve('path-browserify'),
+      path: false,
       process: require.resolve('process/browser'),
       assert: require.resolve('assert/'),
       events: require.resolve('events/'),

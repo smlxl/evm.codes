@@ -6,22 +6,44 @@ import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import type { AbiFunction, AbiParameter } from 'abitype'
-import { createWalletClient, custom, toFunctionSelector, decodeFunctionResult, encodeFunctionData, encodeAbiParameters, decodeAbiParameters, keccak256, encodePacked } from 'viem'
+import {
+  createWalletClient,
+  custom,
+  toFunctionSelector,
+  decodeFunctionResult,
+  encodeFunctionData,
+  encodeAbiParameters,
+  decodeAbiParameters,
+  keccak256,
+  encodePacked,
+} from 'viem'
 import { mainnet } from 'viem/chains'
 
 import { ContractArtifact } from './AstProcessor'
 import { DeploymentInfo, useDeployments } from './DeploymentInfo'
-import useGenericReducer, { convertShortpath, getReducerState } from './GenericReducer'
-import { rpc, type AbiComponent, getComponentArraySize, getArrayBaseComponent, getBadgeColor, spaceBetween, initStateFromAbiInputs, initStateFromComponent } from './ViewerUtils'
+import useGenericReducer, {
+  convertShortpath,
+  getReducerState,
+} from './GenericReducer'
+import {
+  rpc,
+  getComponentArraySize,
+  getArrayBaseComponent,
+  getBadgeColor,
+  spaceBetween,
+  initStateFromAbiInputs,
+  initStateFromComponent,
+} from './ViewerUtils'
+import type { AbiComponent } from './ViewerUtils'
 
 const TextField = ({ ...props }) => {
-  return <MuiTextField autoComplete="off" className="bg-gray-100 dark:invert" {...props} />
-}
-
-type DeploymentItemProps = {
-  deployment: DeploymentInfo
-  children?: any
-  onSelect: (deployment: DeploymentInfo, artifact?: ContractArtifact) => void
+  return (
+    <MuiTextField
+      autoComplete="off"
+      className="bg-gray-100 dark:invert"
+      {...props}
+    />
+  )
 }
 
 const TreeItemLabel = ({ title, subtitle }: any) => {
@@ -30,27 +52,31 @@ const TreeItemLabel = ({ title, subtitle }: any) => {
       <span>{title}</span>
       {subtitle && (
         <span className="text-xs pt-1">
-          {subtitle
-            .split(' ')
-            .map((str: string, i: number) => (
-              <span
-                key={i}
-                className={
-                  'text-gray-700 ' +
-                  getBadgeColor(str) +
-                  ' dark:invert rounded-xl px-2 mx-1'
-                }
-              >
-                {str}
-              </span>
-            ))}
+          {subtitle.split(' ').map((str: string, i: number) => (
+            <span
+              key={i}
+              className={
+                'text-gray-700 ' +
+                getBadgeColor(str) +
+                ' dark:invert rounded-xl px-2 mx-1'
+              }
+            >
+              {str}
+            </span>
+          ))}
         </span>
       )}
     </div>
   )
 }
 
-const TreeItemBasic = ({ nodeId, title, subtitle, children, ...props }: any) => {
+const TreeItemBasic = ({
+  nodeId,
+  title,
+  subtitle,
+  children,
+  ...props
+}: any) => {
   return (
     <TreeItem
       nodeId={nodeId}
@@ -85,7 +111,9 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
   return (
     <>
       <span className="text-xs text-gray-500 bg-white dark:bg-black-900">
-        array {inputAbi.internalType?.replace(/^struct /, '')} {inputAbi.name} ({arraySize !== undefined ? 'fixed ' : ''}{fields.length} items)
+        array {inputAbi.internalType?.replace(/^struct /, '')} {inputAbi.name} (
+        {arraySize !== undefined ? 'fixed ' : ''}
+        {fields.length} items)
       </span>
 
       <div className="flex flex-col p-2">
@@ -93,7 +121,8 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
           return (
             <div key={index}>
               {/* x button on top-left of border */}
-              <input type="button"
+              <input
+                type="button"
                 style={{
                   position: 'relative',
                   top: '12px',
@@ -123,7 +152,9 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
             style={{ border: '1px solid' }}
             size="small"
             onClick={() => {
-              const initVal = initStateFromComponent(getArrayBaseComponent(inputAbi))
+              const initVal = initStateFromComponent(
+                getArrayBaseComponent(inputAbi),
+              )
               fields.push(initVal)
               updateArrayData({ [path]: fields })
             }}
@@ -171,16 +202,17 @@ type ParamItemProps = {
   output?: boolean
 }
 
-export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) => {
+export const ParamItem = ({
+  path,
+  inputAbi,
+  reducer,
+  output,
+}: ParamItemProps) => {
   // array
   if (inputAbi.type.endsWith(']')) {
     return (
       <div className="border-2 rounded-xl pl-2 py-2 my-1 hover:border-blue-500">
-        <ArrayParamItem
-          path={path}
-          inputAbi={inputAbi}
-          reducer={reducer}
-        />
+        <ArrayParamItem path={path} inputAbi={inputAbi} reducer={reducer} />
       </div>
     )
   }
@@ -209,7 +241,7 @@ export const ParamItem = ({ path, inputAbi, reducer, output }: ParamItemProps) =
   let props
   if (output) {
     props = {
-      label: (inputAbi.internalType  || inputAbi.type) + ' ' + inputAbi.name,
+      label: (inputAbi.internalType || inputAbi.type) + ' ' + inputAbi.name,
       value: val.toString(),
     }
   } else {
@@ -245,18 +277,19 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {abi.inputs && abi.inputs.map((inputAbi: any, i: number) => (
-        <ParamItem
-          key={i}
-          inputAbi={inputAbi}
-          path={i.toString()}
-          // reducer={params}
-          reducer={[
-            funcData.params,
-            (val: any) => updateFuncData({ params: convertShortpath(val) }),
-          ]}
-        />
-      ))}
+      {abi.inputs &&
+        abi.inputs.map((inputAbi: any, i: number) => (
+          <ParamItem
+            key={i}
+            inputAbi={inputAbi}
+            path={i.toString()}
+            // reducer={params}
+            reducer={[
+              funcData.params,
+              (val: any) => updateFuncData({ params: convertShortpath(val) }),
+            ]}
+          />
+        ))}
       {abi.stateMutability == 'payable' && (
         <TextField
           variant="outlined"
@@ -284,18 +317,16 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
       <span className="dark:text-gray-200">result:</span>
-      {abi.outputs && abi.outputs.map((inputAbi: any, i: number) => (
-        <ParamItem
-          key={i}
-          inputAbi={inputAbi}
-          path={i.toString()}
-          reducer={[
-            funcData.outputs,
-            null,
-          ]}
-          output={true}
-        />
-      ))}
+      {abi.outputs &&
+        abi.outputs.map((inputAbi: any, i: number) => (
+          <ParamItem
+            key={i}
+            inputAbi={inputAbi}
+            path={i.toString()}
+            reducer={[funcData.outputs, null]}
+            output={true}
+          />
+        ))}
     </div>
   )
 }
@@ -306,7 +337,11 @@ type FunctionAbiItemProps = {
   funcAbi: AbiFunction
 }
 
-export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) => {
+export const FunctionAbiItem = ({
+  id,
+  address,
+  funcAbi,
+}: FunctionAbiItemProps) => {
   const funcName = funcAbi.name
   let subtitle = `${funcAbi.type}`
   if (funcAbi.stateMutability == 'payable') {
@@ -316,7 +351,7 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
   const reducer = useGenericReducer<FuncData>(
     {
       params: initStateFromAbiInputs(funcAbi.inputs || []), //initState,
-      value: (funcAbi.stateMutability == 'payable' ? '0' : undefined),
+      value: funcAbi.stateMutability == 'payable' ? '0' : undefined,
       outputs: initStateFromAbiInputs(funcAbi.outputs || []),
     },
     true,
@@ -328,7 +363,7 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
 
   const encodeCalldata = () => {
     let data, error
-    try { 
+    try {
       data = encodeFunctionData({
         abi: [funcAbi],
         args: funcData.params,
@@ -348,19 +383,18 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
       value: funcData.value,
     }
 
-    return rpc.call(props as any)
-      .then((res: any) => {
-        let decoded = decodeFunctionResult({
-          abi: [funcAbi],
-          data: res.data,
-        })
-
-        if (funcAbi.outputs.length == 1) {
-          decoded = [decoded]
-        }
-
-        return decoded.map((val: any) => val.toString())
+    return rpc.call(props as any).then((res: any) => {
+      let decoded = decodeFunctionResult({
+        abi: [funcAbi],
+        data: res.data,
       })
+
+      if (funcAbi.outputs.length == 1) {
+        decoded = [decoded]
+      }
+
+      return decoded.map((val: any) => val.toString())
+    })
   }
 
   const ethSendTransaction = () => {
@@ -373,11 +407,12 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
 
     const walletClient = createWalletClient({
       chain: mainnet,
-      transport: custom((window as any).ethereum)
+      transport: custom((window as any).ethereum),
     })
 
-    return walletClient.requestAddresses()
-      .then((addresses: any) => {  
+    return walletClient
+      .requestAddresses()
+      .then((addresses: any) => {
         const props = {
           // TODO: support overrides, eg. from, block, gas, etc.
           account: addresses[0],
@@ -386,19 +421,18 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
           value: funcData.value,
         }
 
-        return walletClient.sendTransaction(props as any)
-          .then((res: any) => {
-            let decoded = decodeFunctionResult({
-              abi: [funcAbi],
-              data: res.data,
-            })
-
-            if (funcAbi.outputs.length == 1) {
-              decoded = [decoded]
-            }
-
-            return decoded.map((val: any) => val.toString())
+        return walletClient.sendTransaction(props as any).then((res: any) => {
+          let decoded = decodeFunctionResult({
+            abi: [funcAbi],
+            data: res.data,
           })
+
+          if (funcAbi.outputs.length == 1) {
+            decoded = [decoded]
+          }
+
+          return decoded.map((val: any) => val.toString())
+        })
       })
       .catch((err: any) => {
         setStatus(err.toString())
@@ -442,25 +476,27 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
         <div className="flex gap-1">
           <Button onClick={setCallStatus} variant="contained">
-            {funcAbi?.outputs?.length > 0
-              ? 'Call'
-              : 'Call (no ret)'}
+            {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no ret)'}
           </Button>
           <Button onClick={setEncodeStatus} variant="contained">
             Encode
           </Button>
-          <Button onClick={ethSendTransaction} variant="contained" color="secondary">
+          <Button
+            onClick={ethSendTransaction}
+            variant="contained"
+            color="secondary"
+          >
             Send
           </Button>
         </div>
-        {(funcAbi && funcAbi?.outputs?.length > 0) && <ReturnDataBox abi={funcAbi} reducer={reducer} />}
+        {funcAbi && funcAbi?.outputs?.length > 0 && (
+          <ReturnDataBox abi={funcAbi} reducer={reducer} />
+        )}
         {status && (
           <input
             type="button"
             className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
-            onClick={() =>
-              navigator.clipboard.writeText(status)
-            }
+            onClick={() => navigator.clipboard.writeText(status)}
             value={'📋 copy'}
           />
         )}
@@ -491,10 +527,15 @@ type StorageLayoutItemProps = {
       numberOfBytes: string
       value: string
     }
-   }
+  }
 }
 
-export const StorageLayoutItem = ({ id, address, storage, types }: StorageLayoutItemProps) => {
+export const StorageLayoutItem = ({
+  id,
+  address,
+  storage,
+  types,
+}: StorageLayoutItemProps) => {
   const [status, setStatus] = useState('0x...')
   const [inputs, setInputs] = useState([])
 
@@ -502,7 +543,9 @@ export const StorageLayoutItem = ({ id, address, storage, types }: StorageLayout
 
   // if storage item is a mapping, keyTypes is an array of types of all mapping keys
   // eg. keys of mapping(address => mapping(uint256 => bytes)) would be ['address', 'uint256']
-  const keyTypes = [...(storage.type.matchAll(/\bt_mapping\((?<key>.+?),/g) || [])].map((m) => m.groups.key)
+  const keyTypes = [
+    ...(storage.type.matchAll(/\bt_mapping\((?<key>.+?),/g) || []),
+  ].map((m) => m.groups.key)
 
   const ethGetStorage = () => {
     let slot = storage.slot
@@ -519,11 +562,14 @@ export const StorageLayoutItem = ({ id, address, storage, types }: StorageLayout
     return rpc.getStorageAt(props as any).then((res: any) => {
       let val = res.slice(2)
       if (storage.offset || type.numberOfBytes != '32') {
-        val = val.slice(storage.offset * 2, (storage.offset + parseInt(type.numberOfBytes)) * 2)
+        val = val.slice(
+          storage.offset * 2,
+          (storage.offset + parseInt(type.numberOfBytes)) * 2,
+        )
       }
       val = '0x' + val
       try {
-        val = decodeAbiParameters([{type: type.label}], [val])
+        val = decodeAbiParameters([{ type: type.label }], [val])
       } catch (err) {
         console.log(err)
       }
@@ -543,7 +589,8 @@ export const StorageLayoutItem = ({ id, address, storage, types }: StorageLayout
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
         <span className="text-xs dark:text-gray-200">
-          base slot: {storage.slot}, offset: {storage.offset}, size: {type?.numberOfBytes} bytes
+          base slot: {storage.slot}, offset: {storage.offset}, size:{' '}
+          {type?.numberOfBytes} bytes
           <br />
           {status}
         </span>
@@ -566,6 +613,12 @@ export const StorageLayoutItem = ({ id, address, storage, types }: StorageLayout
   )
 }
 
+type DeploymentItemProps = {
+  deployment: DeploymentInfo
+  children?: any
+  onSelect: (deployment: DeploymentInfo, artifact?: ContractArtifact) => void
+}
+
 export const DeploymentItem = ({
   deployment,
   onSelect,
@@ -586,22 +639,26 @@ export const DeploymentItem = ({
         }}
       />
       <span>{deployment.etherscanInfo.ContractName}</span>
-      <p className="text-xs">{deployment.address}{deployment.context ? ' @ ' + deployment.rootContext().address : ''}</p>
+      <p className="text-xs">
+        {deployment.address}
+        {deployment.context ? ' @ ' + deployment.rootContext().address : ''}
+      </p>
     </div>
   )
 
   return (
-    <TreeItemBasic nodeId={'deployment_' + deployment.id} title={title} onSelect={() => onSelect(deployment)}>
+    <TreeItemBasic
+      nodeId={'deployment_' + deployment.id}
+      title={title}
+      onSelect={() => onSelect(deployment)}
+    >
       <TreeItem
         nodeId={'ti_compiler_' + deployment.id}
         label={'Compiler: ' + deployment.etherscanInfo?.CompilerVersion}
       />
 
-      {deployment.storageLayout &&
-        <TreeItem
-          nodeId={"ti_storage_" + deployment.id}
-          label="Storage"
-        >
+      {deployment.storageLayout && (
+        <TreeItem nodeId={'ti_storage_' + deployment.id} label="Storage">
           {deployment.storageLayout.storage.map((storage: any, i: number) => (
             <StorageLayoutItem
               key={i}
@@ -612,27 +669,28 @@ export const DeploymentItem = ({
             />
           ))}
         </TreeItem>
-      }
+      )}
 
-      <TreeItem
-        nodeId={"ti_functions_" + deployment.id}
-        label="Functions"
-      >
-        {deployment.abi.filter((a) => a.type == 'function').map((funcAbi, i: number) => (
-          <FunctionAbiItem
-            key={i}
-            id={i.toString()}
-            address={deployment.rootContext().address}
-            funcAbi={funcAbi as AbiFunction}
-          />
-        ))}
+      <TreeItem nodeId={'ti_functions_' + deployment.id} label="Functions">
+        {deployment.abi
+          .filter((a) => a.type == 'function')
+          .map((funcAbi, i: number) => (
+            <FunctionAbiItem
+              key={i}
+              id={i.toString()}
+              address={deployment.rootContext().address}
+              funcAbi={funcAbi as AbiFunction}
+            />
+          ))}
       </TreeItem>
 
       <TreeItem
-        nodeId={"ti_impls_" + deployment.id}
+        nodeId={'ti_impls_' + deployment.id}
         label={
-          <span>Implementations
-            <input type="button"
+          <span>
+            Implementations
+            <input
+              type="button"
               className="mx-2 rounded-xl hover:bg-blue-200"
               onClick={() => {
                 const addr = prompt('address')
