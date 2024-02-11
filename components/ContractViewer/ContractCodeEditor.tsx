@@ -7,8 +7,7 @@ const ContractCodeEditor = ({ code, line, column, ...props }: any) => {
   const [codeEditor, setCodeEditor] = useState<any>(null)
   const { theme } = useTheme()
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function handleEditorDidMount(editor: any, _monaco: any) {
+  const handleEditorDidMount = (editor: any) => {
     if (!editor) {
       return
     }

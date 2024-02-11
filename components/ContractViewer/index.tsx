@@ -7,6 +7,12 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useRouter } from 'next/router'
 import NoSSR from 'react-no-ssr'
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from 'components/ui/ResizeablePanel'
+
 import { ContractArtifact } from './AstProcessor'
 import ContractCodeEditor from './ContractCodeEditor'
 import ContractTreeView from './ContractTreeView'
@@ -17,12 +23,6 @@ import {
   useDeployments,
 } from './DeploymentInfo'
 import Header from './Header'
-
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
 
 const ContractViewerInner = () => {
   // address bar routing

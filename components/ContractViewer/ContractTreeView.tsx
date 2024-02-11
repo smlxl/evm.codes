@@ -1,14 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext, useState } from 'react'
+import { createContext } from 'react'
 
 import { HorizontalRule } from '@mui/icons-material'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Box, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { TreeItem } from '@mui/x-tree-view'
 import { TreeView } from '@mui/x-tree-view/TreeView'
-
-import { Button } from 'components/ui'
 
 import { DeploymentItem } from './ContractTreeNode'
 import { DeploymentInfo } from './DeploymentInfo'

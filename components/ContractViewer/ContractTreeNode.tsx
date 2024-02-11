@@ -5,8 +5,7 @@ import React, { useState } from 'react'
 import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
-// eslint-disable-next-line prettier/prettier
-import { type AbiFunction, type AbiParameter } from 'abitype'
+import type { AbiFunction, AbiParameter } from 'abitype'
 import { createWalletClient, custom, toFunctionSelector, decodeFunctionResult, encodeFunctionData, encodeAbiParameters, decodeAbiParameters, keccak256, encodePacked } from 'viem'
 import { mainnet } from 'viem/chains'
 
@@ -441,21 +440,19 @@ export const FunctionAbiItem = ({ id, address, funcAbi }: FunctionAbiItemProps) 
           4byte selector: {toFunctionSelector(funcAbi)}
         </span>
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
-        {(funcAbi.inputs.length > 0 || funcAbi.stateMutability == 'payable') && (
-          <div className="flex gap-1">
-            <Button onClick={setCallStatus} variant="contained">
-              {funcAbi?.outputs?.length > 0
-                ? 'Call'
-                : 'Call (no ret)'}
-            </Button>
-            <Button onClick={setEncodeStatus} variant="contained">
-              Encode
-            </Button>
-            <Button onClick={ethSendTransaction} variant="contained" color="secondary">
-              Send
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-1">
+          <Button onClick={setCallStatus} variant="contained">
+            {funcAbi?.outputs?.length > 0
+              ? 'Call'
+              : 'Call (no ret)'}
+          </Button>
+          <Button onClick={setEncodeStatus} variant="contained">
+            Encode
+          </Button>
+          <Button onClick={ethSendTransaction} variant="contained" color="secondary">
+            Send
+          </Button>
+        </div>
         {(funcAbi && funcAbi?.outputs?.length > 0) && <ReturnDataBox abi={funcAbi} reducer={reducer} />}
         {status && (
           <input

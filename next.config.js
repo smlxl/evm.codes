@@ -10,11 +10,8 @@ module.exports = withPlausibleProxy()({
   serverRuntimeConfig: {
     APP_ROOT: __dirname,
   },
-  compiler: {
-    styledComponents: false,
-  },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   webpack: (config, options) => {
     const { dir, defaultLoaders } = options

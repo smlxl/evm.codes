@@ -299,7 +299,7 @@ export const useDeployments = () => {
           }
         }
 
-        const selectedOutputs = [/*'ast', 'abi',*/ 'storageLayout']
+        const selectedOutputs = ['storageLayout']
         const ogVersion = deployment.etherscanInfo.CompilerVersion
         deployment.compile(selectedOutputs, ogVersion).then((data) => {
           if (!data || data.error) {
@@ -344,7 +344,6 @@ export const useDeployments = () => {
 
   return {
     deployments,
-    // setDeployments,
 
     loadDeployment,
     removeDeployment,

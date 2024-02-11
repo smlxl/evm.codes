@@ -3219,11 +3219,6 @@
     "@typescript-eslint/types" "6.19.1"
     eslint-visitor-keys "^3.4.1"
 
-"@uidotdev/usehooks@^2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@uidotdev/usehooks/-/usehooks-2.4.1.tgz#4b733eaeae09a7be143c6c9ca158b56cc1ea75bf"
-  integrity sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==
-
 "@webassemblyjs/ast@1.11.5", "@webassemblyjs/ast@^1.11.5":
   version "1.11.5"
   resolved "https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.11.5.tgz"
@@ -8369,11 +8364,6 @@ react-dom@^18:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-hook-form@^7.49.3:
-  version "7.49.3"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.49.3.tgz#576a4567f8a774830812f4855e89f5da5830435c"
-  integrity sha512-foD6r3juidAT1cOZzpmD/gOKt7fRsDhXXZ0y28+Al1CHgX+AY1qIN9VSIIItXRq1dN68QrRwl1ORFlwjBaAqeQ==
-
 react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://package-cluster.production.groovehq.com/react-is/-/react-is-16.13.1.tgz"
@@ -8421,10 +8411,10 @@ react-remove-scroll@2.5.5:
     use-callback-ref "^1.3.0"
     use-sidecar "^1.1.2"
 
-react-resizable-panels@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/react-resizable-panels/-/react-resizable-panels-1.0.5.tgz#f6274758eb5f05a3fb85a077ac55f937a4dc8d80"
-  integrity sha512-OP0whNQCko+f4BgoptGaeIc7StBRyeMeJ+8r/7rXACBDf9W5EcMWuM32hfqPDMenS2HFy/eZVi/r8XqK+ZIEag==
+react-resizable-panels@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-resizable-panels/-/react-resizable-panels-2.0.4.tgz#67b742c77df2f4a3c4a7428edad7062691b22070"
+  integrity sha512-rVPtUxxETRaChQePc6xwdwcXCH3ZoGmALVFye1NllTHMBddvOtCkJ5c7CLLHErfNwInBNYSrF9OOm23DLop7Vw==
 
 react-select@^5.1.0:
   version "5.1.0"
