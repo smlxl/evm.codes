@@ -32,7 +32,6 @@ const ContractViewerInner = () => {
     selectedDeployment,
     setSelectedDeployment,
     loadDeployment,
-    reqCount,
   } = useDeployments()
 
   const [status, setStatus] = useState('')
