@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
 import { isValidAddress } from '@ethereumjs/util'
-import { LinearProgress, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
 import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
 import { useRouter } from 'next/router'
 import NoSSR from 'react-no-ssr'
 
@@ -172,11 +171,12 @@ const ContractViewerInner = () => {
         {/* bottom panel: console & metadata information panel */}
         <Header className="py-2 px-4 text-sm flex flex-col gap-2">
           <Box className="whitespace-nowrap">
-            {reqCount > 0 && <CircularProgress />} {status}
+            {/* {reqCount > 0 && <CircularProgress />} {status} */}
+            {status}
           </Box>
-          <LinearProgress
+          {/* <LinearProgress
             sx={{ visibility: reqCount > 0 ? 'visible' : 'hidden' }}
-          />
+          /> */}
           {/* {error && <p>Error! {error}</p>} */}
           {/* <p>Data: {data}</p> */}
 
