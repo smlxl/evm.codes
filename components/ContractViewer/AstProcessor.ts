@@ -12,9 +12,6 @@ export type ContractArtifact<T = AstTypes.BaseASTNode> = {
 
 // this represents a single contract/interface/library definition block
 export class SourceDefinition {
-  // name: string = ''
-  // filepath: string = ''
-  // c3 inheritance / ast node ref?
   contracts: ContractArtifact<AstTypes.ContractDefinition>[] = []
   functions: ContractArtifact<AstTypes.FunctionDefinition>[] = []
   storage: ContractArtifact<AstTypes.StateVariableDeclaration>[] = [] // TODO: rename as variables? (to include floating immutables, constants)
@@ -25,7 +22,7 @@ export class SourceDefinition {
 }
 
 export function buildDefinitionTree(ast: ParseResult): SourceDefinition {
-  let id = 1
+  let id = 0
   const defTree = new SourceDefinition()
   let currentContract: AstTypes.ContractDefinition | undefined
 

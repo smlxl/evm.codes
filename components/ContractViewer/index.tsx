@@ -39,23 +39,15 @@ const ContractViewerInner = () => {
   const [status, setStatus] = useState('')
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
-  // const onCompilationResult = (event: MessageEvent) => {
-  //   // TODO:
-  //   console.log(event.data)
-  // }
-
   const tryLoadContract = async (address: string, context?: DeploymentInfo) => {
     setStatus('loading...')
 
     return loadDeployment(address, context)
-      .then((/*deployment: DeploymentInfo*/) => {
-        setStatus(
-          'loaded', //, compiling with ' + deployment.etherscanInfo.CompilerVersion,
-        )
+      .then(() => {
+        setStatus('loaded')
       })
       .catch((err: any) => {
         setStatus('failed to load contract\n' + err)
-        // throw err
       })
   }
 
@@ -72,16 +64,16 @@ const ContractViewerInner = () => {
     router.replace({ query })
   }
 
-  // TODO: should this be useCallback?
   const tryLoadAddress = (address: string, invalidateRoute: boolean) => {
     if (!isValidAddress(address)) {
-      setStatus('invalid address format')
+      if (address) {
+        setStatus('invalid address format: ' + address)
+      }
       return
     }
 
     address = address.toLowerCase()
     if (deployments[address]) {
-      // setStatus('already loaded')
       return
     }
 
@@ -91,7 +83,6 @@ const ContractViewerInner = () => {
       }
     })
   }
-  // useCallback(^, [router, tryLoadContract, updateRoute])
 
   // load contract from url once router is ready
   useEffect(() => {
@@ -103,14 +94,14 @@ const ContractViewerInner = () => {
     for (const addr of addresses) {
       tryLoadAddress(addr, false)
     }
-  }, [router.isReady])
+  }, [router.isReady, router.query.address, tryLoadAddress])
 
   // TODO: fix router to support user-added implementations too
   useEffect(() => {
     if (router.isReady) {
       updateRoute()
     }
-  }, [router.isReady, deployments])
+  }, [router.isReady])
 
   return (
     // don't ask me why NoSSR is necessary
@@ -146,11 +137,9 @@ const ContractViewerInner = () => {
 
                 const addr = contract.address
                 if (addr != selectedDeployment?.address) {
-                  // state.selectedAddress = contract.codeAddress
                   setSelectedDeployment(contract)
                 }
 
-                // console.log('item select', artifact)
                 if (artifact?.node?.loc) {
                   setCodePeekLocation(artifact.node.loc.start)
                 }

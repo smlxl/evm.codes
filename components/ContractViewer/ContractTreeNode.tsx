@@ -82,7 +82,7 @@ const TreeItemBasic = ({
       nodeId={nodeId}
       label={<TreeItemLabel title={title} subtitle={subtitle} />}
       className="border-l border-b dark:border-gray-600"
-      onClick={props.onSelect} // IT'S DUMB I KNOW
+      onClick={props.onSelect} // IT'S DUMB I KNOW (instead of doing onClick=onSelect should probably replace the treeview component with a more friendly version of it...)
       {...props}
     >
       {children}
@@ -225,7 +225,6 @@ export const ParamItem = ({
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [paramData, updateParamData] = reducer
   const val = getReducerState(paramData, path, '')
 
@@ -257,7 +256,6 @@ export const ParamItem = ({
       error={error}
       sx={{ marginTop: '4px', marginBottom: '4px', marginRight: '16px' }}
       onChange={(e: any) => {
-        // console.log(`updating ${path)}`)
         if (!output) {
           updateParamData({ [path]: e.target.value })
         }
@@ -357,7 +355,6 @@ export const FunctionAbiItem = ({
     true,
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [funcData, updateFuncData] = reducer
   const [status, setStatus] = useState('')
 
@@ -516,7 +513,7 @@ type StorageLayoutItemProps = {
     label: string
     contract: string
     offset: number
-    slot: any // string | number
+    slot: any
     type: string
   }
   types: {
