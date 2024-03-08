@@ -121,7 +121,7 @@ const AboutPage = () => {
           <RelativeLink to="#39" title="CODECOPY" />. The code of one contract
           can be read by other contracts, with instructions{' '}
           <RelativeLink to="#3B" title="EXTCODESIZE" /> and{' '}
-          <RelativeLink to="#3B" title="EXTCODECOPY" />.
+          <RelativeLink to="#3C" title="EXTCODECOPY" />.
         </p>
       </SectionWrapper>
 
