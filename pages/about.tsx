@@ -85,15 +85,14 @@ const AboutPage = () => {
           and executes each instruction sequentially, except for{' '}
           <RelativeLink to="#56" title="JUMP" /> and{' '}
           <RelativeLink to="#57" title="JUMPI" /> instructions. If an
-          instruction cannot be executed (e.g. when there is insufficient gas 
-          or not enough values on the stack), the execution reverts.
-          Transaction reversion can also be triggered with the{' '}
-          <RelativeLink to="#FD" title="REVERT" /> opcode (which refunds the 
-          unused gas fees of its call context, in contrast to all of the gas 
-          being consumed in all the other cases of reversion).
-          In the event of a reverted transaction, any state changes dictated by
-          the transaction instructions are returned to their state before the
-          transaction.
+          instruction cannot be executed (e.g. when there is insufficient gas or
+          not enough values on the stack), the execution reverts. Transaction
+          reversion can also be triggered with the{' '}
+          <RelativeLink to="#FD" title="REVERT" /> opcode (which refunds the
+          unused gas fees of its call context, in contrast to all of the gas
+          being consumed in all the other cases of reversion). In the event of a
+          reverted transaction, any state changes dictated by the transaction
+          instructions are returned to their state before the transaction.
         </p>
       </SectionWrapper>
 
