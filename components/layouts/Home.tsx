@@ -9,7 +9,6 @@ import Nav from './Nav'
 const HomeLayout: NextPage = ({ children }) => {
   return (
     <>
-      <html lang="en"></html>
       <Head>
         <title>
           EVM Codes - An Ethereum Virtual Machine Opcodes Interactive Reference
