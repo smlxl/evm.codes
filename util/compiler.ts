@@ -4,7 +4,7 @@ import { IInstruction, IReferenceItem } from 'types'
 // Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
 // export const compilerSemVer = 'v0.8.19'
 // export const compilerVersion = `soljson-${compilerSemVer}+commit.7dd6d404`
-export const compilerVersion = `soljson-v0.8.19+commit.7dd6d404+commit.7dd6d404`
+export const compilerVersion = `soljson-v0.8.21+commit.d9974bed`
 
 /**
  * Gets target EVM version from a hardfork name
