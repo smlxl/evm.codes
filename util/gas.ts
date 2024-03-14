@@ -1,5 +1,4 @@
-import { Common } from '@ethereumjs/common'
-import { HardforkConfig } from '@ethereumjs/common/src/types'
+import { Common, HardforkTransitionConfig } from '@ethereumjs/common'
 import { setLengthRight, BN } from 'ethereumjs-util'
 import { IReferenceItem } from 'types'
 
@@ -673,13 +672,13 @@ export const parseGasPrices = (common: Common, contents: string) => {
  * @param selectedFork The Hardfork selected by the user
  */
 export const findMatchingForkName = (
-  forks: HardforkConfig[],
+  forks: HardforkTransitionConfig[],
   forkNames: string[],
-  selectedFork: HardforkConfig | undefined,
+  selectedFork: HardforkTransitionConfig | undefined,
 ) => {
   // get all known forks mapped to a block number
   const knownForksWithBlocks = forks.reduce(
-    (res: { [forkName: string]: number }, fork: HardforkConfig) => {
+    (res: { [forkName: string]: number }, fork: HardforkTransitionConfig) => {
       if (fork.block) {
         res[fork.name] = fork.block
       }

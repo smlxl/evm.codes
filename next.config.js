@@ -3,6 +3,9 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withPlausibleProxy } = require('next-plausible')
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const nodeModuleReplacement = require('./webpack/nodeModuleReplacement')
+
 module.exports = withPlausibleProxy()({
   reactStrictMode: true,
   serverRuntimeConfig: {
@@ -21,6 +24,19 @@ module.exports = withPlausibleProxy()({
       ],
     })
 
+    // NOTE: Needed to clear the import assert from rustbn used by ethereumjs
+    config.module.rules.push({
+      test: /\.js$/,
+      include: [dir],
+      use: [
+        {
+          loader: './webpack/importAssertTransformer.js',
+        },
+      ],
+    })
+    // NOTE: Needed to transform various node imports from ethereumjs
+    config.plugins.push(nodeModuleReplacement.default)
+
     config.resolve.fallback = {
       fs: false,
       stream: false,
@@ -29,7 +45,10 @@ module.exports = withPlausibleProxy()({
       process: require.resolve('process/browser'),
       assert: require.resolve('assert/'),
       events: require.resolve('events/'),
+      buffer: require.resolve('buffer/'),
     }
+    // NOTE: Needed because rustbn used by ethereumjs is having a top level await
+    config.experiments.topLevelAwait = true
 
     return config
   },
