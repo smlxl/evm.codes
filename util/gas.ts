@@ -629,6 +629,10 @@ export const calculatePrecompiledDynamicFee = (
       result.imul(new BN(inputs.rounds))
       break
     }
+    case '0x0a': {
+      result = new BN(Number(common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice')))
+      break
+    }
     default:
       return 'Missing precompiled'
   }

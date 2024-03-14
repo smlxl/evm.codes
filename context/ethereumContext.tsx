@@ -49,7 +49,7 @@ const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
 const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
-const postMergeHardforkNames: Array<string> = ['merge', 'shanghai']
+const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
