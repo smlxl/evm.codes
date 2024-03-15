@@ -8,15 +8,18 @@ const NO_GROUP = 'none'
 
 const Results = () => {
   const groups = useMatches()
-  const flattened = useMemo(
-    () =>
-      groups.reduce((acc: any, curr: any) => {
+
+  const flattened = useMemo(() => {
+    if (groups && Array.isArray(groups)) {
+      return groups.reduce((acc: any, curr: any) => {
         acc.push(curr.name)
         acc.push(...curr.actions)
         return acc
-      }, []),
-    [groups],
-  )
+      }, [])
+    } else {
+      return []
+    }
+  }, [groups])
 
   return (
     <KBarResults

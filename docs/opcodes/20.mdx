@@ -3,7 +3,7 @@ fork: Frontier
 group: SHA3
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -16,19 +16,20 @@ group: SHA3
 
 ## Example
 
-| Memory |
-|-------:|
-| `0xFFFFFFFF`|
+|       Memory |
+| -----------: |
+| `0xFFFFFFFF` |
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `0` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
-| `2` | `4` | |
+|  \* | Input |                                                               Output |
+| --: | ----: | -------------------------------------------------------------------: |
+| `1` |   `0` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
+| `2` |   `4` |                                                                      |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='sPutkrequired%20valugin%20memoryj32%200xFFFFFFFFffffz0wMSTOREwwsCallkopcodez4z0wSHA3'~0000000zj1%20w%5Cns%2F%2F%20k%20thgjwPUSHge%20f~~%01fgjkswz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

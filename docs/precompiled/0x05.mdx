@@ -4,32 +4,32 @@ fork: Byzantium
 
 ## Inputs
 
-| Byte range | Name | Description |
-|-----------:|-----:|------------:|
-| `[0; 31]` (32 bytes) | Bsize | Byte size of B |
-| `[32; 63]` (32 bytes) | Esize | Byte size of E |
-| `[64; 95]` (32 bytes) | Msize | Byte size of M |
-| `[96; 96 + Bsize[` | B | Base as unsigned integer |
-| `[96 + Bsize; 96 + Bsize + Esize[` | E | Exponent as unsigned integer, if zero, then `B ** E` will be one |
-| `[96 + Bsize + Esize; 96 + Bsize + Esize + Msize[` | M | Modulo as unsigned integer, if zero, then returns zero |
+|                                         Byte range |  Name |                                                      Description |
+| -------------------------------------------------: | ----: | ---------------------------------------------------------------: |
+|                               `[0; 31]` (32 bytes) | Bsize |                                                   Byte size of B |
+|                              `[32; 63]` (32 bytes) | Esize |                                                   Byte size of E |
+|                              `[64; 95]` (32 bytes) | Msize |                                                   Byte size of M |
+|                                 `[96; 96 + Bsize[` |     B |                                         Base as unsigned integer |
+|                 `[96 + Bsize; 96 + Bsize + Esize[` |     E | Exponent as unsigned integer, if zero, then `B ** E` will be one |
+| `[96 + Bsize + Esize; 96 + Bsize + Esize + Msize[` |     M |           Modulo as unsigned integer, if zero, then returns zero |
 
 ## Output
 
-| Byte range | Name | Description |
-|-----------:|-----:|------------:|
+|   Byte range |  Name |                                                   Description |
+| -----------: | ----: | ------------------------------------------------------------: |
 | `[0; mSize[` | value | Result of the computation, with the same number of bytes as M |
 
- If not enough gas was given, then there is no return data, indicating a precompile contract error.
+If not enough gas was given, then there is no return data, indicating a precompile contract error.
 
 ## Example
 
 | Input | Output |
-|------:|-------:|
-| `1` | `8` |
-| `1` | |
-| `1` | |
-| `8` | |
-| `9` | |
-| `10` | |
+| ----: | -----: |
+|   `1` |    `8` |
+|   `1` |        |
+|   `1` |        |
+|   `8` |        |
+|   `9` |        |
+|  `10` |        |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='jFirsNplacebparameters%20in%20memoryWBsZ_WEsZX2_WMsZX4_Y32G08090A7777JwB%2C%20E%20and%20M~X6_qqjDobcallWretSZX9FwretVX63QSZ0QV5waddressY4GFFFFFFFFwgasqSTATICCALLqqjPutbresulNalonKonbstackqPOP~X80qMLOAD'~Y1%20w%20jvJJJ0q%5Cnj%2F%2F%20b%20thK_0qMSTOREZize~YqPUSHX0xW~1wVOffset~QwargsNt%20Ke%20J00G%20X7vv%017GJKNQVWXYZ_bjqvw~_).

@@ -10,38 +10,38 @@ The point at infinity is encoded with both field `x` and `y` at `0`.
 
 The input must always be a multiple of 6 32-byte values. 0 inputs is valid and returns 1. One set of inputs is defined as follows:
 
-| Byte range | Name |
-|-----------:|-----:|
-| `[0; 31]` (32 bytes) | x1 |
-| `[32; 63]` (32 bytes) | y1 |
-| `[64; 95]` (32 bytes) | x2 |
-| `[96; 127]` (32 bytes) | y2 |
-| `[128; 159]` (32 bytes) | x3 |
-| `[160; 191]` (32 bytes) | y3 |
+|              Byte range | Name |
+| ----------------------: | ---: |
+|    `[0; 31]` (32 bytes) |   x1 |
+|   `[32; 63]` (32 bytes) |   y1 |
+|   `[64; 95]` (32 bytes) |   x2 |
+|  `[96; 127]` (32 bytes) |   y2 |
+| `[128; 159]` (32 bytes) |   x3 |
+| `[160; 191]` (32 bytes) |   y3 |
 
 ## Output
 
-| Byte range | Name | Description |
-|-----------:|-----:|------------:|
+|           Byte range |    Name |                                 Description |
+| -------------------: | ------: | ------------------------------------------: |
 | `[0; 31]` (32 bytes) | success | 1 if the pairing was a success, 0 otherwise |
 
 If the input is not valid, all gas provided is consumed and there is no return data, indicating a precompile contract error. Also, if not enough gas was given, there is no return data.
 
 ## Example
 
-| Input | Output |
-|------:|-------:|
-| `0x2cf44499d5d27bb186308b7af7af02ac5bc9eeb6a3d147c186b21fb1b76e18da` | `1` |
-| `0x2c0f001f52110ccfe69108924926e45f0b0c868df0e7bde1fe16d3242dc715f6` | |
-| `0x1fb19bb476f6b9e44e2a32234da8212f61cd63919354bc06aef31e3cfaff3ebc` | |
-| `0x22606845ff186793914e03e21df544c34ffe2f2f3504de8a79d9159eca2d98d9` | |
-| `0x2bd368e28381e8eccb5fa81fc26cf3f048eea9abfdd85d7ed3ab3698d63e4f90` | |
-| `0x2fe02e47887507adf0ff1743cbac6ba291e66f59be6bd763950bb16041a0a85e` | |
-| `0x0000000000000000000000000000000000000000000000000000000000000001` | |
-| `0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd45` | |
-| `0x1971ff0471b09fa93caaf13cbf443c1aede09cc4328f5a62aad45f40ec133eb4` | |
-| `0x091058a3141822985733cbdddfed0fd8d6c104e9e9eff40bf5abfef9ab163bc7` | |
-| `0x2a23af9a5ce2ba2796c1f4e453a370eb0af8c212d9dc9acd8fc02c2e907baea2` | |
-| `0x23a8eb0b0996252cb548a4487da97b02422ebc0e834613f954de6c7e0afdc1fc` | |
+|                                                                Input | Output |
+| -------------------------------------------------------------------: | -----: |
+| `0x2cf44499d5d27bb186308b7af7af02ac5bc9eeb6a3d147c186b21fb1b76e18da` |    `1` |
+| `0x2c0f001f52110ccfe69108924926e45f0b0c868df0e7bde1fe16d3242dc715f6` |        |
+| `0x1fb19bb476f6b9e44e2a32234da8212f61cd63919354bc06aef31e3cfaff3ebc` |        |
+| `0x22606845ff186793914e03e21df544c34ffe2f2f3504de8a79d9159eca2d98d9` |        |
+| `0x2bd368e28381e8eccb5fa81fc26cf3f048eea9abfdd85d7ed3ab3698d63e4f90` |        |
+| `0x2fe02e47887507adf0ff1743cbac6ba291e66f59be6bd763950bb16041a0a85e` |        |
+| `0x0000000000000000000000000000000000000000000000000000000000000001` |        |
+| `0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd45` |        |
+| `0x1971ff0471b09fa93caaf13cbf443c1aede09cc4328f5a62aad45f40ec133eb4` |        |
+| `0x091058a3141822985733cbdddfed0fd8d6c104e9e9eff40bf5abfef9ab163bc7` |        |
+| `0x2a23af9a5ce2ba2796c1f4e453a370eb0af8c212d9dc9acd8fc02c2e907baea2` |        |
+| `0x23a8eb0b0996252cb548a4487da97b02422ebc0e834613f954de6c7e0afdc1fc` |        |
 
-[Reproduce in playground](/playground?unit=Wei&codeType=Solidity&code='O%20SPDX-License-Identifier%3A%20MITRpragma%20soliditB%5E0.8.9%3BRRcontracAPair*gExpampl!(Rkfunction%20run%7BNpublic%20returnK%7Bu*tN(~u*t256%5B12%5D%20memorBU%3BWJxj0w2cf44499d5d27bbF6308b7af7af02ac5bc9eeb6a3d147cF6b2Hb1b76eFdaQWJyj1w2c0f00H52110ccfe6C08924926e45f0b0c868df0e7bdeHe16d3242dc715f6QW2%7Dx_1j2wHb19bb476f6b9e44e2a32234da8212f61cd63C9354bc06aef31e3cfaff3ebcVx_0j3w22606845ffF6793C4e03e21df544c34ffe2f2f3504de8a79dC59eca2d98d9Vy_1j4w2bd368e28381e8eccb5fa8Hc26cf3f048eea9abfdd85d7ed3ab3698d63e4f90Vy_0j5w2fe02e47887507adf0ff1743cbac6ba2Ce66f59be6bd763950bb16041a0a85eqJxj6wZZZZZZZZZ1qJyj7w30644e72e131a029b85045b68F1585d97816aC6871ca8d3c208c16d87cfd45Vx_1j8w197Hf0471b09fa93caaf13cbf443c1aede09cc4328f5a62aad45f40ec133eb4Vx_0j9w0C058a314F22985733cbdddfed0fd8d6c104e9e9eff40bf5abfef9ab163bc7Vy_1j10w2a23af9a5ce2ba2796cH4e453a370eb0af8c212d9dc9acd8fc02c2e907baea2Vy_0j11w23a8eb0b0996252cb548a4487da97b02422ebc0e834613f954de6c7e0afdcHcQ~OmultiplieKth!pair*gKand%20storeKa%201%20*%20th!firsAelemenAof%20U~assemblB(~kif%20iszero%7B~kkcall%7Bnot%7B0%7DY0x08Y0YUY0x0F0YUY0x20%7D~kN(~kkrevert%7B0Y0%7D~k)~)~return%20U%5B0%5D%3BRk)R)'~Rkkw%5D%20%3D%20u*t256%7B0xqQ%5CtWk%20%20%20%20j~U%5BZ0000000Y%2C%20W~O%7BGVq2%7DU*putR%5CnQ%7D%3BO%2F%2FN%7D%20Ks%20J1%7DH1fF18C91By%20At%20*in!e%20%01!*ABCFHJKNOQRUVWYZjkqw~_)
+[Reproduce in playground](</playground?unit=Wei&codeType=Solidity&code='O%20SPDX-License-Identifier%3A%20MITRpragma%20soliditB%5E0.8.9%3BRRcontracAPair*gExpampl!(Rkfunction%20run%7BNpublic%20returnK%7Bu*tN(~u*t256%5B12%5D%20memorBU%3BWJxj0w2cf44499d5d27bbF6308b7af7af02ac5bc9eeb6a3d147cF6b2Hb1b76eFdaQWJyj1w2c0f00H52110ccfe6C08924926e45f0b0c868df0e7bdeHe16d3242dc715f6QW2%7Dx_1j2wHb19bb476f6b9e44e2a32234da8212f61cd63C9354bc06aef31e3cfaff3ebcVx_0j3w22606845ffF6793C4e03e21df544c34ffe2f2f3504de8a79dC59eca2d98d9Vy_1j4w2bd368e28381e8eccb5fa8Hc26cf3f048eea9abfdd85d7ed3ab3698d63e4f90Vy_0j5w2fe02e47887507adf0ff1743cbac6ba2Ce66f59be6bd763950bb16041a0a85eqJxj6wZZZZZZZZZ1qJyj7w30644e72e131a029b85045b68F1585d97816aC6871ca8d3c208c16d87cfd45Vx_1j8w197Hf0471b09fa93caaf13cbf443c1aede09cc4328f5a62aad45f40ec133eb4Vx_0j9w0C058a314F22985733cbdddfed0fd8d6c104e9e9eff40bf5abfef9ab163bc7Vy_1j10w2a23af9a5ce2ba2796cH4e453a370eb0af8c212d9dc9acd8fc02c2e907baea2Vy_0j11w23a8eb0b0996252cb548a4487da97b02422ebc0e834613f954de6c7e0afdcHcQ~OmultiplieKth!pair*gKand%20storeKa%201%20*%20th!firsAelemenAof%20U~assemblB(~kif%20iszero%7B~kkcall%7Bnot%7B0%7DY0x08Y0YUY0x0F0YUY0x20%7D~kN(~kkrevert%7B0Y0%7D~k)~)~return%20U%5B0%5D%3BRk)R)'~Rkkw%5D%20%3D%20u*t256%7B0xqQ%5CtWk%20%20%20%20j~U%5BZ0000000Y%2C%20W~O%7BGVq2%7DU*putR%5CnQ%7D%3BO%2F%2FN%7D%20Ks%20J1%7DH1fF18C91By%20At%20*in!e%20%01!*ABCFHJKNOQRUVWYZjkqw~_>)

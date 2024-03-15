@@ -1,0 +1,90 @@
+{
+  "type0": {
+    "type": "T0",
+    "name": "User Transactions (Pre-EIP-2718)",
+    "description": "Represent pre-EIP-2718 transactions",
+    "rollups": {
+      "optimism": {
+        "details": "Transactions as per Optimism specifications for pre-EIP-2718."
+      },
+      "base": {
+        "details": "Transactions as per Base specifications for pre-EIP-2718."
+      },
+      "arbitrumOne": {
+        "details": "Transactions as per Arbitrum One specifications for pre-EIP-2718."
+      },
+      "linea": {
+        "details": "Transactions as per Linea specifications for pre-EIP-2718."
+      },
+      "polygonZkEVM": {
+        "details": "Transactions as per Polygon zkEVM specifications for pre-EIP-2718."
+      },
+      "scroll": {
+        "details": "Transactions as per Scroll specifications for pre-EIP-2718."
+      },
+      "taiko": {
+        "details": "Transactions as per Taiko specifications for pre-EIP-2718."
+      }
+    }
+  },
+  "type1": {
+    "type": "T1",
+    "name": "User Transactions (Post EIP-2718)",
+    "description": "Represent legacy transactions post EIP-2718",
+    "rollups": {
+      "optimism": {
+        "details": "Transactions as per Optimism specifications for post EIP-2718."
+      },
+      "base": {
+        "details": "Transactions as per Base specifications for post EIP-2718."
+      }
+    }
+  },
+  "type2": {
+    "type": "T2",
+    "name": "User Transactions (EIP-1559)",
+    "description": "Represent EIP-1559 transactions",
+    "rollups": {
+      "optimism": {
+        "details": "Transactions as per Optimism specifications for EIP-1559."
+      },
+      "base": {
+        "details": "Transactions as per Base specifications for EIP-1559."
+      }
+    }
+  },
+
+  "type100": {
+    "type": "T100",
+    "name": "System (Bridge) Transaction",
+    "description": "A deposit of ETH from L1 to L2 via the Arbitrum bridge",
+    "rollups": {
+      "arbitrumOne": {
+        "details": "Deposit transaction from L1 to L2 in Arbitrum One."
+      }
+    }
+  },
+  "type101": {
+    "type": "T101",
+    "name": "System (Bridge) Transaction",
+    "description": "An L1 user can use to call an L2 contract via the bridge",
+    "rollups": {
+      "arbitrumOne": {
+        "details": "Call L2 contract from L1 via the bridge in Arbitrum One."
+      }
+    }
+  },
+  "type126": {
+    "type": "T126",
+    "name": "System Transactions",
+    "description": "Transactions importing L1 data into rollups or User-deposited transactions",
+    "rollups": {
+      "optimism": {
+        "details": "System transactions specific to the Optimism rollup."
+      },
+      "base": {
+        "details": "System transactions specific to the Base rollup."
+      }
+    }
+  }
+}

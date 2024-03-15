@@ -258,13 +258,6 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (solcWorkerRef && solcWorkerRef.current) {
-      // @ts-ignore change the worker message, when value and args changed.
-      solcWorkerRef.current?.onmessage = handleWorkerMessage
-    }
-  }, [solcWorkerRef, handleWorkerMessage])
-
-  useEffect(() => {
     if (deployedContractAddress) {
       log(`Contract deployed at address: ${deployedContractAddress}`)
     }

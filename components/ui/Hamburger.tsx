@@ -24,20 +24,20 @@ export const Hamburger: React.FC<Props> = ({ isActive, onClick }) => (
 
     <style jsx>{`
       .bar {
-        width: 20px;
-        height: 2px;
+        width: 20px
+        height: 2px
       }
 
       .active .bar:nth-child(2) {
-        opacity: 0;
+        opacity: 0
       }
 
       .active .bar:nth-child(1) {
-        transform: translateY(6px) rotate(45deg);
+        transform: translateY(6px) rotate(45deg)
       }
 
       .active .bar:nth-child(3) {
-        transform: translateY(-6px) rotate(-45deg);
+        transform: translateY(-6px) rotate(-45deg)
       }
     `}</style>
   </button>
