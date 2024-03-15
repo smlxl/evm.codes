@@ -755,9 +755,27 @@
     "description": "Save word to transient storage"
   },
   "5e": {
-    "input": "",
+    "input": "destOffset | offset | size",
     "output": "",
-    "description": ""
+    "description": "Copy memory areas",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: destOffset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "5f": {
     "input": "",
