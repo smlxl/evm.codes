@@ -13,7 +13,7 @@ import {
 } from '@ethereumjs/evm'
 import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
-import { Address, Account } from '@ethereumjs/util'
+import { Address, Account, bytesToHex } from '@ethereumjs/util'
 import { VM } from '@ethereumjs/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
@@ -24,6 +24,7 @@ import {
   IStorage,
   IExecutionState,
   IChain,
+  ITransientStorage,
 } from 'types'
 
 import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
@@ -41,6 +42,7 @@ let common: Common
 let currentOpcodes: OpcodeList | undefined
 
 const storageMemory = new Map()
+const transientStorageMemory = new Map<string, Map<string, string>>()
 const privateKey = Buffer.from(
   'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
   'hex',
@@ -87,9 +89,10 @@ type ContextProps = {
   resetExecution: () => void
 }
 
-const initialExecutionState = {
+const initialExecutionState: IExecutionState = {
   stack: [],
   storage: [],
+  transientStorage: [],
   memory: undefined,
   programCounter: undefined,
   totalGas: undefined,
@@ -542,7 +545,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setPrecompiled(precompiled)
   }
 
-  function traceMethodCalls(obj: any) {
+  function traceStorageMethodCalls(obj: any) {
     const handler = {
       get(target: any, propKey: any) {
         const origMethod = target[propKey]
@@ -561,6 +564,39 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     return new Proxy(obj, handler)
   }
 
+  function traceTransientStorageMethodCalls(obj: any) {
+    const handler = {
+      get(target: any, propKey: any) {
+        const origMethod = target[propKey]
+        return (...args: any[]) => {
+          const result = origMethod.apply(target, args)
+          if (propKey == 'put') {
+            const [rawAddress, rawKey, rawValue] = args as [
+              Address,
+              Uint8Array,
+              Uint8Array,
+            ]
+            const address = rawAddress.toString()
+            const key = bytesToHex(rawKey)
+            const value = bytesToHex(rawValue)
+            let addressTransientStorage = transientStorageMemory.get(address)
+            // Add the address to the transient storage
+            if (addressTransientStorage === undefined) {
+              transientStorageMemory.set(address, new Map<string, string>())
+              addressTransientStorage = transientStorageMemory.get(
+                address,
+              ) as Map<string, string>
+            }
+
+            addressTransientStorage.set(key, value)
+          }
+          return result
+        }
+      },
+    }
+    return new Proxy(obj, handler)
+  }
+
   // In this function we create a proxy EEI object that will intercept
   // putContractStorage and clearContractStorage and route them to our
   // implementations at _putContractStorage and _clearContractStorage
@@ -569,14 +605,20 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _setupStateManager = () => {
     const evm = vm.evm
     if (evm instanceof EVM) {
-      const proxyStateManager = traceMethodCalls(evm.stateManager)
-      vm.evm.stateManager.putContractStorage =
-        proxyStateManager.putContractStorage
-      vm.evm.stateManager.clearContractStorage =
+      // Storage handler
+      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+      evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
+      evm.stateManager.clearContractStorage =
         proxyStateManager.clearContractStorage
+      // Transient storage handler
+      const transientStorageMethodProxy = traceTransientStorageMethodCalls(
+        evm.transientStorage,
+      )
+      evm.transientStorage.put = transientStorageMethodProxy.put
     }
 
     storageMemory.clear()
+    transientStorageMemory.clear()
   }
 
   const _setupAccount = () => {
@@ -714,6 +756,17 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       })
     })
 
+    const transientStorage: ITransientStorage[] = []
+    for (const [address, entries] of transientStorageMemory.entries()) {
+      for (const [key, value] of entries.entries()) {
+        transientStorage.push({
+          address,
+          key,
+          value,
+        })
+      }
+    }
+
     setExecutionState({
       programCounter: pc,
       stack: stack.map((value) => value.toString(16)).reverse(),
@@ -722,6 +775,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         0,
         Number(memoryWordCount) * 64,
       ),
+      transientStorage,
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
       returnValue: returnValue

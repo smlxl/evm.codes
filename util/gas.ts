@@ -647,7 +647,11 @@ export const calculatePrecompiledDynamicFee = (
       break
     }
     case '0x0a': {
-      result = new BN(Number(common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice')))
+      result = new BN(
+        Number(
+          common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice'),
+        ),
+      )
       break
     }
     default:
