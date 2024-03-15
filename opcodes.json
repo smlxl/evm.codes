@@ -520,14 +520,14 @@
     "description": "Get the base fee"
   },
   "49": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "index",
+    "output": "blobVersionedHashesAtIndex",
+    "description": "Get versioned hashes"
   },
   "4a": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "blobBaseFee",
+    "description": "Returns the value of the blob base-fee of the current block"
   },
   "4b": {
     "input": "",
@@ -745,19 +745,41 @@
     "description": "Mark a valid destination for jumps"
   },
   "5c": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "key",
+    "output": "value",
+    "description": "Load word from transient storage"
   },
   "5d": {
-    "input": "",
+    "input": "key | value",
     "output": "",
-    "description": ""
+    "description": "Save word to transient storage"
   },
   "5e": {
-    "input": "",
+    "input": "destOffset | offset | size",
     "output": "",
-    "description": ""
+    "description": "Copy memory areas",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "destOffset": {
+            "type": "number",
+            "label": "Input: destination offset"
+          },
+          "offset": {
+            "type": "number",
+            "label": "Input: input offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "5f": {
     "input": "",
@@ -2058,7 +2080,7 @@
   "ff": {
     "input": "address",
     "output": "",
-    "description": "Halt execution and register account for later deletion",
+    "description": "Halt execution and register account for later deletion or send all Ether to address (post-Cancun)",
     "dynamicFee": {
       "homestead": {},
       "tangerineWhistle": {

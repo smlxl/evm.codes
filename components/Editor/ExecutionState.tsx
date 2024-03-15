@@ -45,7 +45,8 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
 
 const ExecutionState = () => {
   const { executionState } = useContext(EthereumContext)
-  const { memory, stack, storage, returnValue } = executionState
+  const { memory, stack, storage, returnValue, transientStorage } =
+    executionState
 
   return (
     <div>
@@ -66,6 +67,26 @@ const ExecutionState = () => {
                 <div key={`storage-${index}`}>
                   <ExecutionStateRow label="Contract" value={address} />
                   <ExecutionStateRow label="Slot" value={slot} />
+                  <ExecutionStateRow label="Value" value={value} />
+                </div>
+              ))}
+            </dl>
+          </div>
+        </dd>
+
+        <dt className="mb-1 text-gray-500 dark:text-gray-400 font-medium uppercase">
+          Transient storage
+        </dt>
+        <dd className="mb-2">
+          <div
+            className="inline-block border border-gray-600 dark:border-gray-700 px-2 py-1 mb-1 w-full"
+            style={{ minHeight: 26 }}
+          >
+            <dl>
+              {transientStorage.map(({ address, key, value }, index) => (
+                <div key={`transient-storage-${index}`}>
+                  <ExecutionStateRow label="Contract" value={address} />
+                  <ExecutionStateRow label="Key" value={key} />
                   <ExecutionStateRow label="Value" value={value} />
                 </div>
               ))}

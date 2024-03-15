@@ -406,6 +406,23 @@ export const calculateOpcodeDynamicFee = (
       }
       break
     }
+    case '5e': {
+      const destOffset = new BN(inputs.destOffset)
+      const offset = new BN(inputs.offset)
+      const size = new BN(inputs.size)
+      const currentMemorySize = new BN(inputs.memorySize)
+      const maxOffset = BN.max(offset, destOffset)
+
+      const wordsCopied = toWordSize(size).mul(new BN(3))
+      const memoryExpansionCost = memoryExtensionCost(
+        new BN(maxOffset),
+        new BN(size),
+        new BN(currentMemorySize),
+        common,
+      )
+      result = wordsCopied.add(memoryExpansionCost)
+      break
+    }
     case 'a0':
     case 'a1':
     case 'a2':
@@ -627,6 +644,14 @@ export const calculatePrecompiledDynamicFee = (
     case '0x09': {
       result = new BN(Number(common.param('gasPrices', 'blake2Round')))
       result.imul(new BN(inputs.rounds))
+      break
+    }
+    case '0x0a': {
+      result = new BN(
+        Number(
+          common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice'),
+        ),
+      )
       break
     }
     default:
