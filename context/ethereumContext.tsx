@@ -303,6 +303,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       contractAddress,
       Buffer.from(byteCode, 'hex'),
     )
+    transientStorageMemory.clear()
     startTransaction(await transactionData(data, value, contractAddress))
   }
 
