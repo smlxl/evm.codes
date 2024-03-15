@@ -520,9 +520,9 @@
     "description": "Get the base fee"
   },
   "49": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "index",
+    "output": "blobVersionedHashesAtIndex",
+    "description": "Get versioned hashes"
   },
   "4a": {
     "input": "",
