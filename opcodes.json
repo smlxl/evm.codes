@@ -526,8 +526,8 @@
   },
   "4a": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "blobBaseFee",
+    "description": "Returns the value of the blob base-fee of the current block"
   },
   "4b": {
     "input": "",
