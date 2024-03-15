@@ -761,9 +761,13 @@
     "dynamicFee": {
       "cancun": {
         "inputs": {
+          "destOffset": {
+            "type": "number",
+            "label": "Input: destination offset"
+          },
           "offset": {
             "type": "number",
-            "label": "Input: destOffset"
+            "label": "Input: input offset"
           },
           "size": {
             "type": "number",

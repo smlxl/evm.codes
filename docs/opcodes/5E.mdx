@@ -31,3 +31,10 @@ If `length > 0` and `(src + length or dst + length)` is beyond the current memor
 | Memory after |
 |---------------------:|
 | `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` |
+
+## Gas
+    words_copied = (size + 31) // 32
+    g_verylow    = 3
+    g_copy       = 3 * words_copied + memory_expansion_cost
+    gas_cost     = g_verylow + g_copy
+
