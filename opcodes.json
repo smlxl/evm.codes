@@ -745,14 +745,14 @@
     "description": "Mark a valid destination for jumps"
   },
   "5c": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "key",
+    "output": "value",
+    "description": "Load word from transient storage"
   },
   "5d": {
-    "input": "",
+    "input": "key | value",
     "output": "",
-    "description": ""
+    "description": "Save word to transient storage"
   },
   "5e": {
     "input": "",
