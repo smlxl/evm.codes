@@ -6,8 +6,8 @@ group: System operations
 *Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
-
-The current account is registered to be destroyed, and will be at the end of the current transaction. The transfer of the current balance to the given account cannot fail. In particular, the destination account code (if any) is not executed, or, if the account does not exist, the balance is still added to the given address.
+Post-Cancun behavior: send all Ether in the account to the target.
+If executed in the same transaction a contract was created, or pre-Cancun, the current account is registered to be destroyed, and will be at the end of the current transaction. The transfer of the current balance to the given account cannot fail. In particular, the destination account code (if any) is not executed, or, if the account does not exist, the balance is still added to the given address.
 
 ## Stack input
 

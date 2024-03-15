@@ -2058,7 +2058,7 @@
   "ff": {
     "input": "address",
     "output": "",
-    "description": "Halt execution and register account for later deletion",
+    "description": "Halt execution and register account for later deletion or send all Ether to address (post-Cancun)",
     "dynamicFee": {
       "homestead": {},
       "tangerineWhistle": {
