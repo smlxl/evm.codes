@@ -68,6 +68,7 @@ export const getBytecodeFromMnemonic = (
   let bytecode = ''
   const lines = code.split('\n')
 
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < lines.length; ++i) {
     const line = lines[i]
       .replace(/\/\/.*/, '')
