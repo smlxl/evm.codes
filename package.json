@@ -7,6 +7,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "format": "prettier --write \"**/*.{css,js,jsx,ts,tsx}\"",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
@@ -69,7 +70,7 @@
     "husky": "^7.0.2",
     "loader-utils": "^2.0.4",
     "postcss": "^8.4.35",
-    "prettier": "^2.4.1",
+    "prettier": "^3.2.5",
     "sort-package-json": "^1.52.0",
     "swc-loader": "^0.2.6",
     "tailwindcss": "^3.4.1",
