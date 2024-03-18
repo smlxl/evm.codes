@@ -258,7 +258,7 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (solcWorkerRef && solcWorkerRef.current) {
+    if (solcWorkerRef?.current) {
       // @ts-ignore change the worker message, when value and args changed.
       solcWorkerRef.current?.onmessage = handleWorkerMessage
     }

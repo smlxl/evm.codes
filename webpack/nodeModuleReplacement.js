@@ -1,6 +1,5 @@
 // Helper function to transform from node packages to browser compatible packages
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { NormalModuleReplacementPlugin } = require('webpack')
 
 module.exports.default = new NormalModuleReplacementPlugin(
