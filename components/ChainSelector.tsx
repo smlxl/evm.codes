@@ -54,16 +54,22 @@ const ChainSelector = () => {
   )
 
   // TODO: don't redirect (or at least don't override address query param)
-  // useEffect(() => {
-  //   if (!router.isReady) {
-  //     return
-  //   }
+  useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
 
-  //   if (defaultForkOption) {
-  //     handleForkChange(defaultForkOption)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [router.isReady, defaultForkOption])
+    if (!router.query.fork) {
+      const latestFork = forks.at(-1)
+      const fork = forkOptions.find((fork) => fork.value === latestFork?.name)
+      setForkValue(fork)
+      onForkChange(fork.value)
+    }
+    // if (defaultForkOption) {
+    //   handleForkChange(defaultForkOption)
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, defaultForkOption])
 
   useEffect(() => {
     const forkIds: string[] = []
