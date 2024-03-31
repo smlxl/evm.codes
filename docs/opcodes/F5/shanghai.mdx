@@ -2,7 +2,7 @@
 
     minimum_word_size = (size + 31) / 32
     init_code_cost = {gasPrices|initCodeWordCost} * minimum_word_size
-    hash_cost = {gasPrices|sha3Word} * minimum_word_size
+    hash_cost = {gasPrices|keccak256Word} * minimum_word_size
     code_deposit_cost = {gasPrices|createData} * deployed_code_size
 
     static_gas = {gasPrices|create}
