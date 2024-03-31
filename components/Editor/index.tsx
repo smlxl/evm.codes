@@ -402,15 +402,12 @@ const Editor = ({ readOnly = false }: Props) => {
       } else {
         setIsCompiling(true)
         log('Starting compilation...')
-
+        console.log(code)
         if (solcWorkerRef?.current) {
           solcWorkerRef.current.postMessage({
-            version: compilerVersion,
-            stdJson: {
-              language: codeType,
-              evmVersion: getTargetEvmVersion(selectedFork?.name),
-              source: code,
-            },
+            language: codeType,
+            evmVersion: getTargetEvmVersion(selectedFork?.name),
+            source: code,
           })
         }
       }
