@@ -338,7 +338,7 @@ export const calculateOpcodeDynamicFee = (
       break
     }
     case '20': {
-      result = memoryCostCopy(inputs, 'sha3Word', common)
+      result = memoryCostCopy(inputs, 'keccak256Word', common)
       break
     }
     case '31':
@@ -469,7 +469,7 @@ export const calculateOpcodeDynamicFee = (
     case 'f5': {
       result = createCost(common, inputs).iadd(
         toWordSize(new BN(inputs.size)).imuln(
-          Number(common.param('gasPrices', 'sha3Word')),
+          Number(common.param('gasPrices', 'keccak256Word')),
         ),
       )
       break
