@@ -41,8 +41,24 @@ const TextField = ({ ...props }) => {
     <MuiTextField
       autoComplete="off"
       className="bg-gray-100 dark:invert"
+      InputLabelProps={{ style: { top: '-4px' } }}
+      inputProps={{ style: { height: '12px' } }}
+      style={{ margin: '0px' }}
       {...props}
     />
+  )
+}
+
+const SmallButton = ({ children, ...props }: any) => {
+  return (
+    <Button
+      size="small"
+      variant="contained"
+      style={{ height: '20px' }}
+      {...props}
+    >
+      {children}
+    </Button>
   )
 }
 
@@ -314,7 +330,8 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      <span className="dark:text-gray-200">result:</span>
+      <hr />
+      <span className="dark:text-gray-200">results:</span>
       {abi.outputs &&
         abi.outputs.map((inputAbi: any, i: number) => (
           <ParamItem
@@ -472,19 +489,19 @@ export const FunctionAbiItem = ({
         </span>
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
         <div className="flex gap-1">
-          <Button onClick={setCallStatus} variant="contained">
+          <SmallButton onClick={setCallStatus} variant="contained">
             {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no ret)'}
-          </Button>
-          <Button onClick={setEncodeStatus} variant="contained">
+          </SmallButton>
+          <SmallButton onClick={setEncodeStatus} variant="contained">
             Encode
-          </Button>
-          <Button
+          </SmallButton>
+          <SmallButton
             onClick={ethSendTransaction}
             variant="contained"
             color="secondary"
           >
             Send
-          </Button>
+          </SmallButton>
         </div>
         {funcAbi && funcAbi?.outputs?.length > 0 && (
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
