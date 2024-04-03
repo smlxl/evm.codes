@@ -1,3 +1,4 @@
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
   env: {
@@ -5,12 +6,14 @@ module.exports = {
     amd: true,
     node: true,
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
     },
+    project: './tsconfig.json',
   },
   settings: {
     react: {
@@ -20,7 +23,10 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    'eslint:recommended',
+    // TODO: opt-in to stricter ruleset in dedicated PR
+    // 'plugin:@typescript-eslint/strict-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
@@ -29,6 +35,7 @@ module.exports = {
     'plugin:@next/next/recommended',
     'plugin:prettier/recommended',
   ],
+  reportUnusedDisableDirectives: true,
   rules: {
     curly: 'error',
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
@@ -56,6 +63,11 @@ module.exports = {
         },
       },
     ],
+    '@typescript-eslint/consistent-type-definitions': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    '@typescript-eslint/consistent-indexed-object-style': 'off',
+    '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/non-nullable-type-assertion-style': 'off',
     'import/order': [
       'error',
       {
@@ -98,10 +110,4 @@ module.exports = {
       },
     ],
   },
-  overrides: [
-    {
-      files: ['**/*.ts', '**/*.tsx'],
-      parser: '@typescript-eslint/parser',
-    },
-  ],
 }

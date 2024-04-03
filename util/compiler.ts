@@ -22,7 +22,9 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
   }
   if (
     forkName &&
-    ['arrowGlacier', 'grayGlacier', 'merge', 'shanghai'].includes(forkName)
+    ['arrowGlacier', 'grayGlacier', 'merge', 'shanghai', 'cancun'].includes(
+      forkName,
+    )
   ) {
     return 'london'
   }
@@ -67,6 +69,7 @@ export const getBytecodeFromMnemonic = (
   let bytecode = ''
   const lines = code.split('\n')
 
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < lines.length; ++i) {
     const line = lines[i]
       .replace(/\/\/.*/, '')

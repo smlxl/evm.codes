@@ -1,5 +1,4 @@
-import { Common } from '@ethereumjs/common'
-import { HardforkConfig } from '@ethereumjs/common/src/types'
+import { Common, HardforkTransitionConfig } from '@ethereumjs/common'
 import { setLengthRight, BN } from 'ethereumjs-util'
 import { IReferenceItem } from 'types'
 
@@ -339,7 +338,7 @@ export const calculateOpcodeDynamicFee = (
       break
     }
     case '20': {
-      result = memoryCostCopy(inputs, 'sha3Word', common)
+      result = memoryCostCopy(inputs, 'keccak256Word', common)
       break
     }
     case '31':
@@ -407,6 +406,23 @@ export const calculateOpcodeDynamicFee = (
       }
       break
     }
+    case '5e': {
+      const destOffset = new BN(inputs.destOffset)
+      const offset = new BN(inputs.offset)
+      const size = new BN(inputs.size)
+      const currentMemorySize = new BN(inputs.memorySize)
+      const maxOffset = BN.max(offset, destOffset)
+
+      const wordsCopied = toWordSize(size).mul(new BN(3))
+      const memoryExpansionCost = memoryExtensionCost(
+        new BN(maxOffset),
+        new BN(size),
+        new BN(currentMemorySize),
+        common,
+      )
+      result = wordsCopied.add(memoryExpansionCost)
+      break
+    }
     case 'a0':
     case 'a1':
     case 'a2':
@@ -453,7 +469,7 @@ export const calculateOpcodeDynamicFee = (
     case 'f5': {
       result = createCost(common, inputs).iadd(
         toWordSize(new BN(inputs.size)).imuln(
-          Number(common.param('gasPrices', 'sha3Word')),
+          Number(common.param('gasPrices', 'keccak256Word')),
         ),
       )
       break
@@ -630,6 +646,14 @@ export const calculatePrecompiledDynamicFee = (
       result.imul(new BN(inputs.rounds))
       break
     }
+    case '0x0a': {
+      result = new BN(
+        Number(
+          common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice'),
+        ),
+      )
+      break
+    }
     default:
       return 'Missing precompiled'
   }
@@ -673,13 +697,13 @@ export const parseGasPrices = (common: Common, contents: string) => {
  * @param selectedFork The Hardfork selected by the user
  */
 export const findMatchingForkName = (
-  forks: HardforkConfig[],
+  forks: HardforkTransitionConfig[],
   forkNames: string[],
-  selectedFork: HardforkConfig | undefined,
+  selectedFork: HardforkTransitionConfig | undefined,
 ) => {
   // get all known forks mapped to a block number
   const knownForksWithBlocks = forks.reduce(
-    (res: { [forkName: string]: number }, fork: HardforkConfig) => {
+    (res: { [forkName: string]: number }, fork: HardforkTransitionConfig) => {
       if (fork.block) {
         res[fork.name] = fork.block
       }

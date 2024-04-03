@@ -1,0 +1,39 @@
+---
+fork: Cancun
+group: Stack Memory Storage and Flow Operations
+---
+
+*Index 1 is top of the stack.*
+
+## Stack input
+
+0. `key`: 32-byte key in [transient storage](/about).
+1. `value`: 32-byte value to store.
+
+## Examples
+
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `8965` |
+| `2` | `0xFFFF` | * | `2` | `0xFF` |
+
+| Transient storage key before | Transient storage value |
+|-------------------:|--------------:|
+| | |
+
+| Transient storage key after input 1 | Transient storage value |
+|--------------------------:|--------------:|
+| `0` | `0xFFFF` |
+
+| Transient storage key after input 1 then 2 | Transient storage value |
+|---------------------------------:|--------------:|
+| `0` | `0xFFFF` |
+| `8965` | `0xFF` |
+
+[Reproduce in playground](/playground?fork=cancun&unit=Wei&codeType=Mnemonic&code='z1yFFsH1%200w~zvysHv8965w'~%5Cnz%2F%2F%20Input%20yshv0xFFw~TSTORE~v2%20s~PUS%01svwyz~_).
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Stack overflow.

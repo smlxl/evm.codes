@@ -9,8 +9,9 @@ import React, {
 } from 'react'
 
 import { EvmError } from '@ethereumjs/evm/src/exceptions'
+import { Address } from '@ethereumjs/util'
 import abi from 'ethereumjs-abi'
-import { Address, BN, bufferToHex } from 'ethereumjs-util'
+import { BN, bufferToHex } from 'ethereumjs-util'
 import Select, { OnChangeValue } from 'react-select'
 
 import { isEmpty } from 'util/string'
@@ -32,7 +33,7 @@ interface Props {
   ) => Promise<
     | {
         error?: EvmError | undefined
-        returnValue: Buffer
+        returnValue: Uint8Array
         createdAddress: Address | undefined
       }
     | undefined
@@ -207,6 +208,9 @@ const SolidityAdvanceModeTab: FC<Props> = ({
         getCallValue(),
         Address.fromString(deployedContractAddress),
       )
+      if (!transaction) {
+        return
+      }
 
       const result = await startTransaction(transaction)
       if (
@@ -217,7 +221,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
         log(
           `run method complete, the response is ${abi.rawDecode(
             selectedMethod.outputs.map((mi) => mi.type),
-            result.returnValue,
+            Buffer.from(result.returnValue),
           )}`,
         )
       } else if (!result.error) {

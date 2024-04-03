@@ -10,10 +10,10 @@ import React, {
   Fragment,
 } from 'react'
 
-import { bufferToHex } from '@ethereumjs/util'
 import { encode, decode } from '@kunigi/string-compression'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
+import { bufferToHex } from 'ethereumjs-util'
 import { useRouter } from 'next/router'
 import Select, { OnChangeValue } from 'react-select'
 import SCEditor from 'react-simple-code-editor'
@@ -144,18 +144,23 @@ const Editor = ({ readOnly = false }: Props) => {
         loadInstructions(bc)
         setIsCompiling(false)
 
+        if (!transaction) {
+          return
+        }
+
         const result = await startTransaction(transaction)
         if (
           codeType === CodeType.Solidity &&
           !result.error &&
           result.returnValue
         ) {
-          setMethodByteCode(bufferToHex(result.returnValue))
+          setMethodByteCode(bufferToHex(Buffer.from(result.returnValue)))
         }
         return result
       } catch (error) {
         log((error as Error).message, 'error')
         setIsCompiling(false)
+        return undefined
       }
     },
     [
@@ -253,7 +258,7 @@ const Editor = ({ readOnly = false }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (solcWorkerRef && solcWorkerRef.current) {
+    if (solcWorkerRef?.current) {
       // @ts-ignore change the worker message, when value and args changed.
       solcWorkerRef.current.onmessage = handleWorkerMessage
     }

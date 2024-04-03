@@ -1,8 +1,6 @@
 // Helper function to remove the import asserts from files
 
 /* eslint-disable import/order */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable prettier/prettier */
 const parse = require('@babel/parser').parse
 const traverse = require('@babel/traverse').default
 const generate = require('@babel/generator').default

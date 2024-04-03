@@ -62,8 +62,8 @@ const ChainSelector = () => {
     if (!router.query.fork) {
       const latestFork = forks.at(-1)
       const fork = forkOptions.find((fork) => fork.value === latestFork?.name)
-      setForkValue(fork)
-      onForkChange(fork.value)
+      setForkValue(fork as any)
+      onForkChange(fork?.value as string)
     }
     // if (defaultForkOption) {
     //   handleForkChange(defaultForkOption)
