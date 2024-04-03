@@ -4,7 +4,10 @@ import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 // eslint-disable-next-line prettier/prettier
 import { type Abi } from 'abitype'
-import { EtherscanContractResponse, SolidityCompilerOutput } from 'types/contract'
+import {
+  EtherscanContractResponse,
+  SolidityCompilerOutput,
+} from 'types/contract'
 
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
@@ -28,7 +31,7 @@ export type DeploymentsCollection = {
 
 /**
  * DeploymentInfo represents an on-chain deployment:
- * 
+ *
  * @property chainId (chain id as decimal number)
  * @property code (raw flattenned string for simplicity)
  * @property address (on-chain address, currently mainnet only)
@@ -126,8 +129,16 @@ export class DeploymentInfo {
   makeAccessibleCode() {
     let accessibleCode = this.code
     let currentContract: AstTypes.ContractDefinition | undefined
-    function publicizeNode(node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration) {
-      if (!currentContract || currentContract?.kind == 'library' || node.isConstructor || node.isFallback || node.isReceiveEther) {
+    function publicizeNode(
+      node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration,
+    ) {
+      if (
+        !currentContract ||
+        currentContract?.kind == 'library' ||
+        node.isConstructor ||
+        node.isFallback ||
+        node.isReceiveEther
+      ) {
         return
       }
 
@@ -184,36 +195,38 @@ export class DeploymentInfo {
   }
 
   async compile(outputs: string[], version?: string) {
-    return solidityCompiler.compileCode(
-      // this.code,
-      this.etherscanInfo.SourceCode,
-      // if not specifying exact version, 
-      version || this.etherscanInfo.CompilerVersion,
-      outputs
-    ).then(({ result, error }: any) => {
-      if (error || !result) {
-        console.warn('could not compile', this.address, error)
-        return { result, error }
-      }
+    return solidityCompiler
+      .compileCode(
+        // this.code,
+        this.etherscanInfo.SourceCode,
+        // if not specifying exact version,
+        version || this.etherscanInfo.CompilerVersion,
+        outputs,
+      )
+      .then(({ result, error }: any) => {
+        if (error || !result) {
+          console.warn('could not compile', this.address, error)
+          return { result, error }
+        }
 
-      this.compilationInfo = result
+        this.compilationInfo = result
 
-      // TODO: move storage layout processing elsewhere
-      // console.log('outputs', outputs, result)
-      if (outputs.includes('storageLayout')) {
-        const targetName = this.etherscanInfo.ContractName
-        for (const contractData of Object.values(result.contracts) as any[]) {
-          if (contractData[targetName]) {
-            this.storageLayout = contractData[targetName].storageLayout
-            break
+        // TODO: move storage layout processing elsewhere
+        // console.log('outputs', outputs, result)
+        if (outputs.includes('storageLayout')) {
+          const targetName = this.etherscanInfo.ContractName
+          for (const contractData of Object.values(result.contracts) as any[]) {
+            if (contractData[targetName]) {
+              this.storageLayout = contractData[targetName].storageLayout
+              break
+            }
           }
         }
-      }
 
-      return { result, error }
-    })
+        return { result, error }
+      })
   }
-  
+
   // TODO: this is supposed to simply make every function and storage public
   // but there can be name clashes (eg. two private "name" variables in
   // different contracts is ok but if both are public then it is an error; need
@@ -224,13 +237,14 @@ export class DeploymentInfo {
     if (!this.accessibleCode) {
       return false
     }
-  
+
     // console.log('compiling accessible code')
-    solidityCompiler.compileCode(
-      this.accessibleCode,
-      this.etherscanInfo.CompilerVersion,
-      ['abi', 'evm.deployedBytecode'],
-    ).then(({ result, error }: any) => {
+    solidityCompiler
+      .compileCode(this.accessibleCode, this.etherscanInfo.CompilerVersion, [
+        'abi',
+        'evm.deployedBytecode',
+      ])
+      .then(({ result, error }: any) => {
         if (error) {
           console.warn('could not compile:', error)
           return
@@ -256,13 +270,12 @@ export class DeploymentInfo {
         this.accessibleAbi = mainContract.abi
         this.accessibleRuntimeBytecode =
           mainContract?.evm?.deployedBytecode?.object
-      }
-    )
+      })
   }
 }
 
 export const DeploymentsContext = createContext<{
-  deployments: DeploymentsCollection,
+  deployments: DeploymentsCollection
   setDeployments: (deployments: DeploymentsCollection) => void
 }>({
   deployments: {},
@@ -273,10 +286,16 @@ export const DeploymentsContext = createContext<{
 
 export const useDeployments = () => {
   const { deployments, setDeployments } = useContext(DeploymentsContext)
-  const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
+  const [selectedDeployment, setSelectedDeployment] = useState<
+    DeploymentInfo | undefined
+  >(undefined)
   const [reqCount, setReqCount] = useState(0)
 
-  const loadDeployment = async (address: string, context?: DeploymentInfo, loadImplementation = true) => {
+  const loadDeployment = async (
+    address: string,
+    context?: DeploymentInfo,
+    loadImplementation = true,
+  ) => {
     setReqCount(reqCount + 1)
     return EtherscanLoader.loadDeployment(address, context)
       .then(async (deployment: DeploymentInfo) => {

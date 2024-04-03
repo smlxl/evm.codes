@@ -18,8 +18,8 @@ const ExecutionStateRow = ({ label, value }: RowProps) => {
     !value || value.length === 0
       ? ['']
       : Array.isArray(value)
-      ? value
-      : ([value] as string[])
+        ? value
+        : ([value] as string[])
 
   return (
     <>
