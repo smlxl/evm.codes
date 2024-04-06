@@ -13,7 +13,6 @@ import {
   decodeFunctionResult,
   encodeFunctionData,
   encodeAbiParameters,
-  decodeAbiParameters,
   keccak256,
   encodePacked,
 } from 'viem'
@@ -291,19 +290,18 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {abi.inputs &&
-        abi.inputs.map((inputAbi: any, i: number) => (
-          <ParamItem
-            key={i}
-            inputAbi={inputAbi}
-            path={i.toString()}
-            // reducer={params}
-            reducer={[
-              funcData.params,
-              (val: any) => updateFuncData({ params: convertShortpath(val) }),
-            ]}
-          />
-        ))}
+      {abi.inputs?.map((inputAbi: any, i: number) => (
+        <ParamItem
+          key={i}
+          inputAbi={inputAbi}
+          path={i.toString()}
+          // reducer={params}
+          reducer={[
+            funcData.params,
+            (val: any) => updateFuncData({ params: convertShortpath(val) }),
+          ]}
+        />
+      ))}
       {abi.stateMutability == 'payable' && (
         <TextField
           variant="outlined"
@@ -325,23 +323,21 @@ type ReturnDataBox = {
 }
 
 export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [funcData, updateFuncData] = reducer
+  const [funcData] = reducer
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
       <hr />
       <span className="dark:text-gray-200">results:</span>
-      {abi.outputs &&
-        abi.outputs.map((inputAbi: any, i: number) => (
-          <ParamItem
-            key={i}
-            inputAbi={inputAbi}
-            path={i.toString()}
-            reducer={[funcData.outputs, null]}
-            output={true}
-          />
-        ))}
+      {abi.outputs?.map((inputAbi: any, i: number) => (
+        <ParamItem
+          key={i}
+          inputAbi={inputAbi}
+          path={i.toString()}
+          reducer={[funcData.outputs, null]}
+          output={true}
+        />
+      ))}
     </div>
   )
 }
@@ -551,6 +547,7 @@ export const StorageLayoutItem = ({
   types,
 }: StorageLayoutItemProps) => {
   const [status, setStatus] = useState('0x...')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [inputs, setInputs] = useState([])
 
   const type = types[storage.type]
@@ -559,7 +556,7 @@ export const StorageLayoutItem = ({
   // eg. keys of mapping(address => mapping(uint256 => bytes)) would be ['address', 'uint256']
   const keyTypes = [
     ...(storage.type.matchAll(/\bt_mapping\((?<key>.+?),/g) || []),
-  ].map((m) => m.groups.key)
+  ].map((m) => m.groups?.key)
 
   const ethGetStorage = () => {
     let slot = storage.slot
@@ -583,7 +580,8 @@ export const StorageLayoutItem = ({
       }
       val = '0x' + val
       try {
-        val = decodeAbiParameters([{ type: type.label }], [val])
+        // val = decodeAbiParameters([{ type: type.label }], [val])
+        val = null
       } catch (err) {
         console.log(err)
       }
@@ -612,11 +610,11 @@ export const StorageLayoutItem = ({
           <TextField
             key={i}
             size="small"
-            label={types[keyType].label}
-            onChange={(e: any) => {
-              inputs[i] = e.target.value
-              setInputs([...inputs])
-            }}
+            label={types[keyType as string].label}
+            // onChange={(e: any) => {
+            //   inputs[i] = e.target.value
+            //   setInputs([...inputs])
+            // }}
           />
         ))}
         <Button onClick={ethGetStorage} variant="outlined">

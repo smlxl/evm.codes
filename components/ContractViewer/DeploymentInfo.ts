@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from 'react'
 
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
-// eslint-disable-next-line prettier/prettier
 import { type Abi } from 'abitype'
 import {
   EtherscanContractResponse,
@@ -127,33 +126,32 @@ export class DeploymentInfo {
   }
 
   makeAccessibleCode() {
-    let accessibleCode = this.code
+    const accessibleCode = this.code
     let currentContract: AstTypes.ContractDefinition | undefined
-    function publicizeNode(
-      node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration,
-    ) {
+    function publicizeNode() {
+      // node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration,
       if (
         !currentContract ||
-        currentContract?.kind == 'library' ||
-        node.isConstructor ||
-        node.isFallback ||
-        node.isReceiveEther
+        currentContract?.kind == 'library'
+        // node.isConstructor ||
+        // node.isFallback ||
+        // node.isReceiveEther
       ) {
         return
       }
 
-      if (node?.visibility != 'external' && node?.visibility != 'public') {
-        const prefix = accessibleCode.slice(0, node.range[0])
-        const suffix = accessibleCode.slice(node.range[1])
-        const funcCode = accessibleCode
-          .slice(node.range[0], node.range[1])
-          .replace(/\b(internal| private)\b/, '  public')
+      // if (node?.visibility != 'external' && node?.visibility != 'public') {
+      //   const prefix = accessibleCode.slice(0, node.range[0])
+      //   const suffix = accessibleCode.slice(node.range[1])
+      //   const funcCode = accessibleCode
+      //     .slice(node.range[0], node.range[1])
+      //     .replace(/\b(internal| private)\b/, '  public')
 
-        // TODO: publicize visibility == 'default' functions
-        // funcCode = funcCode.replace(/function .+?\)(.+?)
-        // console.log(funcCode)
-        accessibleCode = prefix + funcCode + suffix
-      }
+      //   // TODO: publicize visibility == 'default' functions
+      //   // funcCode = funcCode.replace(/function .+?\)(.+?)
+      //   // console.log(funcCode)
+      //   accessibleCode = prefix + funcCode + suffix
+      // }
     }
 
     solParser.visit(this.ast, {
@@ -178,7 +176,7 @@ export class DeploymentInfo {
       return
     }
 
-    if (!node || !node.nodeType) {
+    if (!node?.nodeType) {
       return
     }
 
@@ -250,12 +248,12 @@ export class DeploymentInfo {
           return
         }
 
-        if (!result || !result.contracts) {
+        if (!result?.contracts) {
           console.warn('bad result?', typeof result, result)
           return
         }
 
-        const mainFile = result['contracts']['main.sol']
+        const mainFile = result.contracts['main.sol']
         const mainContract = mainFile[this.etherscanInfo.ContractName]
         if (!mainContract) {
           console.warn(

@@ -40,7 +40,7 @@ const ThemeSelector = () => {
       shortcut: ['t'],
       keywords: 'theme appearance',
       section: 'Preferences',
-      children: ['theme-light', 'theme-dark', 'theme-system'],
+      // children: ['theme-light', 'theme-dark', 'theme-system'],
     },
   ]
 

@@ -30,11 +30,11 @@ class SolidityCompiler {
 
   listen(callback: (event: MessageEvent) => void) {
     this.init()
-    this.worker.addEventListener('message', callback)
+    this.worker?.addEventListener('message', callback)
   }
 
   unlisten(callback: (event: MessageEvent) => void) {
-    this.worker.removeEventListener('message', callback)
+    this.worker?.removeEventListener('message', callback)
   }
 
   compile(stdJson: SolidityCompilerInput, version: string) {
@@ -51,7 +51,7 @@ class SolidityCompiler {
         }
       }, 5 * 60000)
 
-      this.worker.postMessage({
+      this.worker?.postMessage({
         jobId: randomId,
         version,
         stdJson,
@@ -87,9 +87,9 @@ class SolidityCompiler {
       stdJson = code
       // console.log('from', JSON.stringify(stdJson.settings?.outputSelection), 'to', JSON.stringify(settings.outputSelection))
       if (!stdJson.settings) {
-        stdJson.settings = {}
+        // stdJson.settings = {}
       }
-      stdJson.settings.outputSelection = settings.outputSelection
+      // stdJson.settings?.outputSelection = settings.outputSelection
     }
 
     return this.compile(stdJson, version)

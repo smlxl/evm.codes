@@ -1,4 +1,3 @@
-// eslint-disable-next-line prettier/prettier
 import { type AbiParameter, type AbiInternalType } from 'abitype'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
@@ -98,7 +97,7 @@ export function getComponentArraySize(
   component: AbiComponent,
 ): number | undefined {
   const arrayMatch = component.type.match(/^(.+)\[(\d*)\]$/)
-  return arrayMatch && arrayMatch[2] ? parseInt(arrayMatch[2]) : undefined
+  return arrayMatch?.[2] ? parseInt(arrayMatch[2]) : undefined
 }
 
 export function initStateFromComponent(component: AbiComponent): any {

@@ -2,7 +2,6 @@
 
 const { withPlausibleProxy } = require('next-plausible')
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodeModuleReplacement = require('./webpack/nodeModuleReplacement')
 
 module.exports = withPlausibleProxy()({
@@ -11,14 +10,14 @@ module.exports = withPlausibleProxy()({
     APP_ROOT: __dirname,
   },
   webpack: (config, options) => {
-    const { dir, defaultLoaders } = options
+    const { dir } = options
 
     config.resolve.extensions.push('.ts', '.tsx')
     config.module.rules.push({
       test: /\.+(ts|tsx)$/,
       include: [dir],
       use: [
-        defaultLoaders.babel,
+        // defaultLoaders.babel,
         { loader: 'ts-loader', options: { transpileOnly: true } },
       ],
     })

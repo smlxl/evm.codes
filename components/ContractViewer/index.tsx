@@ -4,7 +4,7 @@ import { isValidAddress } from '@ethereumjs/util'
 import { TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useRouter } from 'next/router'
-import NoSSR from 'react-no-ssr'
+// import NoSSR from 'react-no-ssr'
 
 import {
   ResizableHandle,
@@ -103,93 +103,90 @@ const ContractViewerInner = () => {
 
   return (
     // don't ask me why NoSSR is necessary
-    <NoSSR>
-      <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
-        <ResizablePanelGroup direction="horizontal">
-          {/* contract tree view panel */}
-          <ResizablePanel defaultSize={40}>
-            {/* tree view header & search box */}
-            <Header>
-              <TextField
-                size="small"
-                label="address"
-                className="bg-gray-200 dark:invert w-[350px] font-mono"
-                variant="outlined"
-                onInput={(e: any) =>
-                  tryLoadAddress(e.target.value.trim(), true)
-                }
-              />
-            </Header>
-
-            {/* tree view */}
-            <ContractTreeView
-              deployments={Object.values(deployments)}
-              onSelect={(
-                contract: DeploymentInfo,
-                artifact: ContractArtifact,
-              ) => {
-                if (!contract || !contract.address) {
-                  console.warn('missing contract')
-                  return
-                }
-
-                const addr = contract.address
-                if (addr != selectedDeployment?.address) {
-                  setSelectedDeployment(contract)
-                }
-
-                if (artifact?.node?.loc) {
-                  setCodePeekLocation(artifact.node.loc.start)
-                }
-              }}
+    // <NoSSR>
+    <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
+      <ResizablePanelGroup direction="horizontal">
+        {/* contract tree view panel */}
+        <ResizablePanel defaultSize={40}>
+          {/* tree view header & search box */}
+          <Header>
+            <TextField
+              size="small"
+              label="address"
+              className="bg-gray-200 dark:invert w-[350px] font-mono"
+              variant="outlined"
+              onInput={(e: any) => tryLoadAddress(e.target.value.trim(), true)}
             />
-          </ResizablePanel>
+          </Header>
 
-          {/* horizontal handle */}
-          <ResizableHandle className="border-2 dark:border-gray-600" />
+          {/* tree view */}
+          <ContractTreeView
+            deployments={Object.values(deployments)}
+            onSelect={(
+              contract: DeploymentInfo,
+              artifact: ContractArtifact,
+            ) => {
+              if (!contract?.address) {
+                console.warn('missing contract')
+                return
+              }
 
-          {/* code editor panel */}
-          <ResizablePanel defaultSize={60}>
-            {/* code editor header */}
-            <Header>
-              <p className="font-semibold">
-                {selectedDeployment?.etherscanInfo?.ContractName}
-              </p>
-              <span className="text-xs">{selectedDeployment?.address}</span>
-            </Header>
+              const addr = contract.address
+              if (addr != selectedDeployment?.address) {
+                setSelectedDeployment(contract)
+              }
 
-            {/* code editor */}
-            <ContractCodeEditor
-              code={selectedDeployment?.code}
-              line={codePeekLocation.line}
-              column={codePeekLocation.column + 1}
-            />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+              if (artifact?.node?.loc) {
+                setCodePeekLocation(artifact.node.loc.start)
+              }
+            }}
+          />
+        </ResizablePanel>
 
-        {/* bottom panel: console & metadata information panel */}
-        <Header className="py-2 px-4 text-sm flex flex-col gap-2">
-          <Box className="whitespace-nowrap">
-            {/* {reqCount > 0 && <CircularProgress />} {status} */}
-            {status}
-          </Box>
-          {/* <LinearProgress
+        {/* horizontal handle */}
+        <ResizableHandle className="border-2 dark:border-gray-600" />
+
+        {/* code editor panel */}
+        <ResizablePanel defaultSize={60}>
+          {/* code editor header */}
+          <Header>
+            <p className="font-semibold">
+              {selectedDeployment?.etherscanInfo?.ContractName}
+            </p>
+            <span className="text-xs">{selectedDeployment?.address}</span>
+          </Header>
+
+          {/* code editor */}
+          <ContractCodeEditor
+            code={selectedDeployment?.code}
+            line={codePeekLocation.line}
+            column={codePeekLocation.column + 1}
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
+
+      {/* bottom panel: console & metadata information panel */}
+      <Header className="py-2 px-4 text-sm flex flex-col gap-2">
+        <Box className="whitespace-nowrap">
+          {/* {reqCount > 0 && <CircularProgress />} {status} */}
+          {status}
+        </Box>
+        {/* <LinearProgress
             sx={{ visibility: reqCount > 0 ? 'visible' : 'hidden' }}
           /> */}
-          {/* {error && <p>Error! {error}</p>} */}
-          {/* <p>Data: {data}</p> */}
+        {/* {error && <p>Error! {error}</p>} */}
+        {/* <p>Data: {data}</p> */}
 
-          {/* <p>*Additional metadata info should go here*</p> */}
-          {/* TODO: try moving this inside the treeview? */}
-        </Header>
+        {/* <p>*Additional metadata info should go here*</p> */}
+        {/* TODO: try moving this inside the treeview? */}
+      </Header>
 
-        <sub>
-          Alpha version -{' '}
-          <a href="https://twitter.com/smlxldotio">@smlxldotio</a> for feature
-          requests or bug fixes
-        </sub>
-      </div>
-    </NoSSR>
+      <sub>
+        Alpha version - <a href="https://twitter.com/smlxldotio">@smlxldotio</a>{' '}
+        for feature requests or bug fixes
+      </sub>
+    </div>
+    // </NoSSR>
   )
 }
 const ContractViewer = () => {
