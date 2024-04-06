@@ -10,7 +10,7 @@ export const rpc = createPublicClient({
 
 // redefined here because maybe there is a bug in abitypes,
 // since components is not recognized
-export type AbiComponent = AbiParameter & { 
+export type AbiComponent = AbiParameter & {
   components: AbiComponent[]
   internalType?: AbiInternalType
 }

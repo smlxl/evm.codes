@@ -4,12 +4,12 @@ import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 // eslint-disable-next-line prettier/prettier
 import { type Abi } from 'abitype'
+import { SourceDefinition } from 'types/ast'
 import { EtherscanContractResponse, SolidityCompilerOutput } from 'types/contract'
 
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
 
-import { SourceDefinition } from './AstProcessor'
 import EtherscanLoader from './EtherscanLoader'
 
 export type ParseResult = AstTypes.SourceUnit & {
@@ -28,7 +28,7 @@ export type DeploymentsCollection = {
 
 /**
  * DeploymentInfo represents an on-chain deployment:
- * 
+ *
  * @property chainId (chain id as decimal number)
  * @property code (raw flattenned string for simplicity)
  * @property address (on-chain address, currently mainnet only)
@@ -123,43 +123,6 @@ export class DeploymentInfo {
     return this.context ? this.context.rootContext() : this
   }
 
-  makeAccessibleCode() {
-    let accessibleCode = this.code
-    let currentContract: AstTypes.ContractDefinition | undefined
-    function publicizeNode(node: AstTypes.FunctionDefinition | AstTypes.StateVariableDeclaration) {
-      if (!currentContract || currentContract?.kind == 'library' || node.isConstructor || node.isFallback || node.isReceiveEther) {
-        return
-      }
-
-      if (node?.visibility != 'external' && node?.visibility != 'public') {
-        const prefix = accessibleCode.slice(0, node.range[0])
-        const suffix = accessibleCode.slice(node.range[1])
-        const funcCode = accessibleCode
-          .slice(node.range[0], node.range[1])
-          .replace(/\b(internal| private)\b/, '  public')
-
-        // TODO: publicize visibility == 'default' functions
-        // funcCode = funcCode.replace(/function .+?\)(.+?)
-        // console.log(funcCode)
-        accessibleCode = prefix + funcCode + suffix
-      }
-    }
-
-    solParser.visit(this.ast, {
-      ContractDefinition: (node: AstTypes.ContractDefinition) => {
-        currentContract = node
-      },
-      'ContractDefinition:exit': () => {
-        currentContract = undefined
-      },
-      FunctionDefinition: publicizeNode,
-      StateVariableDeclaration: publicizeNode,
-    })
-
-    this.accessibleCode = accessibleCode
-    // return accessibleCode
-  }
-
   // TODO: should move to AstProcessor maybe?
   processAst(node: any, parent?: any) {
     if (Array.isArray(node)) {
@@ -187,7 +150,7 @@ export class DeploymentInfo {
     return solidityCompiler.compileCode(
       // this.code,
       this.etherscanInfo.SourceCode,
-      // if not specifying exact version, 
+      // if not specifying exact version,
       version || this.etherscanInfo.CompilerVersion,
       outputs
     ).then(({ result, error }: any) => {
@@ -212,52 +175,6 @@ export class DeploymentInfo {
 
       return { result, error }
     })
-  }
-  
-  // TODO: this is supposed to simply make every function and storage public
-  // but there can be name clashes (eg. two private "name" variables in
-  // different contracts is ok but if both are public then it is an error; need
-  // to rename based on ast node id)
-  publicizeEverything() {
-    // TODO: restore compilation (need to rename identifiers to prevent clashes...)
-    this.makeAccessibleCode()
-    if (!this.accessibleCode) {
-      return false
-    }
-  
-    // console.log('compiling accessible code')
-    solidityCompiler.compileCode(
-      this.accessibleCode,
-      this.etherscanInfo.CompilerVersion,
-      ['abi', 'evm.deployedBytecode'],
-    ).then(({ result, error }: any) => {
-        if (error) {
-          console.warn('could not compile:', error)
-          return
-        }
-
-        if (!result || !result.contracts) {
-          console.warn('bad result?', typeof result, result)
-          return
-        }
-
-        const mainFile = result['contracts']['main.sol']
-        const mainContract = mainFile[this.etherscanInfo.ContractName]
-        if (!mainContract) {
-          console.warn(
-            'could not find main contract',
-            this.etherscanInfo.ContractName,
-            'in',
-            mainFile,
-          )
-          return
-        }
-
-        this.accessibleAbi = mainContract.abi
-        this.accessibleRuntimeBytecode =
-          mainContract?.evm?.deployedBytecode?.object
-      }
-    )
   }
 }
 

@@ -5,6 +5,7 @@ import { TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useRouter } from 'next/router'
 import NoSSR from 'react-no-ssr'
+import { ContractArtifact } from 'types/ast'
 
 import {
   ResizableHandle,
@@ -12,7 +13,6 @@ import {
   ResizablePanelGroup,
 } from 'components/ui/ResizeablePanel'
 
-import { ContractArtifact } from './AstProcessor'
 import ContractCodeEditor from './ContractCodeEditor'
 import ContractTreeView from './ContractTreeView'
 import {
@@ -192,6 +192,7 @@ const ContractViewerInner = () => {
     </NoSSR>
   )
 }
+
 const ContractViewer = () => {
   const [deployments, setDeployments] = useState<DeploymentsCollection>({})
 

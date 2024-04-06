@@ -30,11 +30,11 @@ class SolidityCompiler {
 
   listen(callback: (event: MessageEvent) => void) {
     this.init()
-    this.worker.addEventListener('message', callback)
+    this.worker?.addEventListener('message', callback)
   }
 
   unlisten(callback: (event: MessageEvent) => void) {
-    this.worker.removeEventListener('message', callback)
+    this.worker?.removeEventListener('message', callback)
   }
 
   compile(stdJson: SolidityCompilerInput, version: string) {
@@ -51,7 +51,7 @@ class SolidityCompiler {
         }
       }, 5 * 60000)
 
-      this.worker.postMessage({
+      this.worker?.postMessage({
         jobId: randomId,
         version,
         stdJson,
@@ -72,9 +72,8 @@ class SolidityCompiler {
       },
     }
 
-    let stdJson: SolidityCompilerInput
     if (typeof code == 'string') {
-      stdJson = {
+      const stdJson = {
         language: 'Solidity',
         sources: {
           'main.sol': {
@@ -83,16 +82,18 @@ class SolidityCompiler {
         },
         settings,
       }
-    } else {
-      stdJson = code
-      // console.log('from', JSON.stringify(stdJson.settings?.outputSelection), 'to', JSON.stringify(settings.outputSelection))
-      if (!stdJson.settings) {
-        stdJson.settings = {}
-      }
-      stdJson.settings.outputSelection = settings.outputSelection
-    }
 
-    return this.compile(stdJson, version)
+      return this.compile(stdJson, version)
+    } else {
+      const stdJson = {
+        ...code,
+        settings: {
+          outputSelection: settings.outputSelection,
+        },
+      }
+
+      return this.compile(stdJson, version)
+    }
   }
 }
 

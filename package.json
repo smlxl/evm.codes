@@ -5,9 +5,9 @@
   "homepage": "https://github.com/smlxl/evm.codes",
   "license": "MIT",
   "scripts": {
-    "build": "yarn build:solcjs-worker && next build",
-    "build:solcjs-worker": "sh -c ./babel/build.sh",
-    "dev": "yarn build:solcjs-worker && next dev",
+    "build": "next build",
+    "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
+    "dev": "next dev",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
@@ -76,12 +76,12 @@
     "@types/js-cookie": "^3.0.1",
     "@types/lodash.debounce": "^4.0.6",
     "@types/mdx-js__react": "^1.5.5",
-    "@types/react": "^17.0.2",
+    "@types/react": "17.0.30",
     "@types/react-dom": "^17.0.2",
     "@types/react-no-ssr": "^1.1.7",
     "@types/react-table": "^7.7.6",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^6.19.1",
+    "@typescript-eslint/parser": "^5.0.0",
     "autoprefixer": "^10.4.7",
     "babel-loader": "^9.1.2",
     "eslint": "7.32.0",
@@ -102,7 +102,7 @@
     "tailwindcss": "^3.1.2",
     "tinyify": "^4.0.0",
     "ts-loader": "^9.3.1",
-    "typescript": "^4.4.4",
+    "typescript": "^5.0.4",
     "webpack": "^5.81.0"
   }
 }

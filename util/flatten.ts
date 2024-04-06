@@ -3,7 +3,7 @@ import path from 'path'
 import parser from '@solidity-parser/parser'
 import { SolidityCompilerInput } from 'types/contract'
 
-function remapFile(filename, remappings) {
+function remapFile(filename: string, remappings: string[]) {
   if (!remappings) {
     return filename
   }
@@ -34,7 +34,7 @@ function remapFile(filename, remappings) {
 //   return sources
 // }
 
-function getSources(stdJson) {
+function getSources(stdJson: SolidityCompilerInput): any {
   if (stdJson.sources) {
     const remappings = (stdJson.settings?.remappings || []).map((map: string) =>
       map.split('='),

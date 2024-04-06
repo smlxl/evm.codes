@@ -6,6 +6,7 @@ import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import type { AbiFunction, AbiParameter } from 'abitype'
+import { ContractArtifact } from 'types/ast'
 import {
   createWalletClient,
   custom,
@@ -13,13 +14,13 @@ import {
   decodeFunctionResult,
   encodeFunctionData,
   encodeAbiParameters,
-  decodeAbiParameters,
   keccak256,
   encodePacked,
+  decodeAbiParameters,
+  Hex,
 } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { ContractArtifact } from './AstProcessor'
 import { DeploymentInfo, useDeployments } from './DeploymentInfo'
 import useGenericReducer, {
   convertShortpath,
@@ -533,8 +534,9 @@ export const StorageLayoutItem = ({
   storage,
   types,
 }: StorageLayoutItemProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState('0x...')
-  const [inputs, setInputs] = useState([])
+  const [inputs, setInputs] = useState<string[]>([])
 
   const type = types[storage.type]
 
@@ -542,13 +544,15 @@ export const StorageLayoutItem = ({
   // eg. keys of mapping(address => mapping(uint256 => bytes)) would be ['address', 'uint256']
   const keyTypes = [
     ...(storage.type.matchAll(/\bt_mapping\((?<key>.+?),/g) || []),
-  ].map((m) => m.groups.key)
+  ].map((m) => m?.groups?.key)
 
   const ethGetStorage = () => {
     let slot = storage.slot
     for (let i = 0; i < keyTypes.length; i++) {
       const key = inputs[i]
-      slot = keccak256(encodePacked(['uint256', 'uint256'], [key, slot]))
+      slot = keccak256(
+        encodePacked(['uint256', 'uint256'], [BigInt(key), slot]),
+      )
     }
 
     const props = {
@@ -557,24 +561,28 @@ export const StorageLayoutItem = ({
     }
 
     return rpc.getStorageAt(props as any).then((res: any) => {
-      let val = res.slice(2)
+      let input: string = res.toString().slice(2)
       if (storage.offset || type.numberOfBytes != '32') {
-        val = val.slice(
+        input = input.slice(
           storage.offset * 2,
           (storage.offset + parseInt(type.numberOfBytes)) * 2,
         )
       }
-      val = '0x' + val
+
+      input = '0x' + input
       try {
-        val = decodeAbiParameters([{ type: type.label }], [val])
+        let val = decodeAbiParameters(
+          [{ type: type.label }],
+          input as Hex,
+        ).toString()
+        if (slot != storage.slot) {
+          val += ` (mapped slot: ${slot})`
+        }
+
+        setStatus(val)
       } catch (err) {
         console.log(err)
       }
-      if (slot != storage.slot) {
-        val += ` (mapped slot: ${slot})`
-      }
-
-      setStatus(val)
     })
   }
 
@@ -595,7 +603,7 @@ export const StorageLayoutItem = ({
           <TextField
             key={i}
             size="small"
-            label={types[keyType].label}
+            label={types[keyType as string].label}
             onChange={(e: any) => {
               inputs[i] = e.target.value
               setInputs([...inputs])

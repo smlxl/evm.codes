@@ -38,7 +38,4 @@ yarn-error.log*
 # jet brains
 .idea
 
-# auto gen
-public/solcWorker.js
-
 node_modules_/
