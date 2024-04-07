@@ -45,7 +45,6 @@ export default class EtherscanLoader {
     }
 
     if (
-      !etherscanInfo ||
       !etherscanInfo?.SourceCode ||
       etherscanInfo?.ABI == 'Contract source code not verified'
     ) {

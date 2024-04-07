@@ -10,9 +10,12 @@ const Results = () => {
   const groups = useMatches()
   const flattened = useMemo(
     () =>
-      groups.reduce((acc: any, curr: any) => {
-        acc.push(curr.name)
-        acc.push(...curr.actions)
+      groups?.results.reduce((acc: any, curr: any) => {
+        acc.push(curr)
+        if (curr.children) {
+          acc.push(...curr.children)
+        }
+
         return acc
       }, []),
     [groups],
@@ -21,15 +24,15 @@ const Results = () => {
   return (
     <KBarResults
       items={flattened.filter((i: string) => i !== NO_GROUP)}
-      onRender={({ item, active }) =>
-        typeof item === 'string' ? (
+      onRender={({ item, active }) => {
+        return typeof item === 'string' ? (
           <div className="px-4 py-2 text-2xs uppercase text-gray-400 dark:text-gray-600 bg-white dark:bg-black-600">
             {item}
           </div>
         ) : (
           <ResultItem action={item} active={active} />
         )
-      }
+      }}
     />
   )
 }

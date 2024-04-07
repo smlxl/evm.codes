@@ -276,19 +276,18 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      {abi.inputs &&
-        abi.inputs.map((inputAbi: any, i: number) => (
-          <ParamItem
-            key={i}
-            inputAbi={inputAbi}
-            path={i.toString()}
-            // reducer={params}
-            reducer={[
-              funcData.params,
-              (val: any) => updateFuncData({ params: convertShortpath(val) }),
-            ]}
-          />
-        ))}
+      {abi.inputs?.map((inputAbi: any, i: number) => (
+        <ParamItem
+          key={i}
+          inputAbi={inputAbi}
+          path={i.toString()}
+          // reducer={params}
+          reducer={[
+            funcData.params,
+            (val: any) => updateFuncData({ params: convertShortpath(val) }),
+          ]}
+        />
+      ))}
       {abi.stateMutability == 'payable' && (
         <TextField
           variant="outlined"
@@ -310,22 +309,20 @@ type ReturnDataBox = {
 }
 
 export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [funcData, updateFuncData] = reducer
+  const [funcData] = reducer
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
       <span className="dark:text-gray-200">result:</span>
-      {abi.outputs &&
-        abi.outputs.map((inputAbi: any, i: number) => (
-          <ParamItem
-            key={i}
-            inputAbi={inputAbi}
-            path={i.toString()}
-            reducer={[funcData.outputs, null]}
-            output={true}
-          />
-        ))}
+      {abi.outputs?.map((inputAbi: any, i: number) => (
+        <ParamItem
+          key={i}
+          inputAbi={inputAbi}
+          path={i.toString()}
+          reducer={[funcData.outputs, null]}
+          output={true}
+        />
+      ))}
     </div>
   )
 }
@@ -534,7 +531,6 @@ export const StorageLayoutItem = ({
   storage,
   types,
 }: StorageLayoutItemProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [status, setStatus] = useState('0x...')
   const [inputs, setInputs] = useState<string[]>([])
 

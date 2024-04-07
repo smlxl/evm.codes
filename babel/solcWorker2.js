@@ -1,3 +1,6 @@
+// an alternative solc worker that can load arbitrary versions
+// to rebuild this, run `yarn build:solcjs-worker` which updates /public/solcWorker.js
+
 import wrapper from 'solc/wrapper'
 
 const releases = {

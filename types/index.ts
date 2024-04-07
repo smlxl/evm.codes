@@ -48,10 +48,17 @@ export interface IStorage {
   value: string
 }
 
+export interface ITransientStorage {
+  address: string
+  key: string
+  value: string
+}
+
 export interface IExecutionState {
   programCounter: number | undefined
   stack: string[]
   storage: IStorage[]
+  transientStorage: ITransientStorage[]
   memory: string | undefined
   totalGas: string | undefined
   currentGas: string | undefined

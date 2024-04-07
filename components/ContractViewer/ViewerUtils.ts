@@ -1,4 +1,3 @@
-// eslint-disable-next-line prettier/prettier
 import { type AbiParameter, type AbiInternalType } from 'abitype'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
@@ -68,13 +67,16 @@ export function spaceBetween(str: string, pad = 16) {
     str = '0x' + str
   }
 
-  return prefix + str
-    .slice(2)
-    .split('')
-    .reverse()
-    .map((c, i) => (i % pad ? c : c + ' '))
-    .reverse()
-    .join('')
+  return (
+    prefix +
+    str
+      .slice(2)
+      .split('')
+      .reverse()
+      .map((c, i) => (i % pad ? c : c + ' '))
+      .reverse()
+      .join('')
+  )
 }
 
 export function getArrayBaseComponent(component: AbiComponent) {
@@ -91,9 +93,11 @@ export function getArrayBaseComponent(component: AbiComponent) {
   return baseType
 }
 
-export function getComponentArraySize(component: AbiComponent): number | undefined {
+export function getComponentArraySize(
+  component: AbiComponent,
+): number | undefined {
   const arrayMatch = component.type.match(/^(.+)\[(\d*)\]$/)
-  return arrayMatch && arrayMatch[2] ? parseInt(arrayMatch[2]) : undefined
+  return arrayMatch?.[2] ? parseInt(arrayMatch[2]) : undefined
 }
 
 export function initStateFromComponent(component: AbiComponent): any {
@@ -111,7 +115,9 @@ export function initStateFromComponent(component: AbiComponent): any {
   return ''
 }
 
-export function initStateFromAbiInputs(inputs: readonly AbiParameter[] | AbiComponent[]) {
+export function initStateFromAbiInputs(
+  inputs: readonly AbiParameter[] | AbiComponent[],
+) {
   if (!inputs.map) {
     console.warn(inputs)
   }

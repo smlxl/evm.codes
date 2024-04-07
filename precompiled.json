@@ -148,5 +148,11 @@
         }
       }
     }
+  },
+  "0x0a": {
+    "name": "point evaluation",
+    "input": "bytes",
+    "output": "bytes",
+    "description": "Verify p(z) = y given commitment that corresponds to the polynomial p(x) and a KZG proof. Also verify that the provided commitment matches the provided versioned_hash."
   }
 }

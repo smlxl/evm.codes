@@ -35,7 +35,6 @@ const ChainSelector = () => {
     [forks],
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const defaultForkOption = useMemo(
     () => forkOptions.find((fork) => fork.value === selectedFork?.name),
     [forkOptions, selectedFork],
@@ -53,7 +52,6 @@ const ChainSelector = () => {
     [onForkChange],
   )
 
-  // TODO: don't redirect (or at least don't override address query param)
   useEffect(() => {
     if (!router.isReady) {
       return
@@ -65,9 +63,7 @@ const ChainSelector = () => {
       setForkValue(fork as any)
       onForkChange(fork?.value as string)
     }
-    // if (defaultForkOption) {
-    //   handleForkChange(defaultForkOption)
-    // }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, defaultForkOption])
 
@@ -93,7 +89,6 @@ const ChainSelector = () => {
 
     if (forkIds.length > 0) {
       setActions([
-        ...forkActions,
         {
           id: 'fork',
           name: 'Select hardfork…',
@@ -101,6 +96,7 @@ const ChainSelector = () => {
           keywords: 'fork network evm',
           section: 'Preferences',
         },
+        ...forkActions,
       ])
     }
   }, [forkOptions, handleForkChange])

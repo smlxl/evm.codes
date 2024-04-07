@@ -1,0 +1,24 @@
+---
+fork: Cancun
+group: Block Information
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Stack output
+
+0. `blobBaseFee`: [blob base fee](https://eips.ethereum.org/EIPS/eip-4844#gas-accounting) in [wei](https://www.investopedia.com/terms/w/wei.asp).
+
+## Example
+
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `10` |
+
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='BLOBBASEFEE'_).
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Stack overflow.

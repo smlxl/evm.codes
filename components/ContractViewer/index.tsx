@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import { isValidAddress } from '@ethereumjs/util'
 import { TextField } from '@mui/material'
@@ -56,30 +56,32 @@ const ContractViewerInner = () => {
 
     if (addresses) {
       query.address = addresses
+      router.replace({ query })
     }
-
-    router.replace({ query })
   }
 
-  const tryLoadAddress = (address: string, invalidateRoute: boolean) => {
-    if (!isValidAddress(address)) {
-      if (address) {
-        setStatus('invalid address format: ' + address)
+  const tryLoadAddress = useCallback(
+    (address: string, invalidateRoute: boolean) => {
+      if (!isValidAddress(address)) {
+        if (address) {
+          setStatus('invalid address format: ' + address)
+        }
+        return
       }
-      return
-    }
 
-    address = address.toLowerCase()
-    if (deployments[address]) {
-      return
-    }
-
-    tryLoadContract(address).then(() => {
-      if (invalidateRoute) {
-        updateRoute()
+      address = address.toLowerCase()
+      if (deployments[address]) {
+        return
       }
-    })
-  }
+
+      tryLoadContract(address).then(() => {
+        if (invalidateRoute) {
+          updateRoute()
+        }
+      })
+    },
+    [deployments, tryLoadContract, updateRoute],
+  )
 
   // load contract from url once router is ready
   useEffect(() => {
@@ -91,14 +93,19 @@ const ContractViewerInner = () => {
     for (const addr of addresses) {
       tryLoadAddress(addr, false)
     }
-  }, [router.isReady, router.query.address, tryLoadAddress])
+    // NOTE: do not add dependencies here or it will cause an infinite loop (idk why)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
 
-  // TODO: fix router to support user-added implementations too
+  // TODO: fix router to support contract implementations added by user
+  // (currently only top-level contracts are supported)
   useEffect(() => {
     if (router.isReady) {
       updateRoute()
     }
-  }, [router.isReady])
+    // NOTE: do not add dependencies here or it will cause an infinite loop (idk why)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
@@ -123,7 +130,7 @@ const ContractViewerInner = () => {
               contract: DeploymentInfo,
               artifact: ContractArtifact,
             ) => {
-              if (!contract || !contract.address) {
+              if (!contract?.address) {
                 console.warn('missing contract')
                 return
               }

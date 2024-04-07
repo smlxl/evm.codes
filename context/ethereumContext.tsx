@@ -3,16 +3,18 @@ import { Buffer } from 'buffer'
 import React, { createContext, useEffect, useState, useRef } from 'react'
 
 import { Block } from '@ethereumjs/block'
-import { Common, Chain } from '@ethereumjs/common'
-import { HardforkConfig } from '@ethereumjs/common/src/types'
-import { RunState, InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
-import { EvmError } from '@ethereumjs/evm/src/exceptions'
-import { Opcode } from '@ethereumjs/evm/src/opcodes'
-import { getActivePrecompiles } from '@ethereumjs/evm/src/precompiles'
-import { TypedTransaction, TxData, Transaction } from '@ethereumjs/tx'
-import { Address, Account } from '@ethereumjs/util'
+import { Common, Chain, HardforkTransitionConfig } from '@ethereumjs/common'
+import {
+  EVM,
+  EvmError,
+  getActivePrecompiles,
+  InterpreterStep,
+} from '@ethereumjs/evm'
+import { RunState } from '@ethereumjs/evm/dist/cjs/interpreter'
+import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
+import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
+import { Address, Account, bytesToHex } from '@ethereumjs/util'
 import { VM } from '@ethereumjs/vm'
-//
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -22,6 +24,7 @@ import {
   IStorage,
   IExecutionState,
   IChain,
+  ITransientStorage,
 } from 'types'
 
 import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
@@ -33,8 +36,10 @@ import { toHex, fromBuffer } from 'util/string'
 
 let vm: VM
 let common: Common
+let currentOpcodes: OpcodeList | undefined
 
 const storageMemory = new Map()
+const transientStorageMemory = new Map<string, Map<string, string>>()
 const privateKey = Buffer.from(
   'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
   'hex',
@@ -43,15 +48,15 @@ const accountBalance = 18 // 1eth
 const accountAddress = Address.fromPrivateKey(privateKey)
 const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
-const postMergeHardforkNames: Array<string> = ['merge', 'shanghai']
+const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
 
 type ContextProps = {
   common: Common | undefined
   chains: IChain[]
-  forks: HardforkConfig[]
+  forks: HardforkTransitionConfig[]
   selectedChain: IChain | undefined
-  selectedFork: HardforkConfig | undefined
+  selectedFork: HardforkTransitionConfig | undefined
   opcodes: IReferenceItem[]
   precompiled: IReferenceItem[]
   instructions: IInstruction[]
@@ -66,12 +71,12 @@ type ContextProps = {
     byteCode: string,
     value: bigint,
     to?: Address,
-  ) => Promise<TypedTransaction | TxData>
+  ) => Promise<TypedTransaction | TxData | undefined>
   loadInstructions: (byteCode: string) => void
   startExecution: (byteCode: string, value: bigint, data: string) => void
   startTransaction: (tx: TypedTransaction | TxData) => Promise<{
     error?: EvmError
-    returnValue: Buffer
+    returnValue: Uint8Array
     createdAddress: Address | undefined
   }>
   continueExecution: () => void
@@ -81,9 +86,10 @@ type ContextProps = {
   resetExecution: () => void
 }
 
-const initialExecutionState = {
+const initialExecutionState: IExecutionState = {
   stack: [],
   storage: [],
+  transientStorage: [],
   memory: undefined,
   programCounter: undefined,
   totalGas: undefined,
@@ -109,7 +115,7 @@ export const EthereumContext = createContext<ContextProps>({
   onForkChange: () => undefined,
   transactionData: () =>
     new Promise((resolve) => {
-      resolve({})
+      resolve(undefined)
     }),
   loadInstructions: () => undefined,
   startExecution: () => undefined,
@@ -130,9 +136,9 @@ export const CheckIfAfterMergeHardfork = (forkName?: string) => {
 
 export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const [chains, setChains] = useState<IChain[]>([])
-  const [forks, setForks] = useState<HardforkConfig[]>([])
+  const [forks, setForks] = useState<HardforkTransitionConfig[]>([])
   const [selectedChain, setSelectedChain] = useState<IChain>()
-  const [selectedFork, setSelectedFork] = useState<HardforkConfig>()
+  const [selectedFork, setSelectedFork] = useState<HardforkTransitionConfig>()
   const [opcodes, setOpcodes] = useState<IReferenceItem[]>([])
   const [precompiled, setPrecompiled] = useState<IReferenceItem[]>([])
   const [instructions, setInstructions] = useState<IInstruction[]>([])
@@ -169,6 +175,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm = await VM.create({ common })
 
+    const evm = await EVM.create({
+      common,
+    })
+    currentOpcodes = evm.getActiveOpcodes()
+
     if (!skipChainsLoading) {
       _loadChainAndForks(common)
     }
@@ -178,7 +189,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     _setupStateManager()
     _setupAccount()
 
-    vm.evm.events!.on(
+    vm.evm.events?.on(
       'step',
       (e: InterpreterStep, contFunc: ((result?: any) => void) | undefined) => {
         _stepInto(e, contFunc)
@@ -226,10 +237,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       gasLimit,
       gasPrice: 10,
       data: '0x' + data,
-      nonce: account.nonce,
+      nonce: account?.nonce,
     }
 
-    return Transaction.fromTxData(txData).sign(privateKey)
+    return TransactionFactory.fromTxData(txData).sign(privateKey)
   }
 
   /**
@@ -237,8 +248,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * @param byteCode The contract bytecode.
    */
   const loadInstructions = (byteCode: string) => {
-    const opcodes = vm.evm.getActiveOpcodes!()
+    const opcodes = currentOpcodes
     const instructions: IInstruction[] = []
+
+    if (!opcodes) {
+      return
+    }
 
     for (let i = 0; i < byteCode.length; i += 2) {
       const instruction = parseInt(byteCode.slice(i, i + 2), 16)
@@ -285,6 +300,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       contractAddress,
       Buffer.from(byteCode, 'hex'),
     )
+    transientStorageMemory.clear()
     startTransaction(await transactionData(data, value, contractAddress))
   }
 
@@ -292,7 +308,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * Starts EVM execution of the instructions.
    * @param tx The transaction data to run from.
    */
-  const startTransaction = (tx: TypedTransaction | TxData) => {
+  const startTransaction = (tx: TypedTransaction | TxData | undefined) => {
     // always start paused
     isExecutionPaused.current = true
     setIsExecuting(true)
@@ -409,7 +425,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _loadChainAndForks = (common: Common) => {
     const chainIds: number[] = []
     const chainNames: string[] = []
-    const forks: HardforkConfig[] = []
+    const forks: HardforkTransitionConfig[] = []
 
     // iterate over TS enum to pick key,val
     for (const chain in Chain) {
@@ -488,7 +504,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const _loadOpcodes = () => {
     const opcodes: IReferenceItem[] = []
 
-    vm.evm.getActiveOpcodes!().forEach((op: Opcode) => {
+    currentOpcodes?.forEach((op: Opcode) => {
       const opcode = extractDocFromOpcode(op)
 
       opcode.minimumFee = parseInt(
@@ -527,7 +543,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setPrecompiled(precompiled)
   }
 
-  function traceMethodCalls(obj: any) {
+  function traceStorageMethodCalls(obj: any) {
     const handler = {
       get(target: any, propKey: any) {
         const origMethod = target[propKey]
@@ -546,17 +562,61 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     return new Proxy(obj, handler)
   }
 
+  function traceTransientStorageMethodCalls(obj: any) {
+    const handler = {
+      get(target: any, propKey: any) {
+        const origMethod = target[propKey]
+        return (...args: any[]) => {
+          const result = origMethod.apply(target, args)
+          if (propKey == 'put') {
+            const [rawAddress, rawKey, rawValue] = args as [
+              Address,
+              Uint8Array,
+              Uint8Array,
+            ]
+            const address = rawAddress.toString()
+            const key = bytesToHex(rawKey)
+            const value = bytesToHex(rawValue)
+            let addressTransientStorage = transientStorageMemory.get(address)
+            // Add the address to the transient storage
+            if (addressTransientStorage === undefined) {
+              transientStorageMemory.set(address, new Map<string, string>())
+              addressTransientStorage = transientStorageMemory.get(
+                address,
+              ) as Map<string, string>
+            }
+
+            addressTransientStorage.set(key, value)
+          }
+          return result
+        }
+      },
+    }
+    return new Proxy(obj, handler)
+  }
+
   // In this function we create a proxy EEI object that will intercept
   // putContractStorage and clearContractStorage and route them to our
   // implementations at _putContractStorage and _clearContractStorage
   // respectively AFTER applying the original methods.
   // This is necessary in order to handle storage operations easily.
   const _setupStateManager = () => {
-    const proxyStateManager = traceMethodCalls(vm.evm.eei)
-    vm.evm.eei.putContractStorage = proxyStateManager.putContractStorage
-    vm.evm.eei.clearContractStorage = proxyStateManager.clearContractStorage
+    const evm = vm.evm
+    if (evm instanceof EVM) {
+      // Storage handler
+      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+      evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
+      evm.stateManager.clearContractStorage =
+        proxyStateManager.clearContractStorage
+      // Transient storage handler
+      const transientStorageMethodProxy = traceTransientStorageMethodCalls(
+        evm.transientStorage,
+      )
+      evm.transientStorage.put = transientStorageMethodProxy.put
+    }
 
     storageMemory.clear()
+    transientStorageMemory.clear()
   }
 
   const _setupAccount = () => {
@@ -587,9 +647,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     exceptionError,
   }: {
     totalGasSpent: bigint
-    runState?: RunState
+    runState: RunState | undefined
     newContractAddress?: Address
-    returnValue?: Buffer
+    returnValue?: Uint8Array
     exceptionError?: EvmError
   }) => {
     if (runState) {
@@ -597,7 +657,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       _setExecutionState({
         pc,
         totalGasSpent,
-        stack: stack._store,
+        stack: stack.getStack(),
         memory: memory._store,
         memoryWordCount,
         returnValue,
@@ -681,10 +741,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     pc: number
     totalGasSpent: bigint
     stack: bigint[]
-    memory: Buffer
+    memory: Uint8Array
     memoryWordCount: bigint
     currentGas?: bigint | number
-    returnValue?: Buffer
+    returnValue?: Uint8Array
   }) => {
     const storage: IStorage[] = []
 
@@ -694,14 +754,31 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       })
     })
 
+    const transientStorage: ITransientStorage[] = []
+    for (const [address, entries] of transientStorageMemory.entries()) {
+      for (const [key, value] of entries.entries()) {
+        transientStorage.push({
+          address,
+          key,
+          value,
+        })
+      }
+    }
+
     setExecutionState({
       programCounter: pc,
       stack: stack.map((value) => value.toString(16)).reverse(),
       totalGas: totalGasSpent.toString(),
-      memory: fromBuffer(memory).substring(0, Number(memoryWordCount) * 64),
+      memory: fromBuffer(Buffer.from(memory)).substring(
+        0,
+        Number(memoryWordCount) * 64,
+      ),
+      transientStorage,
       storage,
       currentGas: currentGas ? currentGas.toString() : undefined,
-      returnValue: returnValue ? returnValue.toString('hex') : undefined,
+      returnValue: returnValue
+        ? Buffer.from(returnValue).toString('hex')
+        : undefined,
     })
   }
 

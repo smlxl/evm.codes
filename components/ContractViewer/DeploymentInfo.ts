@@ -1,11 +1,13 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
-// eslint-disable-next-line prettier/prettier
 import { type Abi } from 'abitype'
 import { SourceDefinition } from 'types/ast'
-import { EtherscanContractResponse, SolidityCompilerOutput } from 'types/contract'
+import {
+  EtherscanContractResponse,
+  SolidityCompilerOutput,
+} from 'types/contract'
 
 import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
@@ -130,7 +132,7 @@ export class DeploymentInfo {
       return
     }
 
-    if (!node || !node.nodeType) {
+    if (!node?.nodeType) {
       return
     }
 
@@ -147,39 +149,41 @@ export class DeploymentInfo {
   }
 
   async compile(outputs: string[], version?: string) {
-    return solidityCompiler.compileCode(
-      // this.code,
-      this.etherscanInfo.SourceCode,
-      // if not specifying exact version,
-      version || this.etherscanInfo.CompilerVersion,
-      outputs
-    ).then(({ result, error }: any) => {
-      if (error || !result) {
-        console.warn('could not compile', this.address, error)
-        return { result, error }
-      }
+    return solidityCompiler
+      .compileCode(
+        // this.code,
+        this.etherscanInfo.SourceCode,
+        // if not specifying exact version,
+        version || this.etherscanInfo.CompilerVersion,
+        outputs,
+      )
+      .then(({ result, error }: any) => {
+        if (error || !result) {
+          console.warn('could not compile', this.address, error)
+          return { result, error }
+        }
 
-      this.compilationInfo = result
+        this.compilationInfo = result
 
-      // TODO: move storage layout processing elsewhere
-      // console.log('outputs', outputs, result)
-      if (outputs.includes('storageLayout')) {
-        const targetName = this.etherscanInfo.ContractName
-        for (const contractData of Object.values(result.contracts) as any[]) {
-          if (contractData[targetName]) {
-            this.storageLayout = contractData[targetName].storageLayout
-            break
+        // TODO: move storage layout processing elsewhere
+        // console.log('outputs', outputs, result)
+        if (outputs.includes('storageLayout')) {
+          const targetName = this.etherscanInfo.ContractName
+          for (const contractData of Object.values(result.contracts) as any[]) {
+            if (contractData[targetName]) {
+              this.storageLayout = contractData[targetName].storageLayout
+              break
+            }
           }
         }
-      }
 
-      return { result, error }
-    })
+        return { result, error }
+      })
   }
 }
 
 export const DeploymentsContext = createContext<{
-  deployments: DeploymentsCollection,
+  deployments: DeploymentsCollection
   setDeployments: (deployments: DeploymentsCollection) => void
 }>({
   deployments: {},
@@ -190,58 +194,67 @@ export const DeploymentsContext = createContext<{
 
 export const useDeployments = () => {
   const { deployments, setDeployments } = useContext(DeploymentsContext)
-  const [selectedDeployment, setSelectedDeployment] = useState<DeploymentInfo | undefined>(undefined)
+  const [selectedDeployment, setSelectedDeployment] = useState<
+    DeploymentInfo | undefined
+  >(undefined)
   const [reqCount, setReqCount] = useState(0)
 
-  const loadDeployment = async (address: string, context?: DeploymentInfo, loadImplementation = true) => {
-    setReqCount(reqCount + 1)
-    return EtherscanLoader.loadDeployment(address, context)
-      .then(async (deployment: DeploymentInfo) => {
-        // TODO: should we avoid overriding if it already exists?
-        if (context) {
-          context.impls[address] = deployment
-        } else {
-          deployments[address] = deployment
-        }
-
-        setDeployments({ ...deployments })
-        setSelectedDeployment(deployment)
-
-        if (loadImplementation) {
-          const impl = deployment.etherscanInfo?.Implementation as string
-          if (impl) {
-            /*await*/ loadDeployment(impl.toLowerCase(), deployment)
-          }
-        }
-
-        const selectedOutputs = ['storageLayout']
-        const ogVersion = deployment.etherscanInfo.CompilerVersion
-        deployment.compile(selectedOutputs, ogVersion).then((data) => {
-          if (!data || data.error) {
-            // strip the 'v' prefix and '+commit..' suffix
-            // this will choose the latest stable release of that version
-            let shortVersion = ogVersion.split('+')[0].slice(1)
-            if (shortVersion.startsWith('0.4.')) {
-              // solcjs versions 0.4.x have bugs, bump to latest stable release
-              // and hope for good luck
-              shortVersion = '0.4.26'
-            }
-
-            deployment.compile(selectedOutputs, shortVersion).then(() => {
-              setReqCount(reqCount - 1)
-            })
+  const loadDeployment = useCallback(
+    async (
+      address: string,
+      context?: DeploymentInfo,
+      loadImplementation = true,
+    ) => {
+      setReqCount(reqCount + 1)
+      return EtherscanLoader.loadDeployment(address, context)
+        .then(async (deployment: DeploymentInfo) => {
+          // TODO: should we avoid overriding if it already exists?
+          if (context) {
+            context.impls[address] = deployment
           } else {
-            setReqCount(reqCount - 1)
+            deployments[address] = deployment
           }
-        })
 
-        return deployment
-      })
-      .catch((err) => {
-        setReqCount(reqCount - 1)
-        throw err
-      })
-  }
+          setDeployments({ ...deployments })
+          setSelectedDeployment(deployment)
+
+          if (loadImplementation) {
+            const impl = deployment.etherscanInfo?.Implementation as string
+            if (impl) {
+              /*await*/ loadDeployment(impl.toLowerCase(), deployment)
+            }
+          }
+
+          const selectedOutputs = ['storageLayout']
+          const ogVersion = deployment.etherscanInfo.CompilerVersion
+          deployment.compile(selectedOutputs, ogVersion).then((data) => {
+            if (!data || data.error) {
+              // strip the 'v' prefix and '+commit..' suffix
+              // this will choose the latest stable release of that version
+              let shortVersion = ogVersion.split('+')[0].slice(1)
+              if (shortVersion.startsWith('0.4.')) {
+                // solcjs versions 0.4.x have bugs, bump to latest stable release
+                // and hope for good luck
+                shortVersion = '0.4.26'
+              }
+
+              deployment.compile(selectedOutputs, shortVersion).then(() => {
+                setReqCount(reqCount - 1)
+              })
+            } else {
+              setReqCount(reqCount - 1)
+            }
+          })
+
+          return deployment
+        })
+        .catch((err) => {
+          setReqCount(reqCount - 1)
+          throw err
+        })
+    },
+    [deployments, setDeployments, reqCount],
+  )
 
   const removeDeployment = (deployment: DeploymentInfo) => {
     const context = deployment.context

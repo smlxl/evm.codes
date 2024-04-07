@@ -1,0 +1,28 @@
+---
+fork: Cancun
+group: Block Information
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Stack input
+
+0. `index`
+
+## Stack output
+
+0. `tx.blob_versioned_hashes[index]` if `index < len(tx.blob_versioned_hashes)`, and otherwise with a zeroed `bytes32` value.
+
+## Example
+
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `0` |
+
+[Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='BLOBHASH'_).
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.

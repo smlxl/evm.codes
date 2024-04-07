@@ -1,0 +1,39 @@
+---
+fork: Cancun
+group: Stack Memory Storage and Flow Operations
+---
+
+*Index 1 is top of the stack.*
+
+## Notes
+
+Copying takes place as if an intermediate buffer was used, allowing the destination and source to overlap.
+If `size > 0` and `(src + size or dst + size)` is beyond the current memory size, the memory is extended with respective gas cost applied.
+
+## Stack input
+
+0. `destOffset`: byte offset in the [memory](/about) where the result will be copied.
+1. `offset`: byte offset in the [memory](/about) from which to copy.
+2. `size`: byte size to copy.
+
+## Examples
+
+| * | Input 1 | * |
+|--:|--------:|--:|
+| `1` | `0` | * |
+| `2` | `32` | * |
+| `3` | `32` | * |
+
+| Memory before |
+|-------------:|
+| `0000000000000000000000000000000000000000000000000000000000000000 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` |
+
+| Memory after |
+|---------------------:|
+| `000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f` |
+
+[Reproduce in playground](/playground?fork=cancun&unit=Wei&codeType=Mnemonic&code='ySet%20the%20stateuv0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f~32wMSTOREwwyExamplrsizroffset~0%20%2Fydestination%20offsetwMCOPY'~u1%20y%2F%2F%20w%5Cnv32%20uwPUSHre~vy%01ruvwy~_).
+
+## Gas
+    static_gas = 3
+    dynamic_gas = 3 * words_copied + memory_expansion_cost
