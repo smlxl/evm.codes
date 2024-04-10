@@ -3,7 +3,7 @@ fork: Frontier
 group: Exchange Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -45,29 +45,30 @@ group: Exchange Operations
 
 ## Example
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `1` | `2` |
-| `2` | `0` | `0` |
-| `3` | `0` | `0` |
-| `4` | `0` | `0` |
-| `5` | `0` | `0` |
-| `6` | `0` | `0` |
-| `7` | `0` | `0` |
-| `8` | `0` | `0` |
-| `9` | `0` | `0` |
-| `10` | `0` | `0` |
-| `11` | `0` | `0` |
-| `12` | `0` | `0` |
-| `13` | `0` | `0` |
-| `14` | `0` | `0` |
-| `15` | `0` | `0` |
-| `16` | `2` | `1` |
+|   \* | Input | Output |
+| ---: | ----: | -----: |
+|  `1` |   `1` |    `2` |
+|  `2` |   `0` |    `0` |
+|  `3` |   `0` |    `0` |
+|  `4` |   `0` |    `0` |
+|  `5` |   `0` |    `0` |
+|  `6` |   `0` |    `0` |
+|  `7` |   `0` |    `0` |
+|  `8` |   `0` |    `0` |
+|  `9` |   `0` |    `0` |
+| `10` |   `0` |    `0` |
+| `11` |   `0` |    `0` |
+| `12` |   `0` |    `0` |
+| `13` |   `0` |    `0` |
+| `14` |   `0` |    `0` |
+| `15` |   `0` |    `0` |
+| `16` |   `2` |    `1` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='xet%20state~2zzzzzzz~1yyxwapySWAP15'~yPUSH1%20z~0~0y%5Cnx%2F%2F%20S%01xyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

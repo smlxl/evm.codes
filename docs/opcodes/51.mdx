@@ -3,7 +3,7 @@ fork: Frontier
 group: Stack Memory Storage and Flow Operations
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Notes
 
@@ -19,18 +19,19 @@ Pop from the stack a word as `offset` to locate and read a word from the memory 
 
 ## Examples
 
-| Memory |
-|-------:|
+|                                                               Memory |
+| -------------------------------------------------------------------: |
 | `0x00000000000000000000000000000000000000000000000000000000000000FF` |
 
-| * | Input | Output | * | * | Input | Output |
-|--:|------:|-------:|--:|--:|------:|-------:|
-| `1` | `0` | `0xFF` | * | `1` | `1` | `0xFF00` |
+|  \* | Input | Output |  \* |  \* | Input |   Output |
+| --: | ----: | -----: | --: | --: | ----: | -------: |
+| `1` |   `0` | `0xFF` |  \* | `1` |   `1` | `0xFF00` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='qPut%20thkstatkin%20memoryg32%200xfffffdFFv0zMSTOREw1v0jw2v1jz'~dddz%5CnwzzqExamplkvg1%20q%2F%2F%20ke%20jzMLOADgzPUSHf~~d00%01dfgjkqvwz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

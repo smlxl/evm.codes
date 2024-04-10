@@ -3,7 +3,7 @@ fork: Frontier
 group: Block Information
 ---
 
-*Index 1 is top of the stack. See [PUSH](/#60).*
+_Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Stack input
 
@@ -15,12 +15,13 @@ group: Block Information
 
 ## Examples
 
-| * | Input | Output |
-|--:|------:|-------:|
+|  \* |       Input |                                                               Output |
+| --: | ----------: | -------------------------------------------------------------------: |
 | `1` | `599423545` | `0x29045A592007D0C246EF02C2223570DA9522D0CF0F73282C79A1BC8F0BB2C238` |
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
+
 - Not enough gas.
 - Not enough values on the stack.

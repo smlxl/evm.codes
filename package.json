@@ -8,7 +8,7 @@
     "build": "yarn next build",
     "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
     "dev": "next dev",
-    "format": "prettier --write \"**/*.{css,js,jsx,ts,tsx}\"",
+    "format": "prettier --write --cache .",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
