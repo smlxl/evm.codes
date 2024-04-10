@@ -40,3 +40,5 @@ yarn-error.log*
 .idea
 
 node_modules_/
+
+public/solcWorker.js
