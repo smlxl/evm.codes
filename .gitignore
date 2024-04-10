@@ -38,3 +38,5 @@ yarn-error.log*
 
 # jet brains
 .idea
+
+public/solcWorker.js
