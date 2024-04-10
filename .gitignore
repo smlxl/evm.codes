@@ -38,5 +38,3 @@ yarn-error.log*
 
 # jet brains
 .idea
-
-node_modules_/
