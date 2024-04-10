@@ -5,7 +5,7 @@
   "homepage": "https://github.com/smlxl/evm.codes",
   "license": "MIT",
   "scripts": {
-    "build": "next build",
+    "build": "yarn next build",
     "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
     "dev": "next dev",
     "format": "prettier --write \"**/*.{css,js,jsx,ts,tsx}\"",
@@ -70,6 +70,7 @@
     "viem": "^2.9.9"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.24.4",
     "@next/eslint-plugin-next": "^12.0.7",
     "@swc/core": "^1.4.8",
     "@types/ethereumjs-abi": "^0.6.5",
