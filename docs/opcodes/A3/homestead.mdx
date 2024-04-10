@@ -1,0 +1,7 @@
+## Dynamic gas
+
+    static_gas = {gasPrices|log}
+    dynamic_gas = {gasPrices|logTopic} * topic_count + {gasPrices|logData} * size + memory_expansion_cost
+
+For LOG3, `topic_count` is 3.
+The memory expansion cost explanation can be found [here](/about).
