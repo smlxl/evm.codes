@@ -3,10 +3,9 @@ fork: Frontier
 group: System operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
-
 From cancun behavior: send all Ether in the account to the target.
 If executed in the same transaction a contract was created, or pre-Cancun, the current account is registered to be destroyed, and will be at the end of the current transaction. The transfer of the current balance to the given account cannot fail. In particular, the destination account code (if any) is not executed, or, if the account does not exist, the balance is still added to the given address.
 
@@ -21,7 +20,6 @@ If executed in the same transaction a contract was created, or pre-Cancun, the c
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).

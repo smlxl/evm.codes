@@ -3,7 +3,7 @@ fork: Byzantium
 group: Environmental Information
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
@@ -17,26 +17,26 @@ A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL]
 
 ## Examples
 
-|                                                          Return data |
-| -------------------------------------------------------------------: |
+| Return data |
+|------------:|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-|  \* | Input 1 |  \* |  \* | Input 2 |
-| --: | ------: | --: | --: | ------: |
-| `1` |     `0` |  \* | `1` |    `32` |
-| `2` |     `0` |  \* | `2` |    `31` |
-| `3` |    `32` |  \* | `3` |     `1` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `32` |
+| `2` | `0` | * | `2` | `31` |
+| `3` | `32` | * | `3` | `1` |
 
 | Memory before |
-| ------------: |
-|           `0` |
+|--------------:|
+| `0` |
 
-|                                                 Memory after input 1 |
-| -------------------------------------------------------------------: |
+| Memory after input 1 |
+|---------------------:|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-|                                            Memory after input 1 then 2 |
-| ---------------------------------------------------------------------: |
+| Memory after input 1 then 2 |
+|----------------------------:|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 [Reproduce in playground][1]
@@ -46,7 +46,6 @@ A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL]
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.
 - The addition `offset` + `size` overflows.

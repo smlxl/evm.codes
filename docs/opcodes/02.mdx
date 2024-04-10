@@ -3,7 +3,7 @@ fork: Frontier
 group: Stop and Arithmetic Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Stack input
 
@@ -16,21 +16,20 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Examples
 
-|  \* | Input | Output |
-| --: | ----: | -----: |
-| `1` |  `10` |  `100` |
-| `2` |  `10` |        |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `10` | `100` |
+| `2` | `10` | |
 
-|  \* |                                                                Input |                                                               Output |
-| --: | -------------------------------------------------------------------: | -------------------------------------------------------------------: |
+| * | Input | Output |
+|--:|------:|-------:|
 | `1` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE` |
-| `2` |                                                                  `2` |                                                                      |
+| `2` | `2` | |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='y1z10z10twwy2v32%200xssssz2t'~uuuuzv1%20y%2F%2F%20Example%20w%5CnvwPUSHuFFtwMULs~~%01stuvwyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

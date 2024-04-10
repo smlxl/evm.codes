@@ -3,7 +3,7 @@ fork: Frontier
 group: Exchange Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Stack input
 
@@ -33,24 +33,23 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Example
 
-|   \* | Input | Output |
-| ---: | ----: | -----: |
-|  `1` |   `1` |    `2` |
-|  `2` |   `0` |    `0` |
-|  `3` |   `0` |    `0` |
-|  `4` |   `0` |    `0` |
-|  `5` |   `0` |    `0` |
-|  `6` |   `0` |    `0` |
-|  `7` |   `0` |    `0` |
-|  `8` |   `0` |    `0` |
-|  `9` |   `0` |    `0` |
-| `10` |   `2` |    `1` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `1` | `2` |
+| `2` | `0` | `0` |
+| `3` | `0` | `0` |
+| `4` | `0` | `0` |
+| `5` | `0` | `0` |
+| `6` | `0` | `0` |
+| `7` | `0` | `0` |
+| `8` | `0` | `0` |
+| `9` | `0` | `0` |
+| `10` | `2` | `1` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='yet%20state~2xxxx~1zzywapzSWAP9'~zPUSH1%20z%5Cny%2F%2F%20Sx~0~0%01xyz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

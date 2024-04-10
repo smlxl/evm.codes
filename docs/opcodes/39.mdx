@@ -3,7 +3,7 @@ fork: Frontier
 group: Environmental Information
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
@@ -17,26 +17,26 @@ For out of bound bytes, 0s will be copied.
 
 ## Examples
 
-|                                                                 Code |
-| -------------------------------------------------------------------: |
+| Code |
+|-----:|
 | `0x7DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
 
-|  \* | Input 1 |  \* |  \* | Input 2 |
-| --: | ------: | --: | --: | ------: |
-| `1` |     `0` |  \* | `1` |     `0` |
-| `2` |     `0` |  \* | `2` |    `31` |
-| `3` |    `32` |  \* | `3` |     `8` |
+| * | Input 1 | * | * | Input 2 |
+|--:|--------:|--:|--:|--------:|
+| `1` | `0` | * | `1` | `0` |
+| `2` | `0` | * | `2` | `31` |
+| `3` | `32` | * | `3` | `8` |
 
 | Memory before |
-| ------------: |
-|           `0` |
+|--------------:|
+| `0` |
 
-|                                                 Memory after input 1 |
-| -------------------------------------------------------------------: |
+| Memory after input 1 |
+|---------------------:|
 | `0x7DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
 
-|                                          Memory after input 1 then 2 |
-| -------------------------------------------------------------------: |
+| Memory after input 1 then 2 |
+|----------------------------:|
 | `0x7F00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='qPutwbeginning%20ofwcodXtowexpected%20valueZ30VxWWWWWZ32VyyqRemovewvalues%20fromwstackTTj1~32~0_j2~8~31_'~Z1%20zFFFFFFy%5Cnw%20thXq%2F%2F%20jyyqExamplX_~0yCODECOPYZyPUSHXe%20WzzV%200TyPOP%01TVWXZ_jqwyz~_).
@@ -44,6 +44,5 @@ For out of bound bytes, 0s will be copied.
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

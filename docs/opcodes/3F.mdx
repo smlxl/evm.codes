@@ -3,7 +3,7 @@ fork: Constantinople
 group: Environmental Information
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Stack input
 
@@ -15,8 +15,8 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Examples
 
-|  \* |                                        Input |                                                               Output |
-| --: | -------------------------------------------: | -------------------------------------------------------------------: |
+| * | Input | Output |
+|--:|------:|-------:|
 | `1` | `0x43a61f3f4c73ea0d444c5c1c1a8544067a86219b` | `0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470` |
 
 [Reproduce in playground][1]
@@ -26,6 +26,5 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

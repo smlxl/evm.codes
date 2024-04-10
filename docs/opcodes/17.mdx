@@ -3,7 +3,7 @@ fork: Frontier
 group: Comparison & Bitwise Logic Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Stack input
 
@@ -16,16 +16,15 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Examples
 
-|  \* |  Input | Output |  \* |  \* |  Input | Output |
-| --: | -----: | -----: | --: | --: | -----: | -----: |
-| `1` | `0xF0` | `0xFF` |  \* | `1` | `0xFF` | `0xFF` |
-| `2` |  `0xF` |        |  \* | `2` | `0xFF` |        |
+| * | Input | Output | * | * | Input | Output |
+|--:|------:|-------:|--:|--:|------:|-------:|
+| `1` | `0xF0` | `0xFF` | * | `1` | `0xFF` | `0xFF` |
+| `2` | `0xF` | | * | `2` | `0xFF` | |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='z1~~0yORyyz2~F~FyOR'~yPUSH1%200xFz%2F%2F%20Example%20y%5Cn%01yz~_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

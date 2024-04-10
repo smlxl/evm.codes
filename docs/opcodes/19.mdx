@@ -3,7 +3,7 @@ fork: Frontier
 group: Comparison & Bitwise Logic Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Stack input
 
@@ -15,15 +15,14 @@ _Index 1 is top of the stack. See [PUSH](/#60)._
 
 ## Example
 
-|  \* | Input |                                                               Output |
-| --: | ----: | -------------------------------------------------------------------: |
-| `1` |   `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 [Reproduce in playground](/playground?unit=Wei&codeType=Mnemonic&code='PUSH1%200%5CnNOT'_).
 
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.

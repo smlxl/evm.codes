@@ -1,22 +1,22 @@
 ## Gas
 
 ### Definitions:
-
 - **value**: value from the stack input.
 - **current_value**: current value of the storage slot.
 - **original_value**: value of the storage slot before the current transaction.
 
-  static_gas = {gasPrices|sstore}
 
-  if value == current_value
-  dynamic_gas = {gasPrices|sstoreNoopGasEIP2200}
-  else if current_value == original_value
-  if original_value == 0
-  dynamic_gas = {gasPrices|sstoreInitGasEIP2200}
-  else
-  dynamic_gas = {gasPrices|sstoreCleanGasEIP2200}
-  else
-  dynamic_gas = {gasPrices|sstoreDirtyGasEIP2200}
+    static_gas = {gasPrices|sstore}
+
+    if value == current_value
+        dynamic_gas = {gasPrices|sstoreNoopGasEIP2200}
+    else if current_value == original_value
+        if original_value == 0
+            dynamic_gas = {gasPrices|sstoreInitGasEIP2200}
+        else
+            dynamic_gas = {gasPrices|sstoreCleanGasEIP2200}
+    else
+        dynamic_gas = {gasPrices|sstoreDirtyGasEIP2200}
 
 ## Gas refunds
 

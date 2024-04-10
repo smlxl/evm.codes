@@ -3,7 +3,7 @@ fork: Frontier
 group: Logging Operations
 ---
 
-_Index 1 is top of the stack. See [PUSH](/#60)._
+*Index 1 is top of the stack. See [PUSH](/#60).*
 
 ## Notes
 
@@ -18,7 +18,6 @@ This instruction has no effect on the EVM state. See [here](https://ethereum.org
 ## Error cases
 
 The state changes done by the current context are [reverted](#FD) in those cases:
-
 - Not enough gas.
 - Not enough values on the stack.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).
