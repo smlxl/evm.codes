@@ -63,9 +63,14 @@ const ChainSelector = () => {
       setForkValue(fork as any)
       onForkChange(fork?.value as string)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady, defaultForkOption])
+  }, [
+    router.isReady,
+    defaultForkOption,
+    router.query.fork,
+    forks,
+    forkOptions,
+    onForkChange,
+  ])
 
   useEffect(() => {
     const forkIds: string[] = []
@@ -89,6 +94,7 @@ const ChainSelector = () => {
 
     if (forkIds.length > 0) {
       setActions([
+        ...forkActions,
         {
           id: 'fork',
           name: 'Select hardfork…',
@@ -96,7 +102,6 @@ const ChainSelector = () => {
           keywords: 'fork network evm',
           section: 'Preferences',
         },
-        ...forkActions,
       ])
     }
   }, [forkOptions, handleForkChange])
