@@ -24,7 +24,7 @@ import { SettingsContext, Setting } from 'context/settingsContext'
 import { getAbsoluteURL } from 'util/browser'
 import {
   getTargetEvmVersion,
-  compilerSemVer,
+  compilerVersion,
   getBytecodeFromMnemonic,
   getMnemonicFromBytecode,
   getBytecodeLinesFromInstructions,
@@ -94,7 +94,7 @@ const Editor = ({ readOnly = false }: Props) => {
   const [output, setOutput] = useState<IConsoleOutput[]>([
     {
       type: 'info',
-      message: `Loading Solidity compiler ${compilerSemVer}...`,
+      message: `Loading Solidity compiler ${compilerVersion}...`,
     },
   ])
   const solcWorkerRef = useRef<null | Worker>(null)
@@ -260,7 +260,7 @@ const Editor = ({ readOnly = false }: Props) => {
   useEffect(() => {
     if (solcWorkerRef?.current) {
       // @ts-ignore change the worker message, when value and args changed.
-      solcWorkerRef.current?.onmessage = handleWorkerMessage
+      solcWorkerRef.current.onmessage = handleWorkerMessage
     }
   }, [solcWorkerRef, handleWorkerMessage])
 
@@ -407,7 +407,6 @@ const Editor = ({ readOnly = false }: Props) => {
       } else {
         setIsCompiling(true)
         log('Starting compilation...')
-
         if (solcWorkerRef?.current) {
           solcWorkerRef.current.postMessage({
             language: codeType,
@@ -634,7 +633,7 @@ const Editor = ({ readOnly = false }: Props) => {
       </div>
 
       <div className="rounded-b-lg py-2 px-4 border-t bg-gray-800 dark:bg-black-700 border-black-900/25 text-gray-400 dark:text-gray-600 text-xs">
-        Solidity Compiler {compilerSemVer}
+        Solidity Compiler {compilerVersion}
       </div>
     </div>
   )

@@ -8,7 +8,6 @@ import { Container } from 'components/ui'
 const PlaygroundPage = () => {
   return (
     <>
-      <html lang="en"></html>
       <Head>
         <meta property="og:type" content="website" />
         <title>EVM Codes - Playground</title>

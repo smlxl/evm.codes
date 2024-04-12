@@ -1,4 +1,6 @@
 ethereum.js
 solcWorker.js
 public
+@/
+tailwind.config.js
 .eslintrc.js

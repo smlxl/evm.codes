@@ -46,18 +46,26 @@ const ChainSelector = () => {
       onForkChange(option.value)
 
       router.query.fork = option.value
-      router.push(router)
+      router.push({ query: router.query })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [onForkChange],
   )
 
   useEffect(() => {
-    if (defaultForkOption) {
-      handleForkChange(defaultForkOption)
+    if (!router.isReady) {
+      return
     }
+
+    if (!router.query.fork) {
+      const latestFork = forks.at(-1)
+      const fork = forkOptions.find((fork) => fork.value === latestFork?.name)
+      setForkValue(fork as any)
+      onForkChange(fork?.value as string)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultForkOption])
+  }, [router.isReady, defaultForkOption])
 
   useEffect(() => {
     const forkIds: string[] = []
@@ -81,7 +89,6 @@ const ChainSelector = () => {
 
     if (forkIds.length > 0) {
       setActions([
-        ...forkActions,
         {
           id: 'fork',
           name: 'Select hardfork…',
@@ -89,6 +96,7 @@ const ChainSelector = () => {
           keywords: 'fork network evm',
           section: 'Preferences',
         },
+        ...forkActions,
       ])
     }
   }, [forkOptions, handleForkChange])

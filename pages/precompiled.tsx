@@ -44,7 +44,6 @@ const PrecompiledPage = ({
 
   return (
     <>
-      <html lang="en"></html>
       <React.Fragment>
         <Head>
           <title> EVM Codes - Precompiled Contracts </title>

@@ -21,7 +21,6 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
 }) => {
   return (
     <>
-      <html lang="en"></html>
       <React.Fragment>
         <Head>
           <title> EVM Codes - About the EVM </title>
@@ -37,7 +36,7 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
         id={anchorKey}
         className="font-mono mb-4 justify-start relative items-center scroll-mt-14"
       >
-        <Link href={`/about#${anchorKey}`}>
+        <Link legacyBehavior href={`/about#${anchorKey}`}>
           <a className="absolute -left-6">
             <Icon name="links-line" className="text-indigo-500" />
           </a>
@@ -368,24 +367,24 @@ const AboutPage = () => {
         </p>
       </SectionWrapper>
 
-      <SectionWrapper header={<H3>Access Sets</H3>} anchorKey="accesssets">
+      <SectionWrapper header={<H3>Access List</H3>} anchorKey="access_list">
         <p className="pb-6">
-          Access sets are defined per external transaction, and not per call.
+          Access list is defined per external transaction, and not per call.
           Each transaction may be defined by some combination of its sender,
           calldata, or callee. Transactions can either be external or internal.
           External transactions are sent to the Ethereum network. Internal
           transactions are triggered by external transactions that have executed
           the xCALL instruction. As such, internal transactions are also known
-          as calls. Access sets can be thought of as two independent types of
+          as calls. Access list can be thought of as two independent types of
           lists: those of touched addresses, and those of touched contract
           storage slots.
         </p>
         <p className="pb-6">
           When an address is accessed by a transaction, instruction, or used as
-          caller or callee, it is put in the access set. Calling the opcode{' '}
+          caller or callee, it is put in the access list. Calling the opcode{' '}
           <RelativeLink to="#31" title="BALANCE" />, on an address not present
-          in an access set costs more than if the address were already in the
-          set. Other opcodes that can modify the access set include{' '}
+          in an access list costs more than if the address were already in the
+          list. Other opcodes that can modify the access list include{' '}
           <RelativeLink to="#3B" title="EXTCODESIZE" />,{' '}
           <RelativeLink to="#3C" title="EXTCODECOPY" />,{' '}
           <RelativeLink to="#3F" title="EXTCODEHASH" />,{' '}
@@ -399,17 +398,13 @@ const AboutPage = () => {
           own cost when modifying the access set.
         </p>
         <p className="pb-6">
-          Touch slot lists are a set of storage slot keys accessed by contract
+          Touch slot lists are a list of storage slot keys accessed by contract
           addresses. Slot lists are initialized to empty. When an opcode
-          accesses a slot that is not present in the set, it adds it to it.
+          accesses a slot that is not present in the list, it adds it to it.
           Opcodes that can modify the touched slot list are{' '}
           <RelativeLink to="#54" title="SLOAD" /> and{' '}
           <RelativeLink to="#55" title="SSTORE" />. Again, both opcodes have
-          their own cost when modifying the access set.
-        </p>
-        <p className="pb-6">
-          If a context is reverted, sets are reverted to their state before the
-          context.
+          their own cost when modifying the access list.
         </p>
         <p className="pb-6">
           If an address or storage slot is present in the set, it is called
@@ -436,6 +431,10 @@ const AboutPage = () => {
               <RelativeLink to="#41" title="COINBASE" /> address.
             </li>
           </ul>
+        </p>
+        <p className="pb-6">
+          If a context is reverted, access warming effects are reverted to their
+          state before the context.
         </p>
       </SectionWrapper>
 

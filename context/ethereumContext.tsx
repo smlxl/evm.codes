@@ -7,10 +7,10 @@ import { Common, Chain, HardforkTransitionConfig } from '@ethereumjs/common'
 import {
   EVM,
   EvmError,
-  EVMResult,
   getActivePrecompiles,
   InterpreterStep,
 } from '@ethereumjs/evm'
+import { RunState } from '@ethereumjs/evm/dist/cjs/interpreter'
 import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
 import { Address, Account, bytesToHex } from '@ethereumjs/util'
@@ -33,9 +33,6 @@ import {
   calculatePrecompiledDynamicFee,
 } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
-
-// NOTE: Importing the type directly caused issues
-type RunState = EVMResult['execResult']['runState']
 
 let vm: VM
 let common: Common
@@ -178,7 +175,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm = await VM.create({ common })
 
-    const evm = new EVM({
+    const evm = await EVM.create({
       common,
     })
     currentOpcodes = evm.getActiveOpcodes()
