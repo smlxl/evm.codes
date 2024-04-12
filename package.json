@@ -5,17 +5,13 @@
   "homepage": "https://github.com/smlxl/evm.codes",
   "license": "MIT",
   "scripts": {
-    "build": "yarn next build",
+    "build": "next build",
     "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
     "dev": "next dev",
     "format": "prettier --write  --cache .",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "typecheck": "tsc --pretty"
-  },
-  "resolutions": {
-    "@types/react": "17.0.2",
-    "@types/react-dom": "17.0.2"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
@@ -82,6 +78,7 @@
     "@types/react-table": "^7.7.19",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
+    "abitype": "^1.0.2",
     "autoprefixer": "^10.4.18",
     "eslint": "^8.57.0",
     "eslint-config-next": "12.3.2",
@@ -100,5 +97,25 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.0.4",
     "webpack": "^5.90.3"
+  },
+  "packageManager": "pnpm@8.15.6",
+  "engines": {
+    "node": "^20.0.0",
+    "pnpm": "^8.15.6"
+  },
+  "volta": {
+    "node": "20.12.2",
+    "pnpm": "8.15.6"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "17.0.2",
+      "@types/react-dom": "17.0.2"
+    },
+    "allowedDeprecatedVersions": {
+      "@babel/plugin-proposal-object-rest-spread": "7.12.1",
+      "core-js": "2.6.12",
+      "trim": "0.0.1"
+    }
   }
 }
