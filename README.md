@@ -14,8 +14,8 @@ evm.codes is brought to you by [smlXL](https://www.smlxl.io), powered by open-so
 
 The app requires the following dependencies:
 
-- [NodeJS](https://nodejs.org/) >= 18
-- [Yarn](https://yarnpkg.com/)
+- [NodeJS](https://nodejs.org/) >= 20
+- [pnpm](https://pnpm.io/)
 
 ## 👩‍💻 Local Development
 
@@ -27,11 +27,11 @@ Clone this repository:
 
 Install the dependencies:
 
-    yarn install
+    pnpm install
 
-Start up the app and see it running at http://localhost:3000
+Start up the app and see it running at <http://localhost:3000>
 
-    yarn dev
+    pnpm dev
 
 ## 🚀 Deploying
 
@@ -51,15 +51,15 @@ The project is already pre-configured with [Eslint](.eslintrc.js), [TypeScript](
 
 Check for any linting issues and fix:
 
-    yarn lint --fix
+    pnpm lint --fix
 
 Check for any TypeScript issues:
 
-    yarn typecheck
+    pnpm typecheck
 
 Sort the `package.json`:
 
-    yarn lint:package
+    pnpm lint:package
 
 ## Architecture
 
