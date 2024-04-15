@@ -1,0 +1,23 @@
+---
+fork: Cancun
+---
+
+## Inputs
+
+| Byte range | Name           | Description                               |
+|------------|----------------|-------------------------------------------|
+| `[0:32]`   | versioned_hash | Reference to a blob in the execution layer. |
+| `[32:64]`  | x              | x-coordinate at which the blob is being evaluated. |
+| `[64:96]`  | y              | y-coordinate at which the blob is being evaluated. |
+| `[96:144]` | commitment     | Commitment to the blob being evaluated. |
+| `[144:192]`| proof          | Proof associated with the commitment. |
+
+## Output
+
+| Byte range | Name                  | Description |
+|------------|-----------------------|-------------|
+| `[0; 32]`  | FIELD_ELEMENTS_PER_BLOB | The number of field elements in the blob. |
+| `[32; 64]` | BLS_MODULUS            | The modulus used in the BLS signature scheme. |
+
+The precompile will return the number of field elements in the blob, and the `BLS_MODULUS` with the constant value `52435875175126190479447740508185965837690552500527637822603658699938581184513`.
+The precompile will reject non-canonical field elements (i.e. provided field elements **MUST** be strictly less than `BLS_MODULUS`).
