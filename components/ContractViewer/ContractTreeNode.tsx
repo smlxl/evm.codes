@@ -155,7 +155,7 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
         })}
         {arraySize === undefined && (
           <Button
-            style={{ border: '1px solid', marginTop: '4px' }}
+            className="border-solid border-2 mt-4"
             size="sm"
             transparent
             outline
@@ -565,12 +565,14 @@ export const FunctionAbiItem = ({
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
         )}
         {status?.message && (
-          <input
-            type="button"
-            className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
-            onClick={() => navigator.clipboard.writeText(status.message)}
-            value={'Copy to clipboard'}
-          />
+          <div>
+            <Button
+              size="xs"
+              onClick={() => navigator.clipboard.writeText(status.message)}
+            >
+              Copy to clipboard
+            </Button>
+          </div>
         )}
         <p className="text-xs text-gray-500 break-words">
           {/** NOTE: We only want to format messages with a successful response */}
