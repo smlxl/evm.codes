@@ -420,44 +420,72 @@ export const FunctionAbiItem = ({
       return
     }
 
-    const walletClient = createWalletClient({
-      chain: mainnet,
-      transport: custom((window as any).ethereum),
-    })
+    try {
+      const ethWallet: unknown = (window as any).ethereum
+      if (!ethWallet) {
+        setStatus({
+          status: 'error',
+          message: 'No Ethereum wallet extension found',
+        })
+        return
+      }
+      const walletClient = createWalletClient({
+        chain: mainnet,
+        transport: custom(ethWallet as any),
+      })
 
-    return walletClient
-      .requestAddresses()
-      .then((addresses: any) => {
-        const props = {
-          // TODO: support overrides, eg. from, block, gas, etc.
-          account: addresses[0],
-          to: address,
-          data,
-          value: funcData.value,
-        }
-
-        return walletClient.sendTransaction(props as any).then((res: any) => {
-          let decoded = decodeFunctionResult({
-            abi: [funcAbi],
-            data: res.data,
-          })
-
-          if (funcAbi.outputs.length == 1) {
-            decoded = [decoded]
+      return walletClient
+        .requestAddresses()
+        .then((addresses: any) => {
+          const props = {
+            // TODO: support overrides, eg. from, block, gas, etc.
+            account: addresses[0],
+            to: address,
+            data,
+            value: funcData.value,
           }
 
-          return decoded.map((val: any) => val.toString())
+          return walletClient.sendTransaction(props as any).then((res: any) => {
+            let decoded = decodeFunctionResult({
+              abi: [funcAbi],
+              data: res.data,
+            })
+
+            if (funcAbi.outputs.length == 1) {
+              decoded = [decoded]
+            }
+
+            return decoded.map((val: any) => val.toString())
+          })
         })
-      })
-      .catch((err: any) => {
-        setStatus(err.toString())
-      })
+        .catch((err: any) => {
+          setStatus({
+            status: 'error',
+            message: err.toString(),
+          })
+        })
+    } catch (err) {
+      if (err instanceof Error) {
+        setStatus({
+          status: 'error',
+          message: err.toString(),
+        })
+      } else {
+        setStatus({
+          status: 'error',
+          message: 'unknown error',
+        })
+      }
+    }
   }
 
   const setCallStatus = () => {
     const [data, error] = encodeCalldata()
     if (error) {
-      setStatus(error.toString())
+      setStatus({
+        status: 'error',
+        message: error.toString(),
+      })
       updateFuncData({ outputs: [] })
       return
     }
@@ -471,7 +499,10 @@ export const FunctionAbiItem = ({
         updateFuncData({ outputs: decoded })
       })
       .catch((err: any) => {
-        setStatus(err.toString())
+        setStatus({
+          status: 'error',
+          message: err.toString(),
+        })
         updateFuncData({ outputs: [] })
       })
   }
