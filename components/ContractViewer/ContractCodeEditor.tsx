@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 
 const ContractCodeEditor = ({ code, line, column, ...props }: any) => {
   const [codeEditor, setCodeEditor] = useState<any>(null)
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   const handleEditorDidMount = (editor: any) => {
     if (!editor) {
@@ -38,7 +38,7 @@ const ContractCodeEditor = ({ code, line, column, ...props }: any) => {
     <div className="h-full">
       <Editor
         defaultLanguage="sol"
-        theme={theme == 'dark' ? 'vs-dark' : 'vs-light'}
+        theme={resolvedTheme == 'dark' ? 'vs-dark' : 'vs-light'}
         onMount={handleEditorDidMount}
         value={code}
         {...props}
