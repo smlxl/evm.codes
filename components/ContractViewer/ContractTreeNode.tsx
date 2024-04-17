@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 
-import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import type { AbiFunction, AbiParameter } from 'abitype'
@@ -22,7 +21,7 @@ import {
 } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { Icon } from 'components/ui'
+import { Button, Icon } from 'components/ui'
 
 import { DeploymentInfo, useDeployments } from './DeploymentInfo'
 import useGenericReducer, {
@@ -121,12 +120,10 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
       </span>
 
       <div className="flex flex-col p-2">
-        {fields.map((item: string, index: number) => {
+        {fields.map((_: never, index: number) => {
           return (
             <div key={index}>
-              {/* x button on top-left of border */}
-              <input
-                type="button"
+              <button
                 style={{
                   position: 'relative',
                   top: '12px',
@@ -136,13 +133,18 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
                   borderRadius: '20px',
                   zIndex: 9999,
                 }}
-                className="text-red-500 bg-white dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-800"
+                className="bg-white"
                 onClick={() => {
                   fields.splice(index, 1)
                   updateArrayData({ [path]: fields })
                 }}
-                value="X"
-              />
+              >
+                <Icon
+                  size="sm"
+                  name="close-large-line"
+                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                />
+              </button>
               <ParamItem
                 path={`${path}.${index}`}
                 inputAbi={getArrayBaseComponent(inputAbi)}
@@ -153,8 +155,9 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
         })}
         {arraySize === undefined && (
           <Button
-            style={{ border: '1px solid' }}
-            size="small"
+            style={{ border: '1px solid', marginTop: '4px' }}
+            size="sm"
+            transparent
             onClick={() => {
               const initVal = initStateFromComponent(
                 getArrayBaseComponent(inputAbi),
@@ -278,7 +281,7 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
   const [funcData, updateFuncData] = reducer
 
   return (
-    <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
+    <div className="flex flex-col gap-2 text-black-500 -mr-2">
       {abi.inputs?.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
@@ -316,7 +319,7 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
 
   return (
     <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      <span className="dark:text-gray-200">result:</span>
+      <span className="dark:text-gray-200 text-xs">result:</span>
       {abi.outputs?.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
@@ -335,6 +338,16 @@ type FunctionAbiItemProps = {
   address: string
   funcAbi: AbiFunction
 }
+
+type CallStatus =
+  | {
+      status: 'error'
+      message: string
+    }
+  | {
+      status: 'success'
+      message: string
+    }
 
 export const FunctionAbiItem = ({
   id,
@@ -357,7 +370,7 @@ export const FunctionAbiItem = ({
   )
 
   const [funcData, updateFuncData] = reducer
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<CallStatus | null>(null)
 
   const encodeCalldata = () => {
     let data, error
@@ -398,7 +411,10 @@ export const FunctionAbiItem = ({
   const ethSendTransaction = () => {
     const [data, error] = encodeCalldata()
     if (error) {
-      setStatus(error.toString())
+      setStatus({
+        status: 'error',
+        message: error.toString(),
+      })
       updateFuncData({ outputs: [] })
       return
     }
@@ -447,7 +463,10 @@ export const FunctionAbiItem = ({
 
     ethCall(data)
       .then((decoded: any) => {
-        setStatus('')
+        setStatus({
+          status: 'success',
+          message: '',
+        })
         updateFuncData({ outputs: decoded })
       })
       .catch((err: any) => {
@@ -458,7 +477,17 @@ export const FunctionAbiItem = ({
 
   const setEncodeStatus = () => {
     const [data, error] = encodeCalldata()
-    setStatus('calldata: ' + (data || error))
+    if (error) {
+      setStatus({
+        status: 'error',
+        message: error,
+      })
+    } else {
+      setStatus({
+        status: 'success',
+        message: data,
+      })
+    }
   }
 
   return (
@@ -472,19 +501,27 @@ export const FunctionAbiItem = ({
           4byte selector: {toFunctionSelector(funcAbi)}
         </p>
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
-        <div className="flex gap-1">
-          <Button onClick={setCallStatus} variant="contained">
-            {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no ret)'}
+        <div className="flex gap-2 flex-row-reverse">
+          <Button onClick={ethSendTransaction} size="xs">
+            Send
           </Button>
-          <Button onClick={setEncodeStatus} variant="contained">
+          <Button
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            onClick={setEncodeStatus}
+            transparent
+            outline
+            size="xs"
+          >
             Encode
           </Button>
           <Button
-            onClick={ethSendTransaction}
-            variant="contained"
-            color="secondary"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            onClick={setCallStatus}
+            transparent
+            outline
+            size="xs"
           >
-            Send
+            {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no return)'}
           </Button>
         </div>
         {funcAbi && funcAbi?.outputs?.length > 0 && (
@@ -494,12 +531,15 @@ export const FunctionAbiItem = ({
           <input
             type="button"
             className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
-            onClick={() => navigator.clipboard.writeText(status)}
+            onClick={() => navigator.clipboard.writeText(status.message)}
             value={'📋 copy'}
           />
         )}
         <p className="text-xs text-gray-500 break-words">
-          {spaceBetween(status || '')}
+          {/** NOTE: We only want to format messages with a successful response */}
+          {status?.status === 'success'
+            ? spaceBetween(status.message)
+            : status?.message}
         </p>
       </div>
     </TreeItemBasic>
@@ -580,7 +620,8 @@ export const StorageLayoutItem = ({
 
         setStatus(val)
       } catch (err) {
-        console.log(err)
+        console.error(err)
+        setStatus('failed to decode')
       }
     })
   }
@@ -592,26 +633,40 @@ export const StorageLayoutItem = ({
       subtitle={type.label.replace(/ /g, '')}
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
-        <span className="text-xs dark:text-gray-200">
+        <p className="text-xs dark:text-gray-200">
           base slot: {storage.slot}, offset: {storage.offset}, size:{' '}
           {type?.numberOfBytes} bytes
-          <br />
-          {status}
-        </span>
-        {keyTypes.map((keyType, i: number) => (
-          <TextField
-            key={i}
-            size="small"
-            label={types[keyType as string].label}
-            onChange={(e: any) => {
-              inputs[i] = e.target.value
-              setInputs([...inputs])
-            }}
-          />
-        ))}
-        <Button onClick={ethGetStorage} variant="outlined">
-          Read
-        </Button>
+        </p>
+        <p className="text-xs dark:text-gray-200">
+          <p>{status ? `results: ${status}` : ''}</p>
+        </p>
+        <div className="w-full">
+          {keyTypes.map((keyType, i: number) => (
+            <TextField
+              key={i}
+              size="small"
+              className="bg-gray-100 dark:invert w-full"
+              label={types[keyType as string].label}
+              onChange={(e: any) => {
+                inputs[i] = e.target.value
+                setInputs([...inputs])
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-row-reverse">
+          <Button
+            disabled={keyTypes.some((_, index) => {
+              return inputs[index] === undefined
+            })}
+            onClick={ethGetStorage}
+            size="xs"
+            className="font-medium"
+          >
+            Read
+          </Button>
+        </div>
       </div>
     </TreeItemBasic>
   )
@@ -633,23 +688,26 @@ export const DeploymentItem = ({
 
   const title = (
     <div className="whitespace-nowrap">
-      <button
-        type="button"
-        value=""
-        className="ri-close-large-line mr-1"
-        onClick={() => {
-          if (confirm('Are you sure you want to remove this contract?')) {
-            removeDeployment(deployment)
-          }
-        }}
-      >
-        <Icon
-          size="sm"
-          name="close-large-line"
-          className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-        />
-      </button>
-      <span>{deployment.etherscanInfo.ContractName}</span>
+      <div className="flex gap-2">
+        <span>{deployment.etherscanInfo.ContractName}</span>
+
+        <button
+          type="button"
+          value=""
+          className="ri-close-large-line mr-1"
+          onClick={() => {
+            if (confirm('Are you sure you want to remove this contract?')) {
+              removeDeployment(deployment)
+            }
+          }}
+        >
+          <Icon
+            size="sm"
+            name="close-large-line"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+          />
+        </button>
+      </div>
       <p className="text-xs">
         {deployment.address}
         {deployment.context ? ' @ ' + deployment.rootContext().address : ''}
