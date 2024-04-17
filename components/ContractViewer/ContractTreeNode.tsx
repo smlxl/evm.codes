@@ -557,7 +557,9 @@ export const FunctionAbiItem = ({
           </Button>
         </div>
         {funcAbi?.outputs?.length === 0 && (
-          <p>This function has no return value.</p>
+          <p className="text-xs dark:text-gray-200">
+            this function has no return value.
+          </p>
         )}
         {funcAbi && funcAbi?.outputs?.length > 0 && (
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
