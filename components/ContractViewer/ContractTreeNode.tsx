@@ -43,7 +43,7 @@ const TextField = ({ ...props }) => {
   return (
     <MuiTextField
       autoComplete="off"
-      className="bg-gray-100 dark:invert"
+      className="bg-gray-100 dark:invert w-full"
       {...props}
     />
   )
@@ -282,7 +282,7 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
   const [funcData, updateFuncData] = reducer
 
   return (
-    <div className="flex flex-col gap-2 text-black-500 -mr-2">
+    <div className="flex flex-col gap-2 text-black-500">
       {abi.inputs?.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
@@ -319,7 +319,7 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   const [funcData] = reducer
 
   return (
-    <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
+    <div className="flex flex-col gap-2 text-black-500 my-2">
       <span className="dark:text-gray-200 text-xs">result:</span>
       {abi.outputs?.map((inputAbi: any, i: number) => (
         <ParamItem
@@ -512,7 +512,7 @@ export const FunctionAbiItem = ({
     if (error) {
       setStatus({
         status: 'error',
-        message: error,
+        message: error.toString(),
       })
     } else {
       setStatus({
