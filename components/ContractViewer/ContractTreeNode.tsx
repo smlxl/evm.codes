@@ -6,6 +6,7 @@ import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import type { AbiFunction, AbiParameter } from 'abitype'
+import { useRouter } from 'next/router'
 import { ContractArtifact } from 'types/ast'
 import {
   createWalletClient,
@@ -36,7 +37,6 @@ import {
   initStateFromComponent,
 } from './ViewerUtils'
 import type { AbiComponent } from './ViewerUtils'
-import { useRouter } from 'next/router'
 
 const TextField = ({ ...props }) => {
   return (
@@ -627,7 +627,7 @@ export const DeploymentItem = ({
 }: DeploymentItemProps) => {
   const router = useRouter()
   const { loadDeployment, removeDeployment } = useDeployments(router)
-  const impls = deployment.getImplementations()
+  const implementations = deployment.getImplementations()
 
   const title = (
     <div className="whitespace-nowrap">
@@ -706,7 +706,7 @@ export const DeploymentItem = ({
           </span>
         }
       >
-        {impls?.map((impl: DeploymentInfo) => (
+        {implementations?.map((impl: DeploymentInfo) => (
           <DeploymentItem
             key={'impl_' + deployment.address + '_' + impl.address}
             deployment={impl}
