@@ -531,7 +531,7 @@ export const FunctionAbiItem = ({
         {funcAbi && funcAbi?.outputs?.length > 0 && (
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
         )}
-        {status && status.message && (
+        {status?.message && (
           <input
             type="button"
             className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
