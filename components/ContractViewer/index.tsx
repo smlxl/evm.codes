@@ -58,7 +58,7 @@ const ContractViewerInner = () => {
     }: {
       address: string
       invalidateRoute: boolean
-      statusCallback: (update: Status) => void
+      statusCallback: (update: Status | null) => void
     }) => {
       if (!isValidAddress(address)) {
         if (address) {
@@ -66,6 +66,8 @@ const ContractViewerInner = () => {
             status: 'error',
             message: 'invalid address format: ' + address,
           })
+        } else {
+          statusCallback(null)
         }
         return
       }

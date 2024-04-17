@@ -83,10 +83,10 @@ const TreeItemBasic = ({
 }: any) => {
   return (
     <TreeItem
-      nodeId={nodeId}
+      itemId={nodeId}
       label={<TreeItemLabel title={title} subtitle={subtitle} />}
       className="border-l border-b dark:border-gray-600"
-      onClick={props.onSelect} // IT'S DUMB I KNOW (instead of doing onClick=onSelect should probably replace the treeview component with a more friendly version of it...)
+      onClick={props.onSelect}
       {...props}
     >
       {children}
@@ -463,14 +463,14 @@ export const FunctionAbiItem = ({
 
   return (
     <TreeItemBasic
-      nodeId={`function_${id}_${funcAbi.name}`}
+      itemId={`function_${id}_${funcAbi.name}`}
       title={funcName}
       subtitle={subtitle}
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
-        <span className="text-xs dark:text-gray-200">
+        <p className="text-xs dark:text-gray-200">
           4byte selector: {toFunctionSelector(funcAbi)}
-        </span>
+        </p>
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
         <div className="flex gap-1">
           <Button onClick={setCallStatus} variant="contained">
@@ -587,7 +587,7 @@ export const StorageLayoutItem = ({
 
   return (
     <TreeItemBasic
-      nodeId={`storageitem_${id}`}
+      itemId={`storageitem_${id}`}
       title={storage.label}
       subtitle={type.label.replace(/ /g, '')}
     >
@@ -659,17 +659,17 @@ export const DeploymentItem = ({
 
   return (
     <TreeItemBasic
-      nodeId={'deployment_' + deployment.id}
+      itemId={'deployment_' + deployment.id}
       title={title}
       onSelect={() => onSelect(deployment)}
     >
       <TreeItem
-        nodeId={'ti_compiler_' + deployment.id}
+        itemId={'ti_compiler_' + deployment.id}
         label={'Compiler: ' + deployment.etherscanInfo?.CompilerVersion}
       />
 
       {deployment.storageLayout && (
-        <TreeItem nodeId={'ti_storage_' + deployment.id} label="Storage">
+        <TreeItem itemId={'ti_storage_' + deployment.id} label="Storage">
           {deployment.storageLayout.storage.map((storage: any, i: number) => (
             <StorageLayoutItem
               key={i}
@@ -682,7 +682,7 @@ export const DeploymentItem = ({
         </TreeItem>
       )}
 
-      <TreeItem nodeId={'ti_functions_' + deployment.id} label="Functions">
+      <TreeItem itemId={'ti_functions_' + deployment.id} label="Functions">
         {deployment.abi
           .filter((a) => a.type == 'function')
           .map((funcAbi, i: number) => (
@@ -696,7 +696,7 @@ export const DeploymentItem = ({
       </TreeItem>
 
       <TreeItem
-        nodeId={'ti_impls_' + deployment.id}
+        itemId={'ti_impls_' + deployment.id}
         label={
           <span>
             Implementations
