@@ -13,6 +13,7 @@ import { findContract, flattenCode } from 'util/flatten'
 import { solidityCompiler } from 'util/solc'
 
 import EtherscanLoader from './EtherscanLoader'
+import { NextRouter, useRouter } from 'next/router'
 
 export type ParseResult = AstTypes.SourceUnit & {
   errors?: any[]
@@ -192,7 +193,22 @@ export const DeploymentsContext = createContext<{
   },
 })
 
-export const useDeployments = () => {
+const updateRoute = (router: NextRouter, deployments: DeploymentsCollection) => {
+  const query: {address?: string} = {}
+  const addresses = Object.values(deployments)
+    .map((c) => c.address)
+    .join(',')
+
+  if (addresses) {
+    query.address = addresses
+    router.replace({ query })
+  } else {
+    // Clear the field
+    router.replace({ query: {} })
+  }
+}
+
+export const useDeployments = (router: NextRouter) => {
   const { deployments, setDeployments } = useContext(DeploymentsContext)
   const [selectedDeployment, setSelectedDeployment] = useState<
     DeploymentInfo | undefined
@@ -246,6 +262,7 @@ export const useDeployments = () => {
             }
           })
 
+          updateRoute(router, deployments)
           return deployment
         })
         .catch((err) => {
@@ -268,6 +285,8 @@ export const useDeployments = () => {
     if (selectedDeployment == deployment) {
       setSelectedDeployment(undefined)
     }
+    console.log(deployments)
+    updateRoute(router, deployments)
   }
 
   return {

@@ -36,6 +36,7 @@ import {
   initStateFromComponent,
 } from './ViewerUtils'
 import type { AbiComponent } from './ViewerUtils'
+import { useRouter } from 'next/router'
 
 const TextField = ({ ...props }) => {
   return (
@@ -624,7 +625,8 @@ export const DeploymentItem = ({
   deployment,
   onSelect,
 }: DeploymentItemProps) => {
-  const { loadDeployment, removeDeployment } = useDeployments()
+  const router = useRouter()
+  const { loadDeployment, removeDeployment } = useDeployments(router)
   const impls = deployment.getImplementations()
 
   const title = (
