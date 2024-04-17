@@ -123,11 +123,7 @@ const ContractViewerInner = () => {
           statusCallback: () => {},
         })
       })
-      await Promise.all([
-        ...addressPromises,
-        // TODO: remove this once debugging is done
-        new Promise((resolve) => setTimeout(resolve, 5000)),
-      ])
+      await Promise.all(addressPromises)
       setStatus({
         status: 'loaded',
       })
