@@ -158,6 +158,7 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
             style={{ border: '1px solid', marginTop: '4px' }}
             size="sm"
             transparent
+            outline
             onClick={() => {
               const initVal = initStateFromComponent(
                 getArrayBaseComponent(inputAbi),
@@ -184,7 +185,7 @@ const TupleParamItem = ({ inputAbi, path, reducer }: TupleParamItemProps) => {
   const typeName = inputAbi.internalType || 'tuple'
   return (
     <div className="flex flex-col p-2">
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-gray-500 pb-2">
         {typeName} {inputAbi.name}
       </span>
 
@@ -521,18 +522,21 @@ export const FunctionAbiItem = ({
             outline
             size="xs"
           >
-            {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no return)'}
+            Call
           </Button>
         </div>
+        {funcAbi?.outputs?.length === 0 && (
+          <p>This function has no return value.</p>
+        )}
         {funcAbi && funcAbi?.outputs?.length > 0 && (
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
         )}
-        {status && (
+        {status && status.message && (
           <input
             type="button"
             className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
             onClick={() => navigator.clipboard.writeText(status.message)}
-            value={'📋 copy'}
+            value={'Copy to clipboard'}
           />
         )}
         <p className="text-xs text-gray-500 break-words">
