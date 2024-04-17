@@ -22,6 +22,8 @@ import {
 } from 'viem'
 import { mainnet } from 'viem/chains'
 
+import { Icon } from 'components/ui'
+
 import { DeploymentInfo, useDeployments } from './DeploymentInfo'
 import useGenericReducer, {
   convertShortpath,
@@ -631,16 +633,22 @@ export const DeploymentItem = ({
 
   const title = (
     <div className="whitespace-nowrap">
-      <input
+      <button
         type="button"
-        value="❌"
-        className="hover:bg-red-100 active:bg-red-300 mr-1"
+        value=""
+        className="ri-close-large-line mr-1"
         onClick={() => {
           if (confirm('Are you sure you want to remove this contract?')) {
             removeDeployment(deployment)
           }
         }}
-      />
+      >
+        <Icon
+          size="sm"
+          name="close-large-line"
+          className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+        />
+      </button>
       <span>{deployment.etherscanInfo.ContractName}</span>
       <p className="text-xs">
         {deployment.address}
@@ -692,17 +700,21 @@ export const DeploymentItem = ({
         label={
           <span>
             Implementations
-            <input
-              type="button"
-              className="mx-2 rounded-xl hover:bg-blue-200"
+            <button
+              className="mx-2 rounded-xl"
               onClick={() => {
                 const addr = prompt('address')
                 if (addr) {
                   loadDeployment(addr, deployment)
                 }
               }}
-              value="➕"
-            />
+            >
+              <Icon
+                size="sm"
+                name="add-fill"
+                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              />
+            </button>
           </span>
         }
       >
