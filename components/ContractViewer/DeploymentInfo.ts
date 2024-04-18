@@ -225,7 +225,6 @@ export const useDeployments = (router: NextRouter) => {
       loadImplementation = true,
       invalidateRoute = true,
     ) => {
-      console.log('loading?')
       setReqCount(reqCount + 1)
       return EtherscanLoader.loadDeployment(address, context)
         .then(async (deployment: DeploymentInfo) => {

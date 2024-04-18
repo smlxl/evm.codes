@@ -170,7 +170,7 @@ const ContractViewerInner = () => {
               {status?.status === 'loading' ? <CircularProgress /> : ''}
             </div>
             <div className="flex">
-              <p style={{ color: 'red' }}>
+              <p className="text-red">
                 {status?.status === 'error' ? status.message : ''}
               </p>
             </div>
