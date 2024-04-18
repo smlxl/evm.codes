@@ -169,11 +169,9 @@ const ContractViewerInner = () => {
 
               {status?.status === 'loading' ? <CircularProgress /> : ''}
             </div>
-            <div className="flex">
-              <p className="text-red">
-                {status?.status === 'error' ? status.message : ''}
-              </p>
-            </div>
+            <p className="text-red-500 truncate">
+              {status?.status === 'error' ? status.message : ''}
+            </p>
           </Header>
 
           {/* tree view */}
