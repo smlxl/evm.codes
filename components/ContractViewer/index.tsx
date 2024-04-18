@@ -110,6 +110,8 @@ const ContractViewerInner = () => {
       status: 'loading',
     })
 
+    // TODO: fix router to support contract implementations added by user
+    // (currently only top-level contracts are supported)
     async function restoreSession() {
       const addresses =
         typeof router.query.address === 'string'
@@ -133,11 +135,17 @@ const ContractViewerInner = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
-  // TODO: fix router to support contract implementations added by user
-  // (currently only top-level contracts are supported)
-
   return (
-    <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
+    <div
+      className="dark:bg-black-800 dark:border-black-500 dark:text-gray-100"
+      style={{
+        // -112px for the navbar
+        // - 40px for the code editor footer
+        // - 57px for the site footer
+        // sum: -209px
+        height: 'calc(100vh - 209px)',
+      }}
+    >
       <ResizablePanelGroup id="resizable-grp-1" direction="horizontal">
         {/* contract tree view panel */}
         <ResizablePanel defaultSize={40}>

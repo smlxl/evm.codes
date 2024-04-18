@@ -29,8 +29,12 @@ const ContractTreeView = ({ deployments, onSelect }: ContractTreeViewProps) => {
   return (
     <>
       <SimpleTreeView
-        className="font-mono h-[736px] overflow-x-hidden" // TODO: h-full not working. how to fill height?
+        className="font-mono h-full overflow-x-hidden"
         defaultExpandedItems={expanded}
+        style={{
+          // -60px to adjust for the text field
+          height: 'calc(100% - 60px)',
+        }}
       >
         <ContractsTreeItem deployments={deployments} onSelect={onSelect} />
       </SimpleTreeView>
