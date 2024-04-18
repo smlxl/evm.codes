@@ -5,10 +5,11 @@ import cn from 'classnames'
 type Props = {
   name: string
   className?: string
-  size?: 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 const sizes = {
+  sm: 14,
   md: 16,
   lg: 24,
 }

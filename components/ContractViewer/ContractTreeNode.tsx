@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react'
 
-import Button from '@mui/material/Button'
 import MuiTextField from '@mui/material/TextField'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import type { AbiFunction, AbiParameter } from 'abitype'
+import { useRouter } from 'next/router'
 import { ContractArtifact } from 'types/ast'
 import {
   createWalletClient,
@@ -20,6 +20,8 @@ import {
   Hex,
 } from 'viem'
 import { mainnet } from 'viem/chains'
+
+import { Button, Icon } from 'components/ui'
 
 import { DeploymentInfo, useDeployments } from './DeploymentInfo'
 import useGenericReducer, {
@@ -41,7 +43,7 @@ const TextField = ({ ...props }) => {
   return (
     <MuiTextField
       autoComplete="off"
-      className="bg-gray-100 dark:invert"
+      className="bg-gray-100 dark:invert w-full"
       {...props}
     />
   )
@@ -80,10 +82,10 @@ const TreeItemBasic = ({
 }: any) => {
   return (
     <TreeItem
-      nodeId={nodeId}
+      itemId={nodeId}
       label={<TreeItemLabel title={title} subtitle={subtitle} />}
       className="border-l border-b dark:border-gray-600"
-      onClick={props.onSelect} // IT'S DUMB I KNOW (instead of doing onClick=onSelect should probably replace the treeview component with a more friendly version of it...)
+      onClick={props.onSelect}
       {...props}
     >
       {children}
@@ -118,12 +120,10 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
       </span>
 
       <div className="flex flex-col p-2">
-        {fields.map((item: string, index: number) => {
+        {fields.map((_: never, index: number) => {
           return (
             <div key={index}>
-              {/* x button on top-left of border */}
-              <input
-                type="button"
+              <button
                 style={{
                   position: 'relative',
                   top: '12px',
@@ -133,13 +133,18 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
                   borderRadius: '20px',
                   zIndex: 9999,
                 }}
-                className="text-red-500 bg-white dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-800"
+                className="bg-white"
                 onClick={() => {
                   fields.splice(index, 1)
                   updateArrayData({ [path]: fields })
                 }}
-                value="X"
-              />
+              >
+                <Icon
+                  size="sm"
+                  name="close-large-line"
+                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                />
+              </button>
               <ParamItem
                 path={`${path}.${index}`}
                 inputAbi={getArrayBaseComponent(inputAbi)}
@@ -150,8 +155,10 @@ const ArrayParamItem = ({ inputAbi, path, reducer }: ArrayParamItemProps) => {
         })}
         {arraySize === undefined && (
           <Button
-            style={{ border: '1px solid' }}
-            size="small"
+            className="border-solid border-2 mt-4"
+            size="sm"
+            transparent
+            outline
             onClick={() => {
               const initVal = initStateFromComponent(
                 getArrayBaseComponent(inputAbi),
@@ -178,7 +185,7 @@ const TupleParamItem = ({ inputAbi, path, reducer }: TupleParamItemProps) => {
   const typeName = inputAbi.internalType || 'tuple'
   return (
     <div className="flex flex-col p-2">
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-gray-500 pb-2">
         {typeName} {inputAbi.name}
       </span>
 
@@ -275,7 +282,7 @@ export const ParamsBox = ({ abi, reducer }: ParamsBoxProps) => {
   const [funcData, updateFuncData] = reducer
 
   return (
-    <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
+    <div className="flex flex-col gap-2 text-black-500">
       {abi.inputs?.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
@@ -312,8 +319,8 @@ export const ReturnDataBox = ({ abi, reducer }: ReturnDataBox) => {
   const [funcData] = reducer
 
   return (
-    <div className="flex flex-col gap-2 text-black-500 my-2 -mr-2">
-      <span className="dark:text-gray-200">result:</span>
+    <div className="flex flex-col gap-2 text-black-500 my-2">
+      <span className="dark:text-gray-200 text-xs">result:</span>
       {abi.outputs?.map((inputAbi: any, i: number) => (
         <ParamItem
           key={i}
@@ -332,6 +339,16 @@ type FunctionAbiItemProps = {
   address: string
   funcAbi: AbiFunction
 }
+
+type CallStatus =
+  | {
+      status: 'error'
+      message: string
+    }
+  | {
+      status: 'success'
+      message: string
+    }
 
 export const FunctionAbiItem = ({
   id,
@@ -354,7 +371,7 @@ export const FunctionAbiItem = ({
   )
 
   const [funcData, updateFuncData] = reducer
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<CallStatus | null>(null)
 
   const encodeCalldata = () => {
     let data, error
@@ -395,108 +412,173 @@ export const FunctionAbiItem = ({
   const ethSendTransaction = () => {
     const [data, error] = encodeCalldata()
     if (error) {
-      setStatus(error.toString())
+      setStatus({
+        status: 'error',
+        message: error.toString(),
+      })
       updateFuncData({ outputs: [] })
       return
     }
 
-    const walletClient = createWalletClient({
-      chain: mainnet,
-      transport: custom((window as any).ethereum),
-    })
+    try {
+      const ethWallet: unknown = (window as any).ethereum
+      if (!ethWallet) {
+        setStatus({
+          status: 'error',
+          message: 'No Ethereum wallet extension found',
+        })
+        return
+      }
+      const walletClient = createWalletClient({
+        chain: mainnet,
+        transport: custom(ethWallet as any),
+      })
 
-    return walletClient
-      .requestAddresses()
-      .then((addresses: any) => {
-        const props = {
-          // TODO: support overrides, eg. from, block, gas, etc.
-          account: addresses[0],
-          to: address,
-          data,
-          value: funcData.value,
-        }
-
-        return walletClient.sendTransaction(props as any).then((res: any) => {
-          let decoded = decodeFunctionResult({
-            abi: [funcAbi],
-            data: res.data,
-          })
-
-          if (funcAbi.outputs.length == 1) {
-            decoded = [decoded]
+      return walletClient
+        .requestAddresses()
+        .then((addresses: any) => {
+          const props = {
+            // TODO: support overrides, eg. from, block, gas, etc.
+            account: addresses[0],
+            to: address,
+            data,
+            value: funcData.value,
           }
 
-          return decoded.map((val: any) => val.toString())
+          return walletClient.sendTransaction(props as any).then((res: any) => {
+            let decoded = decodeFunctionResult({
+              abi: [funcAbi],
+              data: res.data,
+            })
+
+            if (funcAbi.outputs.length == 1) {
+              decoded = [decoded]
+            }
+
+            return decoded.map((val: any) => val.toString())
+          })
         })
-      })
-      .catch((err: any) => {
-        setStatus(err.toString())
-      })
+        .catch((err: any) => {
+          setStatus({
+            status: 'error',
+            message: err.toString(),
+          })
+        })
+    } catch (err) {
+      if (err instanceof Error) {
+        setStatus({
+          status: 'error',
+          message: err.toString(),
+        })
+      } else {
+        setStatus({
+          status: 'error',
+          message: 'unknown error',
+        })
+      }
+    }
   }
 
   const setCallStatus = () => {
     const [data, error] = encodeCalldata()
     if (error) {
-      setStatus(error.toString())
+      setStatus({
+        status: 'error',
+        message: error.toString(),
+      })
       updateFuncData({ outputs: [] })
       return
     }
 
     ethCall(data)
       .then((decoded: any) => {
-        setStatus('')
+        setStatus({
+          status: 'success',
+          message: '',
+        })
         updateFuncData({ outputs: decoded })
       })
       .catch((err: any) => {
-        setStatus(err.toString())
+        setStatus({
+          status: 'error',
+          message: err.toString(),
+        })
         updateFuncData({ outputs: [] })
       })
   }
 
   const setEncodeStatus = () => {
     const [data, error] = encodeCalldata()
-    setStatus('calldata: ' + (data || error))
+    if (error) {
+      setStatus({
+        status: 'error',
+        message: error.toString(),
+      })
+    } else {
+      setStatus({
+        status: 'success',
+        message: data,
+      })
+    }
   }
 
   return (
     <TreeItemBasic
-      nodeId={`function_${id}_${funcAbi.name}`}
+      itemId={`function_${id}_${funcAbi.name}`}
       title={funcName}
       subtitle={subtitle}
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
-        <span className="text-xs dark:text-gray-200">
+        <p className="text-xs dark:text-gray-200">
           4byte selector: {toFunctionSelector(funcAbi)}
-        </span>
+        </p>
         {funcAbi && <ParamsBox abi={funcAbi} reducer={reducer} />}
-        <div className="flex gap-1">
-          <Button onClick={setCallStatus} variant="contained">
-            {funcAbi?.outputs?.length > 0 ? 'Call' : 'Call (no ret)'}
+        <div className="flex gap-2 flex-row-reverse">
+          <Button onClick={ethSendTransaction} size="xs">
+            Send
           </Button>
-          <Button onClick={setEncodeStatus} variant="contained">
+          <Button
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            onClick={setEncodeStatus}
+            transparent
+            outline
+            size="xs"
+          >
             Encode
           </Button>
           <Button
-            onClick={ethSendTransaction}
-            variant="contained"
-            color="secondary"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            onClick={setCallStatus}
+            transparent
+            outline
+            size="xs"
           >
-            Send
+            Call
           </Button>
         </div>
+        {funcAbi?.outputs?.length === 0 && (
+          <p className="text-xs dark:text-gray-200">
+            this function has no return value.
+          </p>
+        )}
         {funcAbi && funcAbi?.outputs?.length > 0 && (
           <ReturnDataBox abi={funcAbi} reducer={reducer} />
         )}
-        {status && (
-          <input
-            type="button"
-            className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-left whitespace-pre-line break-all text-sm dark:text-gray-100"
-            onClick={() => navigator.clipboard.writeText(status)}
-            value={'📋 copy'}
-          />
+        {status?.message && (
+          <div>
+            <Button
+              size="xs"
+              onClick={() => navigator.clipboard.writeText(status.message)}
+            >
+              Copy to clipboard
+            </Button>
+          </div>
         )}
         <p className="text-xs text-gray-500 break-words">
-          {spaceBetween(status || '')}
+          {/** NOTE: We only want to format messages with a successful response */}
+          {status?.status === 'success'
+            ? spaceBetween(status.message)
+            : status?.message}
         </p>
       </div>
     </TreeItemBasic>
@@ -577,38 +659,53 @@ export const StorageLayoutItem = ({
 
         setStatus(val)
       } catch (err) {
-        console.log(err)
+        console.error(err)
+        setStatus('failed to decode')
       }
     })
   }
 
   return (
     <TreeItemBasic
-      nodeId={`storageitem_${id}`}
+      itemId={`storageitem_${id}`}
       title={storage.label}
       subtitle={type.label.replace(/ /g, '')}
     >
       <div className="flex flex-col gap-2 text-black-500 my-2 mr-4">
-        <span className="text-xs dark:text-gray-200">
+        <p className="text-xs dark:text-gray-200">
           base slot: {storage.slot}, offset: {storage.offset}, size:{' '}
           {type?.numberOfBytes} bytes
-          <br />
-          {status}
-        </span>
-        {keyTypes.map((keyType, i: number) => (
-          <TextField
-            key={i}
-            size="small"
-            label={types[keyType as string].label}
-            onChange={(e: any) => {
-              inputs[i] = e.target.value
-              setInputs([...inputs])
-            }}
-          />
-        ))}
-        <Button onClick={ethGetStorage} variant="outlined">
-          Read
-        </Button>
+        </p>
+        <p className="text-xs dark:text-gray-200">
+          <p>{status ? `results: ${status}` : ''}</p>
+        </p>
+        <div className="w-full">
+          {keyTypes.map((keyType, i: number) => (
+            <TextField
+              key={i}
+              size="small"
+              className="bg-gray-100 dark:invert w-full"
+              label={types[keyType as string].label}
+              onChange={(e: any) => {
+                inputs[i] = e.target.value
+                setInputs([...inputs])
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-row-reverse">
+          <Button
+            disabled={keyTypes.some((_, index) => {
+              return inputs[index] === undefined
+            })}
+            onClick={ethGetStorage}
+            size="xs"
+            className="font-medium"
+          >
+            Read
+          </Button>
+        </div>
       </div>
     </TreeItemBasic>
   )
@@ -624,22 +721,32 @@ export const DeploymentItem = ({
   deployment,
   onSelect,
 }: DeploymentItemProps) => {
-  const { loadDeployment, removeDeployment } = useDeployments()
-  const impls = deployment.getImplementations()
+  const router = useRouter()
+  const { loadDeployment, removeDeployment } = useDeployments(router)
+  const implementations = deployment.getImplementations()
 
   const title = (
     <div className="whitespace-nowrap">
-      <input
-        type="button"
-        value="❌"
-        className="hover:bg-red-100 active:bg-red-300 mr-1"
-        onClick={() => {
-          if (confirm('Are you sure you want to remove this contract?')) {
-            removeDeployment(deployment)
-          }
-        }}
-      />
-      <span>{deployment.etherscanInfo.ContractName}</span>
+      <div className="flex gap-2">
+        <span>{deployment.etherscanInfo.ContractName}</span>
+
+        <button
+          type="button"
+          value=""
+          className="ri-close-large-line mr-1"
+          onClick={() => {
+            if (confirm('Are you sure you want to remove this contract?')) {
+              removeDeployment(deployment)
+            }
+          }}
+        >
+          <Icon
+            size="sm"
+            name="close-large-line"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+          />
+        </button>
+      </div>
       <p className="text-xs">
         {deployment.address}
         {deployment.context ? ' @ ' + deployment.rootContext().address : ''}
@@ -649,17 +756,17 @@ export const DeploymentItem = ({
 
   return (
     <TreeItemBasic
-      nodeId={'deployment_' + deployment.id}
+      itemId={'deployment_' + deployment.id}
       title={title}
       onSelect={() => onSelect(deployment)}
     >
       <TreeItem
-        nodeId={'ti_compiler_' + deployment.id}
+        itemId={'ti_compiler_' + deployment.id}
         label={'Compiler: ' + deployment.etherscanInfo?.CompilerVersion}
       />
 
       {deployment.storageLayout && (
-        <TreeItem nodeId={'ti_storage_' + deployment.id} label="Storage">
+        <TreeItem itemId={'ti_storage_' + deployment.id} label="Storage">
           {deployment.storageLayout.storage.map((storage: any, i: number) => (
             <StorageLayoutItem
               key={i}
@@ -672,7 +779,7 @@ export const DeploymentItem = ({
         </TreeItem>
       )}
 
-      <TreeItem nodeId={'ti_functions_' + deployment.id} label="Functions">
+      <TreeItem itemId={'ti_functions_' + deployment.id} label="Functions">
         {deployment.abi
           .filter((a) => a.type == 'function')
           .map((funcAbi, i: number) => (
@@ -686,25 +793,29 @@ export const DeploymentItem = ({
       </TreeItem>
 
       <TreeItem
-        nodeId={'ti_impls_' + deployment.id}
+        itemId={'ti_impls_' + deployment.id}
         label={
           <span>
             Implementations
-            <input
-              type="button"
-              className="mx-2 rounded-xl hover:bg-blue-200"
+            <button
+              className="mx-2 rounded-xl"
               onClick={() => {
                 const addr = prompt('address')
                 if (addr) {
                   loadDeployment(addr, deployment)
                 }
               }}
-              value="➕"
-            />
+            >
+              <Icon
+                size="sm"
+                name="add-fill"
+                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              />
+            </button>
           </span>
         }
       >
-        {impls?.map((impl: DeploymentInfo) => (
+        {implementations?.map((impl: DeploymentInfo) => (
           <DeploymentItem
             key={'impl_' + deployment.address + '_' + impl.address}
             deployment={impl}

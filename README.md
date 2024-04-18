@@ -29,6 +29,10 @@ Install the dependencies:
 
     pnpm install
 
+Specify the environment variables if you want to run the contract viewer into `.env.local`
+
+    APIKEY_ETHERSCAN=
+
 Start up the app and see it running at <http://localhost:3000>
 
     pnpm dev

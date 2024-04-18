@@ -38,7 +38,7 @@ const Nav = () => {
           >
             <NavLink href="/">Opcodes</NavLink>
             <NavLink href="/precompiled">Precompiled Contracts</NavLink>
-            {/* <NavLink href="/contract">Contract Viewer</NavLink> */}
+            <NavLink href="/contract">Contract Viewer</NavLink>
             <NavLink href="/playground">Playground</NavLink>
             <NavLink href="/about">About the EVM</NavLink>
             <NavLink href={GITHUB_REPO_URL} external>

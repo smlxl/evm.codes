@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useState } from 'react'
 import solParser from '@solidity-parser/parser'
 import * as AstTypes from '@solidity-parser/parser/src/ast-types'
 import { type Abi } from 'abitype'
+import { NextRouter } from 'next/router'
 import { SourceDefinition } from 'types/ast'
 import {
   EtherscanContractResponse,
@@ -53,7 +54,7 @@ export class DeploymentInfo {
   address: string
   context?: DeploymentInfo
   // TODO: support historic upgrades & diffing
-  impls: DeploymentsCollection = {}
+  implementations: DeploymentsCollection = {}
 
   mainContractPath: string
   // originalPathLenses: any[] = []
@@ -118,7 +119,7 @@ export class DeploymentInfo {
   }
 
   getImplementations(): DeploymentInfo[] {
-    return Object.values(this.impls)
+    return Object.values(this.implementations)
   }
 
   rootContext(): DeploymentInfo {
@@ -188,11 +189,29 @@ export const DeploymentsContext = createContext<{
 }>({
   deployments: {},
   setDeployments: () => {
-    console.warn('missing DepoymentsContext provider')
+    console.warn('missing DeploymentsContext provider')
   },
 })
 
-export const useDeployments = () => {
+const updateRoute = (
+  router: NextRouter,
+  deployments: DeploymentsCollection,
+) => {
+  const query: { address?: string } = {}
+  const addresses = Object.values(deployments)
+    .map(({ address }) => address)
+    .join(',')
+
+  if (addresses) {
+    query.address = addresses
+    router.replace({ query })
+  } else {
+    // Clear the field
+    router.replace({ query: {} })
+  }
+}
+
+export const useDeployments = (router: NextRouter) => {
   const { deployments, setDeployments } = useContext(DeploymentsContext)
   const [selectedDeployment, setSelectedDeployment] = useState<
     DeploymentInfo | undefined
@@ -204,13 +223,14 @@ export const useDeployments = () => {
       address: string,
       context?: DeploymentInfo,
       loadImplementation = true,
+      invalidateRoute = true,
     ) => {
       setReqCount(reqCount + 1)
       return EtherscanLoader.loadDeployment(address, context)
         .then(async (deployment: DeploymentInfo) => {
           // TODO: should we avoid overriding if it already exists?
           if (context) {
-            context.impls[address] = deployment
+            context.implementations[address] = deployment
           } else {
             deployments[address] = deployment
           }
@@ -246,6 +266,10 @@ export const useDeployments = () => {
             }
           })
 
+          if (invalidateRoute) {
+            updateRoute(router, deployments)
+          }
+
           return deployment
         })
         .catch((err) => {
@@ -253,13 +277,13 @@ export const useDeployments = () => {
           throw err
         })
     },
-    [deployments, setDeployments, reqCount],
+    [deployments, setDeployments, reqCount, router],
   )
 
   const removeDeployment = (deployment: DeploymentInfo) => {
     const context = deployment.context
     if (context) {
-      delete context.impls[deployment.address]
+      delete context.implementations[deployment.address]
     } else {
       delete deployments[deployment.address]
     }
@@ -268,6 +292,7 @@ export const useDeployments = () => {
     if (selectedDeployment == deployment) {
       setSelectedDeployment(undefined)
     }
+    updateRoute(router, deployments)
   }
 
   return {
@@ -278,7 +303,6 @@ export const useDeployments = () => {
 
     selectedDeployment,
     setSelectedDeployment,
-
     reqCount,
   }
 }

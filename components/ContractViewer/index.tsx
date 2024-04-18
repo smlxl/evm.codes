@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 
 import { isValidAddress } from '@ethereumjs/util'
-import { TextField } from '@mui/material'
-import Box from '@mui/material/Box'
+import { CircularProgress, TextField } from '@mui/material'
 import { useRouter } from 'next/router'
 import { ContractArtifact } from 'types/ast'
 
@@ -22,6 +21,21 @@ import {
 } from './DeploymentInfo'
 import Header from './Header'
 
+type Status =
+  | {
+      status: 'loading'
+    }
+  | {
+      status: 'loaded'
+    }
+  | {
+      status: 'restore-session'
+    }
+  | {
+      status: 'error'
+      message: string
+    }
+
 const ContractViewerInner = () => {
   // address bar routing
   const router = useRouter()
@@ -31,56 +45,59 @@ const ContractViewerInner = () => {
     selectedDeployment,
     setSelectedDeployment,
     loadDeployment,
-  } = useDeployments()
+  } = useDeployments(router)
 
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<Status | null>(null)
   const [codePeekLocation, setCodePeekLocation] = useState<any>({})
 
-  const tryLoadContract = async (address: string, context?: DeploymentInfo) => {
-    setStatus('loading...')
-
-    return loadDeployment(address, context)
-      .then(() => {
-        setStatus('loaded')
-      })
-      .catch((err: any) => {
-        setStatus('failed to load contract\n' + err)
-      })
-  }
-
-  const updateRoute = () => {
-    const query: any = {}
-    const addresses = Object.values(deployments)
-      .map((c) => c.address)
-      .join(',')
-
-    if (addresses) {
-      query.address = addresses
-      router.replace({ query })
-    }
-  }
-
   const tryLoadAddress = useCallback(
-    (address: string, invalidateRoute: boolean) => {
+    async ({
+      address,
+      invalidateRoute,
+      statusCallback,
+    }: {
+      address: string
+      invalidateRoute: boolean
+      statusCallback: (update: Status | null) => void
+    }) => {
       if (!isValidAddress(address)) {
         if (address) {
-          setStatus('invalid address format: ' + address)
+          statusCallback({
+            status: 'error',
+            message: 'invalid address format: ' + address,
+          })
+        } else {
+          statusCallback(null)
         }
         return
       }
+      statusCallback({
+        status: 'loading',
+      })
 
       address = address.toLowerCase()
       if (deployments[address]) {
+        statusCallback({
+          status: 'loaded',
+        })
         return
       }
 
-      tryLoadContract(address).then(() => {
-        if (invalidateRoute) {
-          updateRoute()
-        }
-      })
+      return loadDeployment(address, undefined, false, invalidateRoute)
+        .then(() => {
+          statusCallback({
+            status: 'loaded',
+          })
+        })
+        .catch((err: any) => {
+          statusCallback({
+            status: 'error',
+            message: 'failed to load contract\n' + err,
+          })
+        })
     },
-    [deployments, tryLoadContract, updateRoute],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [deployments],
   )
 
   // load contract from url once router is ready
@@ -89,38 +106,74 @@ const ContractViewerInner = () => {
       return
     }
 
-    const addresses = ((router.query.address as string) || '').split(',')
-    for (const addr of addresses) {
-      tryLoadAddress(addr, false)
+    setStatus({
+      status: 'loading',
+    })
+
+    // TODO: fix router to support contract implementations added by user
+    // (currently only top-level contracts are supported)
+    async function restoreSession() {
+      const addresses =
+        typeof router.query.address === 'string'
+          ? router.query.address.split(',')
+          : []
+      const addressPromises = addresses.map((address) => {
+        return tryLoadAddress({
+          address,
+          invalidateRoute: false,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          statusCallback: () => {},
+        })
+      })
+      await Promise.all(addressPromises)
+      setStatus({
+        status: 'loaded',
+      })
     }
-    // NOTE: do not add dependencies here or it will cause an infinite loop (idk why)
+
+    void restoreSession()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
-  // TODO: fix router to support contract implementations added by user
-  // (currently only top-level contracts are supported)
-  useEffect(() => {
-    if (router.isReady) {
-      updateRoute()
-    }
-    // NOTE: do not add dependencies here or it will cause an infinite loop (idk why)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
-    <div className="h-[800px] dark:bg-black-800 dark:border-black-500 dark:text-gray-100">
+    <div
+      className="dark:bg-black-800 dark:border-black-500 dark:text-gray-100"
+      style={{
+        // -112px for the navbar
+        // - 40px for the code editor footer
+        // - 57px for the site footer
+        // sum: -209px
+        height: 'calc(100vh - 209px)',
+      }}
+    >
       <ResizablePanelGroup id="resizable-grp-1" direction="horizontal">
         {/* contract tree view panel */}
         <ResizablePanel defaultSize={40}>
           {/* tree view header & search box */}
           <Header>
-            <TextField
-              size="small"
-              label="address"
-              className="bg-gray-200 dark:invert w-[350px] font-mono"
-              variant="outlined"
-              onInput={(e: any) => tryLoadAddress(e.target.value.trim(), true)}
-            />
+            <div className="flex gap-2">
+              <TextField
+                size="small"
+                label="address"
+                className="bg-gray-200 dark:invert w-full font-mono"
+                variant="outlined"
+                onInput={(e: any) =>
+                  tryLoadAddress({
+                    address: e.target.value.trim(),
+                    invalidateRoute: true,
+                    statusCallback: setStatus,
+                  })
+                }
+                disabled={status?.status === 'loading'}
+                // 0x + address in hex (0x = 2 and 20 bytes address would be 40 hex chars) == 42 total
+                inputProps={{ maxLength: 42 }}
+              />
+
+              {status?.status === 'loading' ? <CircularProgress /> : ''}
+            </div>
+            <p className="text-red-500 truncate">
+              {status?.status === 'error' ? status.message : ''}
+            </p>
           </Header>
 
           {/* tree view */}
@@ -171,22 +224,6 @@ const ContractViewerInner = () => {
           />
         </ResizablePanel>
       </ResizablePanelGroup>
-
-      {/* bottom panel: console & metadata information panel */}
-      <Header className="py-2 px-4 text-sm flex flex-col gap-2">
-        <Box className="whitespace-nowrap">
-          {/* {reqCount > 0 && <CircularProgress />} {status} */}
-          {status}
-        </Box>
-        {/* <LinearProgress
-          sx={{ visibility: reqCount > 0 ? 'visible' : 'hidden' }}
-        /> */}
-        {/* {error && <p>Error! {error}</p>} */}
-        {/* <p>Data: {data}</p> */}
-
-        {/* <p>*Additional metadata info should go here*</p> */}
-        {/* TODO: try moving this inside the treeview? */}
-      </Header>
 
       <sub>
         Alpha version - <a href="https://twitter.com/smlxldotio">@smlxldotio</a>{' '}
