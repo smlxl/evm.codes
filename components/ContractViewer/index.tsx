@@ -165,6 +165,8 @@ const ContractViewerInner = () => {
                   })
                 }
                 disabled={status?.status === 'loading'}
+                // 0x + address in hex (0x = 2 and 20 bytes address would be 40 hex chars) == 42 total
+                inputProps={{ maxLength: 42 }}
               />
 
               {status?.status === 'loading' ? <CircularProgress /> : ''}
