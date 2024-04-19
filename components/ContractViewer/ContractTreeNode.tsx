@@ -684,7 +684,8 @@ export const StorageLayoutItem = ({
         let val = ''
         if (storageType.label === 'address') {
           val = input
-        } else if (storageType.label === 'string') {
+        } else if (storageType.encoding === 'bytes') {
+          // See https://docs.soliditylang.org/en/v0.8.7/internals/layout_in_storage.html#bytes-and-string
           const isLongStringFormat = (BigInt(input) & 1n) === 1n
           if (isLongStringFormat) {
             val = 'decoding of long strings are unsupported'
