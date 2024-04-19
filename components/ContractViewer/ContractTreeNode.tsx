@@ -585,6 +585,14 @@ export const FunctionAbiItem = ({
   )
 }
 
+interface StorageType {
+  key: string
+  encoding: string
+  label: string
+  numberOfBytes: string
+  value: string
+}
+
 type StorageLayoutItemProps = {
   id: string
   address: string
@@ -597,13 +605,28 @@ type StorageLayoutItemProps = {
     type: string
   }
   types: {
-    [type: string]: {
-      key: string
-      encoding: string
-      label: string
-      numberOfBytes: string
-      value: string
-    }
+    [type: string]: StorageType
+  }
+}
+
+function getKeyTypes({
+  types,
+  key,
+}: {
+  types: Record<string, StorageType>
+  key: string
+}) {
+  const keyTypes: string[] = []
+  let storageType = types[key]
+
+  while (storageType.encoding === 'mapping') {
+    keyTypes.push(storageType.key)
+    storageType = types[storageType.value]
+  }
+
+  return {
+    keyTypes,
+    storageType,
   }
 }
 
@@ -620,9 +643,10 @@ export const StorageLayoutItem = ({
 
   // if storage item is a mapping, keyTypes is an array of types of all mapping keys
   // eg. keys of mapping(address => mapping(uint256 => bytes)) would be ['address', 'uint256']
-  const keyTypes = [
-    ...(storage.type.matchAll(/\bt_mapping\((?<key>.+?),/g) || []),
-  ].map((m) => m?.groups?.key)
+  const { keyTypes, storageType } = getKeyTypes({
+    types,
+    key: storage.type,
+  })
 
   const ethGetStorage = () => {
     let slot = storage.slot
@@ -649,8 +673,9 @@ export const StorageLayoutItem = ({
 
       input = '0x' + input
       try {
+        console.log(input)
         let val = decodeAbiParameters(
-          [{ type: type.label }],
+          [{ type: storageType.label }],
           input as Hex,
         ).toString()
         if (slot != storage.slot) {
@@ -685,7 +710,7 @@ export const StorageLayoutItem = ({
               key={i}
               size="small"
               className="bg-gray-100 dark:invert w-full"
-              label={types[keyType as string].label}
+              label={types[keyType].label}
               onChange={(e: any) => {
                 inputs[i] = e.target.value
                 setInputs([...inputs])
