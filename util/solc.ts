@@ -29,7 +29,6 @@ class SolidityCompiler {
   }
 
   compile(stdJson: SolidityCompilerInput, version: string) {
-    console.log(this.worker)
     return new Promise((resolve, reject) => {
       const randomId = 'jobId_' + Math.random()
       // TODO: wrap callback in promise

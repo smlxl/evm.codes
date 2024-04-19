@@ -592,7 +592,7 @@ interface StorageType {
   numberOfBytes: string
   value: string
   members?: StorageType[]
-  base: string
+  base?: string
 }
 
 type StorageLayoutItemProps = {
@@ -611,6 +611,7 @@ type StorageLayoutItemProps = {
   }
 }
 
+// Return a list of all the mapping keys used by a type
 function getKeyTypes({
   types,
   key,
@@ -691,7 +692,6 @@ export const StorageLayoutItem = ({
             val = Buffer.from(input.slice(2), 'hex').toString('utf-8')
           }
         } else {
-          console.log({ storageType, input })
           val = decodeAbiParameters(
             [{ type: storageType.label }],
             input as Hex,
