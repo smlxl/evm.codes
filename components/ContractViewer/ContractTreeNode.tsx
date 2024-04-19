@@ -591,6 +591,8 @@ interface StorageType {
   label: string
   numberOfBytes: string
   value: string
+  members?: StorageType[]
+  base: string
 }
 
 type StorageLayoutItemProps = {
@@ -647,6 +649,11 @@ export const StorageLayoutItem = ({
     types,
     key: storage.type,
   })
+  // NOTE: static / dynamic arrays amd struct are not supported atm
+  const isUnsupportedType =
+    storageType.encoding === 'dynamic_array' ||
+    !!storageType?.members?.length ||
+    !!storageType.base
 
   const ethGetStorage = () => {
     let slot = storage.slot
@@ -673,11 +680,24 @@ export const StorageLayoutItem = ({
 
       input = '0x' + input
       try {
-        console.log(input)
-        let val = decodeAbiParameters(
-          [{ type: storageType.label }],
-          input as Hex,
-        ).toString()
+        let val = ''
+        if (storageType.label === 'address') {
+          val = input
+        } else if (storageType.label === 'string') {
+          const isLongStringFormat = (BigInt(input) & 1n) === 1n
+          if (isLongStringFormat) {
+            val = 'decoding of long strings are unsupported'
+          } else {
+            val = Buffer.from(input.slice(2), 'hex').toString('utf-8')
+          }
+        } else {
+          console.log({ storageType, input })
+          val = decodeAbiParameters(
+            [{ type: storageType.label }],
+            input as Hex,
+          ).toString()
+        }
+
         if (slot != storage.slot) {
           val += ` (mapped slot: ${slot})`
         }
@@ -701,36 +721,52 @@ export const StorageLayoutItem = ({
           base slot: {storage.slot}, offset: {storage.offset}, size:{' '}
           {type?.numberOfBytes} bytes
         </p>
-        <p className="text-xs dark:text-gray-200">
-          <p>{status ? `results: ${status}` : ''}</p>
-        </p>
-        <div className="w-full">
-          {keyTypes.map((keyType, i: number) => (
-            <TextField
-              key={i}
-              size="small"
-              className="bg-gray-100 dark:invert w-full"
-              label={types[keyType].label}
-              onChange={(e: any) => {
-                inputs[i] = e.target.value
-                setInputs([...inputs])
-              }}
-            />
-          ))}
-        </div>
 
-        <div className="flex flex-row-reverse">
-          <Button
-            disabled={keyTypes.some((_, index) => {
-              return inputs[index] === undefined
-            })}
-            onClick={ethGetStorage}
-            size="xs"
-            className="font-medium"
-          >
-            Read
-          </Button>
-        </div>
+        <p>
+          {isUnsupportedType ? (
+            <p className="text-xs dark:text-gray-200">
+              We currently don't support decoding of this storage slot type.
+              Your contribution is welcome.
+            </p>
+          ) : (
+            <>
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-xs dark:text-gray-200">
+                  <p>{status ? `results: ${status}` : ''}</p>
+                </p>
+
+                {keyTypes.map((keyType, i: number) => (
+                  <TextField
+                    key={i}
+                    disabled={isUnsupportedType}
+                    size="small"
+                    className="bg-gray-100 dark:invert w-full"
+                    label={types[keyType].label}
+                    onChange={(e: any) => {
+                      inputs[i] = e.target.value
+                      setInputs([...inputs])
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="flex flex-row-reverse pt-2">
+                <Button
+                  disabled={
+                    keyTypes.some((_, index) => {
+                      return inputs[index] === undefined
+                    }) || isUnsupportedType
+                  }
+                  onClick={ethGetStorage}
+                  size="xs"
+                  className="font-medium"
+                >
+                  Read
+                </Button>
+              </div>
+            </>
+          )}
+        </p>
       </div>
     </TreeItemBasic>
   )
