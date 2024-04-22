@@ -650,7 +650,7 @@ export const StorageLayoutItem = ({
     types,
     key: storage.type,
   })
-  // NOTE: static / dynamic arrays amd struct are not supported atm
+  // NOTE: static / dynamic arrays and struct are not supported atm
   const isUnsupportedType =
     storageType.encoding === 'dynamic_array' ||
     !!storageType?.members?.length ||
@@ -688,7 +688,7 @@ export const StorageLayoutItem = ({
           // See https://docs.soliditylang.org/en/v0.8.7/internals/layout_in_storage.html#bytes-and-string
           const isLongStringFormat = (BigInt(input) & 1n) === 1n
           if (isLongStringFormat) {
-            val = 'decoding of long strings are unsupported'
+            val = 'decoding of long strings is unsupported'
           } else {
             val = Buffer.from(input.slice(2), 'hex').toString('utf-8')
           }
