@@ -152,7 +152,6 @@ export class DeploymentInfo {
   async compile(outputs: string[], version?: string) {
     return solidityCompiler
       .compileCode(
-        // this.code,
         this.etherscanInfo.SourceCode,
         // if not specifying exact version,
         version || this.etherscanInfo.CompilerVersion,

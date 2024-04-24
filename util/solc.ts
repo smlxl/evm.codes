@@ -4,15 +4,15 @@ class SolidityCompiler {
   worker?: Worker
   callbacks: { [id: string]: (data: any) => void } = {}
 
-  // NOTE: this lazy-load instead of constructor is due to a bug:
-  // "ReferenceError: Worker is not defined"
-  // this lazy-loading seems to fix it
-  init() {
-    if (!this.worker) {
-      // console.info('starting solc worker')
+  constructor() {
+    // TODO: don't use this deprecated check
+    if (process.browser) {
       this.worker = new Worker('/solcWorker.js')
       this.callbacks = {}
-      this.listen(this.onCompilationResult.bind(this))
+      this.worker?.addEventListener(
+        'message',
+        this.onCompilationResult.bind(this),
+      )
     }
   }
 
@@ -28,17 +28,7 @@ class SolidityCompiler {
     callback(data)
   }
 
-  listen(callback: (event: MessageEvent) => void) {
-    this.init()
-    this.worker?.addEventListener('message', callback)
-  }
-
-  unlisten(callback: (event: MessageEvent) => void) {
-    this.worker?.removeEventListener('message', callback)
-  }
-
   compile(stdJson: SolidityCompilerInput, version: string) {
-    this.init()
     return new Promise((resolve, reject) => {
       const randomId = 'jobId_' + Math.random()
       // TODO: wrap callback in promise
@@ -47,7 +37,7 @@ class SolidityCompiler {
       setTimeout(() => {
         if (this.callbacks[randomId]) {
           delete this.callbacks[randomId]
-          reject('timedout')
+          reject('compilation timeout')
         }
       }, 5 * 60000)
 
