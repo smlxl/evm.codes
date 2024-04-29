@@ -11,8 +11,8 @@
     "format": "prettier --write  --cache .",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
-    "typecheck": "tsc --pretty",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "tsc --pretty"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
@@ -90,7 +90,7 @@
     "loader-utils": "^2.0.4",
     "postcss": "^8.4.35",
     "prettier": "^3.2.5",
-    "sort-package-json": "^1.52.0",
+    "sort-package-json": "^2.10.0",
     "swc-loader": "^0.2.6",
     "tailwindcss": "^3.4.1",
     "ts-loader": "^9.5.1",
@@ -107,14 +107,14 @@
     "pnpm": "8.15.6"
   },
   "pnpm": {
-    "overrides": {
-      "@types/react": "17.0.2",
-      "@types/react-dom": "17.0.2"
-    },
     "allowedDeprecatedVersions": {
       "@babel/plugin-proposal-object-rest-spread": "7.12.1",
       "core-js": "2.6.12",
       "trim": "0.0.1"
+    },
+    "overrides": {
+      "@types/react": "17.0.2",
+      "@types/react-dom": "17.0.2"
     }
   }
 }
