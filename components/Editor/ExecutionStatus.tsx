@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { useRegisterActions } from 'kbar'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 
 import { EthereumContext } from 'context/ethereumContext'
 
@@ -45,7 +45,7 @@ const ExecutionStatus = () => {
         </span>
         <span
           className="inline-block mr-4 select-all cursor-help"
-          data-tip="Gas consumed for the current instruction"
+          data-tooltip-content="Gas consumed for the current instruction"
         >
           {executionState.currentGas || 0}
         </span>
@@ -54,12 +54,12 @@ const ExecutionStatus = () => {
         </span>
         <span
           className="inline-block mr-4 select-all cursor-help"
-          data-tip="Total gas consumed"
+          data-tooltip-content="Total gas consumed"
         >
           {executionState.totalGas || 0}
         </span>
 
-        <ReactTooltip className="tooltip" effect="solid" />
+        <Tooltip className="tooltip" />
       </div>
 
       <div>
