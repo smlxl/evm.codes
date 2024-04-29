@@ -56,7 +56,7 @@
     "react-select": "^5.8.0",
     "react-simple-code-editor": "^0.13.1",
     "react-table": "^7.8.0",
-    "react-tooltip": "^4.2.21",
+    "react-tooltip": "^5.26.4",
     "readable-stream": "^4.5.2",
     "solc": "^0.8.23-fixed",
     "tailwind-merge": "^2.2.0",

@@ -537,7 +537,7 @@ const Editor = ({ readOnly = false }: Props) => {
                     >
                       <span
                         className="inline-block mr-4 select-all"
-                        data-tip="Share permalink"
+                        data-tooltip-content="Share permalink"
                       >
                         <Icon
                           name="links-line"

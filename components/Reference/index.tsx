@@ -13,7 +13,7 @@ import useWindowSize from 'lib/useWindowResize'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTable, useExpanded, useFilters, HeaderGroup } from 'react-table'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { IReferenceItem, IItemDocs, IGasDocs } from 'types'
 
 import {
@@ -266,13 +266,12 @@ const ReferenceTable = ({
                           !!dynamicFeeForkName && (
                             <span
                               className="inline-block pl-2 text-gray-400 dark:text-black-400"
-                              data-tip="Has additional dynamic gas cost, expand to estimate it"
-                              data-for={`tip-${cell.row.id}`}
+                              data-tooltip-content="Has additional dynamic gas cost, expand to estimate it"
+                              data-tooltip-id={`tip-${cell.row.id}`}
                             >
                               <Icon name="question-line" />
-                              <ReactTooltip
+                              <Tooltip
                                 className="tooltip"
-                                effect="solid"
                                 id={`tip-${cell.row.id}`}
                               />
                             </span>

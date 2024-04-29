@@ -1,7 +1,7 @@
 import React from 'react'
 
 import cn from 'classnames'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 
 type Props = {
   children: React.ReactNode | string
@@ -54,19 +54,15 @@ export const Button: React.FC<Props> = ({
         },
         className,
       )}
-      data-tip={tooltip}
-      data-for={tooltipIdPrefixed}
+      data-tooltip-content={tooltip}
+      data-tooltip-id={tooltipIdPrefixed}
       {...rest}
     >
       <div className={cn('flex items-center', contentClassName)}>
         {children}
       </div>
       {tooltip && tooltipId && (
-        <ReactTooltip
-          className="tooltip"
-          id={tooltipIdPrefixed}
-          effect="solid"
-        />
+        <Tooltip className="tooltip" id={tooltipIdPrefixed} />
       )}
     </button>
   )

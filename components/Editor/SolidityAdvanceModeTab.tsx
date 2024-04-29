@@ -351,7 +351,7 @@ const SolidityAdvanceModeTab: FC<Props> = ({
           <Button onClick={handleCopyPermalink} transparent padded={false}>
             <span
               className="inline-block mr-4 select-all"
-              data-tip="Share permalink"
+              data-tooltip-content="Share permalink"
             >
               <Icon name="links-line" className="text-indigo-500 mr-1" />
             </span>
