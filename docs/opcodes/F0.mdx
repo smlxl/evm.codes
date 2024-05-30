@@ -16,7 +16,7 @@ The destination address is calculated as the rightmost 20 bytes (160 bits) of th
     address = keccak256(rlp([sender_address,sender_nonce]))[12:]
 
 Deployment can fail due to:
-
+- A contract already exists at the destination address (can happen in combination with [CREATE2](/#F5) and [SELFDESTRUCT](/#FF)).
 - Insufficient value to send.
 - Sub [context](/about) [reverted](/#FD).
 - Insufficient gas to execute the initialisation code.
