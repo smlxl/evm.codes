@@ -83,7 +83,7 @@ const ContractViewerInner = () => {
         return
       }
 
-      return loadDeployment(address, undefined, false, invalidateRoute)
+      return loadDeployment(address, undefined, true, invalidateRoute)
         .then(() => {
           statusCallback({
             status: 'loaded',
