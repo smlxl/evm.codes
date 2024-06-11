@@ -8,6 +8,7 @@ import { SourceDefinition } from 'types/ast'
 import {
   EtherscanContractResponse,
   SolidityCompilerOutput,
+  SoliditySettings,
 } from 'types/contract'
 
 import { findContract, flattenCode } from 'util/flatten'
@@ -149,13 +150,35 @@ export class DeploymentInfo {
     }
   }
 
-  async compile(outputs: string[], version?: string) {
+  async compile(
+    outputs: string[],
+    settings?: SoliditySettings,
+    version?: string,
+  ) {
+    if (!settings) {
+      settings = {
+        outputSelection: {
+          '*': {
+            '': [],
+            '*': [],
+          },
+        },
+      }
+    }
+
+    settings.outputSelection['*'][''] = (
+      settings.outputSelection['*'][''] || []
+    ).concat(outputs)
+    settings.outputSelection['*']['*'] = (
+      settings.outputSelection['*']['*'] || []
+    ).concat(outputs)
+
     return solidityCompiler
       .compileCode(
         this.etherscanInfo.SourceCode,
         // if not specifying exact version,
         version || this.etherscanInfo.CompilerVersion,
-        outputs,
+        settings,
       )
       .then(({ result, error }: any) => {
         if (error || !result) {
@@ -244,26 +267,31 @@ export const useDeployments = (router: NextRouter) => {
             }
           }
 
+          const settings = deployment.etherscanInfo.SourceCode.settings
           const selectedOutputs = ['storageLayout']
           const ogVersion = deployment.etherscanInfo.CompilerVersion
-          deployment.compile(selectedOutputs, ogVersion).then((data) => {
-            if (!data || data.error) {
-              // strip the 'v' prefix and '+commit..' suffix
-              // this will choose the latest stable release of that version
-              let shortVersion = ogVersion.split('+')[0].slice(1)
-              if (shortVersion.startsWith('0.4.')) {
-                // solcjs versions 0.4.x have bugs, bump to latest stable release
-                // and hope for good luck
-                shortVersion = '0.4.26'
-              }
+          deployment
+            .compile(selectedOutputs, settings, ogVersion)
+            .then((data) => {
+              if (!data || data.error) {
+                // strip the 'v' prefix and '+commit..' suffix
+                // this will choose the latest stable release of that version
+                let shortVersion = ogVersion.split('+')[0].slice(1)
+                if (shortVersion.startsWith('0.4.')) {
+                  // solcjs versions 0.4.x have bugs, bump to latest stable release
+                  // and hope for good luck
+                  shortVersion = '0.4.26'
+                }
 
-              deployment.compile(selectedOutputs, shortVersion).then(() => {
+                deployment
+                  .compile(selectedOutputs, settings, shortVersion)
+                  .then(() => {
+                    setReqCount(reqCount - 1)
+                  })
+              } else {
                 setReqCount(reqCount - 1)
-              })
-            } else {
-              setReqCount(reqCount - 1)
-            }
-          })
+              }
+            })
 
           if (invalidateRoute) {
             updateRoute(router, deployments)

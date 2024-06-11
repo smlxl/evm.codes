@@ -49,19 +49,7 @@ class SolidityCompiler {
     })
   }
 
-  compileCode(code: string | any, version: string, outputSelection: string[]) {
-    const settings: SoliditySettings = {
-      outputSelection: {
-        // the format is a bit weird. here for simplicity apply outputSelection
-        // to all files and all contracts
-        // first key is file filter - asterisk for all files
-        '*': {
-          '': outputSelection, // entire file output selections
-          '*': outputSelection, // per-contract output selections
-        },
-      },
-    }
-
+  compileCode(code: string | any, version: string, settings: SoliditySettings) {
     if (typeof code == 'string') {
       const stdJson = {
         language: 'Solidity',
@@ -77,9 +65,7 @@ class SolidityCompiler {
     } else {
       const stdJson = {
         ...code,
-        settings: {
-          outputSelection: settings.outputSelection,
-        },
+        settings,
       }
 
       return this.compile(stdJson, version)
