@@ -114,14 +114,15 @@ export function flattenCode(
     const rel_path =
       imp.path[0] == '.' ? path.join(dirname, imp.path) : imp.path
 
-    const realpath = path.normalize(rel_path).replaceAll('\\', '/')
+    const realPath = path.normalize(rel_path).replaceAll('\\', '/')
+    const remappedRealPath = remapFile(realPath, remappings)
     const preImport = source.slice(index, imp.range[0]).trim() + '\n'
     let flatImport = ''
     flat += preImport
 
-    if (!imported.includes(realpath)) {
+    if (!imported.includes(remappedRealPath)) {
       const countLines = lineOffset + flat.split('\n').length
-      // flat += '/* preimport at ' + countLines + ' of ' + realpath + '*/'
+      // flat += '/* preimport at ' + countLines + ' of ' + realPath + '*/'
 
       // if (lenses) {
       //   lenses.push({
@@ -130,10 +131,10 @@ export function flattenCode(
       //   })
       // }
 
-      imported.push(realpath)
+      imported.push(remappedRealPath)
       flatImport = flattenCode(
         stdJson,
-        realpath,
+        realPath,
         lenses,
         true,
         imported,
