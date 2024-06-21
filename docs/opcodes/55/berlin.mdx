@@ -9,17 +9,14 @@
     static_gas = {gasPrices|sstore}
 
     if value == current_value
-        if key is warm
-            base_dynamic_gas = {gasPrices|warmstorageread}
-        else
-            base_dynamic_gas = {gasPrices|sstoreNoopGasEIP2200}
+        base_dynamic_gas = {gasPrices|warmstorageread}
     else if current_value == original_value
         if original_value == 0
             base_dynamic_gas = {gasPrices|sstoreInitGasEIP2200}
         else
             base_dynamic_gas = {gasPrices|sstoreCleanGasEIP2200}
     else
-        base_dynamic_gas = {gasPrices|sstoreDirtyGasEIP2200}
+        base_dynamic_gas = {gasPrices|warmstorageread}
 
 On top of the cost above, {gasPrices|coldsload} is added to `base_dynamic_gas` if the slot is cold. See section [access sets](/about).
 
@@ -37,14 +34,8 @@ On top of the cost above, {gasPrices|coldsload} is added to `base_dynamic_gas` i
                     gas_refunds += {gasPrices|sstoreClearRefundEIP2200}
             if value == original_value
                 if original_value == 0
-                    if key is warm
-                        gas_refunds += {gasPrices|sstoreInitGasEIP2200} - {gasPrices|warmstorageread}
-                    else
-                        gas_refunds += {gasPrices|sstoreInitRefundEIP2200}
+                    gas_refunds += {gasPrices|sstoreInitGasEIP2200} - {gasPrices|warmstorageread}
                 else
-                    if key is warm
-                        gas_refunds += {gasPrices|sstoreReset} - {gasPrices|coldsload} - {gasPrices|warmstorageread}
-                    else
-                        gas_refunds += {gasPrices|sstoreCleanRefundEIP2200}
+                    gas_refunds += {gasPrices|sstoreReset} - {gasPrices|coldsload} - {gasPrices|warmstorageread}
 
 See [gas refunds](/about).
