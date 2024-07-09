@@ -87,7 +87,7 @@ export function flattenCode(
   if (remove_pragma) {
     source = source
       .replace(/^pragma solidity.*$\s*/gm, '')
-      .replace(/^\/\/ SPDX-.*$\s*/gm, '')
+      .replace(/^\s*\/\/\s*SPDX.*$|^\s*\*\s*SPDX.*$/gm, '')
   }
 
   // TODO: fix lenses or remove entirely
