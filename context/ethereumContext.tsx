@@ -50,6 +50,9 @@ const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
 const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
+const EOF_EIPS = [
+  663, 3540, 3670, 4200, 4750, 5450, 6206, 7069, 7480, 7620, 7698,
+]
 
 type ContextProps = {
   common: Common | undefined
@@ -64,6 +67,7 @@ type ContextProps = {
   isExecuting: boolean
   executionState: IExecutionState
   vmError: string | undefined
+  showEOF: boolean
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -84,6 +88,7 @@ type ContextProps = {
   removeBreakpoint: (instructionId: number) => void
   nextExecution: () => void
   resetExecution: () => void
+  toggleEOFShow: () => void
 }
 
 const initialExecutionState: IExecutionState = {
@@ -110,6 +115,7 @@ export const EthereumContext = createContext<ContextProps>({
   isExecuting: false,
   executionState: initialExecutionState,
   vmError: undefined,
+  showEOF: false,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -125,6 +131,7 @@ export const EthereumContext = createContext<ContextProps>({
   removeBreakpoint: () => undefined,
   nextExecution: () => undefined,
   resetExecution: () => undefined,
+  toggleEOFShow: () => undefined,
 })
 
 export const CheckIfAfterMergeHardfork = (forkName?: string) => {
@@ -150,6 +157,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
+  const [showEOF, setShowEOF] = useState(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
@@ -167,10 +175,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     skipChainsLoading?: boolean,
     chainId?: Chain,
     fork?: string,
+    showEOF?: boolean,
   ) => {
     common = new Common({
       chain: Chain.Mainnet,
       hardfork: fork || CURRENT_FORK,
+      eips: showEOF ? EOF_EIPS : undefined,
     })
 
     vm = await VM.create({ common })
@@ -221,6 +231,15 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       resetExecution()
       initVmInstance(true, selectedChain?.id, fork.name)
     }
+  }
+
+  /**
+   * Toggle EOF opcodes show in the list.
+   */
+  const toggleEOFShow = () => {
+    setShowEOF(!showEOF)
+    resetExecution()
+    initVmInstance(true, selectedChain?.id, selectedFork?.name, !showEOF)
   }
 
   /**
@@ -832,6 +851,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         isExecuting,
         executionState,
         vmError,
+        showEOF,
 
         onChainChange,
         onForkChange,
@@ -844,6 +864,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         removeBreakpoint,
         nextExecution,
         resetExecution,
+        toggleEOFShow,
       }}
     >
       {children}
