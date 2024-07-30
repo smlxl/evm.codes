@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react'
 
-const EvmStorageBanner = () => {
+const SimBanner = () => {
   const [isShown, setIsShown] = useState(false)
 
   useEffect(() => {
     // Check if the banner was closed previously
-    const isBannerClosed = localStorage.getItem('isBannerClosed')
-    if (!isBannerClosed) {
+    const isSimBannerClosed = localStorage.getItem('isSimBannerClosed')
+    if (!isSimBannerClosed) {
       setIsShown(true)
     }
   }, [])
 
   const handleCloseBanner = () => {
     // Save the state in local storage to prevent the banner from showing again
-    localStorage.setItem('isBannerClosed', 'true')
+    localStorage.setItem('isSimBannerClosed', 'true')
     setIsShown(false)
   }
 
@@ -45,23 +45,33 @@ const EvmStorageBanner = () => {
       </button>
       <div className="container mx-auto px-4 md:px-6">
         <p className="font-medium md:text-xl mb-4 pt-6">
-          Introducing evm.storage
+          Announcing sim.studio
         </p>
         <p className="font-normal text-2base text-gray-400 mb-4">
-          Explore any contract, externally owned account, or transaction on
-          Ethereum and Avalanche. With contract interaction, an unrivaled
-          representation of storage, and transaction tracing and simulation,
-          evm.storage is the blockchain explorer designed for you.{' '}
+          Revolutionize the way you build products on-chain using the same infra
+          we used to build{' '}
           <a
             className="underline text-indigo-500"
-            href="https://www.evm.storage"
+            href="https://explorer.sim.io"
           >
-            Try it out
+            sim Explorer
+          </a>{' '}
+          (fka evm.storage). PartyDao built{' '}
+          <a
+            className="underline text-indigo-500"
+            href="https://create.party.app"
+          >
+            create.party.app
           </a>
+          . What will you build?{' '}
+          <a className="underline text-indigo-500" href="https://studio.sim.io">
+            Get started
+          </a>
+          .
         </p>
       </div>
     </div>
   )
 }
 
-export default EvmStorageBanner
+export default SimBanner
