@@ -2,19 +2,26 @@ import { Buffer } from 'buffer'
 
 import React, { createContext, useEffect, useState, useRef } from 'react'
 
-import { Block } from '@ethereumjs/block'
+import { createBlock } from '@ethereumjs/block'
 import { Common, Chain, HardforkTransitionConfig } from '@ethereumjs/common'
 import {
   EVM,
   EvmError,
   getActivePrecompiles,
   InterpreterStep,
+  createEVM,
 } from '@ethereumjs/evm'
 import { RunState } from '@ethereumjs/evm/dist/cjs/interpreter'
 import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
-import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
-import { Address, Account, bytesToHex } from '@ethereumjs/util'
-import { VM } from '@ethereumjs/vm'
+import { TypedTransaction, TxData, createTxFromTxData } from '@ethereumjs/tx'
+import {
+  Address,
+  bytesToHex,
+  createAccount,
+  createAddressFromPrivateKey,
+  createContractAddress,
+} from '@ethereumjs/util'
+import { VM, runTx } from '@ethereumjs/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -45,8 +52,8 @@ const privateKey = Buffer.from(
   'hex',
 )
 const accountBalance = 18 // 1eth
-const accountAddress = Address.fromPrivateKey(privateKey)
-const contractAddress = Address.generate(accountAddress, 1n)
+const accountAddress = createAddressFromPrivateKey(privateKey)
+const contractAddress = createContractAddress(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
 const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
@@ -185,7 +192,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     vm = await VM.create({ common })
 
-    const evm = await EVM.create({
+    const evm = await createEVM({
       common,
     })
     currentOpcodes = evm.getActiveOpcodes()
@@ -255,11 +262,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       value: value,
       gasLimit,
       gasPrice: 10,
-      data: '0x' + data,
+      data: `0x${data}` as `0x${string}`,
       nonce: account?.nonce,
     }
 
-    return TransactionFactory.fromTxData(txData).sign(privateKey)
+    return createTxFromTxData(txData).sign(privateKey)
   }
 
   /**
@@ -315,10 +322,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     value: bigint,
     data: string,
   ) => {
-    vm.stateManager.putContractCode(
-      contractAddress,
-      Buffer.from(byteCode, 'hex'),
-    )
+    vm.stateManager.putCode(contractAddress, Buffer.from(byteCode, 'hex'))
     transientStorageMemory.clear()
     startTransaction(await transactionData(data, value, contractAddress))
   }
@@ -334,8 +338,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setVmError(undefined)
 
     // starting execution via deployed contract's transaction
-    return vm
-      .runTx({ tx: tx as TypedTransaction, block: _getBlock() })
+    return runTx(vm, { tx: tx as TypedTransaction, block: _getBlock() })
       .then(({ execResult, totalGasSpent, createdAddress }) => {
         _loadRunState({
           totalGasSpent,
@@ -624,9 +627,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (evm instanceof EVM) {
       // Storage handler
       const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
-      evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
-      evm.stateManager.clearContractStorage =
-        proxyStateManager.clearContractStorage
+      evm.stateManager.putStorage = proxyStateManager.putContractStorage
+      evm.stateManager.clearStorage = proxyStateManager.clearContractStorage
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
@@ -648,14 +650,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       nonce: 0,
       balance: 0,
     }
-    vm.stateManager.putAccount(
-      accountAddress,
-      Account.fromAccountData(accountData),
-    )
-    vm.stateManager.putAccount(
-      contractAddress,
-      Account.fromAccountData(contractData),
-    )
+    vm.stateManager.putAccount(accountAddress, createAccount(accountData))
+    vm.stateManager.putAccount(contractAddress, createAccount(contractData))
   }
 
   const _loadRunState = ({
@@ -696,7 +692,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       return undefined
     }
 
-    return Block.fromBlockData(
+    return createBlock(
       {
         header: {
           baseFeePerGas: 10,

@@ -10,6 +10,9 @@ module.exports.default = new NormalModuleReplacementPlugin(
       case 'buffer':
         resource.request = 'buffer'
         break
+      case 'crypto':
+        resource.request = 'crypto-browserify'
+        break
       case 'stream':
         resource.request = 'readable-stream'
         break
