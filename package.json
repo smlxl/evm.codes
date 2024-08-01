@@ -9,6 +9,8 @@
     "build:solcjs-worker": "npx -y browserify -t babelify ./babel/solcWorker2.js > ./public/solcWorker.js",
     "dev": "pnpm run build:solcjs-worker && next dev",
     "format": "prettier --write  --cache .",
+    "preinstall": "git submodule update --init",
+    "postinstall": "./build_monorepo.sh",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "prepare": "husky",
@@ -24,6 +26,12 @@
     "@ethereumjs/tx": "^5.2.1",
     "@ethereumjs/util": "^9.0.2",
     "@ethereumjs/vm": "^8.0.0",
+    "@ethjs-eof/block": "link:ethereumjs-monorepo/packages/block",
+    "@ethjs-eof/common": "link:ethereumjs-monorepo/packages/common",
+    "@ethjs-eof/evm": "link:ethereumjs-monorepo/packages/evm",
+    "@ethjs-eof/tx": "link:ethereumjs-monorepo/packages/tx",
+    "@ethjs-eof/util": "link:ethereumjs-monorepo/packages/util",
+    "@ethjs-eof/vm": "link:ethereumjs-monorepo/packages/vm",
     "@kunigi/string-compression": "1.0.2",
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
@@ -32,11 +40,11 @@
     "@mui/x-tree-view": "^7.2.0",
     "@solidity-parser/parser": "^0.18.0",
     "assert": "^2.0.0",
-    "babel-preset-es2020": "^1.0.2",
     "babelify": "^10.0",
     "classnames": "^2.3.1",
     "clsx": "^2.0.0",
     "copy-to-clipboard": "^3.3.1",
+    "crypto-js": "^4.2.0",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.5",
     "events": "^3.3.0",
@@ -116,5 +124,19 @@
       "@types/react": "17.0.2",
       "@types/react-dom": "17.0.2"
     }
+  },
+  "browserslist": {
+    "production": [
+      "chrome >= 67",
+      "edge >= 79",
+      "firefox >= 68",
+      "opera >= 54",
+      "safari >= 14"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

@@ -1438,23 +1438,23 @@
   },
   "d0": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "offset",
+    "description": "loads 32-byte word to stack"
   },
   "d1": {
-    "input": "",
+    "input": "offset",
     "output": "",
-    "description": ""
+    "description": "loads 32-byte word to stack from given offset"
   },
   "d2": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "loads data section size to the stack"
   },
   "d3": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "mem_offset | offset | size",
+    "description": "copies a segment of data section to memory"
   },
   "d4": {
     "input": "",
@@ -1517,49 +1517,49 @@
     "description": ""
   },
   "e0": {
-    "input": "",
+    "input": "relative_offset",
     "output": "",
-    "description": ""
+    "description": "relative jump"
   },
   "e1": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "relative_offset",
+    "output": "condition",
+    "description": "conditional relative jump"
   },
   "e2": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "max_index | relative_offset+ | ...",
+    "output": "case",
+    "description": "relative jump via jump table"
   },
   "e3": {
-    "input": "",
+    "input": "index",
     "output": "",
-    "description": ""
+    "description": "call a function"
   },
   "e4": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "value",
+    "description": "return from a function"
   },
   "e5": {
-    "input": "",
+    "input": "index",
     "output": "",
-    "description": ""
+    "description": "jumps to a code section without adding a new return stack frame."
   },
   "e6": {
-    "input": "",
+    "input": "imm",
     "output": "",
-    "description": ""
+    "description": "duplicate nth stack item at the top of the stack, where n = imm + 1"
   },
   "e7": {
-    "input": "",
+    "input": "imm",
     "output": "",
-    "description": ""
+    "description": "swap (n+1)th stack item with the top stack item, where n = imm + 1"
   },
   "e8": {
-    "input": "",
+    "input": "imm",
     "output": "",
-    "description": ""
+    "description": "swap (n+1)th stack item with (n+m+1)th stack item, where n = imm >> 4 + 1, m = imm & 0x0F + 1"
   },
   "e9": {
     "input": "",
@@ -1577,9 +1577,31 @@
     "description": ""
   },
   "ec": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "initcontainer_index",
+    "output": "value | salt | input_offset | input_size",
+    "description": "allowing factory contracts to create other contracts",
+    "dynamicFee": {
+      "prague": {
+        "inputs": {
+          "initcontainerIndex": {
+            "type": "number",
+            "label": "Input: init container index"
+          },
+          "initcontainerSize": {
+            "type": "number",
+            "label": "Input: init container size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
+        }
+      }
+    }
   },
   "ed": {
     "input": "",
@@ -1587,9 +1609,9 @@
     "description": ""
   },
   "ee": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "deploy_container_index",
+    "output": "aux_data_offset | aux_data_size",
+    "description": "to be finally deployed to an address"
   },
   "ef": {
     "input": "",
@@ -1949,18 +1971,18 @@
   },
   "f7": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "offset",
+    "description": "loads 32-byte word from the returndata start at offset"
   },
   "f8": {
-    "input": "",
+    "input": "target_address | input_offset | input_size | value",
     "output": "",
-    "description": ""
+    "description": "drop-in replacement for CALL instruction, except the runtime operand stack check"
   },
   "f9": {
-    "input": "",
+    "input": "target_address | input_offset | input_size",
     "output": "",
-    "description": ""
+    "description": "drop-in replacement for DELEGATECALL instruction, except the runtime operand stack check"
   },
   "fa": {
     "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
@@ -2030,9 +2052,9 @@
     }
   },
   "fb": {
-    "input": "",
+    "input": "target_address | input_offset | input_size",
     "output": "",
-    "description": ""
+    "description": "drop-in replacement for STATICCALL instruction, except the runtime operand stack check"
   },
   "fc": {
     "input": "",
