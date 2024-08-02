@@ -15,6 +15,9 @@ import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
 import { Address, Account, bytesToHex } from '@ethereumjs/util'
 import { VM } from '@ethereumjs/vm'
+import { Common as EOFCommon } from '@ethjs-eof/common'
+import { createEVM } from '@ethjs-eof/evm/dist/cjs/constructors'
+import { VM as EOFVM } from '@ethjs-eof/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -34,8 +37,8 @@ import {
 } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
-let vm: VM
-let common: Common
+let vm: VM | EOFVM
+let common: Common | EOFCommon
 let currentOpcodes: OpcodeList | undefined
 
 const storageMemory = new Map()
@@ -55,7 +58,7 @@ const EOF_EIPS = [
 ]
 
 type ContextProps = {
-  common: Common | undefined
+  common: Common | EOFCommon | undefined
   chains: IChain[]
   forks: HardforkTransitionConfig[]
   selectedChain: IChain | undefined
@@ -164,9 +167,13 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    initVmInstance()
+    if (showEOF) {
+      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
+    } else {
+      initVmInstance()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [showEOF])
 
   /**
    * Initializes the EVM instance.
@@ -175,17 +182,53 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     skipChainsLoading?: boolean,
     chainId?: Chain,
     fork?: string,
-    showEOF?: boolean,
   ) => {
     common = new Common({
       chain: Chain.Mainnet,
       hardfork: fork || CURRENT_FORK,
-      eips: showEOF ? EOF_EIPS : undefined,
     })
 
     vm = await VM.create({ common })
 
     const evm = await EVM.create({
+      common,
+    })
+    currentOpcodes = evm.getActiveOpcodes()
+
+    if (!skipChainsLoading) {
+      _loadChainAndForks(common)
+    }
+
+    _loadOpcodes()
+    _loadPrecompiled()
+    _setupStateManager()
+    _setupAccount()
+
+    vm.evm.events?.on(
+      'step',
+      (e: InterpreterStep, contFunc: ((result?: any) => void) | undefined) => {
+        _stepInto(e, contFunc)
+      },
+    )
+  }
+
+  /**
+   * Initializes the EVM instance.
+   */
+  const initVmInstanceWithEOF = async (
+    skipChainsLoading?: boolean,
+    chainId?: Chain,
+    fork?: string,
+  ) => {
+    common = new EOFCommon({
+      chain: Chain.Mainnet,
+      hardfork: fork || CURRENT_FORK,
+      eips: EOF_EIPS,
+    })
+
+    vm = await EOFVM.create({ common })
+
+    const evm = await createEVM({
       common,
     })
     currentOpcodes = evm.getActiveOpcodes()
@@ -239,7 +282,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const toggleEOFShow = () => {
     setShowEOF(!showEOF)
     resetExecution()
-    initVmInstance(true, selectedChain?.id, selectedFork?.name, !showEOF)
   }
 
   /**

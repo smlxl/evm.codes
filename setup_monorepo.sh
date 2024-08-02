@@ -6,7 +6,7 @@ echo "Installing dependencies"
 cd ethereumjs-monorepo
 npm i
 
-echo "Add @ethjs-eof/* packages for EOF supported"
+echo "Link @ethjs-eof/* packages to its monorepo for EOF supported"
 cd ..
 pnpm add @ethjs-eof/block@ethereumjs-monorepo/packages/block
 pnpm add @ethjs-eof/common@ethereumjs-monorepo/packages/common

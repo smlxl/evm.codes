@@ -10,7 +10,7 @@
     "dev": "pnpm run build:solcjs-worker && next dev",
     "format": "prettier --write  --cache .",
     "preinstall": "git submodule update --init",
-    "postinstall": "./build_monorepo.sh",
+    "postinstall": "./setup_monorepo.sh",
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "lint:package": "sort-package-json",
     "prepare": "husky",
