@@ -17,7 +17,7 @@ import { Address, Account, bytesToHex } from '@ethereumjs/util'
 import { VM } from '@ethereumjs/vm'
 import { Common as EOFCommon } from '@ethjs-eof/common'
 // @ts-ignore it confused with pre-EOF version
-import { createEVM } from '@ethjs-eof/evm'
+import { createEVM, EVM as EOFEVM } from '@ethjs-eof/evm'
 import { VM as EOFVM } from '@ethjs-eof/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
@@ -169,12 +169,21 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
   useEffect(() => {
     if (showEOF) {
-      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
+      initVmInstanceWithEOF(true)
     } else {
       initVmInstance()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showEOF])
+
+  useEffect(() => {
+    if (showEOF && selectedFork?.name === CURRENT_FORK) {
+      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
+    } else {
+      initVmInstance(true, selectedChain?.id, selectedFork?.name)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFork])
 
   /**
    * Initializes the EVM instance.
@@ -273,7 +282,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (fork) {
       setSelectedFork(fork)
       resetExecution()
-      initVmInstance(true, selectedChain?.id, fork.name)
     }
   }
 
@@ -484,7 +492,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-  const _loadChainAndForks = (common: Common) => {
+  const _loadChainAndForks = (common: Common | EOFCommon) => {
     const chainIds: number[] = []
     const chainNames: string[] = []
     const forks: HardforkTransitionConfig[] = []
@@ -670,6 +678,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
       evm.stateManager.clearContractStorage =
         proxyStateManager.clearContractStorage
+      // Transient storage handler
+      const transientStorageMethodProxy = traceTransientStorageMethodCalls(
+        evm.transientStorage,
+      )
+      evm.transientStorage.put = transientStorageMethodProxy.put
+    } else if (evm instanceof EOFEVM) {
+      // Storage handler
+      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+      // @ts-ignore confused package
+      evm.stateManager.putStorage = proxyStateManager.putContractStorage
+      // @ts-ignore confused package
+      evm.stateManager.clearStorage = proxyStateManager.clearContractStorage
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
