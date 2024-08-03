@@ -1545,7 +1545,7 @@
     "description": "conditional relative jump"
   },
   "e2": {
-    "input": "max_index | relative_offset+ | ...",
+    "input": "max_index | 1st relative_offset | ... | nth relative_offset",
     "output": "case",
     "description": "relative jump via jump table"
   },
