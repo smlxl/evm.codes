@@ -1449,12 +1449,30 @@
   "d2": {
     "input": "",
     "output": "",
-    "description": "loads data section size to the stack"
+    "description": "push data section size to the stack"
   },
   "d3": {
     "input": "",
     "output": "mem_offset | offset | size",
-    "description": "copies a segment of data section to memory"
+    "description": "copies a segment of data section to memory",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: memory offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "d4": {
     "input": "",
@@ -1581,7 +1599,7 @@
     "output": "value | salt | input_offset | input_size",
     "description": "allowing factory contracts to create other contracts",
     "dynamicFee": {
-      "prague": {
+      "cancun": {
         "inputs": {
           "initcontainerIndex": {
             "type": "number",
@@ -1590,6 +1608,10 @@
           "initcontainerSize": {
             "type": "number",
             "label": "Input: init container size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
           },
           "executionCost": {
             "type": "number",
@@ -1611,7 +1633,25 @@
   "ee": {
     "input": "deploy_container_index",
     "output": "aux_data_offset | aux_data_size",
-    "description": "to be finally deployed to an address"
+    "description": "to be finally deployed to an address",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "auxDataOffset": {
+            "type": "number",
+            "label": "Input: Auxiliary data offset"
+          },
+          "auxDataSize": {
+            "type": "number",
+            "label": "Input: Auxiliary data size in bytes"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "ef": {
     "input": "",
@@ -1977,12 +2017,72 @@
   "f8": {
     "input": "target_address | input_offset | input_size | value",
     "output": "",
-    "description": "drop-in replacement for CALL instruction, except the runtime operand stack check"
+    "description": "drop-in replacement for CALL instruction, except the runtime operand stack check",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "inputOffset": {
+            "type": "number",
+            "label": "Input: inputOffset"
+          },
+          "inputSize": {
+            "type": "number",
+            "label": "Input: inputSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "f9": {
     "input": "target_address | input_offset | input_size",
     "output": "",
-    "description": "drop-in replacement for DELEGATECALL instruction, except the runtime operand stack check"
+    "description": "drop-in replacement for DELEGATECALL instruction, except the runtime operand stack check",
+    "dynamicFee": {
+      "cancun": {
+        "inputs": {
+          "inputOffset": {
+            "type": "number",
+            "label": "Input: inputOffset"
+          },
+          "inputSize": {
+            "type": "number",
+            "label": "Input: inputSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "fa": {
     "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
@@ -2054,7 +2154,33 @@
   "fb": {
     "input": "target_address | input_offset | input_size",
     "output": "",
-    "description": "drop-in replacement for STATICCALL instruction, except the runtime operand stack check"
+    "description": "drop-in replacement for STATICCALL instruction, except the runtime operand stack check",
+    "dynamicFee": {
+      "berlin": {
+        "inputs": {
+          "inputOffset": {
+            "type": "number",
+            "label": "Input: inputOffset"
+          },
+          "inputSize": {
+            "type": "number",
+            "label": "Input: inputSize"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'address' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "fc": {
     "input": "",
