@@ -31,7 +31,11 @@ import {
   ITransientStorage,
 } from 'types'
 
-import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
+import {
+  CURRENT_FORK,
+  EOF_ENABLED_FORK,
+  FORKS_WITH_TIMESTAMPS,
+} from 'util/constants'
 import {
   calculateOpcodeDynamicFee,
   calculatePrecompiledDynamicFee,
@@ -168,7 +172,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    if (showEOF) {
+    if (showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
       initVmInstanceWithEOF(true)
     } else {
       initVmInstance()
@@ -177,7 +181,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }, [showEOF])
 
   useEffect(() => {
-    if (showEOF && selectedFork?.name === CURRENT_FORK) {
+    if (showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
       initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
     } else {
       initVmInstance(true, selectedChain?.id, selectedFork?.name)

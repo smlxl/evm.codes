@@ -2012,12 +2012,12 @@
   "f7": {
     "input": "",
     "output": "offset",
-    "description": "loads 32-byte word from the returndata start at offset"
+    "description": "push 32-byte word from the return data onto the stack start at offset"
   },
   "f8": {
     "input": "target_address | input_offset | input_size | value",
-    "output": "",
-    "description": "drop-in replacement for CALL instruction, except the runtime operand stack check",
+    "output": "status",
+    "description": "drop-in replacement for CALL instruction",
     "dynamicFee": {
       "cancun": {
         "inputs": {
@@ -2039,7 +2039,7 @@
           },
           "cold": {
             "type": "boolean",
-            "label": "State: 'address' is cold?"
+            "label": "State: 'targetAddress' is cold?"
           },
           "empty": {
             "type": "boolean",
@@ -2055,8 +2055,8 @@
   },
   "f9": {
     "input": "target_address | input_offset | input_size",
-    "output": "",
-    "description": "drop-in replacement for DELEGATECALL instruction, except the runtime operand stack check",
+    "output": "status",
+    "description": "drop-in replacement for DELEGATECALL instruction",
     "dynamicFee": {
       "cancun": {
         "inputs": {
@@ -2074,7 +2074,7 @@
           },
           "cold": {
             "type": "boolean",
-            "label": "State: 'address' is cold?"
+            "label": "State: 'targetAddress' is cold?"
           },
           "executionCost": {
             "type": "number",
@@ -2153,8 +2153,8 @@
   },
   "fb": {
     "input": "target_address | input_offset | input_size",
-    "output": "",
-    "description": "drop-in replacement for STATICCALL instruction, except the runtime operand stack check",
+    "output": "status",
+    "description": "drop-in replacement for STATICCALL instruction",
     "dynamicFee": {
       "berlin": {
         "inputs": {
@@ -2172,7 +2172,7 @@
           },
           "cold": {
             "type": "boolean",
-            "label": "State: 'address' is cold?"
+            "label": "State: 'targetAddress' is cold?"
           },
           "executionCost": {
             "type": "number",

@@ -31,7 +31,7 @@ function memoryExtensionCost(
   offset: BN,
   byteSize: BN,
   currentMemorySize: BN,
-  common: Common,
+  common: Common | EOFCommon,
 ): BN {
   if (byteSize.isZero()) {
     return byteSize
@@ -206,6 +206,46 @@ function callCost(common: Common, inputs: any): BN {
   if (common.gteHardfork('berlin')) {
     result.iadd(addressAccessCost(common, inputs))
   }
+
+  return result
+}
+
+function extCallCost(common: EOFCommon, inputs: any, opcode: string): BN {
+  const inputOffset = new BN(inputs.inputOffset)
+  const inputSize = new BN(inputs.inputSize)
+  const result = new BN(0)
+
+  if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
+    result
+      .iaddn(Number(getCommonParam(common, 'gasPrices', 'callValueTransfer')))
+      .isubn(Number(getCommonParam(common, 'gasPrices', 'callStipend')))
+
+    // NOTE: if EXTSTATICCALL with value, halt with exceptional failure
+    if (opcode === 'fb') {
+      return result
+    }
+  }
+
+  result.iadd(
+    memoryExtensionCost(
+      inputOffset,
+      inputSize,
+      new BN(inputs.memorySize),
+      common,
+    ),
+  )
+
+  if (common.gteHardfork('berlin')) {
+    result.iadd(addressAccessCost(common, inputs))
+  }
+
+  if (inputs.empty === '1' && inputs.value !== '0') {
+    result.iadd(
+      new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccount'))),
+    )
+  }
+
+  result.iadd(new BN(inputs.executionCost))
 
   return result
 }
@@ -551,6 +591,12 @@ export const calculateOpcodeDynamicFee = (
       result = callCost(common, inputs)
       break
     }
+    case 'f8':
+    case 'f9':
+    case 'fb': {
+      result = extCallCost(common, inputs, opcode.opcodeOrAddress)
+      break
+    }
     case 'f3':
     case 'fd': {
       result = memoryExtensionCost(
@@ -775,7 +821,10 @@ export const calculatePrecompiledDynamicFee = (
  *
  * @returns The String with gas prices replaced.
  */
-export const parseGasPrices = (common: Common, contents: string) => {
+export const parseGasPrices = (
+  common: Common | EOFCommon,
+  contents: string,
+) => {
   return contents.replace(reGasVariable, (str) => {
     const value = str.match(reFences)
     if (!value?.[1]) {

@@ -1,0 +1,39 @@
+---
+fork: Prague
+group: System operations
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+Creates a new sub [context](/about) and execute the [code](/about) of the given account, then resumes the current one. Note that an account with no code will return success status.
+
+If the size of the [return data](/about) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork), or load 32-byte word onto the stack with [RETURNDATALOAD](/#F7) instruction.
+
+If the caller doesn't have enough balance to send the [value](/#34), the call reverted with the current [context](/about).
+
+## Stack input
+
+0. `targetAddress`: the account which [context](/about) to execute.
+1. `inputOffset`: byte offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+2. `inputSize`: byte size to copy (size of the [calldata](/about)).
+3. `value`: [value](/#34) in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the account.
+
+## Stack output
+
+0. `status`: return 0 for success, 1 for revert if the sub [context](/about) [reverted](/#FD), 2 for failure.
+
+## Examples
+
+*TBD: See in playground.*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Call stack depth is 1024
+- The target address has more than 20 bytes. 
+- The target account code is legacy code (pre-EOF).
+- The current execution context is from a [STATICCALL](/#FA) and the [value](/#34) (stack index 2) is not 0 (since Byzantium fork).
