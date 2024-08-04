@@ -172,22 +172,9 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    if (showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
-      initVmInstanceWithEOF(true)
-    } else {
-      initVmInstance()
-    }
+    initVmInstance()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showEOF])
-
-  useEffect(() => {
-    if (showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
-      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
-    } else {
-      initVmInstance(true, selectedChain?.id, selectedFork?.name)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFork])
+  }, [])
 
   /**
    * Initializes the EVM instance.
@@ -237,7 +224,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     common = new EOFCommon({
       chain: Chain.Mainnet,
       hardfork: fork || CURRENT_FORK,
-      eips: EOF_EIPS,
+      eips: fork == EOF_ENABLED_FORK ? EOF_EIPS : [],
     })
 
     vm = await EOFVM.create({ common })
@@ -286,6 +273,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (fork) {
       setSelectedFork(fork)
       resetExecution()
+      initVmInstance(true, selectedChain?.id, forkName)
     }
   }
 
@@ -295,6 +283,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const toggleEOFShow = () => {
     setShowEOF(!showEOF)
     resetExecution()
+    if (!showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
+      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
+    } else {
+      initVmInstance(true, selectedChain?.id, selectedFork?.name)
+    }
   }
 
   /**

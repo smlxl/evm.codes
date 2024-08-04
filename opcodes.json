@@ -1439,32 +1439,32 @@
   "d0": {
     "input": "",
     "output": "offset",
-    "description": "loads 32-byte word to stack"
+    "description": "Load 32-byte word from data section of EOF container to the stack"
   },
   "d1": {
     "input": "offset",
     "output": "",
-    "description": "loads 32-byte word to stack from given offset"
+    "description": "Load 32-byte word from data section of EOF container at given offset to the stack"
   },
   "d2": {
     "input": "",
     "output": "",
-    "description": "push data section size to the stack"
+    "description": "Push data section size to the stack"
   },
   "d3": {
     "input": "",
     "output": "mem_offset | offset | size",
-    "description": "copies a segment of data section to memory",
+    "description": "Copy a segment of data section to the stack",
     "dynamicFee": {
       "cancun": {
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "Input: memory offset"
+            "label": "State: memory offset"
           },
           "size": {
             "type": "number",
-            "label": "Input: size"
+            "label": "State: size"
           },
           "memorySize": {
             "type": "number",
@@ -1537,47 +1537,47 @@
   "e0": {
     "input": "relative_offset",
     "output": "",
-    "description": "relative jump"
+    "description": "Alter the program counter to relative offset"
   },
   "e1": {
     "input": "relative_offset",
     "output": "condition",
-    "description": "conditional relative jump"
+    "description": "Conditionally alter the program counter to relative offset"
   },
   "e2": {
     "input": "max_index | 1st relative_offset | ... | nth relative_offset",
     "output": "case",
-    "description": "relative jump via jump table"
+    "description": "Alter the program counter to a relative offset in jump table"
   },
   "e3": {
-    "input": "index",
+    "input": "target_section_index",
     "output": "",
-    "description": "call a function"
+    "description": "Call into a function"
   },
   "e4": {
     "input": "",
     "output": "value",
-    "description": "return from a function"
+    "description": "Return from a function"
   },
   "e5": {
-    "input": "index",
+    "input": "target_section_index",
     "output": "",
-    "description": "jumps to a code section without adding a new return stack frame."
+    "description": "Chaining function calls without adding a new return stack frame"
   },
   "e6": {
-    "input": "imm",
+    "input": "stack_index",
     "output": "",
-    "description": "duplicate nth stack item at the top of the stack, where n = imm + 1"
+    "description": "Duplicate the stack item at the top of the stack"
   },
   "e7": {
-    "input": "imm",
+    "input": "stack_index",
     "output": "",
-    "description": "swap (n+1)th stack item with the top stack item, where n = imm + 1"
+    "description": "Swap the stack item with the top stack item"
   },
   "e8": {
-    "input": "imm",
+    "input": "stack_index",
     "output": "",
-    "description": "swap (n+1)th stack item with (n+m+1)th stack item, where n = imm >> 4 + 1, m = imm & 0x0F + 1"
+    "description": "Swap between the first and second nibbles of the stack item"
   },
   "e9": {
     "input": "",
@@ -1597,17 +1597,21 @@
   "ec": {
     "input": "initcontainer_index",
     "output": "value | salt | input_offset | input_size",
-    "description": "allowing factory contracts to create other contracts",
+    "description": "Create a contract using EOF container at given index",
     "dynamicFee": {
       "cancun": {
         "inputs": {
-          "initcontainerIndex": {
+          "offset": {
             "type": "number",
-            "label": "Input: init container index"
+            "label": "Input: offset"
           },
-          "initcontainerSize": {
+          "size": {
             "type": "number",
-            "label": "Input: init container size"
+            "label": "Input: size"
+          },
+          "containerSize": {
+            "type": "number",
+            "label": "State: container size"
           },
           "memorySize": {
             "type": "number",
@@ -1633,17 +1637,17 @@
   "ee": {
     "input": "deploy_container_index",
     "output": "aux_data_offset | aux_data_size",
-    "description": "to be finally deployed to an address",
+    "description": "Deploy container to an address",
     "dynamicFee": {
       "cancun": {
         "inputs": {
           "auxDataOffset": {
             "type": "number",
-            "label": "Input: Auxiliary data offset"
+            "label": "State: auxiliary data offset"
           },
           "auxDataSize": {
             "type": "number",
-            "label": "Input: Auxiliary data size in bytes"
+            "label": "State: auxiliary data size in bytes"
           },
           "memorySize": {
             "type": "number",
@@ -2012,12 +2016,12 @@
   "f7": {
     "input": "",
     "output": "offset",
-    "description": "push 32-byte word from the return data onto the stack start at offset"
+    "description": "Push 32-byte word from the return data at offset onto the stack"
   },
   "f8": {
     "input": "target_address | input_offset | input_size | value",
     "output": "status",
-    "description": "drop-in replacement for CALL instruction",
+    "description": "Drop-in replacement for CALL instruction",
     "dynamicFee": {
       "cancun": {
         "inputs": {
@@ -2025,13 +2029,13 @@
             "type": "number",
             "label": "Input: value"
           },
-          "inputOffset": {
+          "offset": {
             "type": "number",
-            "label": "Input: inputOffset"
+            "label": "Input: offset"
           },
-          "inputSize": {
+          "size": {
             "type": "number",
-            "label": "Input: inputSize"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -2056,17 +2060,17 @@
   "f9": {
     "input": "target_address | input_offset | input_size",
     "output": "status",
-    "description": "drop-in replacement for DELEGATECALL instruction",
+    "description": "Drop-in replacement for DELEGATECALL instruction",
     "dynamicFee": {
       "cancun": {
         "inputs": {
-          "inputOffset": {
+          "offset": {
             "type": "number",
-            "label": "Input: inputOffset"
+            "label": "Input: offset"
           },
-          "inputSize": {
+          "size": {
             "type": "number",
-            "label": "Input: inputSize"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -2154,17 +2158,17 @@
   "fb": {
     "input": "target_address | input_offset | input_size",
     "output": "status",
-    "description": "drop-in replacement for STATICCALL instruction",
+    "description": "Drop-in replacement for STATICCALL instruction",
     "dynamicFee": {
       "berlin": {
         "inputs": {
-          "inputOffset": {
+          "offset": {
             "type": "number",
-            "label": "Input: inputOffset"
+            "label": "Input: offset"
           },
-          "inputSize": {
+          "size": {
             "type": "number",
-            "label": "Input: inputSize"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",

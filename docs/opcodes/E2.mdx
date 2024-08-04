@@ -9,7 +9,7 @@ group: Stack Memory Storage and Flow Operations
 
 The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
 
-The **RJUMPV** instruction may alter the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops and conditions. 
+The **RJUMPV** instruction may alter the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops and conditions. if `case > max_index` (out-of-bounds case), fall through and increment the counter by `(max_index + 1) * 2` without `relative_offset` takes into account.
 
 An interesting feature is that `RJUMPV 0 relative_offset` is an inverted-[RJUMPI](/#E1), which can be used in many cases.
 

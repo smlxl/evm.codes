@@ -51,7 +51,11 @@ function memoryExtensionCost(
   return newCost
 }
 
-function memoryCostCopy(inputs: any, param: string, common: Common): BN {
+function memoryCostCopy(
+  inputs: any,
+  param: string,
+  common: Common | EOFCommon,
+): BN {
   const paramWordCost = new BN(
     Number(getCommonParam(common, 'gasPrices', param)),
   )
@@ -210,30 +214,54 @@ function callCost(common: Common, inputs: any): BN {
   return result
 }
 
-function extCallCost(common: EOFCommon, inputs: any, opcode: string): BN {
-  const inputOffset = new BN(inputs.inputOffset)
-  const inputSize = new BN(inputs.inputSize)
-  const result = new BN(0)
+const eofCreateCost = (common: EOFCommon, inputs: any): BN => {
+  const expansionCost = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
+
+  const keccak256WordCost = new BN(
+    Number(getCommonParam(common, 'gasPrices', 'keccak256WordGas')),
+  )
+  const hashingCost = keccak256WordCost.mul(
+    toWordSize(new BN(inputs.containerSize)),
+  )
+
+  const depositCost = new BN(inputs.deployedSize).imuln(
+    Number(getCommonParam(common, 'gasPrices', 'createDataGas')),
+  )
+
+  const result = expansionCost
+    .iadd(hashingCost)
+    .iadd(new BN(inputs.executionCost))
+    .iadd(depositCost)
+
+  if (common.gteHardfork('shanghai')) {
+    const initCodeCost = new BN(
+      toWordSize(new BN(inputs.containerSize)).imuln(
+        Number(getCommonParam(common, 'gasPrices', 'initCodeWordGas')),
+      ),
+    )
+    result.iadd(initCodeCost)
+  }
+  return result
+}
+
+const extCallCost = (common: EOFCommon, inputs: any): BN => {
+  const result = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
 
   if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
-    result
-      .iaddn(Number(getCommonParam(common, 'gasPrices', 'callValueTransfer')))
-      .isubn(Number(getCommonParam(common, 'gasPrices', 'callStipend')))
-
-    // NOTE: if EXTSTATICCALL with value, halt with exceptional failure
-    if (opcode === 'fb') {
-      return result
-    }
+    result.iaddn(
+      Number(getCommonParam(common, 'gasPrices', 'callValueTransferGas')),
+    )
   }
-
-  result.iadd(
-    memoryExtensionCost(
-      inputOffset,
-      inputSize,
-      new BN(inputs.memorySize),
-      common,
-    ),
-  )
 
   if (common.gteHardfork('berlin')) {
     result.iadd(addressAccessCost(common, inputs))
@@ -241,7 +269,7 @@ function extCallCost(common: EOFCommon, inputs: any, opcode: string): BN {
 
   if (inputs.empty === '1' && inputs.value !== '0') {
     result.iadd(
-      new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccount'))),
+      new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccountGas'))),
     )
   }
 
@@ -580,6 +608,23 @@ export const calculateOpcodeDynamicFee = (
         )
       break
     }
+    case 'd3': {
+      result = memoryCostCopy(inputs, 'datacopyGas', common)
+      break
+    }
+    case 'ec': {
+      result = eofCreateCost(common, inputs)
+      break
+    }
+    case 'ee': {
+      result = memoryExtensionCost(
+        new BN(inputs.auxDataOffset),
+        new BN(inputs.auxDataSize),
+        new BN(inputs.memorySize),
+        common,
+      )
+      break
+    }
     case 'f0': {
       result = createCost(common, inputs)
       break
@@ -594,7 +639,7 @@ export const calculateOpcodeDynamicFee = (
     case 'f8':
     case 'f9':
     case 'fb': {
-      result = extCallCost(common, inputs, opcode.opcodeOrAddress)
+      result = extCallCost(common, inputs)
       break
     }
     case 'f3':

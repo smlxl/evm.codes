@@ -1,0 +1,37 @@
+---
+fork: Prague
+group: System operations
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+Context from [EOFCREATE](/#EC), it loads auxiliary data from memory stack and that will be appended to deployed container's data. 
+
+The container index and auxiliary data are used to construct deployed contract.
+
+Should deployment succeed, the account's [code](/about) is set to the [return data](/about) resulting from executing the initialisation code.
+
+## Stack input
+
+0. `deploy_container_index`: the index of EOF containers.
+
+## Stack output
+
+0. `aux_data_offset`: byte offset in the [memory](/about) in bytes.
+1. `aux_data_size`: byte size to copy (size of the auxiliary data).
+
+## Examples
+
+*TBD: See in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- The current execution context is from a [EXTSTATICCALL](/#FB).
+- Exceed the maximum data section size.
+- Less than data section size declared in the header.
+- `input_size` is greater than the chain's maximum initcode size (since Shanghai fork).
