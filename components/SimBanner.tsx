@@ -45,7 +45,7 @@ const SimBanner = () => {
       </button>
       <div className="container mx-auto px-4 md:px-6">
         <p className="font-medium md:text-xl mb-4 pt-6">
-          Announcing sim.studio
+          Announcing sim Studio
         </p>
         <p className="font-normal text-2base text-gray-400 mb-4">
           Revolutionize the way you build products on-chain using the same infra
