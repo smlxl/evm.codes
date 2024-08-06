@@ -1,0 +1,29 @@
+---
+fork: Prague
+group: Subroutine and Function
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+A new return stack is introduced, it is a stack of items representing execution state to return to after function execution is finished.
+
+The **CALLF** instruction call into a function or subroutine with given metadata index in the type section, then push an execution state onto the return stack. 
+
+Static jump instructions are prefered, dynamic jump instructions are disallowed.
+
+## Stack input
+
+0. `target_section_index`: metadata index in the type section of EOF container corresponds to a code section index
+
+*TBD: Reproduce in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Target section index is exceed or equal number of code section.
+- Return stack already has 1024 items.
+- The called function exceed the global stack height limit.

@@ -1,0 +1,25 @@
+---
+fork: Prague
+group: Subroutine and Function
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+The **JUMPF** instruction jump to a code section without adding a new return stack frame, which is changing current section index without updating return stack. 
+
+This allow us to chain function calls, while allow compiler to optimise code size and gas spent.
+
+## Stack output
+
+0. `target_section_index`: metadata index in the type section of EOF container corresponds to a code section index
+
+*TBD: Reproduce in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Operand stack size exceed global stack height limit.
