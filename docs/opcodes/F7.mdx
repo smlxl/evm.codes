@@ -11,45 +11,35 @@ A sub context can be created with [EXTCALL](/#F8), [EXTDELEGATECALL](/#F9) or [E
 
 The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push it onto the memory stack, if return data is less than 32 bytes, the value is zero-padded (same behavior as [CALLDATALOAD](/#35)).
 
-## Stack output
+## Stack input
 
 0. `offset`: byte offset in the [return data](/about) from the last executed sub [context](/about) to copy.
 
+## Stack output
+
+0. `data`: 32-byte value starting from the given offset of the [return data](/about). All bytes after the end of the calldata are set to 0.
+
 ## Examples
 
-| Return data of step 1  |
-|------------:|
+| Returndata |
+|---------|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
-
-| Return data of step 2 |
-|----------------------------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
-
-| Return data of step 3  |
-|------------:|
-| `0xFF` |
 
 | * | Input | Output |
 |--:|------:|-------:|
-| `1` | | `0` |
-| `2` | | `2` |
-| `3` | | `0` |
+| `1` | | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| Memory before |
-|--------------:|
-| `0` |
+| Memory before | Memory after |
+|---------------|--------------|
+| `0x00` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| Memory after input 1 |
-|---------------------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
 
-| Memory after input 1 then 2 |
-|---------------------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
-
-| Memory after input 1 then 2 then 3 |
-|----------------------------:|
-| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| Memory before | Memory after |
+|---------|---------|
+| `0x1F` | `0xFF` |
 
 *TBD: Reproduce in playground*
 

@@ -23,16 +23,20 @@ Deployment can fail due to:
 
 Note that these failures only affect the return value and do not cause the calling context to revert (unlike the error cases below).
 
+## Stack input (Arguments)
+
+0. `initcontainer_index`: the index of EOF subcontainer in the containers.
+
 ## Stack input
-
-0. `initcontainer_index`: the index of EOF containers.
-
-## Stack output
 
 0. `value`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
 1. `salt`: 32-byte value used to create the new account at a deterministic address.
 2. `input_offset`: byte offset in the [memory](/about) in bytes, the initialisation code of the new account.
 3. `input_size`: byte size to copy (size of the initialisation code).
+
+## Stack output
+
+0. `address`: the address of the deployed EOF contract, 0 if the deployment failed.
 
 ## Examples
 

@@ -15,16 +15,14 @@ An interesting feature is that `RJUMPV 0 relative_offset` is an inverted-[RJUMPI
 
 It offer reduced gas cost (both at deploy and execution time) and better analysis properties.
 
-## Stack input
+## Stack input 
 
-0. `max_index`: the maximum index in the jump table - list of relative offset which one of them will be the point where execution will continue from.
-1. `1st relative_offset`: first relative offset of jump table in the deployed [code](/about).
-2. `...`: any relative offset of jump table in the deployed [code](/about) if any.
-2. `nth relative_offset`: last relative offset of jump tablein the deployed [code](/about), where `n = max_index+1` if any
+0. `case`: value that pop from the stack, used to compare with max index, and define how program counter will altered.
 
-## Stack output
+## Stack input (Arguments)
 
-0. `case`: the program counter will be altered with the new value only if this value is equal or less than `max_index`. Otherwise, the program counter is simply incremented and the next instruction will be executed.
+0. `max_index`: immediate argument the maximum index in the jump table - list of relative offset which one of them will be the point where execution will continue from.
+1. `jump_table`: list of relative offsets in the deployed [code](/about).
 
 ## Example
 
@@ -35,6 +33,5 @@ It offer reduced gas cost (both at deploy and execution time) and better analysi
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The code is legacy bytecode.
-- Declare at the end of code section.
+- Note EOF code.
 - Target outside of code bounds, or an immediate operand.

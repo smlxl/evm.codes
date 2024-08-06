@@ -1437,7 +1437,7 @@
     "description": ""
   },
   "d0": {
-    "input": "",
+    "input": "offset",
     "output": "data",
     "description": "Load 32-byte word from data section of EOF container to the stack"
   },
@@ -1452,7 +1452,7 @@
     "description": "Push data section size to the stack"
   },
   "d3": {
-    "input": "",
+    "input": "mem_offset | offset | size",
     "output": "",
     "description": "Copy a segment of data section to the stack",
     "dynamicFee": {
@@ -1460,11 +1460,11 @@
         "inputs": {
           "offset": {
             "type": "number",
-            "label": "State: memory offset"
+            "label": "Input: memory offset"
           },
           "size": {
             "type": "number",
-            "label": "State: size"
+            "label": "Input: size"
           },
           "memorySize": {
             "type": "number",
@@ -1540,13 +1540,13 @@
     "description": "Alter the program counter to relative offset"
   },
   "e1": {
-    "input": "relative_offset",
-    "output": "condition",
+    "input": "condition | relative_offset",
+    "output": "",
     "description": "Conditionally alter the program counter to relative offset"
   },
   "e2": {
-    "input": "max_index | 1st relative_offset | ... | nth relative_offset",
-    "output": "case",
+    "input": "max_index | case | jump_table",
+    "output": "",
     "description": "Alter the program counter to a relative offset in jump table"
   },
   "e3": {
@@ -1556,7 +1556,7 @@
   },
   "e4": {
     "input": "",
-    "output": "value",
+    "output": "",
     "description": "Return from a function"
   },
   "e5": {
@@ -1595,8 +1595,8 @@
     "description": ""
   },
   "ec": {
-    "input": "initcontainer_index",
-    "output": "value | salt | input_offset | input_size",
+    "input": "initcontainer_index | value | salt | input_offset | input_size",
+    "output": "address",
     "description": "Create a contract using EOF container at given index",
     "dynamicFee": {
       "cancun": {
@@ -1635,19 +1635,19 @@
     "description": ""
   },
   "ee": {
-    "input": "deploy_container_index",
-    "output": "aux_data_offset | aux_data_size",
+    "input": "deploy_container_index | aux_data_offset | aux_data_size",
+    "output": "",
     "description": "Deploy container to an address",
     "dynamicFee": {
       "cancun": {
         "inputs": {
           "auxDataOffset": {
             "type": "number",
-            "label": "State: auxiliary data offset"
+            "label": "Input: auxiliary data offset"
           },
           "auxDataSize": {
             "type": "number",
-            "label": "State: auxiliary data size in bytes"
+            "label": "Input: auxiliary data size in bytes"
           },
           "memorySize": {
             "type": "number",
@@ -2014,8 +2014,8 @@
     "description": ""
   },
   "f7": {
-    "input": "",
-    "output": "offset",
+    "input": "offset",
+    "output": "data",
     "description": "Push 32-byte word from the return data at offset onto the stack"
   },
   "f8": {

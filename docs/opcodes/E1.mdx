@@ -11,15 +11,13 @@ The program counter (PC) is a byte offset in the deployed [code](/about). It ind
 
 The **RJUMPI** instruction may alter the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops and conditions.
 
-It offer reduced gas cost compare to dynamic counterpart.
-
 ## Stack input
 
-0. `relative_offset`: byte relative offset in the deployed [code](/about) where execution will continue from.
+0. `condition`: value that pop from the stack, define how program counter will altered.
 
-## Stack output
+## Stack input (Arguments)
 
-0. `condition`: the program counter will be altered with the new value only if this value is different from 0. Otherwise, the program counter is simply incremented and the next instruction will be executed.
+0. `relative_offset`: immediate argument as byte relative offset in the deployed [code](/about) where execution will continue from.
 
 ## Example
 
@@ -30,6 +28,6 @@ It offer reduced gas cost compare to dynamic counterpart.
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The code is legacy bytecode.
+- Not EOF code.
 - Declare at the end of code section.
 - Target outside of code bounds, or an immediate operand.

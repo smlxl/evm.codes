@@ -13,11 +13,11 @@ The container index and auxiliary data are used to construct deployed contract.
 
 Should deployment succeed, the account's [code](/about) is set to the [return data](/about) resulting from executing the initialisation code.
 
-## Stack input
+## Stack input (Arguments)
 
 0. `deploy_container_index`: the index of EOF containers.
 
-## Stack output
+## Stack input
 
 0. `aux_data_offset`: byte offset in the [memory](/about) in bytes.
 1. `aux_data_size`: byte size to copy (size of the auxiliary data).
@@ -34,4 +34,3 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - The current execution context is from a [EXTSTATICCALL](/#FB).
 - Exceed the maximum data section size.
 - Less than data section size declared in the header.
-- `input_size` is greater than the chain's maximum initcode size (since Shanghai fork).

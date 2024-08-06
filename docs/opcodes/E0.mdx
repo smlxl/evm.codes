@@ -15,7 +15,7 @@ It offer reduced gas cost compare to dynamic counterpart.
 
 ## Stack input
 
-0. `relative_offset`: byte relative offset in the deployed [code](/about) where execution will continue from.
+0. `relative_offset`: immediate argument as byte relative offset in the deployed [code](/about) where execution will continue from.
 
 ## Example
 
@@ -26,5 +26,5 @@ It offer reduced gas cost compare to dynamic counterpart.
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The code is legacy bytecode.
+- Not EOF code.
 - Target outside of code bounds, or another immediate argument.
