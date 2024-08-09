@@ -15,6 +15,10 @@ import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
 import { Address, Account, bytesToHex } from '@ethereumjs/util'
 import { VM } from '@ethereumjs/vm'
+import { Common as EOFCommon } from '@ethjs-eof/common'
+// @ts-ignore it confused with pre-EOF version
+import { createEVM, EVM as EOFEVM } from '@ethjs-eof/evm'
+import { VM as EOFVM } from '@ethjs-eof/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -27,15 +31,19 @@ import {
   ITransientStorage,
 } from 'types'
 
-import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
+import {
+  CURRENT_FORK,
+  EOF_ENABLED_FORK,
+  FORKS_WITH_TIMESTAMPS,
+} from 'util/constants'
 import {
   calculateOpcodeDynamicFee,
   calculatePrecompiledDynamicFee,
 } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
-let vm: VM
-let common: Common
+let vm: VM | EOFVM
+let common: Common | EOFCommon
 let currentOpcodes: OpcodeList | undefined
 
 const storageMemory = new Map()
@@ -50,9 +58,12 @@ const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
 const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
+const EOF_EIPS = [
+  663, 3540, 3670, 4200, 4750, 5450, 6206, 7069, 7480, 7620, 7698,
+]
 
 type ContextProps = {
-  common: Common | undefined
+  common: Common | EOFCommon | undefined
   chains: IChain[]
   forks: HardforkTransitionConfig[]
   selectedChain: IChain | undefined
@@ -64,6 +75,7 @@ type ContextProps = {
   isExecuting: boolean
   executionState: IExecutionState
   vmError: string | undefined
+  showEOF: boolean
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -84,6 +96,7 @@ type ContextProps = {
   removeBreakpoint: (instructionId: number) => void
   nextExecution: () => void
   resetExecution: () => void
+  toggleEOFShow: () => void
 }
 
 const initialExecutionState: IExecutionState = {
@@ -110,6 +123,7 @@ export const EthereumContext = createContext<ContextProps>({
   isExecuting: false,
   executionState: initialExecutionState,
   vmError: undefined,
+  showEOF: false,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -125,6 +139,7 @@ export const EthereumContext = createContext<ContextProps>({
   removeBreakpoint: () => undefined,
   nextExecution: () => undefined,
   resetExecution: () => undefined,
+  toggleEOFShow: () => undefined,
 })
 
 export const CheckIfAfterMergeHardfork = (forkName?: string) => {
@@ -150,6 +165,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
+  const [showEOF, setShowEOF] = useState(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
@@ -198,6 +214,44 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   }
 
   /**
+   * Initializes the EVM instance.
+   */
+  const initVmInstanceWithEOF = async (
+    skipChainsLoading?: boolean,
+    chainId?: Chain,
+    fork?: string,
+  ) => {
+    common = new EOFCommon({
+      chain: Chain.Mainnet,
+      hardfork: fork || CURRENT_FORK,
+      eips: fork == EOF_ENABLED_FORK ? EOF_EIPS : [],
+    })
+
+    vm = await EOFVM.create({ common })
+
+    const evm = await createEVM({
+      common,
+    })
+    currentOpcodes = evm.getActiveOpcodes()
+
+    if (!skipChainsLoading) {
+      _loadChainAndForks(common)
+    }
+
+    _loadOpcodes()
+    _loadPrecompiled()
+    _setupStateManager()
+    _setupAccount()
+
+    vm.evm.events?.on(
+      'step',
+      (e: InterpreterStep, contFunc: ((result?: any) => void) | undefined) => {
+        _stepInto(e, contFunc)
+      },
+    )
+  }
+
+  /**
    * Callback on changing the EVM chain.
    * @param chainId The chain ID.
    */
@@ -219,7 +273,20 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (fork) {
       setSelectedFork(fork)
       resetExecution()
-      initVmInstance(true, selectedChain?.id, fork.name)
+      initVmInstance(true, selectedChain?.id, forkName)
+    }
+  }
+
+  /**
+   * Toggle EOF opcodes show in the list.
+   */
+  const toggleEOFShow = () => {
+    setShowEOF(!showEOF)
+    resetExecution()
+    if (!showEOF && selectedFork?.name === EOF_ENABLED_FORK) {
+      initVmInstanceWithEOF(true, selectedChain?.id, selectedFork?.name)
+    } else {
+      initVmInstance(true, selectedChain?.id, selectedFork?.name)
     }
   }
 
@@ -422,7 +489,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-  const _loadChainAndForks = (common: Common) => {
+  const _loadChainAndForks = (common: Common | EOFCommon) => {
     const chainIds: number[] = []
     const chainNames: string[] = []
     const forks: HardforkTransitionConfig[] = []
@@ -608,6 +675,18 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
       evm.stateManager.clearContractStorage =
         proxyStateManager.clearContractStorage
+      // Transient storage handler
+      const transientStorageMethodProxy = traceTransientStorageMethodCalls(
+        evm.transientStorage,
+      )
+      evm.transientStorage.put = transientStorageMethodProxy.put
+    } else if (evm instanceof EOFEVM) {
+      // Storage handler
+      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+      // @ts-ignore confused package
+      evm.stateManager.putStorage = proxyStateManager.putContractStorage
+      // @ts-ignore confused package
+      evm.stateManager.clearStorage = proxyStateManager.clearContractStorage
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
@@ -832,6 +911,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         isExecuting,
         executionState,
         vmError,
+        showEOF,
 
         onChainChange,
         onForkChange,
@@ -844,6 +924,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         removeBreakpoint,
         nextExecution,
         resetExecution,
+        toggleEOFShow,
       }}
     >
       {children}

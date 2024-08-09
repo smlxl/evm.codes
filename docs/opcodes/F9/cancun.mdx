@@ -1,0 +1,10 @@
+## Gas
+
+    static_gas = {gasPrices|extdelegatecallGas}
+    dynamic_gas = memory_expansion_cost + code_execution_cost + address_access_cost
+
+The memory expansion cost explanation can be found [here](/about).
+
+The different costs are:
+ - `code_execution_cost` is the cost of the called code execution.
+ - If `address` is not warm, then `address_access_cost` is {gasPrices|coldaccountaccess} minus {gasPrices|warmstorageread}, otherwise it is {gasPrices|warmstorageread}. See section [access sets](/about).

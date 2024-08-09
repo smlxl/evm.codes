@@ -1,4 +1,5 @@
 import { Common, HardforkTransitionConfig } from '@ethereumjs/common'
+import { Common as EOFCommon } from '@ethjs-eof/common'
 import { setLengthRight, BN } from 'ethereumjs-util'
 import { IReferenceItem } from 'types'
 
@@ -21,8 +22,8 @@ function toWordSize(a: BN): BN {
 }
 
 function memoryCost(wordSize: BN, common: Common): BN {
-  const fee = Number(common.param('gasPrices', 'memory'))
-  const quadCoeff = Number(common.param('gasPrices', 'quadCoeffDiv'))
+  const fee = Number(getCommonParam(common, 'gasPrices', 'memory'))
+  const quadCoeff = Number(getCommonParam(common, 'gasPrices', 'quadCoeffDiv'))
   return wordSize.muln(fee).add(wordSize.mul(wordSize).divn(quadCoeff))
 }
 
@@ -30,7 +31,7 @@ function memoryExtensionCost(
   offset: BN,
   byteSize: BN,
   currentMemorySize: BN,
-  common: Common,
+  common: Common | EOFCommon,
 ): BN {
   if (byteSize.isZero()) {
     return byteSize
@@ -50,8 +51,14 @@ function memoryExtensionCost(
   return newCost
 }
 
-function memoryCostCopy(inputs: any, param: string, common: Common): BN {
-  const paramWordCost = new BN(Number(common.param('gasPrices', param)))
+function memoryCostCopy(
+  inputs: any,
+  param: string,
+  common: Common | EOFCommon,
+): BN {
+  const paramWordCost = new BN(
+    Number(getCommonParam(common, 'gasPrices', param)),
+  )
   const expansionCost = memoryExtensionCost(
     new BN(inputs.offset),
     new BN(inputs.size),
@@ -63,48 +70,68 @@ function memoryCostCopy(inputs: any, param: string, common: Common): BN {
 
 function addressAccessCost(common: Common, inputs: any): BN {
   if (inputs.cold === '1') {
-    return new BN(Number(common.param('gasPrices', 'coldaccountaccess')))
+    return new BN(
+      Number(getCommonParam(common, 'gasPrices', 'coldaccountaccess')),
+    )
   } else {
-    return new BN(Number(common.param('gasPrices', 'warmstorageread')))
+    return new BN(
+      Number(getCommonParam(common, 'gasPrices', 'warmstorageread')),
+    )
   }
 }
 
 function sstoreCost(common: Common, inputs: any): BN {
   if (common.hardfork() === 'constantinople') {
     if (inputs.newValue === inputs.currentValue) {
-      return new BN(Number(common.param('gasPrices', 'netSstoreNoopGas')))
+      return new BN(
+        Number(getCommonParam(common, 'gasPrices', 'netSstoreNoopGas')),
+      )
     } else if (inputs.currentValue === inputs.originalValue) {
       if (inputs.originalValue === '0') {
-        return new BN(Number(common.param('gasPrices', 'netSstoreInitGas')))
+        return new BN(
+          Number(getCommonParam(common, 'gasPrices', 'netSstoreInitGas')),
+        )
       } else {
-        return new BN(Number(common.param('gasPrices', 'netSstoreCleanGas')))
+        return new BN(
+          Number(getCommonParam(common, 'gasPrices', 'netSstoreCleanGas')),
+        )
       }
     } else {
-      return new BN(Number(common.param('gasPrices', 'netSstoreDirtyGas')))
+      return new BN(
+        Number(getCommonParam(common, 'gasPrices', 'netSstoreDirtyGas')),
+      )
     }
   } else if (common.gteHardfork('istanbul')) {
     if (inputs.newValue === inputs.currentValue) {
       if (common.gteHardfork('berlin') && inputs.cold !== '1') {
-        return new BN(Number(common.param('gasPrices', 'warmstorageread')))
+        return new BN(
+          Number(getCommonParam(common, 'gasPrices', 'warmstorageread')),
+        )
       } else {
-        return new BN(Number(common.param('gasPrices', 'sstoreNoopGasEIP2200')))
+        return new BN(
+          Number(getCommonParam(common, 'gasPrices', 'sstoreNoopGasEIP2200')),
+        )
       }
     } else if (inputs.currentValue === inputs.originalValue) {
       if (inputs.originalValue === '0') {
-        return new BN(Number(common.param('gasPrices', 'sstoreInitGasEIP2200')))
+        return new BN(
+          Number(getCommonParam(common, 'gasPrices', 'sstoreInitGasEIP2200')),
+        )
       } else {
         return new BN(
-          Number(common.param('gasPrices', 'sstoreCleanGasEIP2200')),
+          Number(getCommonParam(common, 'gasPrices', 'sstoreCleanGasEIP2200')),
         )
       }
     } else {
-      return new BN(Number(common.param('gasPrices', 'sstoreDirtyGasEIP2200')))
+      return new BN(
+        Number(getCommonParam(common, 'gasPrices', 'sstoreDirtyGasEIP2200')),
+      )
     }
   } else {
     if (inputs.newValue !== '0' && inputs.currentValue === '0') {
-      return new BN(Number(common.param('gasPrices', 'sstoreSet')))
+      return new BN(Number(getCommonParam(common, 'gasPrices', 'sstoreSet')))
     } else {
-      return new BN(Number(common.param('gasPrices', 'sstoreReset')))
+      return new BN(Number(getCommonParam(common, 'gasPrices', 'sstoreReset')))
     }
   }
 }
@@ -117,7 +144,7 @@ function createCost(common: Common, inputs: any): BN {
     common,
   )
   const depositCost = new BN(inputs.deployedSize).imuln(
-    Number(common.param('gasPrices', 'createData')),
+    Number(getCommonParam(common, 'gasPrices', 'createData')),
   )
 
   const result = expansionCost
@@ -127,7 +154,7 @@ function createCost(common: Common, inputs: any): BN {
   if (common.gteHardfork('shanghai')) {
     const initCodeCost = new BN(
       toWordSize(new BN(inputs.size)).imuln(
-        Number(common.param('gasPrices', 'initCodeWordCost')),
+        Number(getCommonParam(common, 'gasPrices', 'initCodeWordCost')),
       ),
     )
     result.iadd(initCodeCost)
@@ -162,16 +189,22 @@ function callCost(common: Common, inputs: any): BN {
   result.iadd(new BN(inputs.executionCost))
 
   if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
-    result.iaddn(Number(common.param('gasPrices', 'callValueTransfer')))
-    result.isubn(Number(common.param('gasPrices', 'callStipend')))
+    result.iaddn(
+      Number(getCommonParam(common, 'gasPrices', 'callValueTransfer')),
+    )
+    result.isubn(Number(getCommonParam(common, 'gasPrices', 'callStipend')))
   }
 
   if (common.gteHardfork('spuriousDragon')) {
     if (inputs.empty === '1' && inputs.value !== '0') {
-      result.iadd(new BN(Number(common.param('gasPrices', 'callNewAccount'))))
+      result.iadd(
+        new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccount'))),
+      )
     }
   } else if (inputs.empty === '1') {
-    result.iadd(new BN(Number(common.param('gasPrices', 'callNewAccount'))))
+    result.iadd(
+      new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccount'))),
+    )
   }
 
   if (common.gteHardfork('berlin')) {
@@ -181,9 +214,73 @@ function callCost(common: Common, inputs: any): BN {
   return result
 }
 
+const eofCreateCost = (common: EOFCommon, inputs: any): BN => {
+  const expansionCost = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
+
+  const keccak256WordCost = new BN(
+    Number(getCommonParam(common, 'gasPrices', 'keccak256WordGas')),
+  )
+  const hashingCost = keccak256WordCost.mul(
+    toWordSize(new BN(inputs.containerSize)),
+  )
+
+  const depositCost = new BN(inputs.deployedSize).imuln(
+    Number(getCommonParam(common, 'gasPrices', 'createDataGas')),
+  )
+
+  const result = expansionCost
+    .iadd(hashingCost)
+    .iadd(new BN(inputs.executionCost))
+    .iadd(depositCost)
+
+  if (common.gteHardfork('shanghai')) {
+    const initCodeCost = new BN(
+      toWordSize(new BN(inputs.containerSize)).imuln(
+        Number(getCommonParam(common, 'gasPrices', 'initCodeWordGas')),
+      ),
+    )
+    result.iadd(initCodeCost)
+  }
+  return result
+}
+
+const extCallCost = (common: EOFCommon, inputs: any): BN => {
+  const result = memoryExtensionCost(
+    new BN(inputs.offset),
+    new BN(inputs.size),
+    new BN(inputs.memorySize),
+    common,
+  )
+
+  if (typeof inputs.value !== 'undefined' && inputs.value !== '0') {
+    result.iaddn(
+      Number(getCommonParam(common, 'gasPrices', 'callValueTransferGas')),
+    )
+  }
+
+  if (common.gteHardfork('berlin')) {
+    result.iadd(addressAccessCost(common, inputs))
+  }
+
+  if (inputs.empty === '1' && inputs.value !== '0') {
+    result.iadd(
+      new BN(Number(getCommonParam(common, 'gasPrices', 'callNewAccountGas'))),
+    )
+  }
+
+  result.iadd(new BN(inputs.executionCost))
+
+  return result
+}
+
 export const calculateDynamicFee = (
   opcodeOrPrecompiled: IReferenceItem,
-  common: Common,
+  common: Common | EOFCommon,
   inputs: any,
 ) => {
   if (opcodeOrPrecompiled.opcodeOrAddress.startsWith('0x')) {
@@ -207,7 +304,9 @@ export const calculateDynamicRefund = (
         } else if (inputs.currentValue === inputs.originalValue) {
           if (inputs.originalValue !== '0' && inputs.newValue === '0') {
             result = new BN(
-              Number(common.param('gasPrices', 'netSstoreClearRefund')),
+              Number(
+                getCommonParam(common, 'gasPrices', 'netSstoreClearRefund'),
+              ),
             )
           } else {
             result = new BN(0)
@@ -217,22 +316,34 @@ export const calculateDynamicRefund = (
           if (inputs.originalValue !== '0') {
             if (inputs.currentValue === '0') {
               result.isubn(
-                Number(common.param('gasPrices', 'netSstoreClearRefund')),
+                Number(
+                  getCommonParam(common, 'gasPrices', 'netSstoreClearRefund'),
+                ),
               )
             } else if (inputs.newValue === '0') {
               result.iaddn(
-                Number(common.param('gasPrices', 'netSstoreClearRefund')),
+                Number(
+                  getCommonParam(common, 'gasPrices', 'netSstoreClearRefund'),
+                ),
               )
             }
           }
           if (inputs.newValue === inputs.originalValue) {
             if (inputs.originalValue === '0') {
               result.iaddn(
-                Number(common.param('gasPrices', 'netSstoreResetClearRefund')),
+                Number(
+                  getCommonParam(
+                    common,
+                    'gasPrices',
+                    'netSstoreResetClearRefund',
+                  ),
+                ),
               )
             } else {
               result.iaddn(
-                Number(common.param('gasPrices', 'netSstoreResetRefund')),
+                Number(
+                  getCommonParam(common, 'gasPrices', 'netSstoreResetRefund'),
+                ),
               )
             }
           }
@@ -243,7 +354,9 @@ export const calculateDynamicRefund = (
         } else if (inputs.currentValue === inputs.originalValue) {
           if (inputs.originalValue !== '0' && inputs.newValue === '0') {
             result = new BN(
-              Number(common.param('gasPrices', 'sstoreClearRefundEIP2200')),
+              Number(
+                getCommonParam(common, 'gasPrices', 'sstoreClearRefundEIP2200'),
+              ),
             )
           } else {
             result = new BN(0)
@@ -253,11 +366,23 @@ export const calculateDynamicRefund = (
           if (inputs.originalValue !== '0') {
             if (inputs.currentValue === '0') {
               result.isubn(
-                Number(common.param('gasPrices', 'sstoreClearRefundEIP2200')),
+                Number(
+                  getCommonParam(
+                    common,
+                    'gasPrices',
+                    'sstoreClearRefundEIP2200',
+                  ),
+                ),
               )
             } else if (inputs.newValue === '0') {
               result.iaddn(
-                Number(common.param('gasPrices', 'sstoreClearRefundEIP2200')),
+                Number(
+                  getCommonParam(
+                    common,
+                    'gasPrices',
+                    'sstoreClearRefundEIP2200',
+                  ),
+                ),
               )
             }
           }
@@ -266,23 +391,53 @@ export const calculateDynamicRefund = (
               if (common.gteHardfork('berlin') && inputs.cold !== '1') {
                 result
                   .iaddn(
-                    Number(common.param('gasPrices', 'sstoreInitGasEIP2200')),
+                    Number(
+                      getCommonParam(
+                        common,
+                        'gasPrices',
+                        'sstoreInitGasEIP2200',
+                      ),
+                    ),
                   )
-                  .isubn(Number(common.param('gasPrices', 'warmstorageread')))
+                  .isubn(
+                    Number(
+                      getCommonParam(common, 'gasPrices', 'warmstorageread'),
+                    ),
+                  )
               } else {
                 result.iaddn(
-                  Number(common.param('gasPrices', 'sstoreInitRefundEIP2200')),
+                  Number(
+                    getCommonParam(
+                      common,
+                      'gasPrices',
+                      'sstoreInitRefundEIP2200',
+                    ),
+                  ),
                 )
               }
             } else {
               if (common.gteHardfork('berlin') && inputs.cold !== '1') {
                 result
-                  .iaddn(Number(common.param('gasPrices', 'sstoreReset')))
-                  .isubn(Number(common.param('gasPrices', 'coldsload')))
-                  .isubn(Number(common.param('gasPrices', 'warmstorageread')))
+                  .iaddn(
+                    Number(getCommonParam(common, 'gasPrices', 'sstoreReset')),
+                  )
+                  .isubn(
+                    Number(getCommonParam(common, 'gasPrices', 'coldsload')),
+                  )
+                  .isubn(
+                    Number(
+                      getCommonParam(common, 'gasPrices', 'warmstorageread'),
+                    ),
+                  )
               } else {
                 result.iaddn(
-                  Number(common.param('gasPrices', 'sstoreCleanRefundEIP2200')),
+                  Number(
+                    getCommonParam(
+                      common,
+                      'gasPrices',
+                      'sstoreCleanRefundEIP2200',
+                    ),
+                  ),
                 )
               }
             }
@@ -290,7 +445,9 @@ export const calculateDynamicRefund = (
         }
       } else {
         if (inputs.newValue === '0' && inputs.currentValue !== '0') {
-          result = new BN(Number(common.param('gasPrices', 'sstoreRefund')))
+          result = new BN(
+            Number(getCommonParam(common, 'gasPrices', 'sstoreRefund')),
+          )
         } else {
           result = new BN(0)
         }
@@ -301,7 +458,9 @@ export const calculateDynamicRefund = (
       if (common.gteHardfork('london')) {
         return null
       } else {
-        result = new BN(Number(common.param('gasPrices', 'selfdestructRefund')))
+        result = new BN(
+          Number(getCommonParam(common, 'gasPrices', 'selfdestructRefund')),
+        )
       }
       break
     }
@@ -326,14 +485,14 @@ export const calculateDynamicRefund = (
  */
 export const calculateOpcodeDynamicFee = (
   opcode: IReferenceItem,
-  common: Common,
+  common: Common | EOFCommon,
   inputs: any,
 ) => {
   let result = null
   switch (opcode.opcodeOrAddress) {
     case '0a': {
       const exponent = new BN(inputs.exponent)
-      const gasPrice = Number(common.param('gasPrices', 'expByte'))
+      const gasPrice = Number(getCommonParam(common, 'gasPrices', 'expByte'))
       result = new BN(exponent.byteLength()).imuln(gasPrice)
       break
     }
@@ -389,9 +548,13 @@ export const calculateOpcodeDynamicFee = (
     case '54': {
       if (common.gteHardfork('berlin')) {
         if (inputs.cold === '1') {
-          result = new BN(Number(common.param('gasPrices', 'coldsload')))
+          result = new BN(
+            Number(getCommonParam(common, 'gasPrices', 'coldsload')),
+          )
         } else {
-          result = new BN(Number(common.param('gasPrices', 'warmstorageread')))
+          result = new BN(
+            Number(getCommonParam(common, 'gasPrices', 'warmstorageread')),
+          )
         }
       } else {
         result = new BN(0)
@@ -402,7 +565,7 @@ export const calculateOpcodeDynamicFee = (
       result = sstoreCost(common, inputs)
 
       if (common.gteHardfork('berlin') && inputs.cold === '1') {
-        result.iaddn(Number(common.param('gasPrices', 'coldsload')))
+        result.iaddn(Number(getCommonParam(common, 'gasPrices', 'coldsload')))
       }
       break
     }
@@ -435,14 +598,31 @@ export const calculateOpcodeDynamicFee = (
         new BN(inputs.memorySize),
         common,
       )
-      result = new BN(Number(common.param('gasPrices', 'logTopic')))
+      result = new BN(Number(getCommonParam(common, 'gasPrices', 'logTopic')))
         .imul(topicsCount)
         .iadd(expansionCost)
         .iadd(
           new BN(inputs.size).muln(
-            Number(common.param('gasPrices', 'logData')),
+            Number(getCommonParam(common, 'gasPrices', 'logData')),
           ),
         )
+      break
+    }
+    case 'd3': {
+      result = memoryCostCopy(inputs, 'datacopyGas', common)
+      break
+    }
+    case 'ec': {
+      result = eofCreateCost(common, inputs)
+      break
+    }
+    case 'ee': {
+      result = memoryExtensionCost(
+        new BN(inputs.auxDataOffset),
+        new BN(inputs.auxDataSize),
+        new BN(inputs.memorySize),
+        common,
+      )
       break
     }
     case 'f0': {
@@ -454,6 +634,12 @@ export const calculateOpcodeDynamicFee = (
     case 'f4':
     case 'fa': {
       result = callCost(common, inputs)
+      break
+    }
+    case 'f8':
+    case 'f9':
+    case 'fb': {
+      result = extCallCost(common, inputs)
       break
     }
     case 'f3':
@@ -469,7 +655,7 @@ export const calculateOpcodeDynamicFee = (
     case 'f5': {
       result = createCost(common, inputs).iadd(
         toWordSize(new BN(inputs.size)).imuln(
-          Number(common.param('gasPrices', 'keccak256Word')),
+          Number(getCommonParam(common, 'gasPrices', 'keccak256Word')),
         ),
       )
       break
@@ -485,13 +671,17 @@ export const calculateOpcodeDynamicFee = (
     }
     case 'ff': {
       if (inputs.empty === '1' && inputs.hasNoBalance !== '1') {
-        result = new BN(Number(common.param('gasPrices', 'callNewAccount')))
+        result = new BN(
+          Number(getCommonParam(common, 'gasPrices', 'callNewAccount')),
+        )
       } else {
         result = new BN(0)
       }
 
       if (common.gteHardfork('berlin') && inputs.cold === '1') {
-        result.iaddn(Number(common.param('gasPrices', 'coldaccountaccess')))
+        result.iaddn(
+          Number(getCommonParam(common, 'gasPrices', 'coldaccountaccess')),
+        )
       }
       break
     }
@@ -574,30 +764,30 @@ export const calculatePrecompiledDynamicFee = (
   let result = null
   switch (precompiled.opcodeOrAddress) {
     case '0x01': {
-      result = new BN(Number(common.param('gasPrices', 'ecRecover')))
+      result = new BN(Number(getCommonParam(common, 'gasPrices', 'ecRecover')))
       break
     }
     case '0x02': {
       result = toWordSize(new BN(inputs.size))
-        .imuln(Number(common.param('gasPrices', 'sha256Word')))
-        .iaddn(Number(common.param('gasPrices', 'sha256')))
+        .imuln(Number(getCommonParam(common, 'gasPrices', 'sha256Word')))
+        .iaddn(Number(getCommonParam(common, 'gasPrices', 'sha256')))
       break
     }
     case '0x03': {
       result = toWordSize(new BN(inputs.size))
-        .imuln(Number(common.param('gasPrices', 'ripemd160Word')))
-        .iaddn(Number(common.param('gasPrices', 'ripemd160')))
+        .imuln(Number(getCommonParam(common, 'gasPrices', 'ripemd160Word')))
+        .iaddn(Number(getCommonParam(common, 'gasPrices', 'ripemd160')))
       break
     }
     case '0x04': {
       result = toWordSize(new BN(inputs.size))
-        .imuln(Number(common.param('gasPrices', 'identityWord')))
-        .iaddn(Number(common.param('gasPrices', 'identity')))
+        .imuln(Number(getCommonParam(common, 'gasPrices', 'identityWord')))
+        .iaddn(Number(getCommonParam(common, 'gasPrices', 'identity')))
       break
     }
     case '0x05': {
       const Gquaddivisor = Number(
-        common.param('gasPrices', 'modexpGquaddivisor'),
+        getCommonParam(common, 'gasPrices', 'modexpGquaddivisor'),
       )
       result = getAdjustedExponentLength(new BN(inputs.exponent))
 
@@ -621,7 +811,7 @@ export const calculatePrecompiledDynamicFee = (
       if (inputs.invalid === '1') {
         result = new BN(inputs.remaining)
       } else {
-        result = new BN(Number(common.param('gasPrices', 'ecAdd')))
+        result = new BN(Number(getCommonParam(common, 'gasPrices', 'ecAdd')))
       }
       break
     }
@@ -629,27 +819,34 @@ export const calculatePrecompiledDynamicFee = (
       if (inputs.invalid === '1') {
         result = new BN(inputs.remaining)
       } else {
-        result = new BN(Number(common.param('gasPrices', 'ecMul')))
+        result = new BN(Number(getCommonParam(common, 'gasPrices', 'ecMul')))
       }
       break
     }
     case '0x08': {
       const inputDataSize = Math.floor(parseInt(inputs.size || 0) / 192)
       result = new BN(
-        Number(common.param('gasPrices', 'ecPairing')) +
-          inputDataSize * Number(common.param('gasPrices', 'ecPairingWord')),
+        Number(getCommonParam(common, 'gasPrices', 'ecPairing')) +
+          inputDataSize *
+            Number(getCommonParam(common, 'gasPrices', 'ecPairingWord')),
       )
       break
     }
     case '0x09': {
-      result = new BN(Number(common.param('gasPrices', 'blake2Round')))
+      result = new BN(
+        Number(getCommonParam(common, 'gasPrices', 'blake2Round')),
+      )
       result.imul(new BN(inputs.rounds))
       break
     }
     case '0x0a': {
       result = new BN(
         Number(
-          common.param('gasPrices', 'kzgPointEvaluationGasPrecompilePrice'),
+          getCommonParam(
+            common,
+            'gasPrices',
+            'kzgPointEvaluationGasPrecompilePrice',
+          ),
         ),
       )
       break
@@ -669,7 +866,10 @@ export const calculatePrecompiledDynamicFee = (
  *
  * @returns The String with gas prices replaced.
  */
-export const parseGasPrices = (common: Common, contents: string) => {
+export const parseGasPrices = (
+  common: Common | EOFCommon,
+  contents: string,
+) => {
   return contents.replace(reGasVariable, (str) => {
     const value = str.match(reFences)
     if (!value?.[1]) {
@@ -682,7 +882,7 @@ export const parseGasPrices = (common: Common, contents: string) => {
     }
 
     if (namespace === 'gasPrices') {
-      const gasPrice = common.param('gasPrices', key)
+      const gasPrice = getCommonParam(common, 'gasPrices', key)
       return gasPrice.toString()
     }
     return str
@@ -731,4 +931,25 @@ export const findMatchingForkName = (
   }
 
   return foundFork
+}
+
+const getCommonParam = (
+  common: Common | EOFCommon,
+  topic: string,
+  name: string,
+): bigint => {
+  if (common instanceof Common) {
+    return common.param(topic, name)
+  } else {
+    let formattedName = name
+    if (!name.endsWith('Gas')) {
+      formattedName = name
+        .replace('Cost', '')
+        .replace('Price', '')
+        .replace('Gas', '')
+        .concat('Gas')
+    }
+    // @ts-ignore it's warn on ide, but technically it's work
+    return (common as EOFCommon).param(formattedName)
+  }
 }

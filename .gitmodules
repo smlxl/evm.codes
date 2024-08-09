@@ -1,0 +1,3 @@
+[submodule "ethereumjs-monorepo"]
+	path = ethereumjs-monorepo
+	url = https://github.com/ethereumjs/ethereumjs-monorepo.git
