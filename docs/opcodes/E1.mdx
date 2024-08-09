@@ -28,6 +28,6 @@ The **RJUMPI** instruction may alter the program counter with relative offset, t
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- Not EOF code.
+- Legacy bytecode.
 - Declare at the end of code section.
 - Target outside of code bounds, or an immediate operand.
