@@ -5,9 +5,9 @@ group: Data Section Access
 
 *Index 1 is top of the stack. See [PUSH](/#60).*
 
-## Stack input
+## Immediate argument 
 
-0. `offset`: immediate argument as byte offset in the data section.
+0. `offset`: 16-bit unsigned value offset in the data section.
 
 ## Stack output
 
@@ -19,10 +19,9 @@ group: Data Section Access
 |---------|
 | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
-| * | Input | Output |
-|--:|------:|-------:|
-| `1` | `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
-| `2` | `31` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+| * | Input | Output | * | * | Input | Output |
+|--:|------:|-------:|--:|--:|------:|-------:|
+| `1` | `0` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` | * | `1` | `31` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
 
 *TBD: Reproduce in playground*
 

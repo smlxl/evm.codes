@@ -19,10 +19,10 @@ It offer reduced gas cost (both at deploy and execution time) and better analysi
 
 0. `case`: value that pop from the stack, used to compare with max index, and define how program counter will altered.
 
-## Stack input (Arguments)
+## Immediate argument
 
-0. `max_index`: immediate argument the maximum index in the jump table - list of relative offset which one of them will be the point where execution will continue from.
-1. `jump_table`: list of relative offsets in the deployed [code](/about).
+0. `max_index`: the maximum index in the jump table - list of relative offset which one of them will be the point where execution will continue from.
+1. `relative_offset+`: list of relative offsets in the deployed [code](/about).
 
 ## Example
 
@@ -33,5 +33,5 @@ It offer reduced gas cost (both at deploy and execution time) and better analysi
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- Note EOF code.
+- Legacy bytecode.
 - Target outside of code bounds, or an immediate operand.

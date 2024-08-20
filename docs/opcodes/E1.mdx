@@ -15,9 +15,9 @@ The **RJUMPI** instruction may alter the program counter with relative offset, t
 
 0. `condition`: value that pop from the stack, define how program counter will altered.
 
-## Stack input (Arguments)
+## Immediate argument
 
-0. `relative_offset`: immediate argument as byte relative offset in the deployed [code](/about) where execution will continue from.
+0. `relative_offset`: 2-byte relative offset in the deployed [code](/about) where execution will continue from.
 
 ## Example
 
@@ -29,5 +29,4 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - Not enough gas.
 - Not enough values on the stack.
 - Legacy bytecode.
-- Declare at the end of code section.
 - Target outside of code bounds, or an immediate operand.

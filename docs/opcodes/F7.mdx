@@ -13,7 +13,7 @@ The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push 
 
 ## Stack input
 
-0. `offset`: byte offset in the [return data](/about) from the last executed sub [context](/about) to copy.
+0. `offset`: 2-byte offset in the [return data](/about) from the last executed sub [context](/about) to copy.
 
 ## Stack output
 
@@ -27,19 +27,19 @@ The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push 
 
 | * | Input | Output |
 |--:|------:|-------:|
-| `1` | | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `1` | `0x0000` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 | Memory before | Memory after |
 |---------------|--------------|
-| `0x00` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+| `0x0000` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
 
 | * | Input | Output |
 |--:|------:|-------:|
-| `1` | | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+| `1` | `0x001F` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
 
 | Memory before | Memory after |
 |---------|---------|
-| `0x1F` | `0xFF` |
+| `0x001F` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
 
 *TBD: Reproduce in playground*
 
