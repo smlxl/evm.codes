@@ -1442,7 +1442,7 @@
     "description": "Load 32-byte word from data section of EOF container to the stack"
   },
   "d1": {
-    "input": "offset",
+    "input": "",
     "output": "data",
     "description": "Load 32-byte word from data section of EOF container at given offset to the stack"
   },
@@ -1535,22 +1535,22 @@
     "description": ""
   },
   "e0": {
-    "input": "relative_offset",
+    "input": "",
     "output": "",
     "description": "Alter the program counter to relative offset"
   },
   "e1": {
-    "input": "condition | relative_offset",
+    "input": "condition",
     "output": "",
     "description": "Conditionally alter the program counter to relative offset"
   },
   "e2": {
-    "input": "max_index | case | jump_table",
+    "input": "case",
     "output": "",
     "description": "Alter the program counter to a relative offset in jump table"
   },
   "e3": {
-    "input": "target_section_index",
+    "input": "",
     "output": "",
     "description": "Call into a function"
   },
@@ -1560,22 +1560,22 @@
     "description": "Return from a function"
   },
   "e5": {
-    "input": "target_section_index",
+    "input": "",
     "output": "",
     "description": "Chaining function calls without adding a new return stack frame"
   },
   "e6": {
-    "input": "stack_index",
+    "input": "",
     "output": "",
     "description": "Duplicate the stack item at the top of the stack"
   },
   "e7": {
-    "input": "stack_index",
+    "input": "",
     "output": "",
     "description": "Swap the stack item with the top stack item"
   },
   "e8": {
-    "input": "stack_index",
+    "input": "",
     "output": "",
     "description": "Swap between the first and second nibbles of the stack item"
   },
@@ -1595,7 +1595,7 @@
     "description": ""
   },
   "ec": {
-    "input": "initcontainer_index | value | salt | input_offset | input_size",
+    "input": "value | salt | input_offset | input_size",
     "output": "address",
     "description": "Create a contract using EOF container at given index",
     "dynamicFee": {
@@ -1635,7 +1635,7 @@
     "description": ""
   },
   "ee": {
-    "input": "deploy_container_index | aux_data_offset | aux_data_size",
+    "input": "aux_data_offset | aux_data_size",
     "output": "",
     "description": "Deploy container to an address",
     "dynamicFee": {
