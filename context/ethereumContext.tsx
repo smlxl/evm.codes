@@ -14,11 +14,14 @@ import { RunState } from '@ethereumjs/evm/dist/cjs/interpreter'
 import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
 import { Address, Account, bytesToHex } from '@ethereumjs/util'
-import { VM } from '@ethereumjs/vm'
+import { RunTxOpts, VM } from '@ethereumjs/vm'
 import { Common as EOFCommon } from '@ethjs-eof/common'
 // @ts-ignore it confused with pre-EOF version
+import { createTxFromTxData as createTxFromTxDataEOF } from '@ethjs-eof/tx'
+// @ts-ignore it confused with pre-EOF version
 import { createEVM, EVM as EOFEVM } from '@ethjs-eof/evm'
-import { VM as EOFVM } from '@ethjs-eof/vm'
+// @ts-ignore it confused with pre-EOF version
+import { VM as EOFVM, runTx as runTxEOF } from '@ethjs-eof/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -59,7 +62,7 @@ const gasLimit = 0xffffffffffffn
 const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
 const EOF_EIPS = [
-  663, 3540, 3670, 4200, 4750, 5450, 6206, 7069, 7480, 7620, 7698,
+  663, 3540, 3670, 4200, 4750, 5450, 6206, 7069, 7480, 7620, 7692, 7698,
 ]
 
 type ContextProps = {
@@ -306,8 +309,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       data: '0x' + data,
       nonce: account?.nonce,
     }
-
-    return TransactionFactory.fromTxData(txData).sign(privateKey)
+    
+    if (vm.evm instanceof EOFEVM) {
+      return createTxFromTxDataEOF(txData).sign(privateKey)
+    } else {
+      return TransactionFactory.fromTxData(txData).sign(privateKey)
+    }
   }
 
   /**
@@ -616,10 +623,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         const origMethod = target[propKey]
         return (...args: any[]) => {
           const result = origMethod.apply(target, args)
-          if (propKey == 'clearContractStorage') {
+          if (propKey == 'clearContractStorage' || propKey == 'clearStorage') {
             _clearContractStorage(args[0])
           }
-          if (propKey == 'putContractStorage') {
+          if (propKey == 'putContractStorage' || propKey == 'putStorage') {
             _putContractStorage(args[0], args[1], args[2])
           }
           return result
@@ -669,31 +676,38 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   // This is necessary in order to handle storage operations easily.
   const _setupStateManager = () => {
     const evm = vm.evm
+    
+    // Storage handler
+    const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+    
     if (evm instanceof EVM) {
-      // Storage handler
-      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
       evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
       evm.stateManager.clearContractStorage =
         proxyStateManager.clearContractStorage
+
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
       )
       evm.transientStorage.put = transientStorageMethodProxy.put
     } else if (evm instanceof EOFEVM) {
-      // Storage handler
-      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
       // @ts-ignore confused package
-      evm.stateManager.putStorage = proxyStateManager.putContractStorage
+      evm.stateManager.putStorage = proxyStateManager.putStorage
       // @ts-ignore confused package
-      evm.stateManager.clearStorage = proxyStateManager.clearContractStorage
+      evm.stateManager.clearStorage = proxyStateManager.clearStorage
+      
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
       )
       evm.transientStorage.put = transientStorageMethodProxy.put
-    }
 
+      // NOTE: they renamed a few functions with the EOF changes 
+      // @ts-ignore it's confused because of the pre eof version
+      evm.stateManager.putContractCode = evm.stateManager.putCode
+      vm.runTx = (opts: RunTxOpts) => runTxEOF(vm, opts)
+    }
+     
     storageMemory.clear()
     transientStorageMemory.clear()
   }
