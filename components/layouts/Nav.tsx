@@ -11,7 +11,6 @@ import ThemeSelector from 'components/ThemeSelector'
 import { Container, Logo, Hamburger } from 'components/ui'
 
 import ChainSelector from '../ChainSelector'
-import EOFToggle from '../EOFToggle'
 
 const Nav = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
@@ -53,7 +52,6 @@ const Nav = () => {
 
           <div className="items-center ml-auto flex">
             <ChainSelector />
-            <EOFToggle />
             <ThemeSelector />
           </div>
 
