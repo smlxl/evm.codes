@@ -18,7 +18,7 @@ const EOFToggle = () => {
           <Toggle
             id="eof-toggle"
             onChange={() => {
-              console.log("clicked")
+              console.log('clicked')
             }}
             isChecked={false}
           />
