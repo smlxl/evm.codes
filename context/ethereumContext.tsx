@@ -37,6 +37,7 @@ import {
 import {
   CURRENT_FORK,
   EOF_ENABLED_FORK,
+  EOF_FORK_NAME,
   FORKS_WITH_TIMESTAMPS,
 } from 'util/constants'
 import {
@@ -182,10 +183,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     chainId?: Chain,
     fork?: string,
   ) => {
+    const forkName = fork == EOF_FORK_NAME ? EOF_ENABLED_FORK : fork
     common = new EOFCommon({
       chain: Chain.Mainnet,
-      hardfork: fork || CURRENT_FORK,
-      eips: fork == EOF_ENABLED_FORK ? EOF_EIPS : [],
+      hardfork: forkName || CURRENT_FORK,
+      eips: forkName === EOF_ENABLED_FORK ? EOF_EIPS : [],
     })
 
     vm = await EOFVM.create({ common })
@@ -486,6 +488,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
           currentForkFound = true
         }
       }
+    })
+
+    forks.push({
+      name: EOF_FORK_NAME,
+      block: null,
     })
 
     setForks(forks)
