@@ -492,7 +492,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     forks.push({
       name: EOF_FORK_NAME,
-      block: null,
+      block: 1710338135,
     })
 
     setForks(forks)
