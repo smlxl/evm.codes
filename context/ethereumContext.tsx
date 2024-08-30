@@ -14,7 +14,14 @@ import { RunState } from '@ethereumjs/evm/dist/cjs/interpreter'
 import { Opcode, OpcodeList } from '@ethereumjs/evm/src/opcodes'
 import { TypedTransaction, TxData, TransactionFactory } from '@ethereumjs/tx'
 import { Address, Account, bytesToHex } from '@ethereumjs/util'
-import { VM } from '@ethereumjs/vm'
+import { RunTxOpts, VM } from '@ethereumjs/vm'
+import { Common as EOFCommon } from '@ethjs-eof/common'
+// @ts-ignore it confused with pre-EOF version
+import { createEVM, EVM as EOFEVM } from '@ethjs-eof/evm'
+// @ts-ignore it confused with pre-EOF version
+import { createTxFromTxData as createTxFromTxDataEOF } from '@ethjs-eof/tx'
+// @ts-ignore it confused with pre-EOF version
+import { VM as EOFVM, runTx as runTxEOF } from '@ethjs-eof/vm'
 import OpcodesMeta from 'opcodes.json'
 import PrecompiledMeta from 'precompiled.json'
 import {
@@ -27,15 +34,20 @@ import {
   ITransientStorage,
 } from 'types'
 
-import { CURRENT_FORK, FORKS_WITH_TIMESTAMPS } from 'util/constants'
+import {
+  CURRENT_FORK,
+  EOF_ENABLED_FORK,
+  EOF_FORK_NAME,
+  FORKS_WITH_TIMESTAMPS,
+} from 'util/constants'
 import {
   calculateOpcodeDynamicFee,
   calculatePrecompiledDynamicFee,
 } from 'util/gas'
 import { toHex, fromBuffer } from 'util/string'
 
-let vm: VM
-let common: Common
+let vm: VM | EOFVM
+let common: Common | EOFCommon
 let currentOpcodes: OpcodeList | undefined
 
 const storageMemory = new Map()
@@ -50,9 +62,12 @@ const contractAddress = Address.generate(accountAddress, 1n)
 const gasLimit = 0xffffffffffffn
 const postMergeHardforkNames: Array<string> = ['merge', 'shanghai', 'cancun']
 export const prevrandaoDocName = '44_merge'
+const EOF_EIPS = [
+  663, 3540, 3670, 4200, 4750, 5450, 6206, 7069, 7480, 7620, 7692, 7698,
+]
 
 type ContextProps = {
-  common: Common | undefined
+  common: Common | EOFCommon | undefined
   chains: IChain[]
   forks: HardforkTransitionConfig[]
   selectedChain: IChain | undefined
@@ -168,16 +183,19 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     chainId?: Chain,
     fork?: string,
   ) => {
-    common = new Common({
+    const forkName = fork == EOF_FORK_NAME ? EOF_ENABLED_FORK : fork
+    common = new EOFCommon({
       chain: Chain.Mainnet,
-      hardfork: fork || CURRENT_FORK,
+      hardfork: forkName || CURRENT_FORK,
+      eips: forkName === EOF_ENABLED_FORK ? EOF_EIPS : [],
     })
 
-    vm = await VM.create({ common })
+    vm = await EOFVM.create({ common })
 
-    const evm = await EVM.create({
+    const evm = await createEVM({
       common,
     })
+
     currentOpcodes = evm.getActiveOpcodes()
 
     if (!skipChainsLoading) {
@@ -219,11 +237,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     if (fork) {
       setSelectedFork(fork)
       resetExecution()
-      initVmInstance(true, selectedChain?.id, fork.name)
+      initVmInstance(true, selectedChain?.id, forkName)
     }
   }
 
-  /**
+  /*
    * Deploys the contract code to the EVM.
    * @param byteCode The contract bytecode.
    * @returns The deployed contract transaction data.
@@ -240,7 +258,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
       nonce: account?.nonce,
     }
 
-    return TransactionFactory.fromTxData(txData).sign(privateKey)
+    if (vm.evm instanceof EOFEVM) {
+      return createTxFromTxDataEOF(txData).sign(privateKey)
+    } else {
+      return TransactionFactory.fromTxData(txData).sign(privateKey)
+    }
   }
 
   /**
@@ -422,7 +444,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-  const _loadChainAndForks = (common: Common) => {
+  const _loadChainAndForks = (common: Common | EOFCommon) => {
     const chainIds: number[] = []
     const chainNames: string[] = []
     const forks: HardforkTransitionConfig[] = []
@@ -444,7 +466,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setSelectedChain({ id: chainIds[0], name: chainNames[0] })
 
     let currentForkFound = false
-
     common.hardforks().forEach((fork) => {
       // FIXME: After shanghai, timestamps are used, so support them in addition
       // to blocks, and in the meantime use timestamp as the block num.
@@ -467,6 +488,11 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
           currentForkFound = true
         }
       }
+    })
+
+    forks.push({
+      name: EOF_FORK_NAME,
+      block: 1710338135,
     })
 
     setForks(forks)
@@ -549,10 +575,10 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         const origMethod = target[propKey]
         return (...args: any[]) => {
           const result = origMethod.apply(target, args)
-          if (propKey == 'clearContractStorage') {
+          if (propKey == 'clearContractStorage' || propKey == 'clearStorage') {
             _clearContractStorage(args[0])
           }
-          if (propKey == 'putContractStorage') {
+          if (propKey == 'putContractStorage' || propKey == 'putStorage') {
             _putContractStorage(args[0], args[1], args[2])
           }
           return result
@@ -602,17 +628,36 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   // This is necessary in order to handle storage operations easily.
   const _setupStateManager = () => {
     const evm = vm.evm
+
+    // Storage handler
+    const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
+
     if (evm instanceof EVM) {
-      // Storage handler
-      const proxyStateManager = traceStorageMethodCalls(evm.stateManager)
       evm.stateManager.putContractStorage = proxyStateManager.putContractStorage
       evm.stateManager.clearContractStorage =
         proxyStateManager.clearContractStorage
+
       // Transient storage handler
       const transientStorageMethodProxy = traceTransientStorageMethodCalls(
         evm.transientStorage,
       )
       evm.transientStorage.put = transientStorageMethodProxy.put
+    } else if (evm instanceof EOFEVM) {
+      // @ts-ignore confused package
+      evm.stateManager.putStorage = proxyStateManager.putStorage
+      // @ts-ignore confused package
+      evm.stateManager.clearStorage = proxyStateManager.clearStorage
+
+      // Transient storage handler
+      const transientStorageMethodProxy = traceTransientStorageMethodCalls(
+        evm.transientStorage,
+      )
+      evm.transientStorage.put = transientStorageMethodProxy.put
+
+      // NOTE: they renamed a few functions with the EOF changes
+      // @ts-ignore it's confused because of the pre eof version
+      evm.stateManager.putContractCode = evm.stateManager.putCode
+      vm.runTx = (opts: RunTxOpts) => runTxEOF(vm, opts)
     }
 
     storageMemory.clear()

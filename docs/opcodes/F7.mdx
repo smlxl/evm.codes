@@ -1,0 +1,42 @@
+---
+fork: EOF
+group: Environmental Information
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+A sub context can be created with [EXTCALL](/#F8), [EXTDELEGATECALL](/#F9) or [EXTSTATICCALL](/#FB). 
+
+The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push it onto the memory stack, if return data is less than 32 bytes, the value is zero-padded (same behavior as [CALLDATALOAD](/#35)).
+
+## Stack input
+
+0. `offset`: 2-byte offset in the [return data](/about) from the last executed sub [context](/about) to copy.
+
+## Stack output
+
+0. `data`: 32-byte value starting from the given offset of the [return data](/about). All bytes after the end of the calldata are set to 0.
+
+## Examples
+
+| Returndata |
+|---------|
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `0x0000` | `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+| * | Input | Output |
+|--:|------:|-------:|
+| `1` | `0x001F` | `0xFF00000000000000000000000000000000000000000000000000000000000000` |
+
+*TBD: Reproduce in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.

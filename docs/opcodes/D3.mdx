@@ -1,0 +1,35 @@
+---
+fork: EOF
+group: Data Section Access
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Stack input
+
+0. `mem_offset`: byte offset in the [memory](/about) where the result will be copied to.
+1. `offset`: byte offset in the [data section](/about) to copy.
+2. `size`: byte size to copy.
+
+## Examples
+
+| Data Section |
+|---------|
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+| Memory before |
+|---------|
+| `0x000020` |
+
+| Memory after |
+|---------------------:|
+| `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF` |
+
+*TBD: Reproduce in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Legacy bytecode.

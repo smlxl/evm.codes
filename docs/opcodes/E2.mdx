@@ -1,0 +1,37 @@
+---
+fork: EOF
+group: Stack Memory Storage and Flow Operations
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
+
+The **RJUMPV** instruction may alter the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops and conditions. if `case > max_index` (out-of-bounds case), fall through and increment the counter by `(max_index + 1) * 2` without `relative_offset` takes into account.
+
+An interesting feature is that `RJUMPV 0 relative_offset` is an inverted-[RJUMPI](/#E1), which can be used in many cases.
+
+It offer reduced gas cost (both at deploy and execution time) and better analysis properties.
+
+## Stack input 
+
+0. `case`: value that pop from the stack, used to compare with max index, and define how program counter will altered.
+
+## Immediate argument
+
+0. `max_index`: the maximum index in the jump table - list of relative offset which one of them will be the point where execution will continue from.
+1. `relative_offset+`: list of relative offsets in the deployed [code](/about).
+
+## Example
+
+*TBD: example in playground*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- Legacy bytecode.
+- Target outside of code bounds, or an immediate operand.

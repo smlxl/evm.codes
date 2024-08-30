@@ -12,12 +12,12 @@ import { toKeyIndex } from 'util/string'
 import { Icon, Label } from 'components/ui'
 
 const ChainOption = (props: any) => {
-  const { data, children } = props
+  const { data, label } = props
   const isCurrent = data.value === CURRENT_FORK
 
   return (
     <components.Option {...props}>
-      {children}
+      {label}
       {isCurrent && <Label>Live</Label>}
     </components.Option>
   )
@@ -57,13 +57,13 @@ const ChainSelector = () => {
       return
     }
 
-    if (!router.query.fork) {
-      const latestFork = forks.at(-1)
-      const fork = forkOptions.find((fork) => fork.value === latestFork?.name)
+    const fork = router.query.fork
+      ? forkOptions.find((fork) => fork.value === router.query.fork)
+      : forkOptions.find((fork) => fork.value === CURRENT_FORK)
+    if (fork) {
       setForkValue(fork as any)
-      onForkChange(fork?.value as string)
+      onForkChange(fork.value)
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, defaultForkOption])
 

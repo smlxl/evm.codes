@@ -1,0 +1,36 @@
+---
+fork: EOF
+group: System operations
+---
+
+*Index 1 is top of the stack. See [PUSH](/#60).*
+
+## Notes
+
+Creates a new sub [context](/about) as if calling itself, but with the [code](/about) of the given account. In particular the [storage](/about) remains the same. Note that an account with no code will return success status.
+
+If the size of the [return data](/about) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork), or load 32-byte word onto the stack with [RETURNDATALOAD](/#F7) instruction.
+
+If the caller doesn't have enough balance to send the [value](/#34), the call fails but the current [context](/about) is not reverted.
+
+## Stack input
+
+0. `target_address`: the account which [context](/about) to execute.
+1. `input_offset`: byte offset in the [memory](/about) in bytes, the [calldata](/about) of the sub [context](/about).
+2. `input_size`: byte size to copy (size of the [calldata](/about)).
+
+## Stack output
+
+0. `status`: return 0 for success, 1 for revert if the sub [context](/about) [reverted](/#FD), 2 for failure.
+
+## Examples
+
+*TBD: See in playground.*
+
+## Error cases
+
+The state changes done by the current context are [reverted](#FD) in those cases:
+- Not enough gas.
+- Not enough values on the stack.
+- The target address has more than 20 bytes.
+- The target account code is legacy code (pre-EOF).

@@ -1437,24 +1437,42 @@
     "description": ""
   },
   "d0": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "offset",
+    "output": "data",
+    "description": "Load 32-byte word from data section of EOF container to the stack"
   },
   "d1": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "data",
+    "description": "Load 32-byte word from data section of EOF container at given offset to the stack"
   },
   "d2": {
     "input": "",
-    "output": "",
-    "description": ""
+    "output": "size",
+    "description": "Push data section size to the stack"
   },
   "d3": {
-    "input": "",
+    "input": "mem_offset | offset | size",
     "output": "",
-    "description": ""
+    "description": "Copy a segment of data section to the stack",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: memory offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "d4": {
     "input": "",
@@ -1519,47 +1537,47 @@
   "e0": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Alter the program counter to relative offset"
   },
   "e1": {
-    "input": "",
+    "input": "condition",
     "output": "",
-    "description": ""
+    "description": "Conditionally alter the program counter to relative offset"
   },
   "e2": {
-    "input": "",
+    "input": "case",
     "output": "",
-    "description": ""
+    "description": "Alter the program counter to a relative offset in jump table"
   },
   "e3": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Call into a function"
   },
   "e4": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Return from a function"
   },
   "e5": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Chaining function calls without adding a new return stack frame"
   },
   "e6": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Duplicate the stack item at the top of the stack"
   },
   "e7": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Swap the stack item with the top stack item"
   },
   "e8": {
     "input": "",
     "output": "",
-    "description": ""
+    "description": "Swap between the first and second nibbles of the stack item"
   },
   "e9": {
     "input": "",
@@ -1577,9 +1595,39 @@
     "description": ""
   },
   "ec": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "value | salt | input_offset | input_size",
+    "output": "address",
+    "description": "Create a contract using EOF container at given index",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "containerSize": {
+            "type": "number",
+            "label": "State: container size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated deployment execution cost"
+          },
+          "deployedSize": {
+            "type": "number",
+            "label": "Estimated deployed code size in bytes"
+          }
+        }
+      }
+    }
   },
   "ed": {
     "input": "",
@@ -1587,9 +1635,27 @@
     "description": ""
   },
   "ee": {
-    "input": "",
+    "input": "aux_data_offset | aux_data_size",
     "output": "",
-    "description": ""
+    "description": "Deploy container to an address",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "auxDataOffset": {
+            "type": "number",
+            "label": "Input: auxiliary data offset"
+          },
+          "auxDataSize": {
+            "type": "number",
+            "label": "Input: auxiliary data size in bytes"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          }
+        }
+      }
+    }
   },
   "ef": {
     "input": "",
@@ -1948,19 +2014,79 @@
     "description": ""
   },
   "f7": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "offset",
+    "output": "data",
+    "description": "Push 32-byte word from the return data at offset onto the stack"
   },
   "f8": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "target_address | input_offset | input_size | value",
+    "output": "status",
+    "description": "Drop-in replacement for CALL instruction",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "value": {
+            "type": "number",
+            "label": "Input: value"
+          },
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'targetAddress' is cold?"
+          },
+          "empty": {
+            "type": "boolean",
+            "label": "State: is the called account empty?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "f9": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "target_address | input_offset | input_size",
+    "output": "status",
+    "description": "Drop-in replacement for DELEGATECALL instruction",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'targetAddress' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "fa": {
     "input": "gas | address | argsOffset | argsSize | retOffset | retSize",
@@ -2030,9 +2156,35 @@
     }
   },
   "fb": {
-    "input": "",
-    "output": "",
-    "description": ""
+    "input": "target_address | input_offset | input_size",
+    "output": "status",
+    "description": "Drop-in replacement for STATICCALL instruction",
+    "dynamicFee": {
+      "EOF (Prague)": {
+        "inputs": {
+          "offset": {
+            "type": "number",
+            "label": "Input: offset"
+          },
+          "size": {
+            "type": "number",
+            "label": "Input: size"
+          },
+          "memorySize": {
+            "type": "number",
+            "label": "State: current memory size"
+          },
+          "cold": {
+            "type": "boolean",
+            "label": "State: 'targetAddress' is cold?"
+          },
+          "executionCost": {
+            "type": "number",
+            "label": "Estimated execution cost"
+          }
+        }
+      }
+    }
   },
   "fc": {
     "input": "",

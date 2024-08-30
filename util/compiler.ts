@@ -1,8 +1,10 @@
 import { BN } from 'ethereumjs-util'
 import { IInstruction, IReferenceItem } from 'types'
 
+import { EOF_FORK_NAME } from './constants'
+
 // Version here: https://github.com/ethereum/solc-bin/blob/gh-pages/bin/list.txt
-export const compilerVersion = `soljson-v0.8.21+commit.d9974bed`
+export const compilerVersion = `soljson-v0.8.27-nightly.2024.8.29+commit.ae1c3d48`
 
 /**
  * Gets target EVM version from a hardfork name
@@ -25,6 +27,8 @@ export const getTargetEvmVersion = (forkName: string | undefined) => {
     )
   ) {
     return 'london'
+  } else if (forkName === EOF_FORK_NAME) {
+    return 'prague'
   }
   return forkName
 }
