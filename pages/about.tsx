@@ -502,6 +502,7 @@ const AboutPage = () => {
           >
             The EVM Chapter in the Mastering Ethereum book
           </a>
+          ,{' '}
           <a
             href="https://x.com/uttam_singhk/status/1830526179105001771"
             target="_blank"
