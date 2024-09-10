@@ -238,14 +238,6 @@ const eofCreateCost = (common: EOFCommon, inputs: any): BN => {
     .iadd(new BN(inputs.executionCost))
     .iadd(depositCost)
 
-  if (common.gteHardfork('shanghai')) {
-    const initCodeCost = new BN(
-      toWordSize(new BN(inputs.containerSize)).imuln(
-        Number(getCommonParam(common, 'gasPrices', 'initCodeWordGas')),
-      ),
-    )
-    result.iadd(initCodeCost)
-  }
   return result
 }
 

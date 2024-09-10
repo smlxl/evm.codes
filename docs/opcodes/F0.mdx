@@ -24,6 +24,8 @@ Deployment can fail due to:
 
 Note that these failures only affect the return value and do not cause the calling context to revert (unlike the error cases below).
 
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack input
 
 0. `value`: value in [wei](https://www.investopedia.com/terms/w/wei.asp) to send to the new account.
@@ -44,5 +46,5 @@ The state changes done by the current context are [reverted](#FD) in those cases
 
 - Not enough gas.
 - Not enough values on the stack.
-- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since Prague fork).
 - `size` is greater than the chain's maximum initcode size (since Shanghai fork).

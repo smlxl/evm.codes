@@ -37,5 +37,5 @@ group: Stack Memory Storage and Flow Operations
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - Not enough values on the stack.
-- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork).
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since Prague fork).
 - When the amount of gas left to the transaction is less than or equal 2300 (since Istanbul fork).

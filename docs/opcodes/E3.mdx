@@ -11,7 +11,7 @@ A new return stack is introduced, it is a stack of items representing execution 
 
 The **CALLF** instruction call into a function or subroutine with given metadata index in the type section, then push an execution state onto the return stack. 
 
-Static jump instructions are prefered, dynamic jump instructions are disallowed.
+Within these functions/subroutines static jump instructions are preferred, dynamic jump instructions are disallowed.
 
 ## Immediate argument
 
@@ -25,7 +25,6 @@ Static jump instructions are prefered, dynamic jump instructions are disallowed.
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- Target section index is exceed or equal number of code section.
 - Return stack already has 1024 items.
 - The called function exceed the global stack height limit.
+- Legacy bytecode.

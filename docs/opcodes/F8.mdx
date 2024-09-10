@@ -9,9 +9,13 @@ group: System operations
 
 Creates a new sub [context](/about) and execute the [code](/about) of the given account, then resumes the current one. Note that an account with no code will return success status.
 
-If the size of the [return data](/about) is not known, it can also be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork), or load 32-byte word onto the stack with [RETURNDATALOAD](/#F7) instruction.
+The size of the [return data](/about) can be retrieved after the call with the instructions [RETURNDATASIZE](/#3D) and [RETURNDATACOPY](/#3E) (since the Byzantium fork), or load 32-byte word onto the stack with [RETURNDATALOAD](/#F7) instruction.
 
-If the caller doesn't have enough balance to send the [value](/#34), the call fails but the current [context](/about) is not reverted.
+If the caller doesn't have enough balance to send the [value](/#34), the call fails returning 1 as `status`, but the current [context](/about) is not reverted.
+
+All but one 64th (`remaining_gas / 64`) of the remaining gas of the current context is sent to the sub [context](/about) to execute, but no less than 2300. The gas that is not used by the sub context is returned to this one. In case gas not sent would be lower than 5000, the call fails returning 1 as `status`, but the current [context](/about) is not reverted.
+
+If the call stack depth is 1024, the call fails returning 1 as `status`, but the current [context](/about) is not reverted.
 
 ## Stack input
 
@@ -32,8 +36,5 @@ If the caller doesn't have enough balance to send the [value](/#34), the call fa
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- Call stack depth is 1024
 - The target address has more than 20 bytes. 
-- The target account code is legacy code (pre-EOF).
-- The current execution context is from a [STATICCALL](/#FA) and the [value](/#34) (stack index 2) is not 0 (since Byzantium fork).
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since Prague fork) and the [value](/#34) is not 0.

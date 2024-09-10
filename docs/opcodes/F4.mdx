@@ -13,6 +13,8 @@ If the size of the [return data](/about) is not known, it can also be retrieved 
 
 From the Tangerine Whistle fork, `gas` is capped at all but one 64th (`remaining_gas / 64`) of the remaining gas of the current context. If a call tries to send more, the `gas` is changed to match the maximum allowed.
 
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack input
 
 0. `gas`: amount of gas to send to the sub [context](/about) to execute. The gas that is not used by the sub context is returned to this one.
