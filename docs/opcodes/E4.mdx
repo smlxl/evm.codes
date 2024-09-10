@@ -9,8 +9,6 @@ group: Subroutine and Function
 
 Context from [CALLF](/#E3), The **RETF** instruction return value from a function or subroutine, which pop an execution state from return stack and set to corresponding values (current section index, program counter).
 
-Within these functions/subroutines static jump instructions are preferred, dynamic jump instructions are disallowed.
-
 ## Example
 
 *TBD: Reproduce in playground*
@@ -19,4 +17,4 @@ Within these functions/subroutines static jump instructions are preferred, dynam
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.

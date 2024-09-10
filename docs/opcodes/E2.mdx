@@ -11,7 +11,7 @@ The program counter (PC) is a byte offset in the deployed [code](/about). It ind
 
 The **RJUMPV** instruction may alter the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like switch statements. if `case > max_index` (out-of-bounds case), fall through and increment the counter by `(max_index + 1) * 2` without `relative_offset` takes into account.
 
-An interesting feature is that `RJUMPV 0 relative_offset` is an inverted-[RJUMPI](/#E1), which can be used in many cases.
+An interesting feature is that `RJUMPV 0 relative_offset` is an inverted-[RJUMPI](/#E1), which can be used in many cases instead of `ISZERO RJUMPI relative_offset`.
 
 It offer reduced gas cost (both at deploy and execution time) and better analysis properties.
 
@@ -32,4 +32,4 @@ It offer reduced gas cost (both at deploy and execution time) and better analysi
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.

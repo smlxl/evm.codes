@@ -11,8 +11,6 @@ A new return stack is introduced, it is a stack of items representing execution 
 
 The **CALLF** instruction call into a function or subroutine with given metadata index in the type section, then push an execution state onto the return stack. 
 
-Within these functions/subroutines static jump instructions are preferred, dynamic jump instructions are disallowed.
-
 ## Immediate argument
 
 0. `target_section_index`: 16-bit unsigned value as metadata index in the type section of EOF container corresponds to a code section index
@@ -27,4 +25,4 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - Not enough gas.
 - Return stack already has 1024 items.
 - The called function exceed the global stack height limit.
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.

@@ -48,4 +48,4 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - Not enough gas.
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since Prague fork).
 - Deploy container code size exceed maximum code size, which is updated within [RETURNCONTRACT](/#EE).
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.
