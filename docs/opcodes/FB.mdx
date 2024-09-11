@@ -36,3 +36,4 @@ If the call stack depth is 1024, the call fails returning 1 as `status`, but the
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
 - The target address has more than 20 bytes.
+- Execution in a legacy (non-EOF) context.

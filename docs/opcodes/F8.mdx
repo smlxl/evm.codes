@@ -38,3 +38,4 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - Not enough gas.
 - The target address has more than 20 bytes. 
 - The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since Prague fork) and the [value](/#34) is not 0.
+- Execution in a legacy (non-EOF) context.
