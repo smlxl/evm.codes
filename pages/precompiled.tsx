@@ -28,7 +28,8 @@ const PrecompiledPage = ({
   precompiledDocs: IItemDocs
   gasDocs: IGasDocs
 }) => {
-  const { precompiled, onForkChange } = useContext(EthereumContext)
+  const { precompiled, onForkChange, areForksLoaded } =
+    useContext(EthereumContext)
 
   // Change selectedFork according to query param
   const router = useRouter()
@@ -40,7 +41,7 @@ const PrecompiledPage = ({
       onForkChange(query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady])
+  }, [router.isReady, areForksLoaded])
 
   return (
     <>

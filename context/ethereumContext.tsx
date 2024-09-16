@@ -79,6 +79,7 @@ type ContextProps = {
   isExecuting: boolean
   executionState: IExecutionState
   vmError: string | undefined
+  areForksLoaded: boolean
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -125,6 +126,7 @@ export const EthereumContext = createContext<ContextProps>({
   isExecuting: false,
   executionState: initialExecutionState,
   vmError: undefined,
+  areForksLoaded: false,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -165,24 +167,24 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
+  const [areForksLoaded, setAreForksLoaded] = useState<boolean>(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    initVmInstance()
+    void (async () => {
+      await initVmInstance()
+      setAreForksLoaded(true)
+    })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   /**
    * Initializes the EVM instance.
    */
-  const initVmInstance = async (
-    skipChainsLoading?: boolean,
-    chainId?: Chain,
-    fork?: string,
-  ) => {
+  const initVmInstance = async (fork?: string) => {
     const forkName = fork == EOF_FORK_NAME ? EOF_ENABLED_FORK : fork
     common = new EOFCommon({
       chain: Chain.Mainnet,
@@ -198,7 +200,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
 
     currentOpcodes = evm.getActiveOpcodes()
 
-    if (!skipChainsLoading) {
+    if (forks.length === 0) {
       _loadChainAndForks(common)
     }
 
@@ -222,9 +224,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const onChainChange = (chainId: number) => {
     const chain = chains.find((chain) => chain.id === chainId)
     if (chain) {
-      setSelectedChain(chain)
-      resetExecution()
-      initVmInstance(true, chainId, selectedFork?.name)
+      void (async () => {
+        // NOTE: we first setup the vm to make sure it has the correct version before refreshing the fork details
+        await initVmInstance(selectedFork?.name)
+        setSelectedChain(chain)
+        resetExecution()
+      })()
     }
   }
 
@@ -235,9 +240,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const onForkChange = (forkName: string) => {
     const fork = forks.find((f) => f.name === forkName)
     if (fork) {
-      setSelectedFork(fork)
-      resetExecution()
-      initVmInstance(true, selectedChain?.id, forkName)
+      ;(async () => {
+        // NOTE: we first setup the vm to make sure it has the correct version before refreshing the fork details
+        await initVmInstance(forkName)
+        setSelectedFork(fork)
+        resetExecution()
+      })()
     }
   }
 
@@ -877,6 +885,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         isExecuting,
         executionState,
         vmError,
+        areForksLoaded,
 
         onChainChange,
         onForkChange,

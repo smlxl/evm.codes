@@ -82,6 +82,7 @@ const Editor = ({ readOnly = false }: Props) => {
     instructions,
     resetExecution,
     onForkChange,
+    areForksLoaded,
   } = useContext(EthereumContext)
 
   const [code, setCode] = useState('')
@@ -240,7 +241,7 @@ const Editor = ({ readOnly = false }: Props) => {
       onForkChange(query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsLoaded && router.isReady])
+  }, [settingsLoaded, router.isReady, areForksLoaded])
 
   useEffect(() => {
     solcWorkerRef.current = new Worker(

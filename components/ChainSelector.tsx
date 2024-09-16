@@ -62,7 +62,6 @@ const ChainSelector = () => {
       : forkOptions.find((fork) => fork.value === CURRENT_FORK)
     if (fork) {
       setForkValue(fork as any)
-      onForkChange(fork.value)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, defaultForkOption])
