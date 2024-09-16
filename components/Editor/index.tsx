@@ -241,7 +241,7 @@ const Editor = ({ readOnly = false }: Props) => {
       onForkChange(query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsLoaded && router.isReady && isForksLoaded])
+  }, [settingsLoaded, router.isReady, isForksLoaded])
 
   useEffect(() => {
     solcWorkerRef.current = new Worker(

@@ -117,7 +117,7 @@ const ReferenceTable = ({
       onForkChange(query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady && isForksLoaded])
+  }, [router.isReady, isForksLoaded])
 
   const renderExpandButton = () => {
     return (
