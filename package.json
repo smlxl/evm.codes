@@ -105,14 +105,14 @@
     "typescript": "^5.0.4",
     "webpack": "^5.90.3"
   },
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@9.10.0",
   "engines": {
     "node": "^20.0.0",
-    "pnpm": "^8.15.6"
+    "pnpm": "^9.0.0"
   },
   "volta": {
     "node": "20.12.2",
-    "pnpm": "8.15.6"
+    "pnpm": "9.10.0"
   },
   "pnpm": {
     "allowedDeprecatedVersions": {
