@@ -30,7 +30,6 @@ Should deployment succeed, the account's [code](/about) is set to the [return da
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- The current execution context is from a [EXTSTATICCALL](/#FB).
-- Exceed the maximum data section size.
-- Less than data section size declared in the header.
+- After appending, the data section size is less than declared in the header or exceeds the maximum data section size.
+- After appending, the container size exceeds the maximum code size limit.
+- Execution in a legacy (non-EOF) context.

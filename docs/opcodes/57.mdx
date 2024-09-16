@@ -11,6 +11,8 @@ The program counter (PC) is a byte offset in the deployed [code](/about). It ind
 
 The **JUMPI** instruction may alter the program counter, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops and conditions.
 
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack input
 
 0. `counter`: byte offset in the deployed [code](/about) where execution will continue from. Must be a [JUMPDEST](/#5B) instruction.

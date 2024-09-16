@@ -15,6 +15,8 @@ From the Tangerine Whistle fork, `gas` is capped at all but one 64th (`remaining
 
 If the caller doesn't have enough balance to send the [value](/#34), the call fails but the current [context](/about) is not reverted.
 
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack input
 
 0. `gas`: amount of gas to send to the sub [context](/about) to execute. The gas that is not used by the sub context is returned to this one.

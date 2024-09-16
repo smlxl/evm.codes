@@ -5,9 +5,13 @@ group: Environmental Information
 
 *Index 1 is top of the stack. See [PUSH](/#60).*
 
+## Notes
+
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack input
 
-0. `address`: 20-byte address of the contract to query.
+0. `address`: 20-byte address of the contract to query. If `address` points to an EOF contract, result is as if its code was `EF00`.
 
 ## Stack output
 

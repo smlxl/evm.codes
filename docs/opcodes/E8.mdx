@@ -7,9 +7,11 @@ group: Exchange Operations
 
 ## Immediate argument
 
-0. `stack_index`: index of item to swap between the first and second nibbles of the item
+0. `imm`: 1 byte containing indices of stack items to swap. Given `n = imm >> 4 + 1`, `m = imm & 0x0F + 1`, `n + 1`th stack item is swapped with `n + m + 1`th. 
 
 ## Example
+
+`E800` will swap the 2nd and 3rd stack item, `E8FF` will swap the 17th and 33rd stack item.
 
 *TBD: Reproduce in playground*
 
@@ -17,5 +19,4 @@ group: Exchange Operations
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.

@@ -9,6 +9,8 @@ group: Environmental Information
 
 A sub context can be created with [CALL](/#F1), [CALLCODE](/#F2), [DELEGATECALL](/#F4) or [STATICCALL](/#FA).
 
+If executed in EOF code, for out of bound bytes, 0s will be copied.
+
 ## Stack input
 
 0. `destOffset`: byte offset in the [memory](/about) where the result will be copied.
@@ -49,4 +51,4 @@ The state changes done by the current context are [reverted](#FD) in those cases
 - Not enough gas.
 - Not enough values on the stack.
 - The addition `offset` + `size` overflows.
-- `offset` + `size` is larger than [RETURNDATASIZE](#3D).
+- `offset` + `size` is larger than [RETURNDATASIZE](#3D), if executed in legacy (non-EOF) code.

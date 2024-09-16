@@ -9,6 +9,8 @@ group: Environmental Information
 
 Each instruction occupies one byte. In the case of a [PUSH](/#60) instruction, the bytes that need to be pushed are encoded after that, it thus increases the codesize accordingly.
 
+Not allowed in EOFv1 code, code containing this instruction will fail validation.
+
 ## Stack output
 
 0. `size`: byte size of the [code](/about).

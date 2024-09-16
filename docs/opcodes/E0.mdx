@@ -9,7 +9,7 @@ group: Stack Memory Storage and Flow Operations
 
 The program counter (PC) is a byte offset in the deployed [code](/about). It indicates which instruction will be executed next. When an [ADD](/#01) is executed, for example, the PC is incremented by 1, since the instruction is 1 byte. The [PUSH](/#60) instructions are bigger than one byte, and so will increment the counter accordingly.
 
-The **RJUMP** instruction alters the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like functions.
+The **RJUMP** instruction alters the program counter with relative offset, thus breaking the linear path of the execution to another point in the deployed [code](/about). It is used to implement functionalities like loops.
 
 It offer reduced gas cost compare to dynamic counterpart.
 
@@ -25,6 +25,4 @@ It offer reduced gas cost compare to dynamic counterpart.
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- Legacy bytecode.
-- Target outside of code bounds, or another immediate argument.
+- Execution in a legacy (non-EOF) context.

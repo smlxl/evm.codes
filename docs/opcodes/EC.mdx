@@ -46,7 +46,6 @@ Note that these failures only affect the return value and do not cause the calli
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- The current execution context is from a [EXTSTATICCALL](/#FB).
+- The current execution context is from a [STATICCALL](/#FA) (since Byzantium fork) or an [EXTSTATICCALL](/#FB) (since EOF fork).
 - Deploy container code size exceed maximum code size, which is updated within [RETURNCONTRACT](/#EE).
-- `input_size` is greater than the chain's maximum initcode size (since Shanghai fork).
+- Execution in a legacy (non-EOF) context.

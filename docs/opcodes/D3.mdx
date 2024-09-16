@@ -5,6 +5,10 @@ group: Data Section Access
 
 *Index 1 is top of the stack. See [PUSH](/#60).*
 
+## Notes
+
+For out of bound bytes, 0s will be copied.
+
 ## Stack input
 
 0. `mem_offset`: byte offset in the [memory](/about) where the result will be copied to.
@@ -31,5 +35,4 @@ group: Data Section Access
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
-- Legacy bytecode.
+- Execution in a legacy (non-EOF) context.

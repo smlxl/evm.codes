@@ -7,8 +7,6 @@ group: Environmental Information
 
 ## Notes
 
-A sub context can be created with [EXTCALL](/#F8), [EXTDELEGATECALL](/#F9) or [EXTSTATICCALL](/#FB). 
-
 The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push it onto the memory stack, if return data is less than 32 bytes, the value is zero-padded (same behavior as [CALLDATALOAD](/#35)).
 
 ## Stack input
@@ -39,4 +37,4 @@ The **RETURNDATALOAD** is used to load 32 bytes word from return data, and push 
 
 The state changes done by the current context are [reverted](#FD) in those cases:
 - Not enough gas.
-- Not enough values on the stack.
+- Execution in a legacy (non-EOF) context.
