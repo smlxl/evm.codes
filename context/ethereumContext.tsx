@@ -167,7 +167,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
-  const [areForksLoaded, setareForksLoaded] = useState<boolean>(false)
+  const [areForksLoaded, setAreForksLoaded] = useState<boolean>(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
@@ -176,7 +176,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   useEffect(() => {
     void (async () => {
       await initVmInstance()
-      setareForksLoaded(true)
+      setAreForksLoaded(true)
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
