@@ -79,7 +79,7 @@ type ContextProps = {
   isExecuting: boolean
   executionState: IExecutionState
   vmError: string | undefined
-  isForksLoaded: boolean
+  areForksLoaded: boolean
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -126,7 +126,7 @@ export const EthereumContext = createContext<ContextProps>({
   isExecuting: false,
   executionState: initialExecutionState,
   vmError: undefined,
-  isForksLoaded: false,
+  areForksLoaded: false,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -167,7 +167,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
-  const [isForksLoaded, setIsForksLoaded] = useState<boolean>(false)
+  const [areForksLoaded, setareForksLoaded] = useState<boolean>(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
@@ -176,7 +176,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   useEffect(() => {
     void (async () => {
       await initVmInstance()
-      setIsForksLoaded(true)
+      setareForksLoaded(true)
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -885,7 +885,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         isExecuting,
         executionState,
         vmError,
-        isForksLoaded,
+        areForksLoaded,
 
         onChainChange,
         onForkChange,
