@@ -171,12 +171,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    _loadChainAndForks(
-      new Common({
-        chain: Chain.Mainnet,
-        hardfork: CURRENT_FORK,
-      }),
-    )
+    initVmInstance()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
