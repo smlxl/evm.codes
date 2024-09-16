@@ -47,7 +47,8 @@ const ReferenceTable = ({
   isPrecompiled?: boolean
 }) => {
   const router = useRouter()
-  const { forks, selectedFork, onForkChange } = useContext(EthereumContext)
+  const { forks, selectedFork, onForkChange, isForksLoaded } =
+    useContext(EthereumContext)
   const data = useMemo(() => reference, [reference])
   const columns = useMemo(() => tableColumns(isPrecompiled), [isPrecompiled])
   const rowRefs = useRef<HTMLTableRowElement[]>([])
@@ -112,12 +113,11 @@ const ReferenceTable = ({
   // Change selectedFork according to query param
   useEffect(() => {
     const query = router.query
-
     if ('fork' in query) {
       onForkChange(query.fork as string)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady])
+  }, [router.isReady && isForksLoaded])
 
   const renderExpandButton = () => {
     return (

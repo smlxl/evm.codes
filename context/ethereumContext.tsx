@@ -79,6 +79,7 @@ type ContextProps = {
   isExecuting: boolean
   executionState: IExecutionState
   vmError: string | undefined
+  isForksLoaded: boolean
 
   onChainChange: (chainId: number) => void
   onForkChange: (forkName: string) => void
@@ -125,6 +126,7 @@ export const EthereumContext = createContext<ContextProps>({
   isExecuting: false,
   executionState: initialExecutionState,
   vmError: undefined,
+  isForksLoaded: false,
 
   onChainChange: () => undefined,
   onForkChange: () => undefined,
@@ -165,13 +167,17 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     string | undefined
   >()
   const [vmError, setVmError] = useState<string | undefined>()
+  const [isForksLoaded, setIsForksLoaded] = useState<boolean>(false)
 
   const nextStepFunction = useRef<any>()
   const isExecutionPaused = useRef(true)
   const breakpointIds = useRef<number[]>([])
 
   useEffect(() => {
-    initVmInstance()
+    void (async () => {
+      await initVmInstance()
+      setIsForksLoaded(true)
+    })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -179,6 +185,8 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * Initializes the EVM instance.
    */
   const initVmInstance = async (fork?: string) => {
+    console.log({ fork })
+
     const forkName = fork == EOF_FORK_NAME ? EOF_ENABLED_FORK : fork
     common = new EOFCommon({
       chain: Chain.Mainnet,
@@ -234,7 +242,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
   const onForkChange = (forkName: string) => {
     const fork = forks.find((f) => f.name === forkName)
     if (fork) {
-      void (async () => {
+      ;(async () => {
         // NOTE: we first setup the vm to make sure it has the correct version before refreshing the fork details
         await initVmInstance(forkName)
         setSelectedFork(fork)
@@ -879,6 +887,7 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
         isExecuting,
         executionState,
         vmError,
+        isForksLoaded,
 
         onChainChange,
         onForkChange,
