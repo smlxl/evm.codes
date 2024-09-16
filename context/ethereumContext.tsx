@@ -185,8 +185,6 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
    * Initializes the EVM instance.
    */
   const initVmInstance = async (fork?: string) => {
-    console.log({ fork })
-
     const forkName = fork == EOF_FORK_NAME ? EOF_ENABLED_FORK : fork
     common = new EOFCommon({
       chain: Chain.Mainnet,
