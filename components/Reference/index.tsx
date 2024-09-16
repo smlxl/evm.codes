@@ -248,8 +248,8 @@ const ReferenceTable = ({
                             legacyBehavior
                             href={
                               isPrecompiled
-                                ? `/precompiled#${opcodeOrAddress}?fork=${selectedFork?.name}`
-                                : `/#${opcodeOrAddress}?fork=${selectedFork?.name}`
+                                ? `/precompiled?fork=${selectedFork?.name}#${opcodeOrAddress}`
+                                : `/?fork=${selectedFork?.name}#${opcodeOrAddress}`
                             }
                             passHref
                           >
