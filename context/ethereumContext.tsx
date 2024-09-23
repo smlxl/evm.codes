@@ -477,9 +477,12 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     common.hardforks().forEach((rawFork) => {
       // FIXME: After shanghai, timestamps are used, so support them in addition
       // to blocks, and in the meantime use timestamp as the block num.
+      const block = rawFork.block
+        ? rawFork.block
+        : FORKS_WITH_TIMESTAMPS[rawFork.name]
       const fork = {
         ...rawFork,
-        block: FORKS_WITH_TIMESTAMPS[rawFork.name],
+        block,
       }
 
       if (typeof fork.block === 'number') {
