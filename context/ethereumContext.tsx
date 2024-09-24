@@ -474,21 +474,19 @@ export const EthereumProvider: React.FC<{}> = ({ children }) => {
     setSelectedChain({ id: chainIds[0], name: chainNames[0] })
 
     let currentForkFound = false
-    common.hardforks().forEach((fork) => {
+    common.hardforks().forEach((rawFork) => {
       // FIXME: After shanghai, timestamps are used, so support them in addition
       // to blocks, and in the meantime use timestamp as the block num.
-      const hasTimestamp = Object.keys(FORKS_WITH_TIMESTAMPS).includes(
-        fork.name,
-      )
-      if (fork.block || hasTimestamp) {
-        if (hasTimestamp) {
-          forks.push({
-            ...fork,
-            block: FORKS_WITH_TIMESTAMPS[fork.name],
-          })
-        } else {
-          forks.push(fork)
-        }
+      const block = rawFork.block
+        ? rawFork.block
+        : FORKS_WITH_TIMESTAMPS[rawFork.name]
+      const fork = {
+        ...rawFork,
+        block,
+      }
+
+      if (typeof fork.block === 'number') {
+        forks.push(fork)
 
         // set initially selected fork
         if (!currentForkFound && fork.name === CURRENT_FORK) {

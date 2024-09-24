@@ -6,7 +6,7 @@ export const CURRENT_FORK = 'cancun'
 export const EOF_ENABLED_FORK = 'prague'
 export const EOF_FORK_NAME = 'EOF'
 
-export const FORKS_WITH_TIMESTAMPS: { [name: string]: number } = {
+export const FORKS_WITH_TIMESTAMPS: { [name: string]: number | null } = {
   shanghai: 1681338455,
   cancun: 1710338135,
 }

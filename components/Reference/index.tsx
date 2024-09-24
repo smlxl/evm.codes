@@ -140,7 +140,7 @@ const ReferenceTable = ({
     )
   }
 
-  if (reference.length === 0) {
+  if (reference.length === 0 || !areForksLoaded) {
     return null
   }
 
