@@ -11,4 +11,4 @@
     calculate_iteration_count = max(iteration_count, 1)
 
     static_gas = 0
-    dynamic_gas = max(200, multiplication_complexity * iteration_count / {gasPrices|modexpGquaddivisor})
+    dynamic_gas = max(200, multiplication_complexity * calculate_iteration_count / {gasPrices|modexpGquaddivisor})
