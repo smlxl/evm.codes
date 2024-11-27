@@ -1,7 +1,7 @@
 export const GITHUB_REPO_URL = 'https://github.com/smlxl/evm.codes'
 
 // Currently active hardfork from the ones available:
-// See: https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks
+// See: https://github.com/ethereumjs/ethereumjs-monorepo/blob/master/packages/common/src/hardforks.ts
 export const CURRENT_FORK = 'cancun'
 export const EOF_ENABLED_FORK = 'prague'
 export const EOF_FORK_NAME = 'EOF'
