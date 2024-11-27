@@ -29,7 +29,7 @@ Install the dependencies:
 
     pnpm install
 
-Specify the environment variables if you want to run the contract viewer into `.env.local`
+Specify the environment variables if you want to run the contract viewer in `.env.local`
 
     APIKEY_ETHERSCAN=
 
