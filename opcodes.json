@@ -1454,7 +1454,7 @@
   "d3": {
     "input": "mem_offset | offset | size",
     "output": "",
-    "description": "Copy a segment of data section to the stack",
+    "description": "Copy a segment of data section to memory",
     "dynamicFee": {
       "EOF": {
         "inputs": {
