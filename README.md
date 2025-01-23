@@ -8,7 +8,7 @@
 
 This is the source code that runs [evm.codes](https://evm.codes) web application. Below you will find the docs on how to contribute to the project and get it up and running locally for further development.
 
-evm.codes is brought to you by [smlXL](https://www.smlxl.io), powered by open-source projects such as [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), [SolcJS](https://github.com/ethereum/solc-js) and [many others](package.json).
+evm.codes is brought to you by [Dune](https://dune.com/home), powered by open-source projects such as [EthereumJS](https://github.com/ethereumjs/ethereumjs-monorepo), [SolcJS](https://github.com/ethereum/solc-js) and [many others](package.json).
 
 ## ⚙️ Installation
 
@@ -23,7 +23,7 @@ For contributing to the project, you can quickly get the application running by 
 
 Clone this repository:
 
-    git clone git@github.com:smlxl/evm.codes.git
+    git clone git@github.com:duneanalytics/evm.codes.git
 
 Install the dependencies:
 
@@ -45,7 +45,7 @@ Deployments are handled automatically by [Vercel](https://vercel.com/), as soon 
 
 evm.codes is built and maintained by a small team, so we would definitely love your help to fix bugs, add new features and improvements, or update EVM [reference docs](docs/opcodes).
 
-Before you submit a pull request, please make sure there isn't an existing [GitHub issue](https://github.com/smlxl/evm.codes/issues). If there isn't, create one first to discuss the best way to approach it and also get some feedback from the team.
+Before you submit a pull request, please make sure there isn't an existing [GitHub issue](https://github.com/duneanalytics/evm.codes/issues). If there isn't, create one first to discuss the best way to approach it and also get some feedback from the team.
 
 Once you are about to submit a pull request, prefix the name with either `chore:` (small improvements and regular maintenance), `fix:` (bugs and hot fixes), or `feat:` (new features) to help us quickly look up the type of the issue from the Git history.
 
