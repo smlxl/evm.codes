@@ -2,7 +2,7 @@
   "name": "evm.codes",
   "version": "0.1.0",
   "description": "An interactive reference to Ethereum Virtual Machine Opcodes",
-  "homepage": "https://github.com/smlxl/evm.codes",
+  "homepage": "https://github.com/duneanalytics/evm.codes",
   "license": "MIT",
   "scripts": {
     "build": "next build",

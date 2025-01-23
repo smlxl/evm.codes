@@ -12,11 +12,11 @@ const Footer = () => {
               Brought to you by{' '}
               <a
                 className="underline font-medium"
-                href="https://smlxl.io"
+                href="https://dune.com/home"
                 target="_blank"
                 rel="noreferrer"
               >
-                smlXL, Inc
+                Dune
               </a>
               .
             </span>
